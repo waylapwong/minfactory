@@ -12,3 +12,11 @@ client/node_modules
 server/coverage
 server/dist
 server/documentation
+
+# VISUAL STUDIO CODE
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+.history/*

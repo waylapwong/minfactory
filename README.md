@@ -5,6 +5,6 @@ minFactory
 ## Installation
 
 ```
-npm install -w client
-npm install -w server
+cd client/ && npm install
+cd server/ && npm install
 ```
