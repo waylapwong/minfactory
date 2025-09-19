@@ -1,6 +1,14 @@
+# ROOT IGNORES
+node_modules
+
+# CLIENT IGNORES
 client/.angular
+client/coverage
 client/dist
+client/documentation
 client/node_modules
 
+# SERVER IGNORES
+server/coverage
 server/dist
-server/node_modules
+server/documentation
