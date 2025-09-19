@@ -3,6 +3,8 @@
   "description": "minFactory",
   "version": "0.0.0",
   "author": "Way-Lap Wong",
+  "workspaces": ["client", "server"],
   "scripts": {
+    "start:client": "npm run start --workspace client"
   }
 }
