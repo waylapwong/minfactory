@@ -4,6 +4,7 @@
   "author": "Way-Lap Wong",
   "workspaces": ["client", "server"],
   "scripts": {
-    "start:client": "npm run start --workspace client"
+    "start:client": "npm run start --workspace client",
+    "start:server": "npm run start --workspace server"
   }
 }
