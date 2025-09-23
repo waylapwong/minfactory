@@ -1,4 +1,5 @@
 name: Bug
+description: Bug Ticket
 title: "[Bug]: "
 labels: ["Bug"]
 
