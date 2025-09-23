@@ -1,6 +1,3 @@
-# ROOT IGNORES
-node_modules
-
 # CLIENT IGNORES
 client/.angular
 client/coverage
@@ -12,6 +9,7 @@ client/node_modules
 server/coverage
 server/dist
 server/documentation
+server/node_modules
 
 # VISUAL STUDIO CODE
 .vscode/*

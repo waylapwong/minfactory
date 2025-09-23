@@ -8,7 +8,6 @@
     "format:all": "npx prettier --write .",
     "gen:api": "rimraf src/app/core/generated && openapi-generator-cli generate -c openapi.config.json -o src/app/core/generated",
     "gen:docs": "compodoc -p tsconfig.doc.json",
-    "git:add": "git add -A",
     "lint": "ng lint",
     "ng": "ng",
     "start": "ng serve --open --watch",
