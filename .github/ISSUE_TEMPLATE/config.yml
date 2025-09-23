@@ -1,0 +1,9 @@
+blank_issues_enabled: false
+
+contact_links:
+  - name: 📖 Dokumentation
+    url: https://github.com/waylapwong/minfactory/wiki
+    about: Schau zuerst in die Doku, vielleicht ist deine Frage schon beantwortet.
+  - name: 💬 Diskussionen
+    url: https://github.com/waylapwong/minfactory/discussions
+    about: Stelle allgemeine Fragen oder starte eine Diskussion.

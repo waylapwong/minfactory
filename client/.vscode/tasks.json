@@ -1,0 +1,41 @@
+{
+  "tasks": [
+    {
+      "isBackground": true,
+      "problemMatcher": {
+        "background": {
+          "activeOnStart": true,
+          "beginsPattern": {
+            "regexp": "(.*?)"
+          },
+          "endsPattern": {
+            "regexp": "bundle generation complete"
+          }
+        },
+        "owner": "typescript",
+        "pattern": "$tsc"
+      },
+      "script": "start",
+      "type": "npm"
+    },
+    {
+      "isBackground": true,
+      "problemMatcher": {
+        "background": {
+          "activeOnStart": true,
+          "beginsPattern": {
+            "regexp": "(.*?)"
+          },
+          "endsPattern": {
+            "regexp": "bundle generation complete"
+          }
+        },
+        "owner": "typescript",
+        "pattern": "$tsc"
+      },
+      "script": "test",
+      "type": "npm"
+    }
+  ],
+  "version": "2.0.0"
+}

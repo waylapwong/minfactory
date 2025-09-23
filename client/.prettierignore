@@ -1,0 +1,6 @@
+.angular/
+coverage/
+dist/
+documentation/
+node_modules/
+src/app/core/generated/

@@ -1,0 +1,20 @@
+# CLIENT IGNORES
+client/.angular
+client/coverage
+client/dist
+client/docs
+client/node_modules
+
+# SERVER IGNORES
+server/coverage
+server/dist
+server/docs
+server/node_modules
+
+# VISUAL STUDIO CODE
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+.history/*

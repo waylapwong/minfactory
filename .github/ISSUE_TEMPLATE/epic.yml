@@ -1,0 +1,21 @@
+name: Epic
+title: "[Epic]: "
+labels: ["Epic"]
+
+body:
+  - type: textarea
+    id: description
+    attributes:
+      label: User Story
+      placeholder: "Als [Rolle] möchte ich [Funktion], um [Nutzen]."
+    validations:
+      required: true
+
+  - type: textarea
+    id: acceptance_criteria
+    attributes:
+      label: Akzeptanzkriterien
+      placeholder: |
+        - [ ] Akzeptanzkriterium
+    validations:
+      required: true
