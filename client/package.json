@@ -11,9 +11,9 @@
     "git:add": "git add -A",
     "lint": "ng lint",
     "ng": "ng",
+    "prepare": "husky",
     "start": "ng serve --open --watch",
-    "test": "ng test --code-coverage",
-    "prepare": "husky"
+    "test": "ng test --code-coverage"
   },
   "dependencies": {
     "@angular/common": "^20.3.0",
@@ -22,7 +22,9 @@
     "@angular/forms": "^20.3.0",
     "@angular/platform-browser": "^20.3.0",
     "@angular/router": "^20.3.0",
+    "@tailwindcss/postcss": "^4.1.13",
     "rxjs": "~7.8.0",
+    "tailwindcss": "^4.1.13",
     "tslib": "^2.3.0"
   },
   "devDependencies": {
