@@ -1,6 +1,6 @@
 .angular/
 coverage/
 dist/
-documentation/
+docs/
 node_modules/
 src/app/core/generated/

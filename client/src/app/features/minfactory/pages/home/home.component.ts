@@ -1,9 +1,9 @@
 import { Component } from '@angular/core';
-import { LogoComponent } from '../../../../shared/components/logo/logo.component';
+import { CardComponent } from '../../../../shared/components/card/card.component';
 
 @Component({
   selector: 'app-home',
-  imports: [LogoComponent],
+  imports: [CardComponent],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss'
 })
