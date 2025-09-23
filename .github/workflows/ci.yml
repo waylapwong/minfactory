@@ -36,7 +36,7 @@ jobs:
           cache-dependency-path: |
             ${{ matrix.app.path }}/package-lock.json
       
-      - name: Install Chrome (Angular Client)
+      - name: Install Chrome
         if: matrix.app.name == 'client'
         run: |
           sudo apt-get update
@@ -54,7 +54,7 @@ jobs:
             libgtk-3-0 \
             fonts-liberation
 
-      - name: Install dependencies
+      - name: Install
         run: npm ci
 
       - name: Lint
