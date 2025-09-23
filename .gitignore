@@ -2,13 +2,13 @@
 client/.angular
 client/coverage
 client/dist
-client/documentation
+client/docs
 client/node_modules
 
 # SERVER IGNORES
 server/coverage
 server/dist
-server/documentation
+server/docs
 server/node_modules
 
 # VISUAL STUDIO CODE

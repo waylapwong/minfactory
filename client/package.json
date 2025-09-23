@@ -7,7 +7,7 @@
     "format": "onchange \"**/*\" -- prettier --write --ignore-unknown {{changed}}",
     "format:all": "npx prettier --write .",
     "gen:api": "rimraf src/app/core/generated && openapi-generator-cli generate -c openapi.config.json -o src/app/core/generated",
-    "gen:docs": "compodoc -p tsconfig.doc.json",
+    "gen:docs": "rimraf docs && compodoc -d docs -p tsconfig.doc.json",
     "lint": "ng lint",
     "ng": "ng",
     "start": "ng serve --open --watch",
