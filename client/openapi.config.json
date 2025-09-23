@@ -1,0 +1,9 @@
+{
+  "additionalProperties": {
+    "fileNaming": "kebab-case",
+    "serviceFileSuffix": "-api.service",
+    "serviceSuffix": "ApiService"
+  },
+  "generatorName": "typescript-angular",
+  "inputSpec": "openapi.json"
+}
