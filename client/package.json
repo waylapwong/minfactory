@@ -11,7 +11,6 @@
     "git:add": "git add -A",
     "lint": "ng lint",
     "ng": "ng",
-    "prepare": "husky",
     "start": "ng serve --open --watch",
     "test": "ng test --code-coverage"
   },
@@ -38,7 +37,6 @@
     "@types/jasmine": "~5.1.0",
     "angular-eslint": "^20.3.0",
     "eslint": "^9.36.0",
-    "husky": "^9.1.7",
     "jasmine-core": "~5.9.0",
     "karma": "~6.4.0",
     "karma-chrome-launcher": "~3.2.0",
