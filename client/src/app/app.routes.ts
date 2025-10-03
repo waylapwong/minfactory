@@ -1,13 +1,14 @@
 import { Routes } from '@angular/router';
 
-export enum Paths {
-  Root = '',
-  Home = 'home',
-  Any = '**'
-}
-
 enum Titles {
   MinFactory = 'minFactory'
+}
+
+export enum Paths {
+  Root = '',
+  Apps = 'apps',
+  Home = 'home',
+  Any = '**'
 }
 
 export const ROUTES: Routes = [
@@ -15,6 +16,12 @@ export const ROUTES: Routes = [
     path: Paths.Root,
     redirectTo: Paths.Home,
     pathMatch: 'full'
+  },
+  {
+    path: Paths.Apps,
+    title: Titles.MinFactory,
+    loadComponent: () =>
+      import('./features/minfactory/pages/apps/apps.component').then((m) => m.AppsComponent)
   },
   {
     path: Paths.Home,

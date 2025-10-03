@@ -1,17 +1,18 @@
+/* tslint:disable:no-unused-variable */
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { HomeComponent } from './home.component';
+import { AppsComponent } from './apps.component';
 
-describe('Home', () => {
-  let component: HomeComponent;
-  let fixture: ComponentFixture<HomeComponent>;
+describe('AppsComponent', () => {
+  let component: AppsComponent;
+  let fixture: ComponentFixture<AppsComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [HomeComponent]
+      imports: [AppsComponent]
     }).compileComponents();
 
-    fixture = TestBed.createComponent(HomeComponent);
+    fixture = TestBed.createComponent(AppsComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

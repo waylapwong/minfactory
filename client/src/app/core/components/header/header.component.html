@@ -1,10 +1,13 @@
-<header>
-  <h1 class="font-sans text-4xl font-bold">
+<header class="flex flex-row items-end justify-between">
+  <h1 class="font-sans text-2xl font-bold">
     <a [routerLink]="Paths.Home" class="cursor-pointer">
-      <span class="text-red-600">min</span>Factory
+      <app-logo>Factory</app-logo>
     </a>
   </h1>
   <!-- <p class="text-sm text-gray-600">{{ 'HOMEPAGE_META' | translate }}</p> -->
+  <a class="cursor-pointer font-sans text-xl font-bold" [routerLink]="Paths.Apps">
+    <app-logo>Apps</app-logo>
+  </a>
 </header>
 
 <app-divider></app-divider>
