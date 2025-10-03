@@ -1,13 +1,28 @@
 <header class="flex flex-row items-end justify-between">
-  <h1 class="font-sans text-2xl font-bold">
-    <a [routerLink]="Paths.Home" class="cursor-pointer">
-      <app-logo>Factory</app-logo>
-    </a>
-  </h1>
-  <!-- <p class="text-sm text-gray-600">{{ 'HOMEPAGE_META' | translate }}</p> -->
-  <a class="cursor-pointer font-sans text-xl font-bold" [routerLink]="Paths.Apps">
-    <app-logo>Apps</app-logo>
+  <!-- LOGO -->
+  <a class="cursor-pointer font-sans text-3xl font-bold" [routerLink]="Paths.Home">
+    <app-logo>Factory</app-logo>
   </a>
+
+  <!-- NAVIGATION -->
+  <div class="flex flex-row gap-2">
+    <!-- MIN_APPS -->
+    <a
+      class="cursor-pointer text-xl font-bold transition-transform duration-300 hover:-translate-y-1 focus:-translate-y-1"
+      routerLinkActive="-translate-y-1"
+      [routerLink]="Paths.Apps"
+    >
+      <app-logo>Apps</app-logo>
+    </a>
+    <!-- MIN_GAMES -->
+    <a
+      class="cursor-pointer text-xl font-bold transition-transform duration-300 hover:-translate-y-1 focus:-translate-y-1"
+      routerLinkActive="-translate-y-1"
+      [routerLink]="Paths.Games"
+    >
+      <app-logo>Games</app-logo>
+    </a>
+  </div>
 </header>
 
 <app-divider></app-divider>

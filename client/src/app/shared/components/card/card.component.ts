@@ -1,4 +1,4 @@
-import { Component, input, InputSignal } from '@angular/core';
+import { Component } from '@angular/core';
 
 @Component({
   selector: 'app-card',
@@ -6,6 +6,4 @@ import { Component, input, InputSignal } from '@angular/core';
   templateUrl: './card.component.html',
   styleUrl: './card.component.scss'
 })
-export class CardComponent {
-  public title: InputSignal<string> = input.required<string>();
-}
+export class CardComponent {}
