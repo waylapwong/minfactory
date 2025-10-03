@@ -1,5 +1,7 @@
 import { Component } from '@angular/core';
+
 import * as packageJson from '../../../../../package.json';
+
 import { DividerComponent } from '../../../shared/components/divider/divider.component';
 
 @Component({
