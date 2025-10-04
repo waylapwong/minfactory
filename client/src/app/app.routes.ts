@@ -7,7 +7,7 @@ enum Titles {
 export enum Paths {
   Root = '',
   Apps = 'apps',
-  Games = 'games',
+  Play = 'play',
   Home = 'home',
   Any = '**'
 }
@@ -25,10 +25,10 @@ export const ROUTES: Routes = [
       import('./features/minfactory/pages/apps/apps.component').then((m) => m.AppsComponent)
   },
   {
-    path: Paths.Games,
+    path: Paths.Play,
     title: Titles.MinFactory,
     loadComponent: () =>
-      import('./features/minfactory/pages/games/games.component').then((m) => m.GamesComponent)
+      import('./features/minfactory/pages/play/play.component').then((m) => m.PlayComponent)
   },
   {
     path: Paths.Home,

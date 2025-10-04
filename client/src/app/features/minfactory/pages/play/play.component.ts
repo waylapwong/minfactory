@@ -5,9 +5,9 @@ import { H1Component } from '../../../../shared/components/h1/h1.component';
 import { LogoComponent } from '../../../../shared/components/logo/logo.component';
 
 @Component({
-  selector: 'min-games',
+  selector: 'min-play',
   imports: [CardComponent, LogoComponent, H1Component],
-  templateUrl: './games.component.html',
-  styleUrls: ['./games.component.scss']
+  templateUrl: './play.component.html',
+  styleUrls: ['./play.component.scss']
 })
-export class GamesComponent {}
+export class PlayComponent {}
