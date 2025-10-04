@@ -1,5 +1,6 @@
-/* tslint:disable:no-unused-variable */
+import { provideZonelessChangeDetection } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+
 import { PlayComponent } from './play.component';
 
 describe('PlayComponent', () => {
@@ -8,7 +9,8 @@ describe('PlayComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [PlayComponent]
+      imports: [PlayComponent],
+      providers: [provideZonelessChangeDetection()]
     }).compileComponents();
 
     fixture = TestBed.createComponent(PlayComponent);

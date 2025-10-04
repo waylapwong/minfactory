@@ -1,4 +1,4 @@
-/* tslint:disable:no-unused-variable */
+import { provideZonelessChangeDetection } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { H2Component } from './h2.component';
@@ -9,7 +9,8 @@ describe('H2Component', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [H2Component]
+      imports: [H2Component],
+      providers: [provideZonelessChangeDetection()]
     }).compileComponents();
 
     fixture = TestBed.createComponent(H2Component);
