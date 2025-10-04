@@ -34,6 +34,11 @@
               {
                 "glob": "**/*",
                 "input": "public"
+              },
+              {
+                "glob": "**/*",
+                "input": "src/assets",
+                "output": "assets"
               }
             ],
             "browser": "src/main.ts",
@@ -72,13 +77,14 @@
                 "input": "public"
               }
             ],
+            "codeCoverageExclude": ["**/*.routes.ts"],
             "inlineStyleLanguage": "scss",
             "styles": ["src/styles.scss"],
             "tsConfig": "tsconfig.spec.json"
           }
         }
       },
-      "prefix": "app",
+      "prefix": "min",
       "projectType": "application",
       "root": "",
       "schematics": {

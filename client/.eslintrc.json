@@ -14,7 +14,7 @@
         "@angular-eslint/component-selector": [
           "error",
           {
-            "prefix": "app",
+            "prefix": "min",
             "style": "kebab-case",
             "type": "element"
           }
@@ -22,11 +22,12 @@
         "@angular-eslint/directive-selector": [
           "error",
           {
-            "prefix": "app",
+            "prefix": "min",
             "style": "camelCase",
             "type": "attribute"
           }
         ],
+        "@angular-eslint/prefer-inject": "off",
         "@typescript-eslint/no-empty-function": "off",
         "@typescript-eslint/no-explicit-any": "off",
         "@typescript-eslint/no-inferrable-types": "off"
