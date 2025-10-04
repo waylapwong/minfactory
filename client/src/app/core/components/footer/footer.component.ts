@@ -1,16 +1,14 @@
 import { Component } from '@angular/core';
 
-import * as packageJson from '../../../../../package.json';
-
 import { DividerComponent } from '../../../shared/components/divider/divider.component';
+import { LogoComponent } from '../../../shared/components/logo/logo.component';
 
 @Component({
   selector: 'min-footer',
-  imports: [DividerComponent],
+  imports: [DividerComponent, LogoComponent],
   templateUrl: './footer.component.html',
   styleUrl: './footer.component.scss'
 })
 export class FooterComponent {
   public currentYear: number = new Date().getFullYear();
-  public version: string = packageJson.version;
 }
