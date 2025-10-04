@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 
 @Component({
-  selector: 'app-divider',
+  selector: 'min-divider',
   imports: [],
   templateUrl: './divider.component.html',
   styleUrl: './divider.component.scss'

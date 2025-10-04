@@ -6,7 +6,7 @@ import { DividerComponent } from '../../../shared/components/divider/divider.com
 import { LogoComponent } from '../../../shared/components/logo/logo.component';
 
 @Component({
-  selector: 'app-header',
+  selector: 'min-header',
   imports: [RouterLink, DividerComponent, LogoComponent, RouterLinkActive],
   templateUrl: './header.component.html',
   styleUrl: './header.component.scss'

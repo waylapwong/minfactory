@@ -5,7 +5,7 @@ import * as packageJson from '../../../../../package.json';
 import { DividerComponent } from '../../../shared/components/divider/divider.component';
 
 @Component({
-  selector: 'app-footer',
+  selector: 'min-footer',
   imports: [DividerComponent],
   templateUrl: './footer.component.html',
   styleUrl: './footer.component.scss'

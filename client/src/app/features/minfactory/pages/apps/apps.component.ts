@@ -4,7 +4,7 @@ import { CardComponent } from '../../../../shared/components/card/card.component
 import { LogoComponent } from '../../../../shared/components/logo/logo.component';
 
 @Component({
-  selector: 'app-apps',
+  selector: 'min-apps',
   imports: [CardComponent, LogoComponent],
   templateUrl: './apps.component.html',
   styleUrls: ['./apps.component.scss']

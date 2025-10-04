@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 
 @Component({
-  selector: 'app-logo',
+  selector: 'min-logo',
   imports: [],
   templateUrl: './logo.component.html',
   styleUrl: './logo.component.scss'
