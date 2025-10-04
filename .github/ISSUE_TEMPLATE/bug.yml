@@ -8,7 +8,7 @@ body:
     id: description
     attributes:
       label: Beschreibung
-      placeholder: ""
+      placeholder: "Beschreibung"
     validations:
       required: true
 
@@ -25,7 +25,7 @@ body:
     id: expected
     attributes:
       label: Erwartetes Verhalten
-      placeholder: ""
+      placeholder: "Erwartetes Verhalten"
     validations:
       required: true
 
@@ -33,6 +33,6 @@ body:
     id: actual
     attributes:
       label: Tatsächliches Verhalten
-      placeholder: ""
+      placeholder: "Tatsächliches Verhalten"
     validations:
       required: true
