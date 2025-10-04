@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 
-import { Paths } from '../../../app.routes';
+import { Path } from '../../../app.routes';
 import { DividerComponent } from '../../../shared/components/divider/divider.component';
 import { LogoComponent } from '../../../shared/components/logo/logo.component';
 
@@ -12,5 +12,5 @@ import { LogoComponent } from '../../../shared/components/logo/logo.component';
   styleUrl: './header.component.scss'
 })
 export class HeaderComponent {
-  public readonly Paths: typeof Paths = Paths;
+  public readonly Paths: typeof Path = Path;
 }
