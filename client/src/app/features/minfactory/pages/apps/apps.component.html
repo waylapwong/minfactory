@@ -5,12 +5,10 @@
 <div class="grid grid-cols-2 gap-2">
   <!-- MIN_ADVENT -->
   <min-card class="col-span-1">
-    <h2 class="text-xl"><min-logo>Advent</min-logo></h2>
+    <div class="flex flex-row items-start justify-between">
+      <min-h2><min-logo>Advent</min-logo></min-h2>
+      <min-badge [color]="Color.Yellow">soon</min-badge>
+    </div>
     <p class="text-sm text-gray-600">Mini advent calendar.</p>
-  </min-card>
-  <!-- MIN_RNG -->
-  <min-card class="col-span-1">
-    <h2 class="text-xl"><min-logo>RNG</min-logo></h2>
-    <p class="text-sm text-gray-600">Mini random number generator.</p>
   </min-card>
 </div>

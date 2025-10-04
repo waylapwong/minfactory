@@ -43,9 +43,7 @@
             ],
             "browser": "src/main.ts",
             "inlineStyleLanguage": "scss",
-            "styles": [
-              "src/styles.scss"
-            ],
+            "styles": ["src/styles.scss"],
             "tsConfig": "tsconfig.app.json"
           }
         },
@@ -55,10 +53,7 @@
         "lint": {
           "builder": "@angular-eslint/builder:lint",
           "options": {
-            "lintFilePatterns": [
-              "src/**/*.ts",
-              "src/**/*.html"
-            ]
+            "lintFilePatterns": ["src/**/*.ts", "src/**/*.html"]
           }
         },
         "serve": {
@@ -83,9 +78,7 @@
               }
             ],
             "inlineStyleLanguage": "scss",
-            "styles": [
-              "src/styles.scss"
-            ],
+            "styles": ["src/styles.scss"],
             "tsConfig": "tsconfig.spec.json"
           }
         }

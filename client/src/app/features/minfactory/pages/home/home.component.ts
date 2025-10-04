@@ -1,6 +1,6 @@
-import { Component } from "@angular/core";
+import { Component } from '@angular/core';
 
-import { LogoComponent } from "../../../../shared/components/logo/logo.component";
+import { LogoComponent } from '../../../../shared/components/logo/logo.component';
 
 @Component({
   selector: 'min-home',
