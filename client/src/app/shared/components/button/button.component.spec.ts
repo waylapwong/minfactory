@@ -1,6 +1,7 @@
 import { provideZonelessChangeDetection } from "@angular/core";
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 
+import { Color } from "../../enums/color.enum";
 import { ButtonComponent } from "./button.component";
 
 describe('ButtonComponent', () => {
@@ -20,5 +21,37 @@ describe('ButtonComponent', () => {
 
   it('should create', () => {
     expect(component).toBeTruthy();
+  });
+
+  describe('cssClass()', () => {
+    it('should return correct css class for color blue', () => {
+      fixture.componentRef.setInput('color', Color.Blue);
+      const cssClass: string = component.cssClass();
+      expect(cssClass).toContain('bg-blue-200');
+    });
+
+    it('should return correct css class for color red', () => {
+      fixture.componentRef.setInput('color', Color.Red);
+      const cssClass: string = component.cssClass();
+      expect(cssClass).toContain('bg-red-200');
+    });
+
+    it('should return correct css class for color green', () => {
+      fixture.componentRef.setInput('color', Color.Green);
+      const cssClass: string = component.cssClass();
+      expect(cssClass).toContain('bg-green-200');
+    });
+    
+    it('should return correct css class for color yellow', () => {
+      fixture.componentRef.setInput('color', Color.Yellow);
+      const cssClass: string = component.cssClass();
+      expect(cssClass).toContain('bg-yellow-200');
+    });
+
+    it('should return correct css class for color gray', () => {
+      fixture.componentRef.setInput('color', Color.Gray);
+      const cssClass: string = component.cssClass();
+      expect(cssClass).toContain('bg-white');
+    });
   });
 });

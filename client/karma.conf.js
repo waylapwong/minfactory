@@ -24,9 +24,7 @@ module.exports = function (config) {
     browsers: ['ChromeHeadless'],
     restartOnFileChange: true,
     specReporter: {
-      suppressSkipped: false,
-      showSpecTiming: true,
-      suppressErrorSummary: false
+      showSpecTiming: true
     }
   });
 };
