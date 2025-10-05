@@ -12,4 +12,8 @@ export class RoutingService {
   public navigateToHomePage(): void {
     this.router.navigate([Path.Home]);
   }
+
+  public navigateToMinRPS(): void {
+    this.router.navigate([Path.MinRPS]);
+  }
 }

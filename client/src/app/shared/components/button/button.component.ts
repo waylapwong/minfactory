@@ -1,4 +1,12 @@
-import { Component, InputSignal, Signal, computed, input } from '@angular/core';
+import {
+  Component,
+  InputSignal,
+  OutputEmitterRef,
+  Signal,
+  computed,
+  input,
+  output
+} from '@angular/core';
 
 import { Color } from '../../enums/color.enum';
 
@@ -11,6 +19,7 @@ import { Color } from '../../enums/color.enum';
 export class ButtonComponent {
   public readonly Color = Color;
 
+  public clicked: OutputEmitterRef<void> = output();
   public color: InputSignal<Color> = input<Color>(Color.Gray);
   public cssClass: Signal<string> = this.getCssClass();
   public disabled: InputSignal<boolean> = input(false);

@@ -1,8 +1,8 @@
-import { provideZonelessChangeDetection } from "@angular/core";
-import { ComponentFixture, TestBed } from "@angular/core/testing";
+import { provideZonelessChangeDetection } from '@angular/core';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { Color } from "../../enums/color.enum";
-import { ButtonComponent } from "./button.component";
+import { Color } from '../../enums/color.enum';
+import { ButtonComponent } from './button.component';
 
 describe('ButtonComponent', () => {
   let component: ButtonComponent;
@@ -41,7 +41,7 @@ describe('ButtonComponent', () => {
       const cssClass: string = component.cssClass();
       expect(cssClass).toContain('bg-green-200');
     });
-    
+
     it('should return correct css class for color yellow', () => {
       fixture.componentRef.setInput('color', Color.Yellow);
       const cssClass: string = component.cssClass();

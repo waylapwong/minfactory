@@ -1,5 +1,7 @@
 import { Component } from '@angular/core';
 
+import { Path } from '../../../../app.routes';
+import { RoutingService } from '../../../../core/services/routing.service';
 import { BadgeComponent } from '../../../../shared/components/badge/badge.component';
 import { ButtonComponent } from '../../../../shared/components/button/button.component';
 import { CardComponent } from '../../../../shared/components/card/card.component';
@@ -23,4 +25,7 @@ import { Color } from '../../../../shared/enums/color.enum';
 })
 export class PlayComponent {
   public readonly Color: typeof Color = Color;
+  public readonly Paths: typeof Path = Path;
+
+  constructor(public readonly routingService: RoutingService) {}
 }
