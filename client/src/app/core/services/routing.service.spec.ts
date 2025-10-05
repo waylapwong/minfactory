@@ -34,4 +34,12 @@ describe('RoutingService', () => {
       expect(spy).toHaveBeenCalledWith([Path.Home]);
     });
   });
+
+  describe('navigateToMinRPS()', () => {
+    it('should navigate to minRPS game', () => {
+      const spy = spyOn((service as any).router, 'navigate');
+      service.navigateToMinRPS();
+      expect(spy).toHaveBeenCalledWith([Path.MinRPS]);
+    });
+  });
 });
