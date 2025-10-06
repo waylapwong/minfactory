@@ -2,31 +2,31 @@
 
 @switch (color()) {
   @case (Color.Blue) {
-    <span class="rounded-md border-2 border-blue-700 bg-blue-100 px-1 py-0.5 text-xs text-blue-700">
+    <span class="rounded-md border-2 border-blue-500 bg-blue-100 px-1 py-0.5 text-xs text-blue-500">
       <ng-container [ngTemplateOutlet]="content"></ng-container>
     </span>
   }
   @case (Color.Red) {
-    <span class="rounded-md border-2 border-red-700 bg-red-100 px-1 py-0.5 text-xs text-red-700">
+    <span class="rounded-md border-2 border-red-500 bg-red-100 px-1 py-0.5 text-xs text-red-500">
       <ng-container [ngTemplateOutlet]="content"></ng-container>
     </span>
   }
   @case (Color.Green) {
     <span
-      class="rounded-md border-2 border-green-700 bg-green-100 px-1 py-0.5 text-xs text-green-700"
+      class="rounded-md border-2 border-green-500 bg-green-100 px-1 py-0.5 text-xs text-green-500"
     >
       <ng-container [ngTemplateOutlet]="content"></ng-container>
     </span>
   }
   @case (Color.Yellow) {
     <span
-      class="rounded-md border-2 border-yellow-700 bg-yellow-100 px-1 py-0.5 text-xs text-yellow-700"
+      class="rounded-md border-2 border-yellow-500 bg-yellow-100 px-1 py-0.5 text-xs text-yellow-500"
     >
       <ng-container [ngTemplateOutlet]="content"></ng-container>
     </span>
   }
   @default {
-    <span class="rounded-md border-2 border-gray-700 bg-gray-100 px-1 py-0.5 text-xs text-gray-700">
+    <span class="rounded-md border-2 border-gray-500 bg-gray-100 px-1 py-0.5 text-xs text-gray-500">
       <ng-container [ngTemplateOutlet]="content"></ng-container>
     </span>
   }
