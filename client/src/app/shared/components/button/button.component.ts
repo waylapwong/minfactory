@@ -5,7 +5,7 @@ import {
   Signal,
   computed,
   input,
-  output
+  output,
 } from '@angular/core';
 
 import { Color } from '../../enums/color.enum';
@@ -14,7 +14,7 @@ import { Color } from '../../enums/color.enum';
   selector: 'min-button',
   imports: [],
   templateUrl: './button.component.html',
-  styleUrls: ['./button.component.scss']
+  styleUrls: ['./button.component.scss'],
 })
 export class ButtonComponent {
   public readonly Color = Color;

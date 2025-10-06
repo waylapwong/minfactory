@@ -7,7 +7,7 @@ import { Color } from '../../enums/color.enum';
   selector: 'min-badge',
   imports: [NgTemplateOutlet],
   templateUrl: './badge.component.html',
-  styleUrls: ['./badge.component.scss']
+  styleUrls: ['./badge.component.scss'],
 })
 export class BadgeComponent {
   public readonly Color = Color;

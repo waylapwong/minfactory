@@ -4,6 +4,6 @@ import { Component } from '@angular/core';
   selector: 'min-card',
   imports: [],
   templateUrl: './card.component.html',
-  styleUrl: './card.component.scss'
+  styleUrl: './card.component.scss',
 })
 export class CardComponent {}

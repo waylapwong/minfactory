@@ -10,7 +10,7 @@ describe('MinRPSMenuComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [MinRPSMenuComponent],
-      providers: [provideZonelessChangeDetection()]
+      providers: [provideZonelessChangeDetection()],
     }).compileComponents();
 
     fixture = TestBed.createComponent(MinRPSMenuComponent);

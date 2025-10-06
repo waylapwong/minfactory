@@ -10,7 +10,7 @@ describe('LogoComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [LogoComponent],
-      providers: [provideZonelessChangeDetection()]
+      providers: [provideZonelessChangeDetection()],
     }).compileComponents();
 
     fixture = TestBed.createComponent(LogoComponent);

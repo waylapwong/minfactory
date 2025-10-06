@@ -8,6 +8,6 @@ import { HeaderComponent } from './core/components/header/header.component';
   selector: 'min-root',
   imports: [RouterOutlet, HeaderComponent, FooterComponent],
   templateUrl: './app.component.html',
-  styleUrl: './app.component.scss'
+  styleUrl: './app.component.scss',
 })
 export class AppComponent {}

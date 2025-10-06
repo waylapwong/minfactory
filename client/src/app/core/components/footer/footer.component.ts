@@ -7,7 +7,7 @@ import { LogoComponent } from '../../../shared/components/logo/logo.component';
   selector: 'min-footer',
   imports: [DividerComponent, LogoComponent],
   templateUrl: './footer.component.html',
-  styleUrl: './footer.component.scss'
+  styleUrl: './footer.component.scss',
 })
 export class FooterComponent {
   public currentYear: number = new Date().getFullYear();

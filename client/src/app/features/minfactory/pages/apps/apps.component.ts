@@ -11,7 +11,7 @@ import { Color } from '../../../../shared/enums/color.enum';
   selector: 'min-apps',
   imports: [CardComponent, LogoComponent, H1Component, H2Component, BadgeComponent],
   templateUrl: './apps.component.html',
-  styleUrls: ['./apps.component.scss']
+  styleUrls: ['./apps.component.scss'],
 })
 export class AppsComponent {
   public readonly Color: typeof Color = Color;

@@ -10,7 +10,7 @@ import { Color } from '../../../../shared/enums/color.enum';
   templateUrl: './minrps-menu.component.html',
   styleUrls: ['./minrps-menu.component.scss'],
   host: { class: 'block h-full' },
-  imports: [CardComponent, H2Component, ButtonComponent]
+  imports: [CardComponent, H2Component, ButtonComponent],
 })
 export class MinRPSMenuComponent {
   public readonly Color = Color;

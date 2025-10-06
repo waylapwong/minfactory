@@ -10,7 +10,7 @@ describe('MinRPSComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [MinRPSComponent],
-      providers: [provideZonelessChangeDetection()]
+      providers: [provideZonelessChangeDetection()],
     }).compileComponents();
 
     fixture = TestBed.createComponent(MinRPSComponent);

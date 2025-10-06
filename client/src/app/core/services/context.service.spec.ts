@@ -7,7 +7,7 @@ describe('ContextService', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      providers: [provideZonelessChangeDetection()]
+      providers: [provideZonelessChangeDetection()],
     });
     service = TestBed.inject(ContextService);
   });

@@ -1,50 +1,35 @@
 import { Routes } from '@angular/router';
 
-enum Title {
-  MinFactory = 'minFactory'
-}
+import { AppName } from './shared/enums/app-name.enum';
 
 export enum Path {
-  Root = '',
+  Empty = '',
   Apps = 'apps',
   Home = 'home',
   MinRPS = 'minrps',
   Play = 'play',
-  Any = '**'
+  Any = '**',
 }
 
 export const APP_ROUTES: Routes = [
   {
-    path: Path.Root,
-    redirectTo: Path.Home,
-    pathMatch: 'full'
-  },
-  {
-    path: Path.Apps,
-    title: Title.MinFactory,
+    path: Path.Empty,
+    title: AppName.MinFactory,
+    loadChildren: () =>
+      import('./features/minfactory/minfactory.routes').then((m) => m.MINFACTORY_ROUTES),
     loadComponent: () =>
-      import('./features/minfactory/pages/apps/apps.component').then((m) => m.AppsComponent)
-  },
-  {
-    path: Path.Play,
-    title: Title.MinFactory,
-    loadComponent: () =>
-      import('./features/minfactory/pages/play/play.component').then((m) => m.PlayComponent)
-  },
-  {
-    path: Path.Home,
-    title: Title.MinFactory,
-    loadComponent: () =>
-      import('./features/minfactory/pages/home/home.component').then((m) => m.HomeComponent)
+      import('./features/minfactory/minfactory.component').then((m) => m.MinFactoryComponent),
   },
   {
     path: Path.MinRPS,
+    title: AppName.MinRPS,
     loadChildren: () => import('./features/minrps/minrps.routes').then((m) => m.MINRPS_ROUTES),
-    loadComponent: () => import('./features/minrps/minrps.component').then((m) => m.MinRPSComponent)
+    loadComponent: () =>
+      import('./features/minrps/minrps.component').then((m) => m.MinRPSComponent),
   },
   {
     path: Path.Any,
-    redirectTo: Path.Root,
-    pathMatch: 'full'
-  }
+    redirectTo: Path.Empty,
+    pathMatch: 'full',
+  },
 ];

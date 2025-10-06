@@ -10,7 +10,7 @@ describe('PlayComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [PlayComponent],
-      providers: [provideZonelessChangeDetection()]
+      providers: [provideZonelessChangeDetection()],
     }).compileComponents();
 
     fixture = TestBed.createComponent(PlayComponent);

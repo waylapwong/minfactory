@@ -4,6 +4,6 @@ export const MINRPS_ROUTES: Routes = [
   {
     path: '',
     loadComponent: () =>
-      import('./pages/minrps-menu/minrps-menu.component').then((m) => m.MinRPSMenuComponent)
-  }
+      import('./pages/minrps-menu/minrps-menu.component').then((m) => m.MinRPSMenuComponent),
+  },
 ];

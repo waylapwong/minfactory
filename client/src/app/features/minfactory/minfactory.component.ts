@@ -5,15 +5,15 @@ import { ContextService } from '../../core/services/context.service';
 import { AppName } from '../../shared/enums/app-name.enum';
 
 @Component({
-  selector: 'min-minrps',
-  templateUrl: './minrps.component.html',
-  styleUrls: ['./minrps.component.scss'],
+  selector: 'app-minfactory',
+  templateUrl: './minfactory.component.html',
+  styleUrls: ['./minfactory.component.scss'],
   imports: [RouterOutlet],
 })
-export class MinRPSComponent implements OnInit {
+export class MinFactoryComponent implements OnInit {
   constructor(private readonly contextService: ContextService) {}
 
   public ngOnInit(): void {
-    this.contextService.app.set(AppName.MinRPS);
+    this.contextService.app.set(AppName.MinFactory);
   }
 }

@@ -17,13 +17,15 @@ import { Color } from '../../../../shared/enums/color.enum';
     CardComponent,
     H1Component,
     H2Component,
-    LogoComponent
+    LogoComponent,
   ],
   templateUrl: './play.component.html',
-  styleUrls: ['./play.component.scss']
+  styleUrls: ['./play.component.scss'],
 })
 export class PlayComponent {
   public readonly Color: typeof Color = Color;
+
+  private readonly test: string = '';
 
   constructor(public readonly routingService: RoutingService) {}
 }

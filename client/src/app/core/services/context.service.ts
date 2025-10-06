@@ -1,10 +1,10 @@
 import { Injectable, WritableSignal, signal } from '@angular/core';
 
-import { Application } from '../../shared/enums/application.enum';
+import { AppName } from '../../shared/enums/app-name.enum';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class ContextService {
-  public app: WritableSignal<Application> = signal(Application.MinFactory);
+  public app: WritableSignal<AppName> = signal(AppName.MinFactory);
 }

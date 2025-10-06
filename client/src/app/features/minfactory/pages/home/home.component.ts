@@ -7,6 +7,6 @@ import { LogoComponent } from '../../../../shared/components/logo/logo.component
   selector: 'min-home',
   imports: [LogoComponent, H1Component],
   templateUrl: './home.component.html',
-  styleUrl: './home.component.scss'
+  styleUrl: './home.component.scss',
 })
 export class HomeComponent {}

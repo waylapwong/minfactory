@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { Path } from '../../app.routes';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class RoutingService {
   constructor(private readonly router: Router) {}
