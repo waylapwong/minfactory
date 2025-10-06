@@ -1,6 +1,14 @@
-import { Component, InputSignal, OutputEmitterRef, Signal, computed, input, output } from "@angular/core";
+import {
+  Component,
+  InputSignal,
+  OutputEmitterRef,
+  Signal,
+  computed,
+  input,
+  output
+} from '@angular/core';
 
-import { Color } from "../../enums/color.enum";
+import { Color } from '../../enums/color.enum';
 
 @Component({
   selector: 'min-button',
@@ -27,24 +35,26 @@ export class ButtonComponent {
       switch (this.color()) {
         case Color.Blue:
           return (
-            baseClass + 'bg-blue-200 hover:bg-blue-400 hover:disabled:bg-blue-200 focus:bg-blue-400'
+            baseClass + 'bg-blue-300 hover:bg-blue-500 hover:disabled:bg-blue-300 focus:bg-blue-500'
           );
         case Color.Red:
           return (
-            baseClass + 'bg-red-200 hover:bg-red-400 hover:disabled:bg-red-200 focus:bg-red-400'
+            baseClass + 'bg-red-300 hover:bg-red-500 hover:disabled:bg-red-300 focus:bg-red-500'
           );
         case Color.Green:
           return (
             baseClass +
-            'bg-green-200 hover:bg-green-400 hover:disabled:bg-green-200 focus:bg-green-400'
+            'bg-green-300 hover:bg-green-500 hover:disabled:bg-green-300 focus:bg-green-500'
           );
         case Color.Yellow:
           return (
             baseClass +
-            'bg-yellow-200 hover:bg-yellow-400 hover:disabled:bg-yellow-200 focus:bg-yellow-400'
+            'bg-yellow-300 hover:bg-yellow-500 hover:disabled:bg-yellow-300 focus:bg-yellow-500'
           );
         default:
-          return baseClass + 'bg-gray-200 hover:bg-gray-400 hover:disabled:bg-white focus:bg-gray-400';
+          return (
+            baseClass + 'bg-gray-300 hover:bg-gray-500 hover:disabled:bg-white focus:bg-gray-500'
+          );
       }
     });
   }
