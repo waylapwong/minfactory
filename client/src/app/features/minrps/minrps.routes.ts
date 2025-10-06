@@ -9,7 +9,7 @@ export const MINRPS_ROUTES: Routes = [
   {
     path: MinRPSPath.Root,
     loadComponent: () =>
-      import('./pages/minrps-menu/minrps-menu.component').then((m) => m.MinRPSMenuComponent),
+      import('./pages/minrps-home/minrps-home.component').then((m) => m.MinRPSHomeComponent),
   },
   {
     path: MinRPSPath.Game,

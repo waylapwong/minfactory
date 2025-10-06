@@ -1,19 +1,19 @@
 import { provideZonelessChangeDetection } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { MinRPSMenuComponent } from './minrps-menu.component';
+import { MinRPSHomeComponent } from './minrps-home.component';
 
-describe('MinRPSMenuComponent', () => {
-  let component: MinRPSMenuComponent;
-  let fixture: ComponentFixture<MinRPSMenuComponent>;
+describe('MinRPSHomeComponent', () => {
+  let component: MinRPSHomeComponent;
+  let fixture: ComponentFixture<MinRPSHomeComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [MinRPSMenuComponent],
+      imports: [MinRPSHomeComponent],
       providers: [provideZonelessChangeDetection()],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(MinRPSMenuComponent);
+    fixture = TestBed.createComponent(MinRPSHomeComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
