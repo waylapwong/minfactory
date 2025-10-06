@@ -2,6 +2,8 @@ import { provideZonelessChangeDetection } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 
+import { AppName } from '../../../shared/enums/app-name.enum';
+import { ContextServiceMock } from '../../../shared/mocks/context.service.mock';
 import { HeaderComponent } from './header.component';
 
 describe('HeaderComponent', () => {
@@ -11,7 +13,14 @@ describe('HeaderComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [HeaderComponent],
-      providers: [provideZonelessChangeDetection(), provideRouter([])],
+      providers: [
+        provideZonelessChangeDetection(),
+        provideRouter([]),
+        {
+          provide: 'ContextService',
+          useClass: ContextServiceMock,
+        },
+      ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(HeaderComponent);
@@ -21,5 +30,22 @@ describe('HeaderComponent', () => {
 
   it('should create', () => {
     expect(component).toBeTruthy();
+  });
+
+  describe('logo()', () => {
+    it('should compute the correct logo for minFactory', () => {
+      (component as any).contextService.app.set(AppName.MinFactory);
+      expect(component.logo()).toBe('Factory');
+    });
+
+    it('should compute the correct logo for minRPS', () => {
+      (component as any).contextService.app.set(AppName.MinRPS);
+      expect(component.logo()).toBe('RPS');
+    });
+
+    it('should default to logo for minFactory', () => {
+      (component as any).contextService.app.set(undefined);
+      expect(component.logo()).toBe('Factory');
+    });
   });
 });

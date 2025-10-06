@@ -1,7 +1,7 @@
 import { Component, computed } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 
-import { Path } from '../../../app.routes';
+import { AppPath } from '../../../app.routes';
 import { DividerComponent } from '../../../shared/components/divider/divider.component';
 import { LogoComponent } from '../../../shared/components/logo/logo.component';
 import { AppName } from '../../../shared/enums/app-name.enum';
@@ -15,7 +15,7 @@ import { ContextService } from '../../services/context.service';
 })
 export class HeaderComponent {
   public readonly Application: typeof AppName = AppName;
-  public readonly Paths: typeof Path = Path;
+  public readonly Paths: typeof AppPath = AppPath;
 
   public logo = computed(() => {
     switch (this.contextService.app()) {

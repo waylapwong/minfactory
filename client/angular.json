@@ -78,7 +78,7 @@
               }
             ],
             "browsers": "ChromeHeadless",
-            "codeCoverageExclude": ["**/*.routes.ts"],
+            "codeCoverageExclude": ["**/*.mock.ts", "**/*.routes.ts"],
             "inlineStyleLanguage": "scss",
             "karmaConfig": "karma.conf.js",
             "styles": ["src/styles.scss"],

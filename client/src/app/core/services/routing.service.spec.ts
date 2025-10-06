@@ -2,7 +2,7 @@ import { provideZonelessChangeDetection } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { Router } from '@angular/router';
 
-import { Path } from '../../app.routes';
+import { AppPath } from '../../app.routes';
 import { RoutingService } from './routing.service';
 
 describe('RoutingService', () => {
@@ -31,7 +31,7 @@ describe('RoutingService', () => {
     it('should navigate to home page', () => {
       const spy = spyOn((service as any).router, 'navigate');
       service.navigateToHomePage();
-      expect(spy).toHaveBeenCalledWith([Path.Home]);
+      expect(spy).toHaveBeenCalledWith([AppPath.Empty]);
     });
   });
 
@@ -39,7 +39,7 @@ describe('RoutingService', () => {
     it('should navigate to minRPS game', () => {
       const spy = spyOn((service as any).router, 'navigate');
       service.navigateToMinRPS();
-      expect(spy).toHaveBeenCalledWith([Path.MinRPS]);
+      expect(spy).toHaveBeenCalledWith([AppPath.MinRPS]);
     });
   });
 });
