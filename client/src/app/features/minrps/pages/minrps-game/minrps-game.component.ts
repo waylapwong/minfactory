@@ -3,8 +3,8 @@ import { Component, WritableSignal, computed, signal } from '@angular/core';
 import { ButtonComponent } from '../../../../shared/components/button/button.component';
 import { DividerComponent } from '../../../../shared/components/divider/divider.component';
 import { Color } from '../../../../shared/enums/color.enum';
-import { MinRPSMove } from '../../enums/minrps-move.enum';
 import { MinRPSMoveComponent } from '../../components/minrps-move/minrps-move.component';
+import { MinRPSMove } from '../../enums/minrps-move.enum';
 
 @Component({
   selector: 'minrps-game',
@@ -23,11 +23,11 @@ export class MinRPSGameComponent {
       case MinRPSMove.None:
         return 'choose move ...';
       case MinRPSMove.Rock:
-        return `${MinRPSMove.Rock}!`;
+        return `play ${MinRPSMove.Rock}!`;
       case MinRPSMove.Paper:
-        return `${MinRPSMove.Paper}!`;
+        return `play ${MinRPSMove.Paper}!`;
       case MinRPSMove.Scissors:
-        return `${MinRPSMove.Scissors}!`;
+        return `play ${MinRPSMove.Scissors}!`;
     }
   });
 }
