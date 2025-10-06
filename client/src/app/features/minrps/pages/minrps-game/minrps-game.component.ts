@@ -4,13 +4,14 @@ import { ButtonComponent } from '../../../../shared/components/button/button.com
 import { DividerComponent } from '../../../../shared/components/divider/divider.component';
 import { Color } from '../../../../shared/enums/color.enum';
 import { MinRPSMove } from '../../enums/minrps-move.enum';
+import { MinRPSMoveComponent } from '../../components/minrps-move/minrps-move.component';
 
 @Component({
   selector: 'minrps-game',
   templateUrl: './minrps-game.component.html',
   styleUrls: ['./minrps-game.component.scss'],
   host: { class: 'block h-full' },
-  imports: [ButtonComponent, DividerComponent],
+  imports: [ButtonComponent, DividerComponent, MinRPSMoveComponent],
 })
 export class MinRPSGameComponent {
   public readonly Color: typeof Color = Color;

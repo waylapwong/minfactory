@@ -30,15 +30,24 @@
   <div class="flex basis-1/2 flex-col justify-evenly">
     <!-- PLAYER MOVES -->
     <div class="flex w-full flex-row justify-evenly gap-2">
-      <min-button (clicked)="selectedMove.set(MinRPSMove.Rock)">
+      <minrps-move
+        [isSelected]="selectedMove() === MinRPSMove.Rock"
+        (selected)="selectedMove.set(MinRPSMove.Rock)"
+      >
         <img src="assets/svg/rock.svg" alt="Rock" class="h-16 w-16" />
-      </min-button>
-      <min-button (clicked)="selectedMove.set(MinRPSMove.Paper)">
+      </minrps-move>
+      <minrps-move
+        [isSelected]="selectedMove() === MinRPSMove.Paper"
+        (selected)="selectedMove.set(MinRPSMove.Paper)"
+      >
         <img src="assets/svg/paper.svg" alt="Rock" class="h-16 w-16" />
-      </min-button>
-      <min-button (clicked)="selectedMove.set(MinRPSMove.Scissors)">
+      </minrps-move>
+      <minrps-move
+        [isSelected]="selectedMove() === MinRPSMove.Scissors"
+        (selected)="selectedMove.set(MinRPSMove.Scissors)"
+      >
         <img src="assets/svg/scissors.svg" alt="Rock" class="h-16 w-16" />
-      </min-button>
+      </minrps-move>
     </div>
     <!-- ACTION BUTTON -->
     <div class="flex w-full flex-row justify-center">
