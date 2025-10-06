@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 
+import { RoutingService } from '../../../../core/services/routing.service';
 import { ButtonComponent } from '../../../../shared/components/button/button.component';
 import { CardComponent } from '../../../../shared/components/card/card.component';
 import { H2Component } from '../../../../shared/components/h2/h2.component';
@@ -14,4 +15,6 @@ import { Color } from '../../../../shared/enums/color.enum';
 })
 export class MinRPSMenuComponent {
   public readonly Color = Color;
+
+  constructor(public readonly routingService: RoutingService) {}
 }

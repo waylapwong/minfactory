@@ -8,6 +8,7 @@ import { AppName } from '../../shared/enums/app-name.enum';
   selector: 'min-minrps',
   templateUrl: './minrps.component.html',
   styleUrls: ['./minrps.component.scss'],
+  host: { class: 'block h-full' },
   imports: [RouterOutlet],
 })
 export class MinRPSComponent implements OnInit {

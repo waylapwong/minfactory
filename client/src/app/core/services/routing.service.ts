@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { AppPath } from '../../app.routes';
+import { MinRPSPath } from '../../features/minrps/minrps.routes';
 
 @Injectable({
   providedIn: 'root',
@@ -15,5 +16,9 @@ export class RoutingService {
 
   public navigateToMinRPS(): void {
     this.router.navigate([AppPath.MinRPS]);
+  }
+
+  public navigateToMinRPsGame(): void {
+    this.router.navigate([AppPath.MinRPS, MinRPSPath.Game]);
   }
 }
