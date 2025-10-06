@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 
-import { ButtonComponent } from "../../../../shared/components/button/button.component";
+import { ButtonComponent } from '../../../../shared/components/button/button.component';
 import { CardComponent } from '../../../../shared/components/card/card.component';
 import { H2Component } from '../../../../shared/components/h2/h2.component';
 import { Color } from '../../../../shared/enums/color.enum';
@@ -13,5 +13,5 @@ import { Color } from '../../../../shared/enums/color.enum';
   imports: [CardComponent, H2Component, ButtonComponent]
 })
 export class MinRPSMenuComponent {
-  readonly Color = Color;
+  public readonly Color = Color;
 }

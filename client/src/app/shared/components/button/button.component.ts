@@ -53,7 +53,7 @@ export class ButtonComponent {
           );
         default:
           return (
-            baseClass + 'bg-gray-300 hover:bg-gray-500 hover:disabled:bg-white focus:bg-gray-500'
+            baseClass + 'bg-gray-300 hover:bg-gray-500 hover:disabled:bg-gray-300 focus:bg-gray-500'
           );
       }
     });
