@@ -1,6 +1,14 @@
 <div class="flex h-full flex-col text-center">
   <!-- OPPONENT SIDE -->
   <div class="flex basis-1/2 flex-col justify-evenly">
+    <!-- Wrapper relativ, damit der Tail positioniert werden kann -->
+    <div class="relative mx-auto w-fit">
+      <!-- Die Sprechblase -->
+      <div class="rounded-lg border-8 border-double border-black bg-white px-2 py-1 shadow-2xl">
+        <p class="text-sm" [innerHTML]="chatMessage()"></p>
+      </div>
+    </div>
+
     <!-- OPPONENT PICTURE -->
     <div class="flex w-full flex-row justify-center">
       <minrps-card>
@@ -31,18 +39,24 @@
     <!-- PLAYER MOVES -->
     <div class="flex w-full flex-row justify-evenly gap-2">
       <minrps-move
+        [disabled]="lockedMove() !== MinRPSMove.None && lockedMove() !== MinRPSMove.Rock"
+        [isLocked]="lockedMove() === MinRPSMove.Rock"
         [isSelected]="selectedMove() === MinRPSMove.Rock"
         (selected)="selectedMove.set(MinRPSMove.Rock)"
       >
         <img src="assets/svg/rock.svg" alt="Rock" class="h-16 w-16" />
       </minrps-move>
       <minrps-move
+        [disabled]="lockedMove() !== MinRPSMove.None && lockedMove() !== MinRPSMove.Paper"
+        [isLocked]="lockedMove() === MinRPSMove.Paper"
         [isSelected]="selectedMove() === MinRPSMove.Paper"
         (selected)="selectedMove.set(MinRPSMove.Paper)"
       >
         <img src="assets/svg/paper.svg" alt="Rock" class="h-16 w-16" />
       </minrps-move>
       <minrps-move
+        [disabled]="lockedMove() !== MinRPSMove.None && lockedMove() !== MinRPSMove.Scissors"
+        [isLocked]="lockedMove() === MinRPSMove.Scissors"
         [isSelected]="selectedMove() === MinRPSMove.Scissors"
         (selected)="selectedMove.set(MinRPSMove.Scissors)"
       >
@@ -55,6 +69,7 @@
         class="basis-3xs"
         [color]="Color.Blue"
         [disabled]="selectedMove() === MinRPSMove.None"
+        (clicked)="lockMove()"
       >
         {{ buttonText() }}
       </min-button>

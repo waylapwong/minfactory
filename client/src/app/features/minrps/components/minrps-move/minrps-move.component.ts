@@ -7,6 +7,8 @@ import { Component, InputSignal, OutputEmitterRef, input, output } from '@angula
   imports: [],
 })
 export class MinRPSMoveComponent {
+  public disabled: InputSignal<boolean> = input(false);
+  public isLocked: InputSignal<boolean> = input(false);
   public isSelected: InputSignal<boolean> = input(false);
   public selected: OutputEmitterRef<void> = output();
 }

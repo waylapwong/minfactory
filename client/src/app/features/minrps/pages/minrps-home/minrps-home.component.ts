@@ -5,13 +5,14 @@ import { ButtonComponent } from '../../../../shared/components/button/button.com
 import { CardComponent } from '../../../../shared/components/card/card.component';
 import { H2Component } from '../../../../shared/components/h2/h2.component';
 import { Color } from '../../../../shared/enums/color.enum';
+import { LogoComponent } from '../../../../shared/components/logo/logo.component';
 
 @Component({
   selector: 'minrps-home',
   templateUrl: './minrps-home.component.html',
   styleUrls: ['./minrps-home.component.scss'],
   host: { class: 'block h-full' },
-  imports: [CardComponent, H2Component, ButtonComponent],
+  imports: [CardComponent, H2Component, ButtonComponent, LogoComponent],
 })
 export class MinRPSHomeComponent {
   public readonly Color = Color;

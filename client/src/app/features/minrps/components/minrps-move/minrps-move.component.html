@@ -1,7 +1,9 @@
 <button
-  class="transform rounded-lg border-4 border-black px-4 py-2 shadow-2xl transition-all hover:bg-blue-300 focus-visible:bg-blue-300 active:translate-y-0.5 active:shadow-none"
+  class="rounded-lg border-4 border-black px-4 py-2 shadow-2xl transition-all duration-100 hover:bg-blue-300 focus-visible:bg-blue-300 active:-translate-y-2 disabled:cursor-not-allowed disabled:bg-gray-300 disabled:opacity-50"
   (click)="selected.emit()"
   [class.bg-blue-300]="isSelected()"
+  [class.-translate-y-2]="isLocked()"
+  [disabled]="disabled()"
 >
   <ng-content></ng-content>
 </button>
