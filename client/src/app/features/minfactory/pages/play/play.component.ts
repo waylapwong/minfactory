@@ -10,7 +10,7 @@ import { LogoComponent } from '../../../../shared/components/logo/logo.component
 import { Color } from '../../../../shared/enums/color.enum';
 
 @Component({
-  selector: 'min-play',
+  selector: 'minfactory-play',
   imports: [
     BadgeComponent,
     ButtonComponent,

@@ -7,7 +7,7 @@ import { H2Component } from '../../../../shared/components/h2/h2.component';
 import { Color } from '../../../../shared/enums/color.enum';
 
 @Component({
-  selector: 'min-minrps-home',
+  selector: 'minrps-home',
   templateUrl: './minrps-home.component.html',
   styleUrls: ['./minrps-home.component.scss'],
   host: { class: 'block h-full' },

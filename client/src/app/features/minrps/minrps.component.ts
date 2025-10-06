@@ -5,7 +5,7 @@ import { ContextService } from '../../core/services/context.service';
 import { AppName } from '../../shared/enums/app-name.enum';
 
 @Component({
-  selector: 'min-minrps',
+  selector: 'min-rps',
   templateUrl: './minrps.component.html',
   styleUrls: ['./minrps.component.scss'],
   host: { class: 'block h-full' },

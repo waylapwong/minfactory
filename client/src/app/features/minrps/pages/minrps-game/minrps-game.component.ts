@@ -6,7 +6,7 @@ import { Color } from '../../../../shared/enums/color.enum';
 import { MinRPSMove } from '../../enums/minrps-move.enum';
 
 @Component({
-  selector: 'app-minrps-game',
+  selector: 'minrps-game',
   templateUrl: './minrps-game.component.html',
   styleUrls: ['./minrps-game.component.scss'],
   host: { class: 'block h-full' },
