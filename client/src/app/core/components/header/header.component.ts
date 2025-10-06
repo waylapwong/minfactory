@@ -2,6 +2,7 @@ import { Component, computed } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 
 import { AppPath } from '../../../app.routes';
+import { MinFactoryPath } from '../../../features/minfactory/minfactory.routes';
 import { DividerComponent } from '../../../shared/components/divider/divider.component';
 import { LogoComponent } from '../../../shared/components/logo/logo.component';
 import { AppName } from '../../../shared/enums/app-name.enum';
@@ -14,8 +15,9 @@ import { ContextService } from '../../services/context.service';
   styleUrl: './header.component.scss',
 })
 export class HeaderComponent {
+  public readonly AppPath: typeof AppPath = AppPath;
   public readonly Application: typeof AppName = AppName;
-  public readonly Paths: typeof AppPath = AppPath;
+  public readonly MinFactoryPath: typeof MinFactoryPath = MinFactoryPath;
 
   public logo = computed(() => {
     switch (this.contextService.app()) {

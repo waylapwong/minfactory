@@ -1,14 +1,14 @@
 import { Routes } from '@angular/router';
 
 export enum MinFactoryPath {
-  Empty = '',
   MinApps = 'apps',
   MinPlay = 'play',
+  Root = '',
 }
 
 export const MINFACTORY_ROUTES: Routes = [
   {
-    path: MinFactoryPath.Empty,
+    path: MinFactoryPath.Root,
     loadComponent: () => import('./pages/home/home.component').then((m) => m.HomeComponent),
   },
   {

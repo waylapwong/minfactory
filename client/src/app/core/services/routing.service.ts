@@ -10,7 +10,7 @@ export class RoutingService {
   constructor(private readonly router: Router) {}
 
   public navigateToHomePage(): void {
-    this.router.navigate([AppPath.Empty]);
+    this.router.navigate([AppPath.Root]);
   }
 
   public navigateToMinRPS(): void {

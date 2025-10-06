@@ -3,14 +3,14 @@ import { Routes } from '@angular/router';
 import { AppName } from './shared/enums/app-name.enum';
 
 export enum AppPath {
-  Empty = '',
   MinRPS = 'minrps',
-  Any = '**',
+  Root = '',
+  Unknown = '**',
 }
 
 export const APP_ROUTES: Routes = [
   {
-    path: AppPath.Empty,
+    path: AppPath.Root,
     title: AppName.MinFactory,
     loadChildren: () =>
       import('./features/minfactory/minfactory.routes').then((m) => m.MINFACTORY_ROUTES),
@@ -25,8 +25,8 @@ export const APP_ROUTES: Routes = [
       import('./features/minrps/minrps.component').then((m) => m.MinRPSComponent),
   },
   {
-    path: AppPath.Any,
-    redirectTo: AppPath.Empty,
+    path: AppPath.Unknown,
+    redirectTo: AppPath.Root,
     pathMatch: 'full',
   },
 ];

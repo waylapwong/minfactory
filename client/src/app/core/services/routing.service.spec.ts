@@ -31,7 +31,7 @@ describe('RoutingService', () => {
     it('should navigate to home page', () => {
       const spy = spyOn((service as any).router, 'navigate');
       service.navigateToHomePage();
-      expect(spy).toHaveBeenCalledWith([AppPath.Empty]);
+      expect(spy).toHaveBeenCalledWith([AppPath.Root]);
     });
   });
 
