@@ -1,8 +1,8 @@
-import { provideZonelessChangeDetection } from "@angular/core";
-import { ComponentFixture, TestBed } from "@angular/core/testing";
+import { provideZonelessChangeDetection } from '@angular/core';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { Color } from "../../enums/color.enum";
-import { ButtonComponent } from "./button.component";
+import { Color } from '../../enums/color.enum';
+import { ButtonComponent } from './button.component';
 
 describe('ButtonComponent', () => {
   let component: ButtonComponent;
