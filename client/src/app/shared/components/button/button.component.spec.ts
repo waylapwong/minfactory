@@ -1,8 +1,8 @@
-import { provideZonelessChangeDetection } from '@angular/core';
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideZonelessChangeDetection } from "@angular/core";
+import { ComponentFixture, TestBed } from "@angular/core/testing";
 
-import { Color } from '../../enums/color.enum';
-import { ButtonComponent } from './button.component';
+import { Color } from "../../enums/color.enum";
+import { ButtonComponent } from "./button.component";
 
 describe('ButtonComponent', () => {
   let component: ButtonComponent;
@@ -51,7 +51,7 @@ describe('ButtonComponent', () => {
     it('should return correct css class for color gray', () => {
       fixture.componentRef.setInput('color', Color.Gray);
       const cssClass: string = component.cssClass();
-      expect(cssClass).toContain('bg-white');
+      expect(cssClass).toContain('bg-gray-200');
     });
   });
 });

@@ -1,1 +1,14 @@
-MinRPSMenuComponent
+<div class="flex h-full flex-row items-center justify-evenly gap-2 sm:gap-0">
+  <!-- SINGLEPLAYER -->
+  <min-card class="basis-3xs text-center">
+    <min-h2>Singleplayer</min-h2>
+    <p class="mb-4 text-gray-600 italic">Play against the computer.</p>
+    <min-button class="mx-auto w-1/2" [color]="Color.Blue">Play</min-button>
+  </min-card>
+  <!-- MULTIPLAYER -->
+  <min-card class="basis-3xs text-center">
+    <min-h2>Multiplayer</min-h2>
+    <p class="mb-4 text-gray-600 italic">Play against a friend.</p>
+    <min-button class="mx-auto w-1/2" [color]="Color.Blue" [disabled]="true">Play</min-button>
+  </min-card>
+</div>

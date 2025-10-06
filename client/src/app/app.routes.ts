@@ -13,7 +13,7 @@ export enum Path {
   Any = '**'
 }
 
-export const ROUTES: Routes = [
+export const APP_ROUTES: Routes = [
   {
     path: Path.Root,
     redirectTo: Path.Home,

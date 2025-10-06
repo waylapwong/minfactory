@@ -1,14 +1,6 @@
-import {
-  Component,
-  InputSignal,
-  OutputEmitterRef,
-  Signal,
-  computed,
-  input,
-  output
-} from '@angular/core';
+import { Component, InputSignal, OutputEmitterRef, Signal, computed, input, output } from "@angular/core";
 
-import { Color } from '../../enums/color.enum';
+import { Color } from "../../enums/color.enum";
 
 @Component({
   selector: 'min-button',
@@ -52,7 +44,7 @@ export class ButtonComponent {
             'bg-yellow-200 hover:bg-yellow-400 hover:disabled:bg-yellow-200 focus:bg-yellow-400'
           );
         default:
-          return baseClass + 'bg-white hover:bg-gray-400 hover:disabled:bg-white focus:bg-gray-400';
+          return baseClass + 'bg-gray-200 hover:bg-gray-400 hover:disabled:bg-white focus:bg-gray-400';
       }
     });
   }
