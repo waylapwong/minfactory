@@ -17,15 +17,33 @@
     </div>
     <!-- OPPONENT MOVES -->
     <div class="flex w-full flex-row justify-evenly gap-2">
-      <minrps-card>
-        <img src="assets/svg/uncertainty.svg" alt="Rock" class="h-16 w-16" />
-      </minrps-card>
-      <minrps-card>
-        <img src="assets/svg/uncertainty.svg" alt="Rock" class="h-16 w-16" />
-      </minrps-card>
-      <minrps-card>
-        <img src="assets/svg/uncertainty.svg" alt="Rock" class="h-16 w-16" />
-      </minrps-card>
+      @if (lockedOpponentMove() === MinRPSMove.Rock) {
+        <minrps-card [gameResult]="gameResult()">
+          <img src="assets/svg/rock.svg" alt="Rock" class="h-16 w-16" />
+        </minrps-card>
+      } @else {
+        <minrps-card>
+          <img src="assets/svg/uncertainty.svg" alt="Rock" class="h-16 w-16" />
+        </minrps-card>
+      }
+      @if (lockedOpponentMove() === MinRPSMove.Paper) {
+        <minrps-card [gameResult]="gameResult()">
+          <img src="assets/svg/paper.svg" alt="Rock" class="h-16 w-16" />
+        </minrps-card>
+      } @else {
+        <minrps-card>
+          <img src="assets/svg/uncertainty.svg" alt="Rock" class="h-16 w-16" />
+        </minrps-card>
+      }
+      @if (lockedOpponentMove() === MinRPSMove.Scissors) {
+        <minrps-card [gameResult]="gameResult()">
+          <img src="assets/svg/scissors.svg" alt="Rock" class="h-16 w-16" />
+        </minrps-card>
+      } @else {
+        <minrps-card>
+          <img src="assets/svg/uncertainty.svg" alt="Rock" class="h-16 w-16" />
+        </minrps-card>
+      }
     </div>
   </div>
 
@@ -39,26 +57,35 @@
     <!-- PLAYER MOVES -->
     <div class="flex w-full flex-row justify-evenly gap-2">
       <minrps-move
-        [disabled]="lockedMove() !== MinRPSMove.None && lockedMove() !== MinRPSMove.Rock"
-        [isLocked]="lockedMove() === MinRPSMove.Rock"
-        [isSelected]="selectedMove() === MinRPSMove.Rock"
-        (selected)="selectedMove.set(MinRPSMove.Rock)"
+        [disabled]="
+          lockedPlayerMove() !== MinRPSMove.None && lockedPlayerMove() !== MinRPSMove.Rock
+        "
+        [isLocked]="lockedPlayerMove() === MinRPSMove.Rock"
+        [isSelected]="selectedPlayerMove() === MinRPSMove.Rock"
+        [gameResult]="gameResult()"
+        (selected)="selectedPlayerMove.set(MinRPSMove.Rock)"
       >
         <img src="assets/svg/rock.svg" alt="Rock" class="h-16 w-16" />
       </minrps-move>
       <minrps-move
-        [disabled]="lockedMove() !== MinRPSMove.None && lockedMove() !== MinRPSMove.Paper"
-        [isLocked]="lockedMove() === MinRPSMove.Paper"
-        [isSelected]="selectedMove() === MinRPSMove.Paper"
-        (selected)="selectedMove.set(MinRPSMove.Paper)"
+        [disabled]="
+          lockedPlayerMove() !== MinRPSMove.None && lockedPlayerMove() !== MinRPSMove.Paper
+        "
+        [isLocked]="lockedPlayerMove() === MinRPSMove.Paper"
+        [isSelected]="selectedPlayerMove() === MinRPSMove.Paper"
+        [gameResult]="gameResult()"
+        (selected)="selectedPlayerMove.set(MinRPSMove.Paper)"
       >
         <img src="assets/svg/paper.svg" alt="Rock" class="h-16 w-16" />
       </minrps-move>
       <minrps-move
-        [disabled]="lockedMove() !== MinRPSMove.None && lockedMove() !== MinRPSMove.Scissors"
-        [isLocked]="lockedMove() === MinRPSMove.Scissors"
-        [isSelected]="selectedMove() === MinRPSMove.Scissors"
-        (selected)="selectedMove.set(MinRPSMove.Scissors)"
+        [disabled]="
+          lockedPlayerMove() !== MinRPSMove.None && lockedPlayerMove() !== MinRPSMove.Scissors
+        "
+        [isLocked]="lockedPlayerMove() === MinRPSMove.Scissors"
+        [isSelected]="selectedPlayerMove() === MinRPSMove.Scissors"
+        [gameResult]="gameResult()"
+        (selected)="selectedPlayerMove.set(MinRPSMove.Scissors)"
       >
         <img src="assets/svg/scissors.svg" alt="Rock" class="h-16 w-16" />
       </minrps-move>
@@ -68,7 +95,9 @@
       <min-button
         class="basis-3xs"
         [color]="Color.Blue"
-        [disabled]="selectedMove() === MinRPSMove.None"
+        [disabled]="
+          selectedPlayerMove() === MinRPSMove.None || lockedPlayerMove() !== MinRPSMove.None
+        "
         (clicked)="lockMove()"
       >
         {{ buttonText() }}

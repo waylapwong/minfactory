@@ -20,6 +20,7 @@ export const MINRPS_FIRST_MESSAGES = [
   'System reboot required... just kidding... maybe...',
   'Too many variables... and none of them make sense...',
 ];
+export const MINRPS_NEXT_MESSAGE = "Let's play again.";
 export const MINRPS_SECOND_MESSAGES = [
   'Asking the universe for guidance...',
   'Running quantum simulations...',
