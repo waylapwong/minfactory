@@ -1,1 +1,54 @@
-<p>minrps-game works!</p>
+<div class="flex h-full flex-col text-center">
+  <!-- OPPONENT SIDE -->
+  <div class="flex basis-1/2 flex-col justify-evenly">
+    <!-- OPPONENT PICTURE -->
+    <div class="flex w-full flex-row justify-center">
+      <min-button>
+        <img src="assets/svg/robot-antennas.svg" alt="Rock" class="h-16 w-16" />
+      </min-button>
+    </div>
+    <!-- OPPONENT MOVES -->
+    <div class="flex w-full flex-row justify-evenly gap-2">
+      <min-button>
+        <img src="assets/svg/uncertainty.svg" alt="Rock" class="h-16 w-16" />
+      </min-button>
+      <min-button>
+        <img src="assets/svg/uncertainty.svg" alt="Rock" class="h-16 w-16" />
+      </min-button>
+      <min-button>
+        <img src="assets/svg/uncertainty.svg" alt="Rock" class="h-16 w-16" />
+      </min-button>
+    </div>
+  </div>
+
+  <!-- DIVIDER -->
+  <div class="flex flex-row justify-center">
+    <min-divider class="basis-3/4"></min-divider>
+  </div>
+
+  <!-- PLAYER SIDE -->
+  <div class="flex basis-1/2 flex-col justify-evenly">
+    <!-- PLAYER MOVES -->
+    <div class="flex w-full flex-row justify-evenly gap-2">
+      <min-button (clicked)="selectedMove.set(MinRPSMove.Rock)">
+        <img src="assets/svg/rock.svg" alt="Rock" class="h-16 w-16" />
+      </min-button>
+      <min-button (clicked)="selectedMove.set(MinRPSMove.Paper)">
+        <img src="assets/svg/paper.svg" alt="Rock" class="h-16 w-16" />
+      </min-button>
+      <min-button (clicked)="selectedMove.set(MinRPSMove.Scissors)">
+        <img src="assets/svg/scissors.svg" alt="Rock" class="h-16 w-16" />
+      </min-button>
+    </div>
+    <!-- ACTION BUTTON -->
+    <div class="flex w-full flex-row justify-center">
+      <min-button
+        class="basis-3xs"
+        [color]="Color.Blue"
+        [disabled]="selectedMove() === MinRPSMove.None"
+      >
+        {{ buttonText() }}
+      </min-button>
+    </div>
+  </div>
+</div>
