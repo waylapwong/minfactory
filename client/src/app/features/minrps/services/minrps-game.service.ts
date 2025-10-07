@@ -1,14 +1,19 @@
 import { Injectable, Signal, WritableSignal, computed, signal } from '@angular/core';
 
 import { delay } from '../../../shared/utils/delay.util';
+import { MINRPS_FIRST_MESSAGES } from '../models/constants/minrps-first.message';
 import {
-  MINRPS_FIRST_MESSAGES,
-  MINRPS_SECOND_MESSAGES,
-  MINRPS_START_MESSAGE,
+  MINRPS_FOURTH_MESSAGES_LOSE,
+  MINRPS_FOURTH_MESSAGES_TIE,
+  MINRPS_FOURTH_MESSAGES_WIN,
+} from '../models/constants/minrps-fourth.message';
+import { MINRPS_SECOND_MESSAGES } from '../models/constants/minrps-second.message';
+import { MINRPS_START_MESSAGE } from '../models/constants/minrps-start.message';
+import {
   MINRPS_THIRD_MESSAGES_PAPER,
   MINRPS_THIRD_MESSAGES_ROCK,
   MINRPS_THIRD_MESSAGES_SCISSORS,
-} from '../models/constants/minrps-message.const';
+} from '../models/constants/minrps-third.message';
 import { MinRPSGame } from '../models/domain/minrps-game';
 import { MinRPSMove } from '../models/enums/minrps-move.enum';
 import { MinRPSResult } from '../models/enums/minrps-result.enum';
@@ -46,6 +51,17 @@ export class MinRPSGameService {
     const messages = this.getMessages(player2Move);
     await this.displayMessages(messages);
     await this.revealPlayer2Move(player2Move);
+    switch (this.game().result) {
+      case MinRPSResult.Player1:
+        this.writeMessage(this.getRandomMessage(MINRPS_FOURTH_MESSAGES_LOSE));
+        break;
+      case MinRPSResult.Player2:
+        this.writeMessage(this.getRandomMessage(MINRPS_FOURTH_MESSAGES_WIN));
+        break;
+      default:
+        this.writeMessage(this.getRandomMessage(MINRPS_FOURTH_MESSAGES_TIE));
+        break;
+    }
     this.setupNewGame();
   }
 
@@ -99,6 +115,6 @@ export class MinRPSGameService {
       if (index >= message.length) {
         clearInterval(interval);
       }
-    }, 30);
+    }, MINRPS_SETTINGS.TYPE_MESSAGE_SPEED);
   }
 }
