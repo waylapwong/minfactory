@@ -7,32 +7,24 @@
         <p class="text-sm" [innerHTML]="message()"></p>
       </div>
     </div>
+
     <!-- OPPONENT AVATAR -->
     <div class="flex w-full flex-row justify-center">
       <minrps-card>
         <img src="assets/svg/robot-antennas.svg" alt="Rock" class="h-16 w-16" />
       </minrps-card>
     </div>
+
     <!-- OPPONENT MOVES -->
     <div class="flex w-full flex-row justify-evenly gap-2">
-      @for (i of [0, 1, 2]; track $index) {
-        @if (playedVillainMove() === MinRPSMove.Rock) {
+      @for (villainMove of villainMoves; track $index) {
+        @if (playedVillainMove() === villainMove) {
           <minrps-card [result]="result()">
-            <img src="assets/svg/rock.svg" alt="Rock" class="h-16 w-16" />
-          </minrps-card>
-        }
-        @if (playedVillainMove() === MinRPSMove.Paper) {
-          <minrps-card [result]="result()">
-            <img src="assets/svg/paper.svg" alt="Rock" class="h-16 w-16" />
-          </minrps-card>
-        }
-        @if (playedVillainMove() === MinRPSMove.Scissors) {
-          <minrps-card [result]="result()">
-            <img src="assets/svg/scissors.svg" alt="Rock" class="h-16 w-16" />
+            <img class="h-16 w-16" [alt]="villainMove" [src]="`assets/svg/${villainMove}.svg`" />
           </minrps-card>
         } @else {
           <minrps-card>
-            <img src="assets/svg/uncertainty.svg" alt="Rock" class="h-16 w-16" />
+            <img src="assets/svg/uncertainty.svg" alt="?" class="h-16 w-16" />
           </minrps-card>
         }
       }
@@ -48,35 +40,17 @@
   <div class="flex basis-1/2 flex-col justify-evenly">
     <!-- PLAYER MOVES -->
     <div class="flex w-full flex-row justify-evenly gap-2">
-      <minrps-move
-        [isDisabled]="playedHeroMove() !== MinRPSMove.None && playedHeroMove() !== MinRPSMove.Rock"
-        [isPlayed]="playedHeroMove() === MinRPSMove.Rock"
-        [isSelected]="selectedHeroMove() === MinRPSMove.Rock"
-        [result]="result()"
-        (selected)="selectedHeroMove.set(MinRPSMove.Rock)"
-      >
-        <img src="assets/svg/rock.svg" alt="Rock" class="h-16 w-16" />
-      </minrps-move>
-      <minrps-move
-        [isDisabled]="playedHeroMove() !== MinRPSMove.None && playedHeroMove() !== MinRPSMove.Paper"
-        [isPlayed]="playedHeroMove() === MinRPSMove.Paper"
-        [isSelected]="selectedHeroMove() === MinRPSMove.Paper"
-        [result]="result()"
-        (selected)="selectedHeroMove.set(MinRPSMove.Paper)"
-      >
-        <img src="assets/svg/paper.svg" alt="Paper" class="h-16 w-16" />
-      </minrps-move>
-      <minrps-move
-        [isDisabled]="
-          playedHeroMove() !== MinRPSMove.None && playedHeroMove() !== MinRPSMove.Scissors
-        "
-        [isPlayed]="playedHeroMove() === MinRPSMove.Scissors"
-        [isSelected]="selectedHeroMove() === MinRPSMove.Scissors"
-        [result]="result()"
-        (selected)="selectedHeroMove.set(MinRPSMove.Scissors)"
-      >
-        <img src="assets/svg/scissors.svg" alt="Scissors" class="h-16 w-16" />
-      </minrps-move>
+      @for (heroMove of heroMoves; track $index) {
+        <minrps-move
+          [isDisabled]="playedHeroMove() !== MinRPSMove.None && playedHeroMove() !== heroMove"
+          [isPlayed]="playedHeroMove() === heroMove"
+          [isSelected]="selectedHeroMove() === heroMove"
+          [result]="result()"
+          (selected)="selectedHeroMove.set(heroMove)"
+        >
+          <img [src]="`assets/svg/${heroMove}.svg`" [alt]="heroMove" class="h-16 w-16" />
+        </minrps-move>
+      }
     </div>
 
     <!-- ACTION BUTTON -->

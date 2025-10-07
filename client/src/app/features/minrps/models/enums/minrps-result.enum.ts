@@ -1,6 +1,6 @@
 export enum MinRPSResult {
-  None,
-  Player1,
-  Player2,
-  Draw,
+  None = 'none',
+  Player1 = 'player1',
+  Player2 = 'player2',
+  Draw = 'draw',
 }

@@ -1,7 +1,7 @@
 import { provideZonelessChangeDetection } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 
-import { MinRPSGameService } from './minrps-Game.service';
+import { MinRPSGameService } from './minrps-game.service';
 
 describe('MinRPSGameService', () => {
   let service: MinRPSGameService;

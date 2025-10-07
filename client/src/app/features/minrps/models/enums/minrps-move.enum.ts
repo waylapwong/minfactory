@@ -1,6 +1,6 @@
 export enum MinRPSMove {
-  None,
-  Rock,
-  Paper,
-  Scissors,
+  None = 'none',
+  Rock = 'rock',
+  Paper = 'paper',
+  Scissors = 'scissors',
 }
