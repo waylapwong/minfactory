@@ -11,9 +11,9 @@ import { MinRPSResult } from '../../models/enums/minrps-result.enum';
 export class MinRPSMoveComponent {
   public readonly MinRPSGameResult: typeof MinRPSResult = MinRPSResult;
 
-  public disabled: InputSignal<boolean> = input(false);
-  public gameResult: InputSignal<MinRPSResult> = input(MinRPSResult.None) as any;
-  public isLocked: InputSignal<boolean> = input(false);
-  public isSelected: InputSignal<boolean> = input(false);
   public selected: OutputEmitterRef<void> = output();
+  public isDisabled: InputSignal<boolean> = input(false);
+  public isPlayed: InputSignal<boolean> = input(false);
+  public isSelected: InputSignal<boolean> = input(false);
+  public result: InputSignal<MinRPSResult> = input(MinRPSResult.None) as any;
 }

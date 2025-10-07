@@ -1,114 +1,93 @@
 import { Injectable, Signal, WritableSignal, computed, signal } from '@angular/core';
 
+import { delay } from '../../../shared/utils/delay.util';
 import {
   MINRPS_FIRST_MESSAGES,
-  MINRPS_NEXT_MESSAGE,
   MINRPS_SECOND_MESSAGES,
   MINRPS_START_MESSAGE,
   MINRPS_THIRD_MESSAGES_PAPER,
   MINRPS_THIRD_MESSAGES_ROCK,
   MINRPS_THIRD_MESSAGES_SCISSORS,
-} from '../messages/minrps-chat.message';
-import { MinRPSPlayer } from '../models/domain/minprs-player';
+} from '../models/constants/minrps-message.const';
 import { MinRPSGame } from '../models/domain/minrps-game';
 import { MinRPSMove } from '../models/enums/minrps-move.enum';
 import { MinRPSResult } from '../models/enums/minrps-result.enum';
-import { MinRPSGameComponent } from '../pages/minrps-game/minrps-game.component';
+import { MINRPS_SETTINGS } from '../settings/minrps.settings';
 
 @Injectable({
   providedIn: 'root',
 })
 export class MinRPSGameService {
-  public game: WritableSignal<MinRPSGame> = signal(new MinRPSGame());
-  public gameResult: Signal<MinRPSResult> = computed(() => this.updateGameResult());
   public message: WritableSignal<string> = signal(MINRPS_START_MESSAGE);
-  public player1Move: WritableSignal<MinRPSMove> = signal(MinRPSMove.None);
-  public player1MovePreview: WritableSignal<MinRPSMove> = signal(MinRPSMove.None);
-  public player2Move: WritableSignal<MinRPSMove> = signal(MinRPSMove.None);
-  public player2MovePreview: WritableSignal<MinRPSMove> = signal(MinRPSMove.None);
+  public player1Move: Signal<MinRPSMove> = computed(() => this.game().player1Move);
+  public player2Move: Signal<MinRPSMove> = computed(() => this.game().player2Move);
+  public result: Signal<MinRPSResult> = computed(() => this.game().result);
+
+  private game: WritableSignal<MinRPSGame> = signal(new MinRPSGame());
 
   public setPlayer1Move(move: MinRPSMove): void {
-    const game: MinRPSGame = this.game();
-    game.getPlayer1().move = move;
-    this.game.set(game);
+    const newGame = new MinRPSGame({ ...this.game(), player1Move: move });
+    this.game.set(newGame);
   }
 
-  public startGame(): void {
-    const game: MinRPSGame = new MinRPSGame();
-    game.setPlayer1(new MinRPSPlayer());
-    game.setPlayer2(new MinRPSPlayer());
-    this.game.set(game);
+  public setPlayer2Move(move: MinRPSMove): void {
+    const newGame = new MinRPSGame({ ...this.game(), player2Move: move });
+    this.game.set(newGame);
   }
 
-  public startGameLoop(): void {
-    this.player1Move.set(this.player1MovePreview());
-    // this.setPlayer1Move(this.player1MovePreview());
+  public setupNewGame(): void {
+    const newGame: MinRPSGame = new MinRPSGame();
+    this.game.set(newGame);
+  }
 
-    const moves: MinRPSMove[] = [MinRPSMove.Rock, MinRPSMove.Paper, MinRPSMove.Scissors];
-    const opponentMove = moves[Math.floor(Math.random() * moves.length)];
-    this.player2MovePreview.set(opponentMove);
+  public async startGame(move: MinRPSMove): Promise<void> {
+    this.setPlayer1Move(move);
+    const player2Move = this.getRandomMove();
+    const messages = this.getMessages(player2Move);
+    await this.displayMessages(messages);
+    await this.revealPlayer2Move(player2Move);
+    this.setupNewGame();
+  }
 
-    let finalMessage = '';
-    switch (opponentMove) {
+  private async displayMessages(messages: string[]): Promise<void> {
+    for (const message of messages) {
+      this.writeMessage(message);
+      await delay(MINRPS_SETTINGS.MESSAGE_DURATION);
+    }
+  }
+
+  private getMessages(move: MinRPSMove): string[] {
+    const firstMessage = this.getRandomMessage(MINRPS_FIRST_MESSAGES);
+    const secondMessage = this.getRandomMessage(MINRPS_SECOND_MESSAGES);
+
+    let thirdMessage = '';
+    switch (move) {
       case MinRPSMove.Rock:
-        finalMessage =
-          MINRPS_THIRD_MESSAGES_ROCK[Math.floor(Math.random() * MINRPS_THIRD_MESSAGES_ROCK.length)];
+        thirdMessage = this.getRandomMessage(MINRPS_THIRD_MESSAGES_ROCK);
         break;
       case MinRPSMove.Paper:
-        finalMessage =
-          MINRPS_THIRD_MESSAGES_PAPER[
-            Math.floor(Math.random() * MINRPS_THIRD_MESSAGES_PAPER.length)
-          ];
+        thirdMessage = this.getRandomMessage(MINRPS_THIRD_MESSAGES_PAPER);
         break;
       case MinRPSMove.Scissors:
-        finalMessage =
-          MINRPS_THIRD_MESSAGES_SCISSORS[
-            Math.floor(Math.random() * MINRPS_THIRD_MESSAGES_SCISSORS.length)
-          ];
+        thirdMessage = this.getRandomMessage(MINRPS_THIRD_MESSAGES_SCISSORS);
         break;
     }
 
-    const messages = [
-      MINRPS_FIRST_MESSAGES[Math.floor(Math.random() * MINRPS_FIRST_MESSAGES.length)],
-      MINRPS_SECOND_MESSAGES[Math.floor(Math.random() * MINRPS_SECOND_MESSAGES.length)],
-      finalMessage,
-    ];
-
-    messages.forEach((message, index) => {
-      setTimeout(
-        () => this.writeMessage(message),
-        index * MinRPSGameComponent.SINGLE_MESSAGE_DURATION,
-      );
-    });
-
-    setTimeout(() => {
-      this.player2Move.set(opponentMove);
-    }, MinRPSGameComponent.TOTAL_MESSAGE_DURATION);
-
-    setTimeout(() => {
-      this.player1Move.set(MinRPSMove.None);
-      this.player1MovePreview.set(MinRPSMove.None);
-      this.player2Move.set(MinRPSMove.None);
-      this.player2MovePreview.set(MinRPSMove.None);
-      this.message.set(MINRPS_NEXT_MESSAGE);
-    }, MinRPSGameComponent.GAME_ROUND_DURATION);
+    return [firstMessage, secondMessage, thirdMessage];
   }
 
-  private updateGameResult(): MinRPSResult {
-    const playerMove = this.player1Move();
-    const opponentMove = this.player2Move();
-    if (playerMove === MinRPSMove.None || opponentMove === MinRPSMove.None) {
-      return MinRPSResult.None;
-    }
-    if (playerMove === opponentMove) {
-      return MinRPSResult.Draw;
-    }
-    const playerWins: boolean =
-      (playerMove === MinRPSMove.Rock && opponentMove === MinRPSMove.Scissors) ||
-      (playerMove === MinRPSMove.Paper && opponentMove === MinRPSMove.Rock) ||
-      (playerMove === MinRPSMove.Scissors && opponentMove === MinRPSMove.Paper);
+  private getRandomMessage(messages: string[]): string {
+    return messages[Math.floor(Math.random() * messages.length)];
+  }
 
-    return playerWins ? MinRPSResult.Win : MinRPSResult.Loss;
+  private getRandomMove(): MinRPSMove {
+    const moves: MinRPSMove[] = [MinRPSMove.Rock, MinRPSMove.Paper, MinRPSMove.Scissors];
+    return moves[Math.floor(Math.random() * moves.length)];
+  }
+
+  private async revealPlayer2Move(move: MinRPSMove): Promise<void> {
+    this.setPlayer2Move(move);
+    await delay(MINRPS_SETTINGS.RESULT_DURATION);
   }
 
   private writeMessage(message: string): void {

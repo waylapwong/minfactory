@@ -4,7 +4,7 @@
     <!-- MESSAGES -->
     <div class="relative mx-auto w-fit">
       <div class="rounded-lg border-8 border-double border-black bg-white px-2 py-1 shadow-2xl">
-        <p class="text-sm" [innerHTML]="minRPSGameService.message()"></p>
+        <p class="text-sm" [innerHTML]="message()"></p>
       </div>
     </div>
     <!-- OPPONENT AVATAR -->
@@ -15,32 +15,26 @@
     </div>
     <!-- OPPONENT MOVES -->
     <div class="flex w-full flex-row justify-evenly gap-2">
-      @if (minRPSGameService.player2Move() === MinRPSMove.Rock) {
-        <minrps-card [gameResult]="minRPSGameService.gameResult()">
-          <img src="assets/svg/rock.svg" alt="Rock" class="h-16 w-16" />
-        </minrps-card>
-      } @else {
-        <minrps-card>
-          <img src="assets/svg/uncertainty.svg" alt="Rock" class="h-16 w-16" />
-        </minrps-card>
-      }
-      @if (minRPSGameService.player2Move() === MinRPSMove.Paper) {
-        <minrps-card [gameResult]="minRPSGameService.gameResult()">
-          <img src="assets/svg/paper.svg" alt="Rock" class="h-16 w-16" />
-        </minrps-card>
-      } @else {
-        <minrps-card>
-          <img src="assets/svg/uncertainty.svg" alt="Rock" class="h-16 w-16" />
-        </minrps-card>
-      }
-      @if (minRPSGameService.player2Move() === MinRPSMove.Scissors) {
-        <minrps-card [gameResult]="minRPSGameService.gameResult()">
-          <img src="assets/svg/scissors.svg" alt="Rock" class="h-16 w-16" />
-        </minrps-card>
-      } @else {
-        <minrps-card>
-          <img src="assets/svg/uncertainty.svg" alt="Rock" class="h-16 w-16" />
-        </minrps-card>
+      @for (i of [0, 1, 2]; track $index) {
+        @if (playedVillainMove() === MinRPSMove.Rock) {
+          <minrps-card [result]="result()">
+            <img src="assets/svg/rock.svg" alt="Rock" class="h-16 w-16" />
+          </minrps-card>
+        }
+        @if (playedVillainMove() === MinRPSMove.Paper) {
+          <minrps-card [result]="result()">
+            <img src="assets/svg/paper.svg" alt="Rock" class="h-16 w-16" />
+          </minrps-card>
+        }
+        @if (playedVillainMove() === MinRPSMove.Scissors) {
+          <minrps-card [result]="result()">
+            <img src="assets/svg/scissors.svg" alt="Rock" class="h-16 w-16" />
+          </minrps-card>
+        } @else {
+          <minrps-card>
+            <img src="assets/svg/uncertainty.svg" alt="Rock" class="h-16 w-16" />
+          </minrps-card>
+        }
       }
     </div>
   </div>
@@ -55,52 +49,43 @@
     <!-- PLAYER MOVES -->
     <div class="flex w-full flex-row justify-evenly gap-2">
       <minrps-move
-        [disabled]="
-          minRPSGameService.player1Move() !== MinRPSMove.None &&
-          minRPSGameService.player1Move() !== MinRPSMove.Rock
-        "
-        [isLocked]="minRPSGameService.player1Move() === MinRPSMove.Rock"
-        [isSelected]="minRPSGameService.player1MovePreview() === MinRPSMove.Rock"
-        [gameResult]="minRPSGameService.gameResult()"
-        (selected)="minRPSGameService.player1MovePreview.set(MinRPSMove.Rock)"
+        [isDisabled]="playedHeroMove() !== MinRPSMove.None && playedHeroMove() !== MinRPSMove.Rock"
+        [isPlayed]="playedHeroMove() === MinRPSMove.Rock"
+        [isSelected]="selectedHeroMove() === MinRPSMove.Rock"
+        [result]="result()"
+        (selected)="selectedHeroMove.set(MinRPSMove.Rock)"
       >
         <img src="assets/svg/rock.svg" alt="Rock" class="h-16 w-16" />
       </minrps-move>
       <minrps-move
-        [disabled]="
-          minRPSGameService.player1Move() !== MinRPSMove.None &&
-          minRPSGameService.player1Move() !== MinRPSMove.Paper
-        "
-        [isLocked]="minRPSGameService.player1Move() === MinRPSMove.Paper"
-        [isSelected]="minRPSGameService.player1MovePreview() === MinRPSMove.Paper"
-        [gameResult]="minRPSGameService.gameResult()"
-        (selected)="minRPSGameService.player1MovePreview.set(MinRPSMove.Paper)"
+        [isDisabled]="playedHeroMove() !== MinRPSMove.None && playedHeroMove() !== MinRPSMove.Paper"
+        [isPlayed]="playedHeroMove() === MinRPSMove.Paper"
+        [isSelected]="selectedHeroMove() === MinRPSMove.Paper"
+        [result]="result()"
+        (selected)="selectedHeroMove.set(MinRPSMove.Paper)"
       >
-        <img src="assets/svg/paper.svg" alt="Rock" class="h-16 w-16" />
+        <img src="assets/svg/paper.svg" alt="Paper" class="h-16 w-16" />
       </minrps-move>
       <minrps-move
-        [disabled]="
-          minRPSGameService.player1Move() !== MinRPSMove.None &&
-          minRPSGameService.player1Move() !== MinRPSMove.Scissors
+        [isDisabled]="
+          playedHeroMove() !== MinRPSMove.None && playedHeroMove() !== MinRPSMove.Scissors
         "
-        [isLocked]="minRPSGameService.player1Move() === MinRPSMove.Scissors"
-        [isSelected]="minRPSGameService.player1MovePreview() === MinRPSMove.Scissors"
-        [gameResult]="minRPSGameService.gameResult()"
-        (selected)="minRPSGameService.player1MovePreview.set(MinRPSMove.Scissors)"
+        [isPlayed]="playedHeroMove() === MinRPSMove.Scissors"
+        [isSelected]="selectedHeroMove() === MinRPSMove.Scissors"
+        [result]="result()"
+        (selected)="selectedHeroMove.set(MinRPSMove.Scissors)"
       >
-        <img src="assets/svg/scissors.svg" alt="Rock" class="h-16 w-16" />
+        <img src="assets/svg/scissors.svg" alt="Scissors" class="h-16 w-16" />
       </minrps-move>
     </div>
+
     <!-- ACTION BUTTON -->
     <div class="flex w-full flex-row justify-center">
       <min-button
         class="basis-3xs"
         [color]="Color.Blue"
-        [disabled]="
-          minRPSGameService.player1MovePreview() === MinRPSMove.None ||
-          minRPSGameService.player1Move() !== MinRPSMove.None
-        "
-        (clicked)="minRPSGameService.startGameLoop()"
+        [disabled]="selectedHeroMove() === MinRPSMove.None || playedHeroMove() !== MinRPSMove.None"
+        (clicked)="startGame()"
       >
         {{ buttonText() }}
       </min-button>

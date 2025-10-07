@@ -1,4 +1,5 @@
-import { MinRPSPlayer } from './minprs-player';
+import { MinRPSMove } from '../enums/minrps-move.enum';
+import { MinRPSResult } from '../enums/minrps-result.enum';
 
 export class MinRPSGame {
   public static readonly MAX_PLAYERS: number = 2;
@@ -6,37 +7,29 @@ export class MinRPSGame {
   public static readonly PLAYER_1_ID: string = '1';
   public static readonly PLAYER_2_ID: string = '2';
 
-  public loser: MinRPSPlayer | null = null;
-  public players: Map<string, MinRPSPlayer> = new Map<string, MinRPSPlayer>();
-  public test = 1;
-  public winner: MinRPSPlayer | null = null;
+  public player1Move: MinRPSMove = MinRPSMove.None;
+  public player2Move: MinRPSMove = MinRPSMove.None;
 
-  public getPlayer1(): MinRPSPlayer {
-    const player: MinRPSPlayer | undefined = this.players.get(MinRPSGame.PLAYER_1_ID);
-    if (!player) {
-      throw new Error('Player 1 not found');
+  constructor(partial?: Partial<MinRPSGame>) {
+    Object.assign(this, partial);
+  }
+
+  public get result(): MinRPSResult {
+    if (this.player1Move === MinRPSMove.None || this.player2Move === MinRPSMove.None) {
+      return MinRPSResult.None;
     }
-    return player;
-  }
 
-  public getPlayer2(): MinRPSPlayer | undefined {
-    return this.players.get(MinRPSGame.PLAYER_2_ID);
-  }
-
-  public setPlayer1(player: MinRPSPlayer): void {
-    this.players.set(MinRPSGame.PLAYER_1_ID, player);
-  }
-
-  public setPlayer2(player: MinRPSPlayer): void {
-    this.players.set(MinRPSGame.PLAYER_2_ID, player);
-  }
-
-  public validate(): void {
-    if (this.players.size < MinRPSGame.MIN_PLAYERS) {
-      throw new Error('Not enough players');
+    if (this.player1Move === this.player2Move) {
+      return MinRPSResult.Draw;
     }
-    if (this.players.size > MinRPSGame.MAX_PLAYERS) {
-      throw new Error('Too many players');
+    const player1Wins =
+      (this.player1Move === MinRPSMove.Rock && this.player2Move === MinRPSMove.Scissors) ||
+      (this.player1Move === MinRPSMove.Paper && this.player2Move === MinRPSMove.Rock) ||
+      (this.player1Move === MinRPSMove.Scissors && this.player2Move === MinRPSMove.Paper);
+    if (player1Wins) {
+      return MinRPSResult.Player1;
+    } else {
+      return MinRPSResult.Player2;
     }
   }
 }

@@ -11,5 +11,5 @@ import { MinRPSResult } from '../../models/enums/minrps-result.enum';
 export class MinRPSCardComponent {
   public readonly MinRPSGameResult: typeof MinRPSResult = MinRPSResult;
 
-  public gameResult: InputSignal<MinRPSResult> = input(MinRPSResult.None) as any;
+  public result: InputSignal<MinRPSResult> = input(MinRPSResult.None) as any;
 }
