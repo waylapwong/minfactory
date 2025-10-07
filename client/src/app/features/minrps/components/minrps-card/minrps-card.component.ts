@@ -1,6 +1,6 @@
 import { Component, InputSignal, input } from '@angular/core';
 
-import { MinRPSGameResult } from '../../enums/minrps-game-result.enum';
+import { MinRPSResult } from '../../models/enums/minrps-result.enum';
 
 @Component({
   selector: 'minrps-card',
@@ -9,7 +9,7 @@ import { MinRPSGameResult } from '../../enums/minrps-game-result.enum';
   imports: [],
 })
 export class MinRPSCardComponent {
-  public readonly MinRPSGameResult: typeof MinRPSGameResult = MinRPSGameResult;
+  public readonly MinRPSGameResult: typeof MinRPSResult = MinRPSResult;
 
-  public gameResult: InputSignal<MinRPSGameResult> = input(MinRPSGameResult.None) as any;
+  public gameResult: InputSignal<MinRPSResult> = input(MinRPSResult.None) as any;
 }

@@ -4,14 +4,14 @@ import { RoutingService } from '../../../../core/services/routing.service';
 import { ButtonComponent } from '../../../../shared/components/button/button.component';
 import { CardComponent } from '../../../../shared/components/card/card.component';
 import { H2Component } from '../../../../shared/components/h2/h2.component';
-import { Color } from '../../../../shared/enums/color.enum';
 import { LogoComponent } from '../../../../shared/components/logo/logo.component';
+import { Color } from '../../../../shared/enums/color.enum';
 
 @Component({
   selector: 'minrps-home',
   templateUrl: './minrps-home.component.html',
   styleUrls: ['./minrps-home.component.scss'],
-  host: { class: 'block h-full' },
+  host: { class: 'flex h-full flex-row items-center justify-evenly gap-2 sm:gap-0' },
   imports: [CardComponent, H2Component, ButtonComponent, LogoComponent],
 })
 export class MinRPSHomeComponent {
