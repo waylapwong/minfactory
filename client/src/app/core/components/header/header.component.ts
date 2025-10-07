@@ -29,6 +29,16 @@ export class HeaderComponent {
         return 'Factory';
     }
   });
+  public routerLink = computed(() => {
+    switch (this.contextService.app()) {
+      case AppName.MinFactory:
+        return AppPath.Root;
+      case AppName.MinRPS:
+        return AppPath.MinRPS;
+      default:
+        return AppPath.Root;
+    }
+  });
 
   constructor(private readonly contextService: ContextService) {}
 }
