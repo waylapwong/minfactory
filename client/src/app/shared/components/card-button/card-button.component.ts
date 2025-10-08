@@ -1,4 +1,4 @@
-import { Component, OutputEmitterRef, output } from '@angular/core';
+import { Component, InputSignal, OutputEmitterRef, input, output } from '@angular/core';
 
 @Component({
   selector: 'min-card-button',
@@ -8,4 +8,5 @@ import { Component, OutputEmitterRef, output } from '@angular/core';
 })
 export class CardButtonComponent {
   public clicked: OutputEmitterRef<void> = output();
+  public disabled: InputSignal<boolean> = input(false);
 }

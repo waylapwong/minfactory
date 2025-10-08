@@ -3,7 +3,6 @@ import { Component } from '@angular/core';
 import { RoutingService } from '../../../../core/services/routing.service';
 import { BadgeComponent } from '../../../../shared/components/badge/badge.component';
 import { CardButtonComponent } from '../../../../shared/components/card-button/card-button.component';
-import { CardComponent } from '../../../../shared/components/card/card.component';
 import { H1Component } from '../../../../shared/components/h1/h1.component';
 import { H2Component } from '../../../../shared/components/h2/h2.component';
 import { LogoComponent } from '../../../../shared/components/logo/logo.component';
@@ -14,7 +13,6 @@ import { Color } from '../../../../shared/enums/color.enum';
   imports: [
     BadgeComponent,
     CardButtonComponent,
-    CardComponent,
     H1Component,
     H2Component,
     LogoComponent,
