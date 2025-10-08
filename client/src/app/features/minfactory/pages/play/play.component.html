@@ -4,14 +4,11 @@
 <!-- GAMES -->
 <div class="grid grid-cols-2 gap-2">
   <!-- MIN_RPS -->
-  <min-card class="col-span-1">
+  <min-card-button class="mt-4" (clicked)="routingService.navigateToMinRPS()">
     <div class="flex flex-row items-start justify-between">
       <min-h2><min-logo>RPS</min-logo></min-h2>
       <min-badge [color]="Color.Yellow">alpha</min-badge>
     </div>
     <p class="text-sm text-gray-500">Mini "rock, paper, scissors" game.</p>
-    <min-button class="mt-4" [color]="Color.Blue" (clicked)="routingService.navigateToMinRPS()">
-      Play
-    </min-button>
-  </min-card>
+  </min-card-button>
 </div>

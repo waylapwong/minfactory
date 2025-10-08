@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 
 import { RoutingService } from '../../../../core/services/routing.service';
 import { BadgeComponent } from '../../../../shared/components/badge/badge.component';
-import { ButtonComponent } from '../../../../shared/components/button/button.component';
+import { CardButtonComponent } from '../../../../shared/components/card-button/card-button.component';
 import { CardComponent } from '../../../../shared/components/card/card.component';
 import { H1Component } from '../../../../shared/components/h1/h1.component';
 import { H2Component } from '../../../../shared/components/h2/h2.component';
@@ -13,7 +13,7 @@ import { Color } from '../../../../shared/enums/color.enum';
   selector: 'minfactory-play',
   imports: [
     BadgeComponent,
-    ButtonComponent,
+    CardButtonComponent,
     CardComponent,
     H1Component,
     H2Component,

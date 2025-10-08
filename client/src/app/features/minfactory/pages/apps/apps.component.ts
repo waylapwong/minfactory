@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 
 import { BadgeComponent } from '../../../../shared/components/badge/badge.component';
-import { CardComponent } from '../../../../shared/components/card/card.component';
+import { CardButtonComponent } from '../../../../shared/components/card-button/card-button.component';
 import { H1Component } from '../../../../shared/components/h1/h1.component';
 import { H2Component } from '../../../../shared/components/h2/h2.component';
 import { LogoComponent } from '../../../../shared/components/logo/logo.component';
@@ -9,7 +9,7 @@ import { Color } from '../../../../shared/enums/color.enum';
 
 @Component({
   selector: 'minfactory-apps',
-  imports: [CardComponent, LogoComponent, H1Component, H2Component, BadgeComponent],
+  imports: [BadgeComponent, CardButtonComponent, H1Component, H2Component, LogoComponent],
   templateUrl: './apps.component.html',
   styleUrls: ['./apps.component.scss'],
 })
