@@ -89,7 +89,7 @@ export class MinRPSGameService {
     this.abortTyping();
     for (const message of messages) {
       this.abortController = new AbortController();
-      await this.typeMessage(message);
+      await this.typeMessage(message, this.abortController.signal);
       await this.sleep(MINRPS_SETTINGS.MESSAGE_DELAY);
     }
     this.abortController = undefined;
@@ -133,9 +133,12 @@ export class MinRPSGameService {
     await sleep(ms);
   }
 
-  private async typeMessage(message: string): Promise<void> {
+  private async typeMessage(message: string, signal?: AbortSignal): Promise<void> {
     this.message.set('&nbsp;');
     for (const char of message) {
+      if (signal?.aborted) {
+        throw new DOMException('Aborted', 'AbortError');
+      }
       this.message.update((currentMessage) => currentMessage + char);
       await this.sleep(MINRPS_SETTINGS.TYPE_MESSAGE_SPEED);
     }

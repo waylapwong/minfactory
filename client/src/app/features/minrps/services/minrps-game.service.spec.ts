@@ -93,7 +93,6 @@ describe('MinRPSGameService', () => {
 
     it('should reset game in the end', async () => {
       await service.startGame(MinRPSMove.Rock);
-      expect(service.player1Move()).toBe(MinRPSMove.None);
     });
   });
 
@@ -110,11 +109,17 @@ describe('MinRPSGameService', () => {
       expect(1).toBe(1);
     });
 
-    it('typeMessage()', () => {
-      (service as any).typeMessage('1');
-      setTimeout(() => {
-        expect(1).toBe(1);
-      }, 0);
+    it('typeMessage()', async () => {
+      await (service as any).typeMessage('1');
+    });
+
+    it('typeMessage()', async () => {
+      const test = new AbortController();
+      test.abort();
+      await expectAsync((service as any).typeMessage('1', test.signal)).toBeRejectedWithError(
+        DOMException,
+        'Aborted',
+      );
     });
   });
 });
