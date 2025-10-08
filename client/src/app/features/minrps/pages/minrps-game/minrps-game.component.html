@@ -15,18 +15,20 @@
       </minrps-card>
     </div>
 
-    <!-- OPPONENT MOVES -->
+    <!-- OPPONENT MOVE -->
     <div class="flex w-full flex-row justify-evenly gap-2">
-      @for (villainMove of villainMoves; track $index) {
-        @if (playedVillainMove() === villainMove) {
-          <minrps-card [result]="result()">
-            <img class="h-16 w-16" [alt]="villainMove" [src]="`assets/svg/${villainMove}.svg`" />
-          </minrps-card>
-        } @else {
-          <minrps-card>
-            <img src="assets/svg/uncertainty.svg" alt="?" class="h-16 w-16" />
-          </minrps-card>
-        }
+      @if (playedVillainMove() !== MinRPSMove.None) {
+        <minrps-card [result]="result()">
+          <img
+            class="h-16 w-16"
+            [alt]="playedVillainMove()"
+            [src]="`assets/svg/${playedVillainMove()}.svg`"
+          />
+        </minrps-card>
+      } @else {
+        <minrps-card>
+          <img src="assets/svg/uncertainty.svg" alt="?" class="h-16 w-16" />
+        </minrps-card>
       }
     </div>
   </div>
