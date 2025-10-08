@@ -3,8 +3,10 @@
   <div class="flex basis-1/2 flex-col justify-evenly">
     <!-- MESSAGES -->
     <div class="relative mx-auto w-fit">
-      <div class="rounded-lg border-8 border-double border-black bg-white px-2 py-1 shadow-2xl">
-        <p class="text-sm" [innerHTML]="message()"></p>
+      <div
+        class="rounded-lg border-8 border-double border-black bg-white px-1 py-0.5 text-xs shadow-2xl sm:text-sm md:px-2 md:py-1"
+      >
+        <p [innerHTML]="message()"></p>
       </div>
     </div>
 
