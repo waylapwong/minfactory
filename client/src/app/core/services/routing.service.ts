@@ -18,7 +18,7 @@ export class RoutingService {
     this.router.navigate([AppPath.MinRPS]);
   }
 
-  public navigateToMinRPsGame(): void {
+  public navigateToMinRPSGame(): void {
     this.router.navigate([AppPath.MinRPS, MinRPSPath.Game]);
   }
 }
