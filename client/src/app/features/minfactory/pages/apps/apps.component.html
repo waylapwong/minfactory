@@ -1,14 +1,53 @@
-<!-- TITLE -->
-<min-h1 class="text-center"><min-logo>Apps</min-logo></min-h1>
+<div
+  class="mb-4 flex w-full flex-row items-end justify-around gap-4 border-b-4 border-black text-center"
+>
+  <button
+    class="relative bottom-[-4px] ml-4 basis-1/2 cursor-pointer rounded-t-lg border-4 px-4 font-bold"
+    [class.bg-gray-300]="selectedTab() !== 1"
+    [class.border-b-0]="selectedTab() === 1"
+    [class.bg-gray-100]="selectedTab() === 1"
+    [class.pt-2]="selectedTab() !== 1"
+    [class.pb-2]="selectedTab() !== 1"
+    [class.pt-3]="selectedTab() === 1"
+    [class.pb-3]="selectedTab() === 1"
+    (click)="selectedTab.set(1)"
+  >
+    Apps
+  </button>
+  <button
+    class="relative bottom-[-4px] mr-4 basis-1/2 cursor-pointer rounded-t-lg border-4 px-4 font-bold"
+    [class.bg-gray-300]="selectedTab() !== 2"
+    [class.border-b-0]="selectedTab() === 2"
+    [class.bg-gray-100]="selectedTab() === 2"
+    [class.pt-2]="selectedTab() !== 2"
+    [class.pb-2]="selectedTab() !== 2"
+    [class.pt-3]="selectedTab() === 2"
+    [class.pb-3]="selectedTab() === 2"
+    (click)="selectedTab.set(2)"
+  >
+    Games
+  </button>
+</div>
 
-<!-- APPS -->
-<div class="grid grid-cols-2 gap-2">
-  <!-- MIN_ADVENT -->
-  <min-card-button class="col-span-1" [disabled]="true">
-    <div class="flex flex-row items-start justify-between">
-      <min-h2><min-logo>Advent</min-logo></min-h2>
-      <min-badge [color]="Color.Gray">soon</min-badge>
-    </div>
-    <p class="text-left text-sm text-gray-500">Mini advent calendar.</p>
-  </min-card-button>
+<div class="flex w-full grow flex-row items-start justify-center">
+  @if (selectedTab() === 1) {
+    <!-- MIN_ADVENT -->
+    <min-card-button class="basis-3xs" [disabled]="true">
+      <div class="flex flex-row items-start justify-between">
+        <min-h2><min-logo>Advent</min-logo></min-h2>
+        <min-badge [color]="Color.Gray">soon</min-badge>
+      </div>
+      <p class="text-left text-sm text-gray-500">Mini advent calendar.</p>
+    </min-card-button>
+  }
+  @if (selectedTab() === 2) {
+    <!-- MIN_RPS -->
+    <min-card-button class="basis-3xs" (clicked)="routingService.navigateToMinRPS()">
+      <div class="flex flex-row items-start justify-between">
+        <min-h2><min-logo>RPS</min-logo></min-h2>
+        <min-badge [color]="Color.Yellow">alpha</min-badge>
+      </div>
+      <p class="text-left text-sm text-gray-500">Mini "rock, paper, scissors" game.</p>
+    </min-card-button>
+  }
 </div>

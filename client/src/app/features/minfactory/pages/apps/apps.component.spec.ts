@@ -1,6 +1,7 @@
 import { provideZonelessChangeDetection } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
+import { RoutingServiceMock } from '../../../../core/services/routing.service.mock';
 import { AppsComponent } from './apps.component';
 
 describe('AppsComponent', () => {
@@ -10,7 +11,12 @@ describe('AppsComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [AppsComponent],
-      providers: [provideZonelessChangeDetection()],
+      providers: [provideZonelessChangeDetection(),
+        {
+          provide: 'RoutingService',
+          useValue: RoutingServiceMock
+        }
+      ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(AppsComponent);
