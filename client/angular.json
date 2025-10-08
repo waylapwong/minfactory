@@ -77,8 +77,10 @@
                 "input": "public"
               }
             ],
-            "codeCoverageExclude": ["**/*.routes.ts"],
+            "browsers": "ChromeHeadless",
+            "codeCoverageExclude": ["**/*.mock.ts", "**/*.routes.ts"],
             "inlineStyleLanguage": "scss",
+            "karmaConfig": "karma.conf.js",
             "styles": ["src/styles.scss"],
             "tsConfig": "tsconfig.spec.json"
           }

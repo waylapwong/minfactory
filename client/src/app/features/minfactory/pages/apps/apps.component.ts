@@ -8,10 +8,10 @@ import { LogoComponent } from '../../../../shared/components/logo/logo.component
 import { Color } from '../../../../shared/enums/color.enum';
 
 @Component({
-  selector: 'min-apps',
+  selector: 'minfactory-apps',
   imports: [CardComponent, LogoComponent, H1Component, H2Component, BadgeComponent],
   templateUrl: './apps.component.html',
-  styleUrls: ['./apps.component.scss']
+  styleUrls: ['./apps.component.scss'],
 })
 export class AppsComponent {
   public readonly Color: typeof Color = Color;

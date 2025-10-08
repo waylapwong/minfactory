@@ -10,7 +10,7 @@ describe('H2Component', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [H2Component],
-      providers: [provideZonelessChangeDetection()]
+      providers: [provideZonelessChangeDetection()],
     }).compileComponents();
 
     fixture = TestBed.createComponent(H2Component);

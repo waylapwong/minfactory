@@ -4,6 +4,6 @@ import { Component } from '@angular/core';
   selector: 'min-h1',
   imports: [],
   templateUrl: './h1.component.html',
-  styleUrls: ['./h1.component.scss']
+  styleUrls: ['./h1.component.scss'],
 })
 export class H1Component {}

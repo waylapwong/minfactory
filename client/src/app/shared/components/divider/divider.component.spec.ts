@@ -10,7 +10,7 @@ describe('DividerComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [DividerComponent],
-      providers: [provideZonelessChangeDetection()]
+      providers: [provideZonelessChangeDetection()],
     }).compileComponents();
 
     fixture = TestBed.createComponent(DividerComponent);

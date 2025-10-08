@@ -14,7 +14,7 @@
         "@angular-eslint/component-selector": [
           "error",
           {
-            "prefix": "min",
+            "prefix": ["min", "minfactory", "minrps"],
             "style": "kebab-case",
             "type": "element"
           }
@@ -22,7 +22,7 @@
         "@angular-eslint/directive-selector": [
           "error",
           {
-            "prefix": "min",
+            "prefix": ["min"],
             "style": "camelCase",
             "type": "attribute"
           }
