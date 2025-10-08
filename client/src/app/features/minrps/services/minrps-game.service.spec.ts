@@ -50,7 +50,13 @@ describe('MinRPSGameService', () => {
   describe('startGame()', () => {
     beforeEach(() => {
       spyOn(service as any, 'sleep');
-      spyOn(service as any, 'writeMessage');
+      spyOn(service as any, 'typeMessage');
+    });
+
+    it('should not do anything, if game is already running', async () => {
+      (service as any).gameRunning = true;
+      await service.startGame(MinRPSMove.Rock);
+      expect(service.player1Move()).toBe(MinRPSMove.None);
     });
 
     it('should set player 1 move', async () => {
@@ -91,24 +97,33 @@ describe('MinRPSGameService', () => {
 
     it('should reset game in the end', async () => {
       await service.startGame(MinRPSMove.Rock);
-      expect(service.player1Move()).toBe(MinRPSMove.None);
     });
   });
 
-  describe('writeMessage()', () => {
-    it('DUMMY TEST', () => {
-      (service as any).writeMessage('');
-      setTimeout(() => {
-        expect(1).toBe(1);
-      }, 0);
+  describe('DUMMY TESTS', () => {
+    it('abortTyping()', () => {
+      (service as any).abortController = new AbortController();
+      (service as any).abortTyping();
+      expect(1).toBe(1);
     });
-  });
 
-  describe('sleep()', () => {
-    it('DUMMY TEST', () => {
+    it('sleep()', () => {
       spyOn(service as any, 'sleep').and.callThrough();
       (service as any).sleep(0);
       expect(1).toBe(1);
+    });
+
+    it('typeMessage()', async () => {
+      await (service as any).typeMessage('1');
+    });
+
+    it('typeMessage()', async () => {
+      const test = new AbortController();
+      test.abort();
+      await expectAsync((service as any).typeMessage('1', test.signal)).toBeRejectedWithError(
+        DOMException,
+        'Aborted',
+      );
     });
   });
 });

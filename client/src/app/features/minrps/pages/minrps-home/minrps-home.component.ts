@@ -11,7 +11,7 @@ import { Color } from '../../../../shared/enums/color.enum';
   templateUrl: './minrps-home.component.html',
   styleUrls: ['./minrps-home.component.scss'],
   host: { class: 'flex h-full flex-row items-center justify-evenly gap-2 sm:gap-0' },
-  imports: [CardButtonComponent, H2Component, LogoComponent, ],
+  imports: [CardButtonComponent, H2Component, LogoComponent],
 })
 export class MinRPSHomeComponent {
   public readonly Color = Color;

@@ -10,13 +10,7 @@ import { Color } from '../../../../shared/enums/color.enum';
 
 @Component({
   selector: 'minfactory-play',
-  imports: [
-    BadgeComponent,
-    CardButtonComponent,
-    H1Component,
-    H2Component,
-    LogoComponent,
-  ],
+  imports: [BadgeComponent, CardButtonComponent, H1Component, H2Component, LogoComponent],
   templateUrl: './play.component.html',
   styleUrls: ['./play.component.scss'],
 })

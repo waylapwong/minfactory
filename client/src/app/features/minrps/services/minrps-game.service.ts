@@ -30,6 +30,9 @@ export class MinRPSGameService {
   public player2Move: Signal<MinRPSMove> = computed(() => this.game().player2Move);
   public result: Signal<MinRPSResult> = computed(() => this.game().result);
 
+  private abortController: AbortController | undefined = undefined;
+  private gameRunning: boolean = false;
+
   public setPlayer1Move(move: MinRPSMove): void {
     const newGame = new MinRPSGame({ ...this.game(), player1Move: move });
     this.game.set(newGame);
@@ -46,30 +49,50 @@ export class MinRPSGameService {
   }
 
   public async startGame(move: MinRPSMove): Promise<void> {
-    this.setPlayer1Move(move);
-    const player2Move = this.getRandomMove();
-    const messages = this.getMessages(player2Move);
-    await this.displayMessages(messages);
-    await this.revealPlayer2Move(player2Move);
-    switch (this.game().result) {
-      case MinRPSResult.Player1:
-        this.writeMessage(this.getRandomMessage(MINRPS_FOURTH_MESSAGES_LOSE));
-        break;
-      case MinRPSResult.Player2:
-        this.writeMessage(this.getRandomMessage(MINRPS_FOURTH_MESSAGES_WIN));
-        break;
-      default:
-        this.writeMessage(this.getRandomMessage(MINRPS_FOURTH_MESSAGES_TIE));
-        break;
+    if (this.gameRunning) {
+      return;
     }
-    this.setupNewGame();
+    this.gameRunning = true;
+
+    try {
+      this.setPlayer1Move(move);
+      const player2Move = this.getRandomMove();
+      const messages = this.getMessages(player2Move);
+
+      await this.displayMessages(messages);
+      await this.revealPlayer2Move(player2Move);
+
+      switch (this.game().result) {
+        case MinRPSResult.Player1:
+          await this.typeMessage(this.getRandomMessage(MINRPS_FOURTH_MESSAGES_LOSE));
+          break;
+        case MinRPSResult.Player2:
+          await this.typeMessage(this.getRandomMessage(MINRPS_FOURTH_MESSAGES_WIN));
+          break;
+        default:
+          await this.typeMessage(this.getRandomMessage(MINRPS_FOURTH_MESSAGES_TIE));
+          break;
+      }
+    } finally {
+      this.setupNewGame();
+      this.gameRunning = false;
+    }
+  }
+
+  private abortTyping(): void {
+    if (this.abortController && !this.abortController.signal.aborted) {
+      this.abortController.abort();
+    }
   }
 
   private async displayMessages(messages: string[]): Promise<void> {
+    this.abortTyping();
     for (const message of messages) {
-      this.writeMessage(message);
-      await this.sleep(MINRPS_SETTINGS.MESSAGE_DURATION);
+      this.abortController = new AbortController();
+      await this.typeMessage(message, this.abortController.signal);
+      await this.sleep(MINRPS_SETTINGS.MESSAGE_DELAY);
     }
+    this.abortController = undefined;
   }
 
   private getMessages(move: MinRPSMove): string[] {
@@ -110,15 +133,14 @@ export class MinRPSGameService {
     await sleep(ms);
   }
 
-  private writeMessage(message: string): void {
+  private async typeMessage(message: string, signal?: AbortSignal): Promise<void> {
     this.message.set('&nbsp;');
-    let index: number = 0;
-    const interval: number = setInterval(() => {
-      this.message.update((text: string) => text + message[index]);
-      index++;
-      if (index >= message.length) {
-        clearInterval(interval);
+    for (const char of message) {
+      if (signal?.aborted) {
+        throw new DOMException('Aborted', 'AbortError');
       }
-    }, MINRPS_SETTINGS.TYPE_MESSAGE_SPEED);
+      this.message.update((currentMessage) => currentMessage + char);
+      await this.sleep(MINRPS_SETTINGS.TYPE_MESSAGE_SPEED);
+    }
   }
 }
