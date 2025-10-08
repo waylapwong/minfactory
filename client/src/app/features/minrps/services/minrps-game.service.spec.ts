@@ -1,7 +1,11 @@
 import { provideZonelessChangeDetection } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 
-import { MINRPS_FOURTH_MESSAGES_LOSE, MINRPS_FOURTH_MESSAGES_TIE, MINRPS_FOURTH_MESSAGES_WIN } from '../models/constants/minrps-fourth.message';
+import {
+  MINRPS_FOURTH_MESSAGES_LOSE,
+  MINRPS_FOURTH_MESSAGES_TIE,
+  MINRPS_FOURTH_MESSAGES_WIN,
+} from '../models/constants/minrps-fourth.message';
 import { MinRPSMove } from '../models/enums/minrps-move.enum';
 import { MinRPSGameService } from './minrps-game.service';
 
