@@ -20,7 +20,6 @@ export class MinRPSGameComponent implements OnInit {
   public readonly Color: typeof Color = Color;
   public readonly MinRPSMove: typeof MinRPSMove = MinRPSMove;
   public readonly heroMoves = [MinRPSMove.Rock, MinRPSMove.Paper, MinRPSMove.Scissors];
-  public readonly villainMoves = [MinRPSMove.Scissors, MinRPSMove.Paper, MinRPSMove.Rock];
 
   public selectedHeroMove: WritableSignal<MinRPSMove> = signal(MinRPSMove.None);
   public buttonText = computed(() => {

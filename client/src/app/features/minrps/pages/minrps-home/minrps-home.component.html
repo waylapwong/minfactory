@@ -1,19 +1,11 @@
 <!-- SINGLEPLAYER -->
-<min-card class="basis-3xs text-center">
+<min-card-button class="basis-3xs" (clicked)="routingService.navigateToMinRPsGame()">
   <min-h2>Singleplayer</min-h2>
-  <p class="mb-4 text-gray-500">Play with <min-logo>Bot</min-logo>.</p>
-  <min-button
-    class="mx-auto w-1/2"
-    [color]="Color.Blue"
-    (clicked)="routingService.navigateToMinRPsGame()"
-  >
-    Play
-  </min-button>
-</min-card>
+  <p class="text-gray-500">Play with <min-logo>Robo</min-logo>.</p>
+</min-card-button>
 
 <!-- MULTIPLAYER -->
-<min-card class="basis-3xs text-center">
+<min-card-button class="basis-3xs" [disabled]="true">
   <min-h2>Multiplayer</min-h2>
-  <p class="mb-4 text-gray-500">Play with a friend.</p>
-  <min-button class="mx-auto w-1/2" [color]="Color.Gray" [disabled]="true">Play</min-button>
-</min-card>
+  <p class="text-gray-500">Play with a friend.</p>
+</min-card-button>
