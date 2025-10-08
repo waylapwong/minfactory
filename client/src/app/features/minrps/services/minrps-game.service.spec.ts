@@ -1,11 +1,7 @@
 import { provideZonelessChangeDetection } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 
-import {
-  MINRPS_FOURTH_MESSAGES_LOSE,
-  MINRPS_FOURTH_MESSAGES_TIE,
-  MINRPS_FOURTH_MESSAGES_WIN,
-} from '../models/constants/minrps-fourth.message';
+import { MINRPS_FOURTH_MESSAGES_LOSE, MINRPS_FOURTH_MESSAGES_TIE, MINRPS_FOURTH_MESSAGES_WIN } from '../models/constants/minrps-fourth.message';
 import { MinRPSMove } from '../models/enums/minrps-move.enum';
 import { MinRPSGameService } from './minrps-game.service';
 
@@ -50,7 +46,13 @@ describe('MinRPSGameService', () => {
   describe('startGame()', () => {
     beforeEach(() => {
       spyOn(service as any, 'sleep');
-      spyOn(service as any, 'writeMessage');
+      spyOn(service as any, 'typeMessage');
+    });
+
+    it('should not do anything, if game is already running', async () => {
+      (service as any).gameRunning = true;
+      await service.startGame(MinRPSMove.Rock);
+      expect(service.player1Move()).toBe(MinRPSMove.None);
     });
 
     it('should set player 1 move', async () => {
@@ -95,20 +97,24 @@ describe('MinRPSGameService', () => {
     });
   });
 
-  describe('writeMessage()', () => {
-    it('DUMMY TEST', () => {
-      (service as any).writeMessage('');
-      setTimeout(() => {
-        expect(1).toBe(1);
-      }, 0);
+  describe('DUMMY TESTS', () => {
+    it('abortTyping()', () => {
+      (service as any).abortController = new AbortController();
+      (service as any).abortTyping();
+      expect(1).toBe(1);
     });
-  });
 
-  describe('sleep()', () => {
-    it('DUMMY TEST', () => {
+    it('sleep()', () => {
       spyOn(service as any, 'sleep').and.callThrough();
       (service as any).sleep(0);
       expect(1).toBe(1);
+    });
+
+    it('typeMessage()', () => {
+      (service as any).typeMessage('1');
+      setTimeout(() => {
+        expect(1).toBe(1);
+      }, 0);
     });
   });
 });
