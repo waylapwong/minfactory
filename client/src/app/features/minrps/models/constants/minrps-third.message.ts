@@ -70,7 +70,7 @@ export const MINRPS_THIRD_MESSAGES_ROCK = [
   "I've chosen rock... because it's my emotional support mineral.",
   "I've chosen rock... because I believe in brute force and vibes.",
   "I've chosen rock... the OG of hand gestures.",
-  "I've chosen rock... because I'm feeling stoned… digitally.",
+  "I've chosen rock... because I'm feeling stoned... digitally.",
   "I've chosen rock... because it's unbreakable. Except when it's not.",
   "I've chosen rock... because it matches my poker face.",
   "I've chosen rock... because I'm in my mineral era.",
