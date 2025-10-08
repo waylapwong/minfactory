@@ -2,6 +2,7 @@ import { provideZonelessChangeDetection } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 
+import { AppPath } from '../../../app.routes';
 import { AppName } from '../../../shared/enums/app-name.enum';
 import { ContextServiceMock } from '../../../shared/mocks/context.service.mock';
 import { HeaderComponent } from './header.component';
@@ -46,6 +47,23 @@ describe('HeaderComponent', () => {
     it('should default to logo for minFactory', () => {
       (component as any).contextService.app.set(undefined);
       expect(component.logo()).toBe('Factory');
+    });
+  });
+
+  describe('routerLink()', () => {
+    it('should compute the correct link for minFactory', () => {
+      (component as any).contextService.app.set(AppName.MinFactory);
+      expect(component.routerLink()).toBe(AppPath.Root);
+    });
+
+    it('should compute the correct link for minRPS', () => {
+      (component as any).contextService.app.set(AppName.MinRPS);
+      expect(component.routerLink()).toBe(AppPath.MinRPS);
+    });
+
+    it('should default to link for minFactory', () => {
+      (component as any).contextService.app.set(undefined);
+      expect(component.routerLink()).toBe(AppPath.Root);
     });
   });
 });

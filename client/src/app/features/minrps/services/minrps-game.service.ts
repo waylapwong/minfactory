@@ -1,6 +1,6 @@
 import { Injectable, Signal, WritableSignal, computed, signal } from '@angular/core';
 
-import { delay } from '../../../shared/utils/delay.util';
+import { sleep } from '../../../shared/utils/sleep.util';
 import { MINRPS_FIRST_MESSAGES } from '../models/constants/minrps-first.message';
 import {
   MINRPS_FOURTH_MESSAGES_LOSE,
@@ -23,12 +23,12 @@ import { MINRPS_SETTINGS } from '../settings/minrps.settings';
   providedIn: 'root',
 })
 export class MinRPSGameService {
+  private readonly game: WritableSignal<MinRPSGame> = signal(new MinRPSGame());
+
   public message: WritableSignal<string> = signal(MINRPS_START_MESSAGE);
   public player1Move: Signal<MinRPSMove> = computed(() => this.game().player1Move);
   public player2Move: Signal<MinRPSMove> = computed(() => this.game().player2Move);
   public result: Signal<MinRPSResult> = computed(() => this.game().result);
-
-  private game: WritableSignal<MinRPSGame> = signal(new MinRPSGame());
 
   public setPlayer1Move(move: MinRPSMove): void {
     const newGame = new MinRPSGame({ ...this.game(), player1Move: move });
@@ -68,7 +68,7 @@ export class MinRPSGameService {
   private async displayMessages(messages: string[]): Promise<void> {
     for (const message of messages) {
       this.writeMessage(message);
-      await delay(MINRPS_SETTINGS.MESSAGE_DURATION);
+      await this.sleep(MINRPS_SETTINGS.MESSAGE_DURATION);
     }
   }
 
@@ -103,7 +103,11 @@ export class MinRPSGameService {
 
   private async revealPlayer2Move(move: MinRPSMove): Promise<void> {
     this.setPlayer2Move(move);
-    await delay(MINRPS_SETTINGS.RESULT_DURATION);
+    await this.sleep(MINRPS_SETTINGS.RESULT_DURATION);
+  }
+
+  private async sleep(ms: number): Promise<void> {
+    await sleep(ms);
   }
 
   private writeMessage(message: string): void {

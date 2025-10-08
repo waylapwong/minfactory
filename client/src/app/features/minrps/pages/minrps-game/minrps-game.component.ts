@@ -48,7 +48,7 @@ export class MinRPSGameComponent implements OnInit {
     this.minRPSGameService.setupNewGame();
   }
 
-  public async startGame() {
+  public async startGame(): Promise<void> {
     await this.minRPSGameService.startGame(this.selectedHeroMove());
     this.selectedHeroMove.set(MinRPSMove.None);
   }
