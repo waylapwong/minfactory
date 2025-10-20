@@ -24,4 +24,9 @@ export class MinRPSGameService {
     const entities: MinRPSGameEntity[] = await this.gameRepository.findAll();
     return entities.map((entity: MinRPSGameEntity) => MinRPSGameMapper.fromEntityToDTO(entity));
   }
+
+  public async getByID(id: string): Promise<MinRPSGameResponseDTO> {
+    const entity: MinRPSGameEntity = await this.gameRepository.findById(id);
+    return MinRPSGameMapper.fromEntityToDTO(entity);
+  }
 }
