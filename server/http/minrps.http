@@ -1,6 +1,6 @@
 @baseUrl = http://localhost:3000/minrps
 @gamesEndpoint = /games
-@gameId = 64081365-71d1-4225-ba55-029b102e1a45
+@gameId = a4ce11bb-1d24-4936-a35d-e7d6bb654d4b
 
 ### GET /games
 GET {{baseUrl}}{{gamesEndpoint}}

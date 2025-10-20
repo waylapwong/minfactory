@@ -1,28 +1,15 @@
-import {
-  Body,
-  Controller,
-  Delete,
-  Get,
-  HttpCode,
-  HttpStatus,
-  Param,
-  ParseUUIDPipe,
-  Post,
-} from '@nestjs/common';
-import {
-  ApiBadRequestResponse,
-  ApiCreatedResponse,
-  ApiInternalServerErrorResponse,
-  ApiNoContentResponse,
-  ApiOkResponse,
-  ApiOperation,
-  ApiParam,
-  ApiTags,
-} from '@nestjs/swagger';
+import { Body, Controller, Delete, Get, Param, ParseUUIDPipe, Post } from '@nestjs/common';
+import { ApiInternalServerErrorResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 
 import { MinRPSGameRequestDTO } from '../models/dtos/minrps-game-request';
 import { MinRPSGameResponseDTO } from '../models/dtos/minrps-game-response.dto';
 import { MinRPSGameService } from '../services/minrps-game.service';
+import { BadRequest } from 'src/shared/decorators/bad-request.decorator';
+import { Created } from 'src/shared/decorators/created.decorator';
+import { ID } from 'src/shared/decorators/id.decorator';
+import { InternalServerError } from 'src/shared/decorators/internal-server-error.decorator';
+import { NoContent } from 'src/shared/decorators/no-content.decorator';
+import { OK } from 'src/shared/decorators/ok.decorator';
 import { MinApp } from 'src/shared/enums/minapp.enum';
 
 @Controller('minrps/games')
@@ -31,16 +18,11 @@ export class MinRPSGameController {
   constructor(private readonly minRPSGameService: MinRPSGameService) {}
 
   @Delete(':id')
-  @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({ operationId: 'deleteMinRPSGame' })
-  @ApiParam({
-    name: 'id',
-    description: 'UUID of the game to delete',
-    example: '550e8400-e29b-41d4-a716-446655440000',
-  })
-  @ApiNoContentResponse({ description: 'Deleted' })
-  @ApiBadRequestResponse({ description: 'Bad Request' })
-  @ApiInternalServerErrorResponse({ description: 'Internal Server Error' })
+  @ID()
+  @NoContent()
+  @BadRequest()
+  @InternalServerError()
   public async deleteMinRPSGame(
     @Param('id', new ParseUUIDPipe({ version: '4' })) id: string,
   ): Promise<void> {
@@ -48,9 +30,8 @@ export class MinRPSGameController {
   }
 
   @Get()
-  @HttpCode(HttpStatus.OK)
   @ApiOperation({ operationId: 'getAllMinRPSGames' })
-  @ApiOkResponse({
+  @OK({
     description: 'All minRPS games',
     isArray: true,
     type: MinRPSGameResponseDTO,
@@ -61,11 +42,10 @@ export class MinRPSGameController {
   }
 
   @Post()
-  @HttpCode(HttpStatus.CREATED)
   @ApiOperation({ operationId: 'createMinRPSGame' })
-  @ApiCreatedResponse({ description: 'Created', type: MinRPSGameResponseDTO })
-  @ApiBadRequestResponse({ description: 'Bad Request' })
-  @ApiInternalServerErrorResponse({ description: 'Internal Server Error' })
+  @Created({ description: 'Created', type: MinRPSGameResponseDTO })
+  @BadRequest()
+  @InternalServerError()
   public async createMinRPSGame(@Body() dto: MinRPSGameRequestDTO): Promise<MinRPSGameResponseDTO> {
     return await this.minRPSGameService.createMinRPSGame(dto);
   }
