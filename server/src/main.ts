@@ -1,5 +1,8 @@
-import { NestFactory } from '@nestjs/core';
+import { ClassSerializerInterceptor, ValidationPipe } from '@nestjs/common';
+import { NestFactory, Reflector } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+
+import helmet from 'helmet';
 
 import * as packageJson from '../package.json';
 
@@ -8,6 +11,22 @@ import { MinApp } from './shared/enums/minapp.enum';
 
 async function bootstrap() {
   const application = await NestFactory.create(AppModule);
+
+  // HELMET
+  application.use(helmet());
+
+  // CORS
+  application.enableCors({
+    origin: '*',
+    methods: 'GET,POST,PUT,DELETE,OPTIONS',
+    allowedHeaders: 'Content-Type, Authorization',
+  });
+
+  // REQUEST VALIDATION
+  application.useGlobalPipes(new ValidationPipe({ transform: true, whitelist: true }));
+
+  // RESPONSE SERIALIZATION
+  application.useGlobalInterceptors(new ClassSerializerInterceptor(application.get(Reflector)));
 
   // OPENAPI
   const SWAGGER_CONFIG = new DocumentBuilder()
@@ -20,6 +39,9 @@ async function bootstrap() {
     .build();
   const SWAGGER_DOCUMENT = SwaggerModule.createDocument(application, SWAGGER_CONFIG);
   SwaggerModule.setup('openapi', application, SWAGGER_DOCUMENT);
+
+  // SHUTDOWN HOOK
+  application.enableShutdownHooks();
 
   // PORT
   await application.listen(process.env.PORT ?? 3000);

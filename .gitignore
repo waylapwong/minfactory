@@ -10,6 +10,7 @@ server/coverage
 server/dist
 server/docs
 server/node_modules
+server/.env
 
 # VISUAL STUDIO CODE
 .vscode/*
