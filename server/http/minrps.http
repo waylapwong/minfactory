@@ -1,5 +1,10 @@
 @baseUrl = http://localhost:3000/minrps
 @gamesEndpoint = /games
+@gameId = 64081365-71d1-4225-ba55-029b102e1a45
+
+### GET /games
+GET {{baseUrl}}{{gamesEndpoint}}
+Accept: application/json
 
 ### POST /games
 POST {{baseUrl}}{{gamesEndpoint}}
@@ -9,3 +14,7 @@ Content-Type: application/json
 {
   "name": "Test Game"
 }
+
+### DELETE /games/{id}
+DELETE {{baseUrl}}{{gamesEndpoint}}/{{gameId}}
+Accept: application/json

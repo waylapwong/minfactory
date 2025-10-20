@@ -8,11 +8,20 @@ import { MinRPSGameRepository } from '../repositories/minrps-game.repository';
 
 @Injectable()
 export class MinRPSGameService {
-  constructor(private readonly repository: MinRPSGameRepository) {}
+  constructor(private readonly minRPSGameRepository: MinRPSGameRepository) {}
 
   public async createMinRPSGame(dto: MinRPSGameRequestDTO): Promise<MinRPSGameResponseDTO> {
     const entity: MinRPSGameEntity = MinRPSGameMapper.toEntityFromDTO(dto);
-    const savedEntity: MinRPSGameEntity = await this.repository.save(entity);
+    const savedEntity: MinRPSGameEntity = await this.minRPSGameRepository.save(entity);
     return MinRPSGameMapper.fromEntityToDTO(savedEntity);
+  }
+
+  public async deleteMinRPSGame(id: string): Promise<void> {
+    await this.minRPSGameRepository.deleteById(id);
+  }
+
+  public async getAllMinRPSGames(): Promise<MinRPSGameResponseDTO[]> {
+    const entities: MinRPSGameEntity[] = await this.minRPSGameRepository.findAll();
+    return entities.map((entity: MinRPSGameEntity) => MinRPSGameMapper.fromEntityToDTO(entity));
   }
 }

@@ -7,7 +7,7 @@ import { MinApp } from './shared/enums/minapp.enum';
 @ApiTags(MinApp.MinFactory)
 export class AppController {
   @Get('health')
-  public getHello(): string {
+  public getHealth(): string {
     return 'application up and running!';
   }
 }
