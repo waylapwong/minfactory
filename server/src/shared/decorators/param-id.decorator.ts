@@ -1,7 +1,7 @@
 import { applyDecorators } from '@nestjs/common';
 import { ApiParam } from '@nestjs/swagger';
 
-export function ID() {
+export function API_Param_ID() {
   return applyDecorators(
     ApiParam({
       description: 'UUID of ressource',
