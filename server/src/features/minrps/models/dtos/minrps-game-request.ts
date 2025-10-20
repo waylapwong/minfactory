@@ -1,12 +1,13 @@
 import { ApiProperty } from '@nestjs/swagger';
 
-import { IsDefined, IsString, MaxLength, MinLength } from 'class-validator';
+import { Transform } from 'class-transformer';
+import { IsString, MaxLength, MinLength } from 'class-validator';
 
-export class MinRPSGameRequestDto {
-  @ApiProperty({ required: false, example: 'Jon Doe' })
-  @IsDefined()
+export class MinRPSGameRequestDTO {
+  @ApiProperty({ required: true, description: 'player name', example: 'Jon Doe' })
   @IsString()
   @MaxLength(32)
   @MinLength(2)
+  @Transform(({ value }) => value.trim())
   public name: string;
 }

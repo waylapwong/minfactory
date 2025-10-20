@@ -1,0 +1,11 @@
+@baseUrl = http://localhost:3000/minrps
+@gamesEndpoint = /games
+
+### POST /games
+POST {{baseUrl}}{{gamesEndpoint}}
+Accept: application/json
+Content-Type: application/json
+
+{
+  "name": "Test Game"
+}

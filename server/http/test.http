@@ -1,5 +1,0 @@
-@baseUrl = http://localhost:3000
-
-### GET Hello World from NestJS
-GET {{baseUrl}}
-Accept: application/json

@@ -10,6 +10,7 @@ import { AppModule } from './app.module';
 import { MinApp } from './shared/enums/minapp.enum';
 
 async function bootstrap() {
+  // APPLICATION
   const application = await NestFactory.create(AppModule);
 
   // HELMET
@@ -23,7 +24,16 @@ async function bootstrap() {
   });
 
   // REQUEST VALIDATION
-  application.useGlobalPipes(new ValidationPipe({ transform: true, whitelist: true }));
+  application.useGlobalPipes(
+    new ValidationPipe({
+      transform: true,
+      transformOptions: {
+        enableImplicitConversion: true,
+      },
+      whitelist: true,
+      forbidNonWhitelisted: true,
+    }),
+  );
 
   // RESPONSE SERIALIZATION
   application.useGlobalInterceptors(new ClassSerializerInterceptor(application.get(Reflector)));
