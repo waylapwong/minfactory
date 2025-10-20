@@ -1,0 +1,154 @@
+{
+  "openapi": "3.0.0",
+  "paths": {
+    "/health": {
+      "get": {
+        "operationId": "AppController_getHealth",
+        "parameters": [],
+        "responses": { "200": { "description": "" } },
+        "tags": ["minFactory"]
+      }
+    },
+    "/minrps/health": {
+      "get": {
+        "operationId": "MinRPSController_getHealth",
+        "parameters": [],
+        "responses": { "200": { "description": "" } },
+        "tags": ["minRPS"]
+      }
+    },
+    "/minrps/games/{id}": {
+      "delete": {
+        "operationId": "deleteByID",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "UUID of ressource",
+            "schema": { "example": "550e8400-e29b-41d4-a716-446655440000", "type": "string" }
+          }
+        ],
+        "responses": {
+          "204": { "description": "Deleted" },
+          "400": { "description": "Bad Request" },
+          "500": { "description": "Internal Server Error" }
+        },
+        "summary": "",
+        "tags": ["minRPS"]
+      },
+      "get": {
+        "operationId": "getByID",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "UUID of ressource",
+            "schema": { "example": "550e8400-e29b-41d4-a716-446655440000", "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/MinRPSGameResponseDTO" }
+              }
+            }
+          },
+          "400": { "description": "Not Found" },
+          "500": { "description": "Internal Server Error" }
+        },
+        "summary": "",
+        "tags": ["minRPS"]
+      }
+    },
+    "/minrps/games": {
+      "get": {
+        "operationId": "getAll",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/MinRPSGameResponseDTO" }
+                }
+              }
+            }
+          },
+          "500": { "description": "Internal Server Error" }
+        },
+        "summary": "",
+        "tags": ["minRPS"]
+      },
+      "post": {
+        "operationId": "create",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/MinRPSGameRequestDTO" }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/MinRPSGameResponseDTO" }
+              }
+            }
+          },
+          "400": { "description": "Bad Request" },
+          "500": { "description": "Internal Server Error" }
+        },
+        "summary": "",
+        "tags": ["minRPS"]
+      }
+    }
+  },
+  "info": {
+    "title": "minFactory",
+    "description": "minFactory OpenAPI specification. <br/> <a href=\"http://localhost:3000/openapi-json/\" target=\"_blank\">JSON specification</a>",
+    "version": "v0.0.0",
+    "contact": { "name": "minFactory", "url": "https://minFactory.com", "email": "" }
+  },
+  "tags": [],
+  "servers": [],
+  "components": {
+    "schemas": {
+      "MinRPSGameResponseDTO": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Player name",
+            "example": "Jon Doe",
+            "maxLength": 32,
+            "minLength": 2
+          },
+          "id": {
+            "type": "string",
+            "description": "Unique game identifier (UUID v4)",
+            "example": "550e8400-e29b-41d4-a716-446655440000",
+            "format": "uuid"
+          }
+        },
+        "required": ["name", "id"]
+      },
+      "MinRPSGameRequestDTO": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string", "description": "player name", "example": "Jon Doe" }
+        },
+        "required": ["name"]
+      }
+    }
+  }
+}

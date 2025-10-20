@@ -1,0 +1,16 @@
+.gitignore
+.openapi-generator-ignore
+README.md
+api.module.ts
+api/api.ts
+api/min-factory-api.service.ts
+api/min-rps-api.service.ts
+configuration.ts
+encoder.ts
+git_push.sh
+index.ts
+model/min-rps-game-request-dto.ts
+model/min-rps-game-response-dto.ts
+model/models.ts
+param.ts
+variables.ts
