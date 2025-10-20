@@ -1,5 +1,8 @@
 import { Injectable, Signal, WritableSignal, computed, signal } from '@angular/core';
 
+import { firstValueFrom } from 'rxjs';
+
+import { MinRPSApiService, MinRPSGameResponseDTO } from '../../../core/generated';
 import { sleep } from '../../../shared/utils/sleep.util';
 import { MINRPS_FIRST_MESSAGES } from '../models/constants/minrps-first.message';
 import {
@@ -24,7 +27,9 @@ import { MINRPS_SETTINGS } from '../settings/minrps.settings';
 })
 export class MinRPSGameService {
   private readonly game: WritableSignal<MinRPSGame> = signal(new MinRPSGame());
+  private readonly games: WritableSignal<MinRPSGameResponseDTO[]> = signal([]);
 
+  public gamesList: Signal<MinRPSGameResponseDTO[]> = computed(() => this.games());
   public message: WritableSignal<string> = signal(MINRPS_START_MESSAGE);
   public player1Move: Signal<MinRPSMove> = computed(() => this.game().player1Move);
   public player2Move: Signal<MinRPSMove> = computed(() => this.game().player2Move);
@@ -32,6 +37,13 @@ export class MinRPSGameService {
 
   private abortController: AbortController | undefined = undefined;
   private gameRunning: boolean = false;
+
+  constructor(private readonly minRPSApiService: MinRPSApiService) {}
+
+  public async getAllGames(): Promise<void> {
+    const dtos: MinRPSGameResponseDTO[] = await firstValueFrom(this.minRPSApiService.getAll());
+    this.games.set(dtos);
+  }
 
   public setPlayer1Move(move: MinRPSMove): void {
     const newGame = new MinRPSGame({ ...this.game(), player1Move: move });

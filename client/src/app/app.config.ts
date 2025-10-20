@@ -1,3 +1,4 @@
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import {
   ApplicationConfig,
   importProvidersFrom,
@@ -15,6 +16,7 @@ export const APP_CONFIG: ApplicationConfig = {
     provideBrowserGlobalErrorListeners(),
     provideZonelessChangeDetection(),
     provideRouter(APP_ROUTES),
+    provideHttpClient(withInterceptorsFromDi()),
     importProvidersFrom(ApiModule),
     { provide: BASE_PATH, useValue: ENVIRONMENT.API_BASE_PATH },
   ],

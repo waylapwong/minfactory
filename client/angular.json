@@ -65,14 +65,14 @@
         "serve": {
           "builder": "@angular/build:dev-server",
           "configurations": {
-            "development": {
-              "buildTarget": "client:build:development"
+            "dev": {
+              "buildTarget": "client:build:dev"
             },
-            "production": {
-              "buildTarget": "client:build:production"
+            "prod": {
+              "buildTarget": "client:build:prod"
             }
           },
-          "defaultConfiguration": "development"
+          "defaultConfiguration": "dev"
         },
         "test": {
           "builder": "@angular/build:karma",

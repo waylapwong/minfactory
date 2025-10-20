@@ -1,8 +1,9 @@
 import { Routes } from '@angular/router';
 
 export enum MinRPSPath {
-  Game = 'game',
   Root = '',
+  Game = 'game',
+  Lobby = 'lobby',
 }
 
 export const MINRPS_ROUTES: Routes = [
@@ -15,5 +16,10 @@ export const MINRPS_ROUTES: Routes = [
     path: MinRPSPath.Game,
     loadComponent: () =>
       import('./pages/minrps-game/minrps-game.component').then((m) => m.MinRPSGameComponent),
+  },
+  {
+    path: MinRPSPath.Lobby,
+    loadComponent: () =>
+      import('./pages/minrps-lobby/minrps-lobby.component').then((m) => m.MinRPSLobbyComponent),
   },
 ];
