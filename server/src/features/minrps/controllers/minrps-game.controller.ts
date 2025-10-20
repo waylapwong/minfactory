@@ -15,38 +15,32 @@ import { MinApp } from 'src/shared/enums/minapp.enum';
 @Controller('minrps/games')
 @ApiTags(MinApp.MinRPS)
 export class MinRPSGameController {
-  constructor(private readonly minRPSGameService: MinRPSGameService) {}
+  constructor(private readonly gameService: MinRPSGameService) {}
 
   @Delete(':id')
-  @ApiOperation({ operationId: 'deleteMinRPSGame' })
+  @ApiOperation({ operationId: 'deleteByID' })
   @API_Param_ID()
   @API_204()
   @API_400()
   @API_500()
-  public async deleteMinRPSGame(
-    @Param('id', new ParseUUIDPipe({ version: '4' })) id: string,
-  ): Promise<void> {
-    await this.minRPSGameService.deleteMinRPSGame(id);
+  public async deleteByID(@Param('id', new ParseUUIDPipe()) id: string): Promise<void> {
+    await this.gameService.deleteByID(id);
   }
 
   @Get()
-  @ApiOperation({ operationId: 'getAllMinRPSGames' })
-  @API_200({
-    description: 'All minRPS games',
-    isArray: true,
-    type: MinRPSGameResponseDTO,
-  })
+  @ApiOperation({ operationId: 'getAll' })
+  @API_200({ isArray: true, type: MinRPSGameResponseDTO })
   @API_500()
-  public async getAllMinRPSGames(): Promise<MinRPSGameResponseDTO[]> {
-    return await this.minRPSGameService.getAllMinRPSGames();
+  public async getAll(): Promise<MinRPSGameResponseDTO[]> {
+    return await this.gameService.getAll();
   }
 
   @Post()
-  @ApiOperation({ operationId: 'createMinRPSGame' })
-  @API_201({ description: 'Created', type: MinRPSGameResponseDTO })
+  @ApiOperation({ operationId: 'create' })
+  @API_201({ type: MinRPSGameResponseDTO })
   @API_400()
   @API_500()
-  public async createMinRPSGame(@Body() dto: MinRPSGameRequestDTO): Promise<MinRPSGameResponseDTO> {
-    return await this.minRPSGameService.createMinRPSGame(dto);
+  public async create(@Body() dto: MinRPSGameRequestDTO): Promise<MinRPSGameResponseDTO> {
+    return await this.gameService.create(dto);
   }
 }
