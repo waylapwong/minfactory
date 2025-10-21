@@ -6,6 +6,7 @@ import { MinRPSGameEntity } from '../models/entities/minrps-game.entity';
 export class MinRPSGameMapper {
   public static fromDomainToDTO(domain: MinRPSGame): MinRPSGameResponseDTO {
     const dto: MinRPSGameResponseDTO = new MinRPSGameResponseDTO();
+    dto.createdAt = domain.createdAt;
     dto.id = domain.id;
     dto.name = domain.name;
     return dto;
@@ -18,6 +19,7 @@ export class MinRPSGameMapper {
 
   public static fromEntityToDomain(entity: MinRPSGameEntity): MinRPSGame {
     const domain: MinRPSGame = new MinRPSGame();
+    domain.createdAt = entity.createdAt;
     domain.id = entity.id;
     domain.name = entity.name;
     return domain;
