@@ -22,7 +22,7 @@ export class ButtonComponent {
   public clicked: OutputEmitterRef<void> = output();
   public color: InputSignal<Color> = input<Color>(Color.White);
   public cssClass: Signal<string> = this.getCssClass();
-  public disabled: InputSignal<boolean> = input(false);
+  public isDisabled: InputSignal<boolean> = input(false);
   public type: InputSignal<string> = input('button');
 
   private getCssClass(): Signal<string> {

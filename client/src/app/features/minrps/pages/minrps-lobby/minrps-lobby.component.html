@@ -25,14 +25,11 @@
 >
   <div class="mb-4 flex flex-col">
     <min-input label="Game name" [formControlInput]="gameName" id="game-name-input"></min-input>
-    <min-input
-      label="Player name"
-      [formControlInput]="playerName"
-      id="player-name-input"
-    ></min-input>
   </div>
 
   <div class="flex flex-row justify-end">
-    <min-button [color]="Color.Blue" [disabled]="formGroup.invalid">Create Game</min-button>
+    <min-button [color]="Color.Blue" [isDisabled]="formGroup.invalid" (clicked)="createNewGame()">
+      Create Game
+    </min-button>
   </div>
 </min-dialog>

@@ -40,6 +40,11 @@ export class MinRPSGameService {
 
   constructor(private readonly minRPSApiService: MinRPSApiService) {}
 
+  public async createNewGame(name: string): Promise<void> {
+    await firstValueFrom(this.minRPSApiService.create({ name }));
+    this.getAllGames();
+  }
+
   public async getAllGames(): Promise<void> {
     const dtos: MinRPSGameResponseDTO[] = await firstValueFrom(this.minRPSApiService.getAll());
     this.games.set(dtos);

@@ -41,32 +41,30 @@ export class MinRPSLobbyComponent implements OnInit {
     return this.formGroup.get('gameName') as FormControl;
   }
 
-  public get playerName(): FormControl {
-    return this.formGroup.get('playerName') as FormControl;
-  }
-
   public ngOnInit(): void {
     this.minRPSGameService.getAllGames();
     this.initFormGroup();
   }
 
-  public initFormGroup(): void {
+  public async createNewGame(): Promise<void> {
+    if (this.formGroup.valid) {
+      await this.minRPSGameService.createNewGame(this.gameName.value);
+      this.isNewGameDialogOpen.set(false);
+    }
+  }
+
+  public openNewGameDialog(): void {
+    this.initFormGroup();
+    this.isNewGameDialogOpen.set(true);
+  }
+
+  private initFormGroup(): void {
     this.formGroup = new FormGroup({
       gameName: new FormControl<string>('', [
         Validators.maxLength(32),
         Validators.minLength(2),
         Validators.required,
       ]),
-      playerName: new FormControl<string>('', [
-        Validators.maxLength(32),
-        Validators.minLength(2),
-        Validators.required,
-      ]),
     });
-  }
-
-  public openNewGameDialog(): void {
-    this.initFormGroup();
-    this.isNewGameDialogOpen.set(true);
   }
 }

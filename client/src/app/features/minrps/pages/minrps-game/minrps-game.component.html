@@ -62,7 +62,9 @@
       <min-button
         class="basis-3xs"
         [color]="Color.Blue"
-        [disabled]="selectedHeroMove() === MinRPSMove.None || playedHeroMove() !== MinRPSMove.None"
+        [isDisabled]="
+          selectedHeroMove() === MinRPSMove.None || playedHeroMove() !== MinRPSMove.None
+        "
         (clicked)="startGame()"
       >
         {{ buttonText() }}
