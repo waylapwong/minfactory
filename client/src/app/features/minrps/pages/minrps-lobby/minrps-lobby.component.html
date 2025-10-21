@@ -1,8 +1,8 @@
-<div class="flex flex-row justify-between">
+<div class="mb-4 flex flex-row justify-between">
   <!-- TITLE -->
   <min-h1>Online Games</min-h1>
   <!-- NEW GAME BUTTON -->
-  <min-button [color]="Color.Blue" (clicked)="openNewGameDialog()">+ Create New Game</min-button>
+  <min-button [color]="Color.Blue" (clicked)="openNewGameDialog()">Create Game</min-button>
 </div>
 
 <!-- GAMES LIST -->
@@ -11,14 +11,14 @@
     <min-card-button class="basis-3xs">
       <div class="flex flex-row items-start justify-between">
         <min-h2>{{ game.name }}</min-h2>
-        <min-button [color]="Color.Red" (clicked)="deleteGame(game.id)">✕</min-button>
+        <min-button class="text-xs" [color]="Color.Red" (clicked)="deleteGame(game.id)">
+          ✖
+        </min-button>
       </div>
       <p class="text-left text-sm text-gray-500">
-        {{ game.createdAt | date: 'MMMM d, yyyy' }}
+        created on {{ game.createdAt | date: 'MMMM d, yyyy' }}
       </p>
-      <p class="text-left text-sm text-gray-500">
-        {{ game.createdAt | date: 'hh:mm:ss a' }}
-      </p>
+      <p class="text-left text-sm text-gray-500">at {{ game.createdAt | date: 'hh:mm a' }}</p>
     </min-card-button>
   </div>
 }
