@@ -45,6 +45,11 @@ export class MinRPSGameService {
     this.getAllGames();
   }
 
+  public async deleteGameByID(id: string): Promise<void> {
+    await firstValueFrom(this.minRPSApiService.deleteByID(id));
+    await this.getAllGames();
+  }
+
   public async getAllGames(): Promise<void> {
     const dtos: MinRPSGameResponseDTO[] = await firstValueFrom(this.minRPSApiService.getAll());
     this.games.set(dtos);

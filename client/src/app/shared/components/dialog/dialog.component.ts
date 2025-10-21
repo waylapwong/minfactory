@@ -2,13 +2,13 @@ import { Component, InputSignal, OutputEmitterRef, input, output } from '@angula
 
 import { Color } from '../../enums/color.enum';
 import { ButtonComponent } from '../button/button.component';
-import { H2Component } from '../h2/h2.component';
+import { H1Component } from '../h1/h1.component';
 
 @Component({
   selector: 'min-dialog',
   templateUrl: './dialog.component.html',
   styleUrls: ['./dialog.component.scss'],
-  imports: [ButtonComponent, H2Component],
+  imports: [ButtonComponent, H1Component],
 })
 export class DialogComponent {
   public readonly Color: typeof Color = Color;

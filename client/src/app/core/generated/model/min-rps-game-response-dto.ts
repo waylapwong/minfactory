@@ -13,11 +13,15 @@
 
 export interface MinRPSGameResponseDTO { 
     /**
-     * Player name
+     * Game name
      */
     name: string;
     /**
-     * Unique game identifier (UUID v4)
+     * Timestamp when the game was created (UTC)
+     */
+    createdAt: string;
+    /**
+     * Unique game identifier
      */
     id: string;
 }

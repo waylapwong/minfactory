@@ -128,19 +128,25 @@
         "properties": {
           "name": {
             "type": "string",
-            "description": "Player name",
-            "example": "Jon Doe",
-            "maxLength": 32,
-            "minLength": 2
+            "description": "Game name",
+            "example": "Jon Doe Game",
+            "minLength": 2,
+            "maxLength": 32
+          },
+          "createdAt": {
+            "format": "date-time",
+            "type": "string",
+            "description": "Timestamp when the game was created (UTC)",
+            "example": "2025-10-21T18:45:30.000Z"
           },
           "id": {
             "type": "string",
-            "description": "Unique game identifier (UUID v4)",
+            "description": "Unique game identifier",
             "example": "550e8400-e29b-41d4-a716-446655440000",
             "format": "uuid"
           }
         },
-        "required": ["name", "id"]
+        "required": ["name", "createdAt", "id"]
       },
       "MinRPSGameRequestDTO": {
         "type": "object",

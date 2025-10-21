@@ -8,7 +8,6 @@ import { FormControl, ReactiveFormsModule } from '@angular/forms';
   imports: [ReactiveFormsModule],
 })
 export class InputComponent {
-  public isDisabled: InputSignal<boolean> = input(false);
   public formControlInput: InputSignal<FormControl> = input.required();
   public id: InputSignal<string> = input.required();
   public label: InputSignal<string> = input('');

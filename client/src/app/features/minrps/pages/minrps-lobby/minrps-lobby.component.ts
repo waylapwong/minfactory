@@ -1,3 +1,4 @@
+import { DatePipe } from '@angular/common';
 import { Component, OnInit, Signal, WritableSignal, computed, signal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 
@@ -24,6 +25,7 @@ import { MinRPSGameService } from '../../services/minrps-game.service';
     DialogComponent,
     InputComponent,
     ReactiveFormsModule,
+    DatePipe,
   ],
 })
 export class MinRPSLobbyComponent implements OnInit {
@@ -51,6 +53,10 @@ export class MinRPSLobbyComponent implements OnInit {
       await this.minRPSGameService.createNewGame(this.gameName.value);
       this.isNewGameDialogOpen.set(false);
     }
+  }
+
+  public async deleteGame(id: string): Promise<void> {
+    await this.minRPSGameService.deleteGameByID(id);
   }
 
   public openNewGameDialog(): void {
