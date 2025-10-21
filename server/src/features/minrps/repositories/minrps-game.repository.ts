@@ -18,7 +18,11 @@ export class MinRPSGameRepository {
   }
 
   public async findAll(): Promise<MinRPSGameEntity[]> {
-    return await this.repository.find();
+    return await this.repository.find({
+      order: {
+        createdAt: 'DESC',
+      },
+    });
   }
 
   public async findById(id: string): Promise<MinRPSGameEntity> {
