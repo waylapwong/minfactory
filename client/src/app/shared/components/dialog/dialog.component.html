@@ -1,0 +1,25 @@
+@if (isOpen()) {
+  <!-- BACKDROP -->
+  <div class="fixed inset-0 z-40 flex items-center justify-center bg-black/50 backdrop-blur-xs">
+    <!-- DIALOG -->
+    <div
+      class="relative w-9/10 max-w-md rounded-lg border-4 border-black bg-gray-100 p-4 text-neutral-900 shadow-xl"
+    >
+      <!-- CLOSE BUTTON -->
+      <min-button
+        aria-label="close"
+        class="absolute top-2 right-2"
+        [color]="Color.Red"
+        (clicked)="emitClosed()"
+      >
+        ✕
+      </min-button>
+
+      <!-- TITLE -->
+      <min-h2>{{ title() }}</min-h2>
+
+      <!-- CONTENT -->
+      <ng-content></ng-content>
+    </div>
+  </div>
+}
