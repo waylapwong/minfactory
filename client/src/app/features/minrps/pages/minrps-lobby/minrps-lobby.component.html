@@ -8,17 +8,29 @@
 <!-- GAMES LIST -->
 @for (game of games(); track $index) {
   <div class="flex flex-row justify-center">
-    <min-card-button class="basis-3xs">
+    <min-card-button class="basis-xs sm:basis-md">
       <div class="flex flex-row items-start justify-between">
-        <min-h2>{{ game.name }}</min-h2>
-        <min-button class="text-xs" [color]="Color.Red" (clicked)="deleteGame(game.id)">
-          ✖
+        <min-h2 class="grow text-left break-all">{{ game.name }}</min-h2>
+        <min-button [color]="Color.Red" (clicked)="deleteGame(game.id)">
+          <img src="assets/svg/close.svg" alt="Rock" class="h-4 w-4" />
         </min-button>
       </div>
-      <p class="text-left text-sm text-gray-500">
-        created on {{ game.createdAt | date: 'MMMM d, yyyy' }}
-      </p>
-      <p class="text-left text-sm text-gray-500">at {{ game.createdAt | date: 'hh:mm a' }}</p>
+      <div class="flex flex-row items-end gap-2 text-left text-sm text-gray-500">
+        <img src="assets/svg/player.svg" alt="Rock" class="h-6 w-6" />
+        0/2
+      </div>
+      <div class="flex flex-row items-end gap-2 text-left text-sm text-gray-500">
+        <img src="assets/svg/observer.svg" alt="Rock" class="h-6 w-6" />
+        6
+      </div>
+      <div class="flex flex-row items-end gap-2 text-left text-sm text-gray-500">
+        <img src="assets/svg/calendar.svg" alt="Rock" class="h-6 w-6" />
+        {{ game.createdAt | date: 'MMMM d, yyyy' }}
+      </div>
+      <div class="flex flex-row items-end gap-2 text-left text-sm text-gray-500">
+        <img src="assets/svg/clock.svg" alt="Rock" class="h-6 w-6" />
+        {{ game.createdAt | date: 'hh:mm a' }}
+      </div>
     </min-card-button>
   </div>
 }
