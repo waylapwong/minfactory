@@ -4,7 +4,12 @@ import { MinRPSGameResponseDTO } from '../models/dtos/minrps-game-response.dto';
 import { MinRPSGameEntity } from '../models/entities/minrps-game.entity';
 
 export class MinRPSGameMapper {
-  public static fromDomainToDTO(domain: MinRPSGame): MinRPSGameResponseDTO {
+  public static toDTOFromEntity(entity: MinRPSGameEntity): MinRPSGameResponseDTO {
+    const domain: MinRPSGame = MinRPSGameMapper.toDomainFromEntity(entity);
+    return MinRPSGameMapper.toDTOfromDomain(domain);
+  }
+
+  public static toDTOfromDomain(domain: MinRPSGame): MinRPSGameResponseDTO {
     const dto: MinRPSGameResponseDTO = new MinRPSGameResponseDTO();
     dto.createdAt = domain.createdAt;
     dto.id = domain.id;
@@ -12,22 +17,17 @@ export class MinRPSGameMapper {
     return dto;
   }
 
-  public static fromEntityToDTO(entity: MinRPSGameEntity): MinRPSGameResponseDTO {
-    const domain: MinRPSGame = MinRPSGameMapper.fromEntityToDomain(entity);
-    return MinRPSGameMapper.fromDomainToDTO(domain);
+  public static toDomainFromDTO(dto: MinRPSGameRequestDTO): MinRPSGame {
+    const domain: MinRPSGame = new MinRPSGame();
+    domain.name = dto.name;
+    return domain;
   }
 
-  public static fromEntityToDomain(entity: MinRPSGameEntity): MinRPSGame {
+  public static toDomainFromEntity(entity: MinRPSGameEntity): MinRPSGame {
     const domain: MinRPSGame = new MinRPSGame();
     domain.createdAt = entity.createdAt;
     domain.id = entity.id;
     domain.name = entity.name;
-    return domain;
-  }
-
-  public static toDomainFromDTO(dto: MinRPSGameRequestDTO): MinRPSGame {
-    const domain: MinRPSGame = new MinRPSGame();
-    domain.name = dto.name;
     return domain;
   }
 

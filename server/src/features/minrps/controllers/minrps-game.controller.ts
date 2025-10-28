@@ -8,7 +8,6 @@ import { API_200 } from 'src/shared/decorators/api-200.decorator';
 import { API_201 } from 'src/shared/decorators/api-201.decorator';
 import { API_204 } from 'src/shared/decorators/api-204.decorator';
 import { API_400 } from 'src/shared/decorators/api-400.decorator';
-import { API_404 } from 'src/shared/decorators/api-404.decorator';
 import { API_500 } from 'src/shared/decorators/api-500.decorator';
 import { API_Param_ID } from 'src/shared/decorators/param-id.decorator';
 import { MinApp } from 'src/shared/enums/minapp.enum';
@@ -25,7 +24,7 @@ export class MinRPSGameController {
   @API_400()
   @API_500()
   public async deleteByID(@Param('id', new ParseUUIDPipe()) id: string): Promise<void> {
-    await this.gameService.deleteByID(id);
+    await this.gameService.deleteGame(id);
   }
 
   @Get()
@@ -33,19 +32,7 @@ export class MinRPSGameController {
   @API_200({ isArray: true, type: MinRPSGameResponseDTO })
   @API_500()
   public async getAll(): Promise<MinRPSGameResponseDTO[]> {
-    return await this.gameService.getAll();
-  }
-
-  @Get(':id')
-  @ApiOperation({ operationId: 'getByID' })
-  @API_Param_ID()
-  @API_200({ type: MinRPSGameResponseDTO })
-  @API_404()
-  @API_500()
-  public async getByID(
-    @Param('id', new ParseUUIDPipe()) id: string,
-  ): Promise<MinRPSGameResponseDTO> {
-    return await this.gameService.getByID(id);
+    return await this.gameService.getAllGames();
   }
 
   @Post()
@@ -54,6 +41,6 @@ export class MinRPSGameController {
   @API_400()
   @API_500()
   public async create(@Body() dto: MinRPSGameRequestDTO): Promise<MinRPSGameResponseDTO> {
-    return await this.gameService.create(dto);
+    return await this.gameService.createGame(dto);
   }
 }

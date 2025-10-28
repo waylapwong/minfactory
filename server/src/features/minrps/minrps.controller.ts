@@ -1,13 +1,4 @@
-import { Controller, Get } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
-
-import { MinApp } from 'src/shared/enums/minapp.enum';
+import { Controller } from '@nestjs/common';
 
 @Controller('minrps')
-@ApiTags(MinApp.MinRPS)
-export class MinRPSController {
-  @Get('health')
-  public getHealth(): string {
-    return 'minRPS up and running!';
-  }
-}
+export class MinRPSController {}

@@ -6,7 +6,7 @@ import { IsString, MaxLength, MinLength } from 'class-validator';
 export class MinRPSGameRequestDTO {
   @ApiProperty({ required: true, description: 'player name', example: 'Jon Doe' })
   @IsString()
-  @MaxLength(32)
+  @MaxLength(16)
   @MinLength(2)
   @Transform(({ value }) => value.trim())
   public name: string;

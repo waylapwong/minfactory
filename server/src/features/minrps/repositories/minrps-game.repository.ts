@@ -25,19 +25,19 @@ export class MinRPSGameRepository {
     });
   }
 
-  public async findById(id: string): Promise<MinRPSGameEntity> {
-    const entity: MinRPSGameEntity | null = await this.repository.findOne({ where: { id } });
-    if (!entity) {
-      throw new NotFoundException(`minRPS game with ID ${id} not found`);
-    }
-    return entity;
-  }
-
   public async save(entity: MinRPSGameEntity): Promise<MinRPSGameEntity> {
     const clone: MinRPSGameEntity = structuredClone(entity);
     if (!clone.id) {
       clone.id = randomUUID();
     }
     return await this.repository.save(clone);
+  }
+
+  private async findById(id: string): Promise<MinRPSGameEntity> {
+    const entity: MinRPSGameEntity | null = await this.repository.findOne({ where: { id } });
+    if (!entity) {
+      throw new NotFoundException(`minRPS game with ID ${id} not found`);
+    }
+    return entity;
   }
 }
