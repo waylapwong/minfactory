@@ -3,6 +3,7 @@ import { Component, OnInit, Signal, WritableSignal, computed, signal } from '@an
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 
 import { MinRPSGameResponseDTO } from '../../../../core/generated';
+import { RoutingService } from '../../../../core/services/routing.service';
 import { ButtonComponent } from '../../../../shared/components/button/button.component';
 import { CardButtonComponent } from '../../../../shared/components/card-button/card-button.component';
 import { DialogComponent } from '../../../../shared/components/dialog/dialog.component';
@@ -37,7 +38,10 @@ export class MinRPSLobbyComponent implements OnInit {
   );
   public isNewGameDialogOpen: WritableSignal<boolean> = signal(false);
 
-  constructor(private readonly minRPSGameService: MinRPSGameService) {}
+  constructor(
+    public readonly routingService: RoutingService,
+    private readonly minRPSGameService: MinRPSGameService,
+  ) {}
 
   public get gameName(): FormControl {
     return this.formGroup.get('gameName') as FormControl;
@@ -57,6 +61,10 @@ export class MinRPSLobbyComponent implements OnInit {
 
   public async deleteGame(id: string): Promise<void> {
     await this.minRPSGameService.deleteGameByID(id);
+  }
+
+  public navigateToMinRPSMultiplayer(id: string): void {
+    this.routingService.navigateToMinRPSMultiplayer(id);
   }
 
   public openNewGameDialog(): void {

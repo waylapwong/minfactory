@@ -4,6 +4,7 @@ export enum MinRPSPath {
   Root = '',
   Game = 'game',
   Lobby = 'lobby',
+  Multiplayer = 'multiplayer',
 }
 
 export const MINRPS_ROUTES: Routes = [
@@ -21,5 +22,12 @@ export const MINRPS_ROUTES: Routes = [
     path: MinRPSPath.Lobby,
     loadComponent: () =>
       import('./pages/minrps-lobby/minrps-lobby.component').then((m) => m.MinRPSLobbyComponent),
+  },
+  {
+    path: `${MinRPSPath.Multiplayer}/:id`,
+    loadComponent: () =>
+      import('./pages/minrps-multiplayer/minrps-multiplayer.component').then(
+        (m) => m.MinRPSMultiplayerComponent,
+      ),
   },
 ];
