@@ -17,34 +17,32 @@ import {
   MINRPS_THIRD_MESSAGES_ROCK,
   MINRPS_THIRD_MESSAGES_SCISSORS,
 } from '../models/constants/minrps-third.message';
-import { MinRPSGame } from '../models/domain/minrps-game';
-import { MinRPSMove } from '../models/enums/minrps-move.enum';
-import { MinRPSResult } from '../models/enums/minrps-result.enum';
+import { MinRpsGame } from '../models/domain/minrps-game';
+import { MinRpsMove } from '../models/enums/minrps-move.enum';
+import { MinRpsResult } from '../models/enums/minrps-result.enum';
 import { MINRPS_SETTINGS } from '../settings/minrps.settings';
 
 @Injectable({
   providedIn: 'root',
 })
-export class MinRPSGameService {
-  private readonly game: WritableSignal<MinRPSGame> = signal(new MinRPSGame());
+export class MinRpsGameService {
+  private readonly game: WritableSignal<MinRpsGame> = signal(new MinRpsGame());
   private readonly games: WritableSignal<MinRpsGameResponseDto[]> = signal([]);
 
   public gamesList: Signal<MinRpsGameResponseDto[]> = computed(() => this.games());
   public message: WritableSignal<string> = signal(MINRPS_START_MESSAGE);
-  public player1Move: Signal<MinRPSMove> = computed(() => this.game().player1Move);
-  public player2Move: Signal<MinRPSMove> = computed(() => this.game().player2Move);
-  public result: Signal<MinRPSResult> = computed(() => this.game().result);
+  public player1Move: Signal<MinRpsMove> = computed(() => this.game().player1Move);
+  public player2Move: Signal<MinRpsMove> = computed(() => this.game().player2Move);
+  public result: Signal<MinRpsResult> = computed(() => this.game().result);
 
   private abortController: AbortController | undefined = undefined;
   private gameRunning: boolean = false;
 
-  constructor(private readonly minRPSGameApiService: MinRPSGameApiService) {}
+  constructor(private readonly gameApiService: MinRPSGameApiService) {}
 
   public async checkGameById(id: string): Promise<boolean> {
     try {
-      const dto: MinRpsGameResponseDto = await firstValueFrom(
-        this.minRPSGameApiService.getById(id),
-      );
+      const dto: MinRpsGameResponseDto = await firstValueFrom(this.gameApiService.getById(id));
       console.log(dto);
       return !!dto;
     } catch (error: unknown) {
@@ -54,36 +52,36 @@ export class MinRPSGameService {
   }
 
   public async createNewGame(name: string): Promise<void> {
-    await firstValueFrom(this.minRPSGameApiService.create({ name }));
+    await firstValueFrom(this.gameApiService.create({ name }));
     this.getAllGames();
   }
 
   public async deleteGameById(id: string): Promise<void> {
-    await firstValueFrom(this.minRPSGameApiService.deleteById(id));
+    await firstValueFrom(this.gameApiService.deleteById(id));
     await this.getAllGames();
   }
 
   public async getAllGames(): Promise<void> {
-    const dtos: MinRpsGameResponseDto[] = await firstValueFrom(this.minRPSGameApiService.getAll());
+    const dtos: MinRpsGameResponseDto[] = await firstValueFrom(this.gameApiService.getAll());
     this.games.set(dtos);
   }
 
-  public setPlayer1Move(move: MinRPSMove): void {
-    const newGame = new MinRPSGame({ ...this.game(), player1Move: move });
+  public setPlayer1Move(move: MinRpsMove): void {
+    const newGame = new MinRpsGame({ ...this.game(), player1Move: move });
     this.game.set(newGame);
   }
 
-  public setPlayer2Move(move: MinRPSMove): void {
-    const newGame = new MinRPSGame({ ...this.game(), player2Move: move });
+  public setPlayer2Move(move: MinRpsMove): void {
+    const newGame = new MinRpsGame({ ...this.game(), player2Move: move });
     this.game.set(newGame);
   }
 
   public setupNewGame(): void {
-    const newGame: MinRPSGame = new MinRPSGame();
+    const newGame: MinRpsGame = new MinRpsGame();
     this.game.set(newGame);
   }
 
-  public async startGame(move: MinRPSMove): Promise<void> {
+  public async startGame(move: MinRpsMove): Promise<void> {
     if (this.gameRunning) {
       return;
     }
@@ -98,10 +96,10 @@ export class MinRPSGameService {
       await this.revealPlayer2Move(player2Move);
 
       switch (this.game().result) {
-        case MinRPSResult.Player1:
+        case MinRpsResult.Player1:
           await this.typeMessage(this.getRandomMessage(MINRPS_FOURTH_MESSAGES_LOSE));
           break;
-        case MinRPSResult.Player2:
+        case MinRpsResult.Player2:
           await this.typeMessage(this.getRandomMessage(MINRPS_FOURTH_MESSAGES_WIN));
           break;
         default:
@@ -130,19 +128,19 @@ export class MinRPSGameService {
     this.abortController = undefined;
   }
 
-  private getMessages(move: MinRPSMove): string[] {
+  private getMessages(move: MinRpsMove): string[] {
     const firstMessage = this.getRandomMessage(MINRPS_FIRST_MESSAGES);
     const secondMessage = this.getRandomMessage(MINRPS_SECOND_MESSAGES);
 
     let thirdMessage = '';
     switch (move) {
-      case MinRPSMove.Rock:
+      case MinRpsMove.Rock:
         thirdMessage = this.getRandomMessage(MINRPS_THIRD_MESSAGES_ROCK);
         break;
-      case MinRPSMove.Paper:
+      case MinRpsMove.Paper:
         thirdMessage = this.getRandomMessage(MINRPS_THIRD_MESSAGES_PAPER);
         break;
-      case MinRPSMove.Scissors:
+      case MinRpsMove.Scissors:
         thirdMessage = this.getRandomMessage(MINRPS_THIRD_MESSAGES_SCISSORS);
         break;
     }
@@ -154,12 +152,12 @@ export class MinRPSGameService {
     return messages[Math.floor(Math.random() * messages.length)];
   }
 
-  private getRandomMove(): MinRPSMove {
-    const moves: MinRPSMove[] = [MinRPSMove.Rock, MinRPSMove.Paper, MinRPSMove.Scissors];
+  private getRandomMove(): MinRpsMove {
+    const moves: MinRpsMove[] = [MinRpsMove.Rock, MinRpsMove.Paper, MinRpsMove.Scissors];
     return moves[Math.floor(Math.random() * moves.length)];
   }
 
-  private async revealPlayer2Move(move: MinRPSMove): Promise<void> {
+  private async revealPlayer2Move(move: MinRpsMove): Promise<void> {
     this.setPlayer2Move(move);
     await this.sleep(MINRPS_SETTINGS.RESULT_DURATION);
   }

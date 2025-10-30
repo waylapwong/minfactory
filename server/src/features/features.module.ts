@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common';
 
-import { MinRPSModule } from './minrps/minrps.module';
+import { MinRpsModule } from './minrps/minrps.module';
 
 @Module({
-  imports: [MinRPSModule],
-  exports: [MinRPSModule]
+  imports: [MinRpsModule],
+  exports: [MinRpsModule],
 })
 export class FeaturesModule {}

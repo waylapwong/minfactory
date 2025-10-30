@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 
 import { MinRpsGameService } from './minrps-game.service';
 
-describe('MinRPSGameService', () => {
+describe('MinRpsGameService', () => {
   let service: MinRpsGameService;
 
   beforeEach(async () => {

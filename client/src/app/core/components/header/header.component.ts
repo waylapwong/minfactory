@@ -23,7 +23,7 @@ export class HeaderComponent {
     switch (this.contextService.app()) {
       case AppName.MinFactory:
         return 'Factory';
-      case AppName.MinRPS:
+      case AppName.MinRps:
         return 'RPS';
       default:
         return 'Factory';
@@ -33,8 +33,8 @@ export class HeaderComponent {
     switch (this.contextService.app()) {
       case AppName.MinFactory:
         return AppPath.Root;
-      case AppName.MinRPS:
-        return AppPath.MinRPS;
+      case AppName.MinRps:
+        return AppPath.MinRps;
       default:
         return AppPath.Root;
     }

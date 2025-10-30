@@ -19,7 +19,7 @@
 
     <!-- OPPONENT MOVE -->
     <div class="flex w-full flex-row justify-evenly gap-2">
-      @if (playedVillainMove() !== MinRPSMove.None) {
+      @if (playedVillainMove() !== MinRpsMove.None) {
         <minrps-card [result]="result()">
           <img
             class="h-16 w-16"
@@ -46,7 +46,7 @@
     <div class="flex w-full flex-row justify-evenly gap-2">
       @for (heroMove of heroMoves; track $index) {
         <minrps-move
-          [isDisabled]="playedHeroMove() !== MinRPSMove.None && playedHeroMove() !== heroMove"
+          [isDisabled]="playedHeroMove() !== MinRpsMove.None && playedHeroMove() !== heroMove"
           [isPlayed]="playedHeroMove() === heroMove"
           [isSelected]="selectedHeroMove() === heroMove"
           [result]="result()"
@@ -63,7 +63,7 @@
         class="basis-3xs"
         [color]="Color.Blue"
         [isDisabled]="
-          selectedHeroMove() === MinRPSMove.None || playedHeroMove() !== MinRPSMove.None
+          selectedHeroMove() === MinRpsMove.None || playedHeroMove() !== MinRpsMove.None
         "
         (clicked)="startGame()"
       >

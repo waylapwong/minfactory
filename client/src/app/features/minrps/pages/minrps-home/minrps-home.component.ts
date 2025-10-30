@@ -13,7 +13,7 @@ import { Color } from '../../../../shared/enums/color.enum';
   host: { class: 'flex h-full flex-row items-center justify-evenly gap-2 sm:gap-0' },
   imports: [CardButtonComponent, H2Component, LogoComponent],
 })
-export class MinRPSHomeComponent {
+export class MinRpsHomeComponent {
   public readonly Color: typeof Color = Color;
 
   constructor(public readonly routingService: RoutingService) {}

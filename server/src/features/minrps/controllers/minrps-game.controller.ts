@@ -1,7 +1,7 @@
 import { Body, Controller, Delete, Get, Param, ParseUUIDPipe, Post } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 
-import { MinRPSGameRequestDto } from '../models/dtos/minrps-game-request';
+import { MinRpsGameRequestDto } from '../models/dtos/minrps-game-request';
 import { MinRpsGameResponseDto } from '../models/dtos/minrps-game-response.dto';
 import { MinRpsGameService } from '../services/minrps-game.service';
 import { API_200 } from 'src/shared/decorators/api-200.decorator';
@@ -41,7 +41,7 @@ export class MinRpsGameController {
   @API_400()
   @API_500()
   @Post()
-  public async create(@Body() dto: MinRPSGameRequestDto): Promise<MinRpsGameResponseDto> {
+  public async create(@Body() dto: MinRpsGameRequestDto): Promise<MinRpsGameResponseDto> {
     return await this.gameService.createGame(dto);
   }
 

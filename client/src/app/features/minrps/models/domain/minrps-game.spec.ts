@@ -1,56 +1,56 @@
-import { MinRPSMove } from '../enums/minrps-move.enum';
-import { MinRPSResult } from '../enums/minrps-result.enum';
-import { MinRPSGame } from './minrps-game';
+import { MinRpsMove } from '../enums/minrps-move.enum';
+import { MinRpsResult } from '../enums/minrps-result.enum';
+import { MinRpsGame } from './minrps-game';
 
 describe('result()', () => {
   it('should return "none", if player 1 has no move', () => {
-    const game = new MinRPSGame({ player1Move: MinRPSMove.None, player2Move: MinRPSMove.Rock });
-    expect(game.result).toBe(MinRPSResult.None);
+    const game = new MinRpsGame({ player1Move: MinRpsMove.None, player2Move: MinRpsMove.Rock });
+    expect(game.result).toBe(MinRpsResult.None);
   });
 
   it('should return "none", if player 2 has no move', () => {
-    const game = new MinRPSGame({ player1Move: MinRPSMove.Rock, player2Move: MinRPSMove.None });
-    expect(game.result).toBe(MinRPSResult.None);
+    const game = new MinRpsGame({ player1Move: MinRpsMove.Rock, player2Move: MinRpsMove.None });
+    expect(game.result).toBe(MinRpsResult.None);
   });
 
   it('should return "draw", if both players have same moves', () => {
-    const game = new MinRPSGame({ player1Move: MinRPSMove.Rock, player2Move: MinRPSMove.Rock });
-    expect(game.result).toBe(MinRPSResult.Draw);
+    const game = new MinRpsGame({ player1Move: MinRpsMove.Rock, player2Move: MinRpsMove.Rock });
+    expect(game.result).toBe(MinRpsResult.Draw);
   });
 
   it('should return "player1", if player 1 rock & player 2 scissors', () => {
-    const game = new MinRPSGame({ player1Move: MinRPSMove.Rock, player2Move: MinRPSMove.Scissors });
-    expect(game.result).toBe(MinRPSResult.Player1);
+    const game = new MinRpsGame({ player1Move: MinRpsMove.Rock, player2Move: MinRpsMove.Scissors });
+    expect(game.result).toBe(MinRpsResult.Player1);
   });
 
   it('should return "player1", if player 1 scissors & player 2 paper', () => {
-    const game = new MinRPSGame({
-      player1Move: MinRPSMove.Scissors,
-      player2Move: MinRPSMove.Paper,
+    const game = new MinRpsGame({
+      player1Move: MinRpsMove.Scissors,
+      player2Move: MinRpsMove.Paper,
     });
-    expect(game.result).toBe(MinRPSResult.Player1);
+    expect(game.result).toBe(MinRpsResult.Player1);
   });
 
   it('should return "player1", if player 1 paper & player 2 rock', () => {
-    const game = new MinRPSGame({ player1Move: MinRPSMove.Paper, player2Move: MinRPSMove.Rock });
-    expect(game.result).toBe(MinRPSResult.Player1);
+    const game = new MinRpsGame({ player1Move: MinRpsMove.Paper, player2Move: MinRpsMove.Rock });
+    expect(game.result).toBe(MinRpsResult.Player1);
   });
 
   it('should return "player2", if player 1 scissors & player 2 rock', () => {
-    const game = new MinRPSGame({ player1Move: MinRPSMove.Scissors, player2Move: MinRPSMove.Rock });
-    expect(game.result).toBe(MinRPSResult.Player2);
+    const game = new MinRpsGame({ player1Move: MinRpsMove.Scissors, player2Move: MinRpsMove.Rock });
+    expect(game.result).toBe(MinRpsResult.Player2);
   });
 
   it('should return "player2", if player 1 rock & player 2 paper', () => {
-    const game = new MinRPSGame({ player1Move: MinRPSMove.Rock, player2Move: MinRPSMove.Paper });
-    expect(game.result).toBe(MinRPSResult.Player2);
+    const game = new MinRpsGame({ player1Move: MinRpsMove.Rock, player2Move: MinRpsMove.Paper });
+    expect(game.result).toBe(MinRpsResult.Player2);
   });
 
   it('should return "player2", if player 1 paper & player 2 scissors', () => {
-    const game = new MinRPSGame({
-      player1Move: MinRPSMove.Paper,
-      player2Move: MinRPSMove.Scissors,
+    const game = new MinRpsGame({
+      player1Move: MinRpsMove.Paper,
+      player2Move: MinRpsMove.Scissors,
     });
-    expect(game.result).toBe(MinRPSResult.Player2);
+    expect(game.result).toBe(MinRpsResult.Player2);
   });
 });

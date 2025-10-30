@@ -1,27 +1,28 @@
 import { provideZonelessChangeDetection } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { MinRPSMove } from '../../models/enums/minrps-move.enum';
-import { MinRPSGameServiceMock } from '../../services/minrps-game.service.mock';
-import { MinRPSGameComponent } from './minrps-game.component';
+import { MinRpsMove } from '../../models/enums/minrps-move.enum';
+import { MinRpsGameServiceMock } from '../../services/minrps-game.service.mock';
+import { MinRpsGameComponent } from './minrps-game.component';
+import { MinRpsGameService } from '../../services/minrps-game.service';
 
-describe('MinRPSGameComponent', () => {
-  let component: MinRPSGameComponent;
-  let fixture: ComponentFixture<MinRPSGameComponent>;
+describe('MinRpsGameComponent', () => {
+  let component: MinRpsGameComponent;
+  let fixture: ComponentFixture<MinRpsGameComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [MinRPSGameComponent],
+      imports: [MinRpsGameComponent],
       providers: [
         provideZonelessChangeDetection(),
         {
-          provide: 'MinRPSGameService',
-          useValue: MinRPSGameServiceMock,
+          provide: MinRpsGameService,
+          useValue: MinRpsGameServiceMock,
         },
       ],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(MinRPSGameComponent);
+    fixture = TestBed.createComponent(MinRpsGameComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
@@ -32,22 +33,22 @@ describe('MinRPSGameComponent', () => {
 
   describe('buttonText()', () => {
     it('should return "choose-move", if no move is selected', () => {
-      component.selectedHeroMove.set(MinRPSMove.None);
+      component.selectedHeroMove.set(MinRpsMove.None);
       expect(component.buttonText()).toBe('choose move');
     });
 
     it('should return "play rock!", if a move is selected', () => {
-      component.selectedHeroMove.set(MinRPSMove.Rock);
+      component.selectedHeroMove.set(MinRpsMove.Rock);
       expect(component.buttonText()).toBe('play rock!');
     });
 
     it('should return "play paper!", if a move is selected', () => {
-      component.selectedHeroMove.set(MinRPSMove.Paper);
+      component.selectedHeroMove.set(MinRpsMove.Paper);
       expect(component.buttonText()).toBe('play paper!');
     });
 
     it('should return "play scissors!", if a move is selected', () => {
-      component.selectedHeroMove.set(MinRPSMove.Scissors);
+      component.selectedHeroMove.set(MinRpsMove.Scissors);
       expect(component.buttonText()).toBe('play scissors!');
     });
   });
@@ -68,10 +69,10 @@ describe('MinRPSGameComponent', () => {
     });
 
     it('should reset selected move', async () => {
-      component.selectedHeroMove.set(MinRPSMove.Rock);
+      component.selectedHeroMove.set(MinRpsMove.Rock);
       spyOn((component as any).minRPSGameService, 'startGame').and.resolveTo();
       await component.startGame();
-      expect(component.selectedHeroMove()).toBe(MinRPSMove.None);
+      expect(component.selectedHeroMove()).toBe(MinRpsMove.None);
     });
   });
 });

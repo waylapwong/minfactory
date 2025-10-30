@@ -11,7 +11,7 @@ import { H1Component } from '../../../../shared/components/h1/h1.component';
 import { H2Component } from '../../../../shared/components/h2/h2.component';
 import { InputComponent } from '../../../../shared/components/input/input.component';
 import { Color } from '../../../../shared/enums/color.enum';
-import { MinRPSGameService } from '../../services/minrps-game.service';
+import { MinRpsGameService } from '../../services/minrps-game.service';
 
 @Component({
   selector: 'min-minrps-lobby',
@@ -29,7 +29,7 @@ import { MinRPSGameService } from '../../services/minrps-game.service';
     DatePipe,
   ],
 })
-export class MinRPSLobbyComponent implements OnInit {
+export class MinRpsLobbyComponent implements OnInit {
   public readonly Color = Color;
 
   public formGroup!: FormGroup;
@@ -40,7 +40,7 @@ export class MinRPSLobbyComponent implements OnInit {
 
   constructor(
     public readonly routingService: RoutingService,
-    private readonly minRPSGameService: MinRPSGameService,
+    private readonly minRPSGameService: MinRpsGameService,
   ) {}
 
   public get gameName(): FormControl {
@@ -63,8 +63,8 @@ export class MinRPSLobbyComponent implements OnInit {
     await this.minRPSGameService.deleteGameById(id);
   }
 
-  public navigateToMinRPSMultiplayer(id: string): void {
-    this.routingService.navigateToMinRPSMultiplayer(id);
+  public navigateToMinRpsMultiplayer(id: string): void {
+    this.routingService.navigateToMinRpsMultiplayer(id);
   }
 
   public openNewGameDialog(): void {

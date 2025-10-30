@@ -1,6 +1,6 @@
 import { Component, InputSignal, OutputEmitterRef, input, output } from '@angular/core';
 
-import { MinRPSResult } from '../../models/enums/minrps-result.enum';
+import { MinRpsResult } from '../../models/enums/minrps-result.enum';
 
 @Component({
   selector: 'minrps-move',
@@ -8,12 +8,12 @@ import { MinRPSResult } from '../../models/enums/minrps-result.enum';
   styleUrls: ['./minrps-move.component.scss'],
   imports: [],
 })
-export class MinRPSMoveComponent {
-  public readonly MinRPSGameResult: typeof MinRPSResult = MinRPSResult;
+export class MinRpsMoveComponent {
+  public readonly MinRpsResult: typeof MinRpsResult = MinRpsResult;
 
-  public selected: OutputEmitterRef<void> = output();
   public isDisabled: InputSignal<boolean> = input(false);
   public isPlayed: InputSignal<boolean> = input(false);
   public isSelected: InputSignal<boolean> = input(false);
-  public result: InputSignal<MinRPSResult> = input(MinRPSResult.None) as any;
+  public result: InputSignal<MinRpsResult> = input(MinRpsResult.None) as any;
+  public selected: OutputEmitterRef<void> = output();
 }

@@ -1,16 +1,16 @@
 import { Test, TestingModule } from '@nestjs/testing';
 
-import { MinRPSController } from './minrps.controller';
+import { MinRpsController } from './minrps.controller';
 
-describe('MinRPSController', () => {
-  let controller: MinRPSController;
+describe('MinRpsController', () => {
+  let controller: MinRpsController;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      controllers: [MinRPSController],
+      controllers: [MinRpsController],
     }).compile();
 
-    controller = module.get<MinRPSController>(MinRPSController);
+    controller = module.get<MinRpsController>(MinRpsController);
   });
 
   it('should be defined', () => {

@@ -1,35 +1,35 @@
-import { MinRPSMove } from '../enums/minrps-move.enum';
-import { MinRPSResult } from '../enums/minrps-result.enum';
+import { MinRpsMove } from '../enums/minrps-move.enum';
+import { MinRpsResult } from '../enums/minrps-result.enum';
 
-export class MinRPSGame {
+export class MinRpsGame {
   public static readonly MAX_PLAYERS: number = 2;
   public static readonly MIN_PLAYERS: number = 2;
   public static readonly PLAYER_1_ID: string = '1';
   public static readonly PLAYER_2_ID: string = '2';
 
-  public player1Move: MinRPSMove = MinRPSMove.None;
-  public player2Move: MinRPSMove = MinRPSMove.None;
+  public player1Move: MinRpsMove = MinRpsMove.None;
+  public player2Move: MinRpsMove = MinRpsMove.None;
 
-  constructor(partial?: Partial<MinRPSGame>) {
+  constructor(partial?: Partial<MinRpsGame>) {
     Object.assign(this, partial);
   }
 
-  public get result(): MinRPSResult {
-    if (this.player1Move === MinRPSMove.None || this.player2Move === MinRPSMove.None) {
-      return MinRPSResult.None;
+  public get result(): MinRpsResult {
+    if (this.player1Move === MinRpsMove.None || this.player2Move === MinRpsMove.None) {
+      return MinRpsResult.None;
     }
 
     if (this.player1Move === this.player2Move) {
-      return MinRPSResult.Draw;
+      return MinRpsResult.Draw;
     }
     const player1Wins =
-      (this.player1Move === MinRPSMove.Rock && this.player2Move === MinRPSMove.Scissors) ||
-      (this.player1Move === MinRPSMove.Paper && this.player2Move === MinRPSMove.Rock) ||
-      (this.player1Move === MinRPSMove.Scissors && this.player2Move === MinRPSMove.Paper);
+      (this.player1Move === MinRpsMove.Rock && this.player2Move === MinRpsMove.Scissors) ||
+      (this.player1Move === MinRpsMove.Paper && this.player2Move === MinRpsMove.Rock) ||
+      (this.player1Move === MinRpsMove.Scissors && this.player2Move === MinRpsMove.Paper);
     if (player1Wins) {
-      return MinRPSResult.Player1;
+      return MinRpsResult.Player1;
     } else {
-      return MinRPSResult.Player2;
+      return MinRpsResult.Player2;
     }
   }
 }

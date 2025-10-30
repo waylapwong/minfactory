@@ -40,7 +40,7 @@ describe('HeaderComponent', () => {
     });
 
     it('should compute the correct logo for minRPS', () => {
-      (component as any).contextService.app.set(AppName.MinRPS);
+      (component as any).contextService.app.set(AppName.MinRps);
       expect(component.logo()).toBe('RPS');
     });
 
@@ -57,8 +57,8 @@ describe('HeaderComponent', () => {
     });
 
     it('should compute the correct link for minRPS', () => {
-      (component as any).contextService.app.set(AppName.MinRPS);
-      expect(component.routerLink()).toBe(AppPath.MinRPS);
+      (component as any).contextService.app.set(AppName.MinRps);
+      expect(component.routerLink()).toBe(AppPath.MinRps);
     });
 
     it('should default to link for minFactory', () => {

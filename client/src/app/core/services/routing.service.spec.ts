@@ -3,7 +3,7 @@ import { TestBed } from '@angular/core/testing';
 import { Router } from '@angular/router';
 
 import { AppPath } from '../../app.routes';
-import { MinRPSPath } from '../../features/minrps/minrps.routes';
+import { MinRpsPath } from '../../features/minrps/minrps.routes';
 import { RoutingService } from './routing.service';
 
 describe('RoutingService', () => {
@@ -36,19 +36,19 @@ describe('RoutingService', () => {
     });
   });
 
-  describe('navigateToMinRPS()', () => {
+  describe('navigateToMinRps()', () => {
     it('should navigate to minRPS', () => {
       const spy = spyOn((service as any).router, 'navigate');
-      service.navigateToMinRPS();
-      expect(spy).toHaveBeenCalledWith([AppPath.MinRPS]);
+      service.navigateToMinRps();
+      expect(spy).toHaveBeenCalledWith([AppPath.MinRps]);
     });
   });
 
-  describe('navigateToMinRPsGame()', () => {
+  describe('navigateToMinRpsGame()', () => {
     it('should navigate to minRPS game', () => {
       const spy = spyOn((service as any).router, 'navigate');
-      service.navigateToMinRPSGame();
-      expect(spy).toHaveBeenCalledWith([AppPath.MinRPS, MinRPSPath.Game]);
+      service.navigateToMinRpsGame();
+      expect(spy).toHaveBeenCalledWith([AppPath.MinRps, MinRpsPath.Game]);
     });
   });
 });

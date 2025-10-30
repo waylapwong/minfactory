@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 
 import { MinRpsGameController } from './minrps-game.controller';
 
-describe('MinRPSGameController', () => {
+describe('MinRpsGameController', () => {
   let controller: MinRpsGameController;
 
   beforeEach(async () => {

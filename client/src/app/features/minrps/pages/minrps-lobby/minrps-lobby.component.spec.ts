@@ -1,19 +1,19 @@
 import { provideZonelessChangeDetection } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { MinRPSLobbyComponent } from './minrps-lobby.component';
+import { MinRpsLobbyComponent } from './minrps-lobby.component';
 
-describe('MinRPSLobbyComponent', () => {
-  let component: MinRPSLobbyComponent;
-  let fixture: ComponentFixture<MinRPSLobbyComponent>;
+describe('MinRpsLobbyComponent', () => {
+  let component: MinRpsLobbyComponent;
+  let fixture: ComponentFixture<MinRpsLobbyComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [MinRPSLobbyComponent],
+      imports: [MinRpsLobbyComponent],
       providers: [provideZonelessChangeDetection()],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(MinRPSLobbyComponent);
+    fixture = TestBed.createComponent(MinRpsLobbyComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

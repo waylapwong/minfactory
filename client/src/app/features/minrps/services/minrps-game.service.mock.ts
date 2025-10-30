@@ -1,4 +1,4 @@
-export const MinRPSGameServiceMock = {
+export const MinRpsGameServiceMock = {
   setupNewGame: () => {},
   startGame: async () => {},
 };

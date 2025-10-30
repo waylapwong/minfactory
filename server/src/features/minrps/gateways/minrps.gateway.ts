@@ -16,7 +16,7 @@ import { MinRpsNamespace } from '../models/enums/minrps-namespace.enum';
   cors: { origin: '*' },
   namespace: MinRpsNamespace.MinRps,
 })
-export class MinRPSGateway implements OnGatewayConnection, OnGatewayDisconnect {
+export class MinRpsGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer()
   public server: Server;
 

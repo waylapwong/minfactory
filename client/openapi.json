@@ -78,7 +78,7 @@
           "required": true,
           "content": {
             "application/json": {
-              "schema": { "$ref": "#/components/schemas/MinRPSGameRequestDto" }
+              "schema": { "$ref": "#/components/schemas/MinRpsGameRequestDto" }
             }
           }
         },
@@ -134,7 +134,7 @@
         },
         "required": ["name", "createdAt", "id"]
       },
-      "MinRPSGameRequestDto": {
+      "MinRpsGameRequestDto": {
         "type": "object",
         "properties": {
           "name": { "type": "string", "description": "player name", "example": "Jon Doe" }

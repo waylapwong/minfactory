@@ -1,4 +1,4 @@
-export enum MinRPSMove {
+export enum MinRpsMove {
   None = 'none',
   Rock = 'rock',
   Paper = 'paper',

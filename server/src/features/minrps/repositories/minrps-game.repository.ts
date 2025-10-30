@@ -7,7 +7,7 @@ import { Repository } from 'typeorm';
 import { MinRpsGameEntity } from '../models/entities/minrps-game.entity';
 
 @Injectable()
-export class MinRPSGameRepository {
+export class MinRpsGameRepository {
   constructor(
     @InjectRepository(MinRpsGameEntity) private readonly repository: Repository<MinRpsGameEntity>,
   ) {}

@@ -19,7 +19,7 @@ import { CustomHttpParameterCodec }                          from '../encoder';
 import { Observable }                                        from 'rxjs';
 
 // @ts-ignore
-import { MinRPSGameRequestDto } from '../model/min-rps-game-request-dto';
+import { MinRpsGameRequestDto } from '../model/min-rps-game-request-dto';
 // @ts-ignore
 import { MinRpsGameResponseDto } from '../model/min-rps-game-response-dto';
 
@@ -95,16 +95,16 @@ export class MinRPSGameApiService {
 
     /**
      * 
-     * @param minRPSGameRequestDto 
+     * @param minRpsGameRequestDto 
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public create(minRPSGameRequestDto: MinRPSGameRequestDto, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<MinRpsGameResponseDto>;
-    public create(minRPSGameRequestDto: MinRPSGameRequestDto, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpResponse<MinRpsGameResponseDto>>;
-    public create(minRPSGameRequestDto: MinRPSGameRequestDto, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpEvent<MinRpsGameResponseDto>>;
-    public create(minRPSGameRequestDto: MinRPSGameRequestDto, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<any> {
-        if (minRPSGameRequestDto === null || minRPSGameRequestDto === undefined) {
-            throw new Error('Required parameter minRPSGameRequestDto was null or undefined when calling create.');
+    public create(minRpsGameRequestDto: MinRpsGameRequestDto, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<MinRpsGameResponseDto>;
+    public create(minRpsGameRequestDto: MinRpsGameRequestDto, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpResponse<MinRpsGameResponseDto>>;
+    public create(minRpsGameRequestDto: MinRpsGameRequestDto, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpEvent<MinRpsGameResponseDto>>;
+    public create(minRpsGameRequestDto: MinRpsGameRequestDto, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<any> {
+        if (minRpsGameRequestDto === null || minRpsGameRequestDto === undefined) {
+            throw new Error('Required parameter minRpsGameRequestDto was null or undefined when calling create.');
         }
 
         let localVarHeaders = this.defaultHeaders;
@@ -151,7 +151,7 @@ export class MinRPSGameApiService {
         return this.httpClient.request<MinRpsGameResponseDto>('post', `${this.configuration.basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
-                body: minRPSGameRequestDto,
+                body: minRpsGameRequestDto,
                 responseType: <any>responseType_,
                 withCredentials: this.configuration.withCredentials,
                 headers: localVarHeaders,
