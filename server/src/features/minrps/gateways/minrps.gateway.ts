@@ -3,7 +3,6 @@ import {
   MessageBody,
   OnGatewayConnection,
   OnGatewayDisconnect,
-  OnGatewayInit,
   SubscribeMessage,
   WebSocketGateway,
   WebSocketServer,
@@ -17,7 +16,7 @@ import { MinRPSNamespace } from '../models/enums/minrps-namespace.enum';
   cors: { origin: '*' },
   namespace: MinRPSNamespace.MinRPS,
 })
-export class MinRPSGateway implements OnGatewayConnection, OnGatewayDisconnect, OnGatewayInit {
+export class MinRPSGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer()
   public server: Server;
 
@@ -26,15 +25,11 @@ export class MinRPSGateway implements OnGatewayConnection, OnGatewayDisconnect, 
     this.server.emit('events', data);
   }
 
-  public afterInit(server: any) {
-    console.log('Socket is live');
+  public handleConnection(client: Socket) {
+    console.log(`Player connected: ${client.id}`);
   }
 
-  public handleConnection(client: any, ...args: any[]) {
-    console.log('User connected');
-  }
-
-  public handleDisconnect(client: any) {
-    console.log('User disconnected');
+  public handleDisconnect(client: Socket) {
+    console.log(`Player disconnected: ${client.id}`);
   }
 }
