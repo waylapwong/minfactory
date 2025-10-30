@@ -1,16 +1,16 @@
 import { Test, TestingModule } from '@nestjs/testing';
 
-import { MinRPSGameService } from './minrps-game.service';
+import { MinRpsGameService } from './minrps-game.service';
 
 describe('MinRPSGameService', () => {
-  let service: MinRPSGameService;
+  let service: MinRpsGameService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [MinRPSGameService],
+      providers: [MinRpsGameService],
     }).compile();
 
-    service = module.get<MinRPSGameService>(MinRPSGameService);
+    service = module.get<MinRpsGameService>(MinRpsGameService);
   });
 
   it('should be defined', () => {

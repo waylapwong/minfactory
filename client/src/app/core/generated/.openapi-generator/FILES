@@ -4,7 +4,7 @@ README.md
 api.module.ts
 api/api.ts
 api/min-factory-api.service.ts
-api/min-rps-api.service.ts
+api/min-rps-game-api.service.ts
 configuration.ts
 encoder.ts
 git_push.sh

@@ -11,7 +11,7 @@
  */
 
 
-export interface MinRPSGameRequestDTO { 
+export interface MinRPSGameRequestDto { 
     /**
      * player name
      */

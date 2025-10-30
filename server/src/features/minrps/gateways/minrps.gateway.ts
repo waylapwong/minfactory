@@ -10,11 +10,11 @@ import {
 
 import { Server, Socket } from 'socket.io';
 
-import { MinRPSNamespace } from '../models/enums/minrps-namespace.enum';
+import { MinRpsNamespace } from '../models/enums/minrps-namespace.enum';
 
 @WebSocketGateway({
   cors: { origin: '*' },
-  namespace: MinRPSNamespace.MinRPS,
+  namespace: MinRpsNamespace.MinRps,
 })
 export class MinRPSGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer()

@@ -1,4 +1,4 @@
-export class MinRPSGame {
+export class MinRpsGame {
   public static readonly MAX_PLAYERS: number = 2;
   public static readonly MIN_PLAYERS: number = 2;
   public static readonly PLAYER_1_ID: string = '1';

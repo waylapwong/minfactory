@@ -11,7 +11,7 @@
  */
 
 
-export interface MinRPSGameResponseDTO { 
+export interface MinRpsGameResponseDto { 
     /**
      * Game name
      */

@@ -2,7 +2,7 @@ import { DatePipe } from '@angular/common';
 import { Component, OnInit, Signal, WritableSignal, computed, signal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 
-import { MinRPSGameResponseDTO } from '../../../../core/generated';
+import { MinRpsGameResponseDto } from '../../../../core/generated';
 import { RoutingService } from '../../../../core/services/routing.service';
 import { ButtonComponent } from '../../../../shared/components/button/button.component';
 import { CardButtonComponent } from '../../../../shared/components/card-button/card-button.component';
@@ -33,7 +33,7 @@ export class MinRPSLobbyComponent implements OnInit {
   public readonly Color = Color;
 
   public formGroup!: FormGroup;
-  public games: Signal<MinRPSGameResponseDTO[]> = computed(() =>
+  public games: Signal<MinRpsGameResponseDto[]> = computed(() =>
     this.minRPSGameService.gamesList(),
   );
   public isNewGameDialogOpen: WritableSignal<boolean> = signal(false);
@@ -60,7 +60,7 @@ export class MinRPSLobbyComponent implements OnInit {
   }
 
   public async deleteGame(id: string): Promise<void> {
-    await this.minRPSGameService.deleteGameByID(id);
+    await this.minRPSGameService.deleteGameById(id);
   }
 
   public navigateToMinRPSMultiplayer(id: string): void {

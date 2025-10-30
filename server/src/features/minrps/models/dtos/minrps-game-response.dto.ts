@@ -3,7 +3,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import { IsDate, IsString, IsUUID } from 'class-validator';
 
-export class MinRPSGameResponseDTO {
+export class MinRpsGameResponseDto {
   @ApiProperty({
     description: 'Game name',
     example: 'Jon Doe Game',

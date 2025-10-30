@@ -11,11 +11,12 @@ describe('AppsComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [AppsComponent],
-      providers: [provideZonelessChangeDetection(),
+      providers: [
+        provideZonelessChangeDetection(),
         {
           provide: 'RoutingService',
-          useValue: RoutingServiceMock
-        }
+          useValue: RoutingServiceMock,
+        },
       ],
     }).compileComponents();
 

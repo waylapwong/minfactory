@@ -14,7 +14,7 @@ import { Color } from '../../../../shared/enums/color.enum';
   imports: [CardButtonComponent, H2Component, LogoComponent],
 })
 export class MinRPSHomeComponent {
-  public readonly Color = Color;
+  public readonly Color: typeof Color = Color;
 
   constructor(public readonly routingService: RoutingService) {}
 }
