@@ -1,3 +1,3 @@
 export enum MinRpsNamespace {
-  MinRps = 'minRPS',
+  MinRps = 'minrps',
 }

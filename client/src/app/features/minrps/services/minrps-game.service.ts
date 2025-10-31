@@ -43,7 +43,6 @@ export class MinRpsGameService {
   public async checkGameById(id: string): Promise<boolean> {
     try {
       const dto: MinRpsGameResponseDto = await firstValueFrom(this.gameApiService.getById(id));
-      console.log(dto);
       return !!dto;
     } catch (error: unknown) {
       console.error(error);
