@@ -1,6 +1,5 @@
-import { Test, TestingModule } from '@nestjs/testing';
-
 import { MinRpsController } from './minrps.controller';
+import { Test, TestingModule } from '@nestjs/testing';
 
 describe('MinRpsController', () => {
   let controller: MinRpsController;

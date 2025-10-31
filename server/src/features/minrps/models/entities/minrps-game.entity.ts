@@ -1,4 +1,4 @@
-import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, PrimaryColumn } from 'typeorm';
 
 @Entity({ name: 'minrps_games' })
 export class MinRpsGameEntity {
@@ -8,11 +8,11 @@ export class MinRpsGameEntity {
     type: 'varchar',
   })
   public name: string;
-  @CreateDateColumn({
-    default: () => 'CURRENT_TIMESTAMP',
+  @Column({
     type: 'datetime',
+    nullable: false,
   })
   public createdAt: Date;
-  @PrimaryGeneratedColumn('uuid')
+  @PrimaryColumn('uuid')
   public id: string;
 }

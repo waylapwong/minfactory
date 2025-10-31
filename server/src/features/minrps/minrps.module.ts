@@ -1,12 +1,11 @@
-import { Module } from '@nestjs/common';
-import { TypeOrmModule } from '@nestjs/typeorm';
-
 import { MinRpsGameController } from './controllers/minrps-game.controller';
 import { MinRpsGateway } from './gateways/minrps.gateway';
 import { MinRpsController } from './minrps.controller';
 import { MinRpsGameEntity } from './models/entities/minrps-game.entity';
 import { MinRpsGameRepository } from './repositories/minrps-game.repository';
 import { MinRpsGameService } from './services/minrps-game.service';
+import { Module } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
 
 @Module({
   imports: [TypeOrmModule.forFeature([MinRpsGameEntity])],

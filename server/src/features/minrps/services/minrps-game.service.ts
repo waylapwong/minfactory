@@ -1,10 +1,9 @@
-import { Injectable } from '@nestjs/common';
-
 import { MinRpsGameMapper } from '../mapper/minrps-game.mapper';
 import { MinRpsGameRequestDto } from '../models/dtos/minrps-game-request';
 import { MinRpsGameResponseDto } from '../models/dtos/minrps-game-response.dto';
 import { MinRpsGameEntity } from '../models/entities/minrps-game.entity';
 import { MinRpsGameRepository } from '../repositories/minrps-game.repository';
+import { Injectable } from '@nestjs/common';
 
 @Injectable()
 export class MinRpsGameService {

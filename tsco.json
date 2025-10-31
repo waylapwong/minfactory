@@ -180,7 +180,7 @@
   },
   "imports": {
     "expand": "never",
-    "groupImportsBySource": true,
+    "groupImportsBySource": false,
     "quote": "single",
     "removeUnusedImports": true,
     "separateImportGroups": true,

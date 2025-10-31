@@ -5,16 +5,14 @@ import { MinRpsGameEntity } from '../models/entities/minrps-game.entity';
 
 export class MinRpsGameMapper {
   public static toDomainFromDto(dto: MinRpsGameRequestDto): MinRpsGame {
-    const domain: MinRpsGame = new MinRpsGame();
-    domain.name = dto.name;
+    const domain: MinRpsGame = new MinRpsGame(dto.name);
     return domain;
   }
 
   public static toDomainFromEntity(entity: MinRpsGameEntity): MinRpsGame {
-    const domain: MinRpsGame = new MinRpsGame();
+    const domain: MinRpsGame = new MinRpsGame(entity.name);
     domain.createdAt = entity.createdAt;
     domain.id = entity.id;
-    domain.name = entity.name;
     return domain;
   }
 

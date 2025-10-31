@@ -1,9 +1,8 @@
-import { Body, Controller, Delete, Get, Param, ParseUUIDPipe, Post } from '@nestjs/common';
-import { ApiOperation, ApiTags } from '@nestjs/swagger';
-
 import { MinRpsGameRequestDto } from '../models/dtos/minrps-game-request';
 import { MinRpsGameResponseDto } from '../models/dtos/minrps-game-response.dto';
 import { MinRpsGameService } from '../services/minrps-game.service';
+import { Body, Controller, Delete, Get, Param, ParseUUIDPipe, Post } from '@nestjs/common';
+import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { API_200 } from 'src/shared/decorators/api-200.decorator';
 import { API_201 } from 'src/shared/decorators/api-201.decorator';
 import { API_204 } from 'src/shared/decorators/api-204.decorator';
