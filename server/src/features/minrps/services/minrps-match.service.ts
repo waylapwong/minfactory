@@ -3,30 +3,32 @@ import { MinRpsGameMapper } from '../mapper/minrps-game.mapper';
 import { MinRpsGame } from '../models/domain/minrps-game';
 import { MinRpsGameEntity } from '../models/entities/minrps-game.entity';
 import { MinRpsGameRepository } from '../repositories/minrps-game.repository';
+import { MatchRepository } from '../repositories/minrps-match.repository';
 
 @Injectable()
 export class MinRpsMatchService {
-  public readonly matches = new Map<string, MinRpsGame>();
+  constructor(
+    private readonly gameRepository: MinRpsGameRepository,
+    private readonly matchRepository: MatchRepository,
+  ) {}
 
-  constructor(private readonly gameRepository: MinRpsGameRepository) {}
-
-  public async addObserverToMatch(playerId: string, matchId: string): Promise<void> {
+  public async addObserver(playerId: string, matchId: string): Promise<void> {
     const gameEntity: MinRpsGameEntity = await this.gameRepository.findById(matchId);
-    const match: MinRpsGame | undefined = this.findById(matchId);
+    const match: MinRpsGame | undefined = this.getMatch(matchId);
     if (match) {
       match.addObserver(playerId);
     } else {
       const newMatch: MinRpsGame = MinRpsGameMapper.toDomainFromEntity(gameEntity);
       newMatch.addObserver(playerId);
-      this.saveById(matchId, newMatch);
+      this.saveMatch(matchId, newMatch);
     }
   }
 
-  private findById(id: string): MinRpsGame | undefined {
-    return this.matches.get(id);
+  private getMatch(id: string): MinRpsGame | undefined {
+    return this.matchRepository.findById(id);
   }
 
-  private saveById(id: string, match: MinRpsGame): void {
-    this.matches.set(id, match);
+  private saveMatch(id: string, match: MinRpsGame): void {
+    this.matchRepository.save(id, match);
   }
 }

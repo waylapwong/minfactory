@@ -32,7 +32,8 @@ export class MinRpsGateway implements OnGatewayConnection, OnGatewayDisconnect {
     @MessageBody() joinEvent: MinRpsJoinEvent,
   ) {
     console.log(`${MinRpsEvent.Join} event received`, joinEvent);
-    this.sendJoinedEvent(joinEvent.playerId);
+    this.joinRoom(joinEvent.matchId, client);
+    this.sendJoinedEvent(joinEvent.playerId, joinEvent.matchId);
   }
 
   public handleConnection(client: Socket): void {
@@ -43,6 +44,11 @@ export class MinRpsGateway implements OnGatewayConnection, OnGatewayDisconnect {
   public handleDisconnect(client: Socket): void {
     console.log(`Player disconnected: ${client.id}`);
     this.sendDisconnectedEvent(client.id);
+  }
+
+  private joinRoom(room: string, client: Socket): void {
+    client.join(room);
+    console.log(`Client ${client.id} joined room ${room}`);
   }
 
   private sendConnectedEvent(client: Socket): void {
@@ -57,9 +63,9 @@ export class MinRpsGateway implements OnGatewayConnection, OnGatewayDisconnect {
     this.server.emit(MinRpsEvent.Disconnected, disconnectedEvent);
   }
 
-  private sendJoinedEvent(playerId: string): void {
+  private sendJoinedEvent(playerId: string, room: string): void {
     const joinedEvent: MinRpsJoinedEvent = { playerId };
     console.log(`${MinRpsEvent.Joined} event sent`, joinedEvent);
-    this.server.emit(MinRpsEvent.Joined, joinedEvent);
+    this.server.to(room).emit(MinRpsEvent.Joined, joinedEvent);
   }
 }

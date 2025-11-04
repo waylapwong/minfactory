@@ -4,6 +4,7 @@ import { Subscription } from 'rxjs';
 import { RoutingService } from '../../../../core/services/routing.service';
 import { MinRpsEvent } from '../../models/enums/minrps-event.enum';
 import { MinRpsConnectedEvent } from '../../models/events/minrps-connected.event';
+import { MinRpsDisconnectedEvent } from '../../models/events/minrps-disconnected.event';
 import { MinRpsJoinEvent } from '../../models/events/minrps-join.event';
 import { MinRpsJoinedEvent } from '../../models/events/minrps-joined.event';
 import { MinRpsGameService } from '../../services/minrps-game.service';
@@ -35,12 +36,13 @@ export class MinRpsMultiplayerComponent implements OnInit, OnDestroy {
   }
 
   public ngOnDestroy(): void {
-    this.unsubscribeFromEvents();
+    this.subscription.unsubscribe();
     this.socketService.disconnect();
   }
 
   protected subscribeToAllEvents(): void {
     this.subscribeToConnectedEvent();
+    this.subscribeToDisonnectedEvent();
     this.subscribeToJoinedEvent();
   }
 
@@ -74,6 +76,16 @@ export class MinRpsMultiplayerComponent implements OnInit, OnDestroy {
     );
   }
 
+  private subscribeToDisonnectedEvent(): void {
+    this.subscription.add(
+      this.socketService
+        .fromEvent(MinRpsEvent.Disconnected)
+        .subscribe((disconnectedEvent: MinRpsDisconnectedEvent) => {
+          console.log(`${MinRpsEvent.Connected} event received`, disconnectedEvent);
+        }),
+    );
+  }
+
   private subscribeToJoinedEvent(): void {
     this.subscription.add(
       this.socketService
@@ -82,9 +94,5 @@ export class MinRpsMultiplayerComponent implements OnInit, OnDestroy {
           console.log(`${MinRpsEvent.Joined} event received`, joinedEvent);
         }),
     );
-  }
-
-  private unsubscribeFromEvents(): void {
-    this.subscription.unsubscribe();
   }
 }
