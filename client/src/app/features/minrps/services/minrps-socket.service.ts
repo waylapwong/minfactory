@@ -1,5 +1,4 @@
 import { ApplicationRef, Injectable } from '@angular/core';
-
 import { Socket, SocketIoConfig } from 'ngx-socket-io';
 
 @Injectable({
@@ -8,6 +7,9 @@ import { Socket, SocketIoConfig } from 'ngx-socket-io';
 export class MinRpsSocketService extends Socket {
   constructor(appRef: ApplicationRef) {
     super(MINRPS_SOCKET_CONFIG, appRef);
+  }
+
+  public emitJoin(gameId: string, playerId: string, move: 'rock' | 'paper' | 'scissors') {
   }
 }
 

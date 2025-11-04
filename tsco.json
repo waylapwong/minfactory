@@ -180,10 +180,10 @@
   },
   "imports": {
     "expand": "never",
-    "groupImportsBySource": false,
+    "groupImportsBySource": true,
     "quote": "single",
     "removeUnusedImports": true,
-    "separateImportGroups": true,
+    "separateImportGroups": false,
     "sortImportsByName": true,
     "sortImportsBySource": true
   },

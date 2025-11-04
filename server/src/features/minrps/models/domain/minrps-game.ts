@@ -1,7 +1,7 @@
+import { randomUUID } from 'crypto';
 import { MinRpsResult } from '../enums/minrps-game-result.enum';
 import { MinRpsMove } from '../enums/minrps-move.enum';
 import { MinRpsPlayer } from './minrps-player';
-import { randomUUID } from 'crypto';
 import { GameRuleException } from 'src/shared/exceptions/game-rule.exception';
 
 export class MinRpsGame {
@@ -14,6 +14,7 @@ export class MinRpsGame {
   public createdAt: Date;
   public id: string;
   public name: string;
+  public observers: string[] = [];
   public player1?: MinRpsPlayer;
   public player2?: MinRpsPlayer;
   public result?: MinRpsResult;
@@ -22,6 +23,10 @@ export class MinRpsGame {
     this.createdAt = new Date();
     this.id = randomUUID();
     this.name = name;
+  }
+
+  public addObserver(playerId: string): void {
+    this.observers.push(playerId);
   }
 
   public determineResult(): void {
