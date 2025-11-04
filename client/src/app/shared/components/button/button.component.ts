@@ -19,7 +19,7 @@ import { Color } from '../../enums/color.enum';
 export class ButtonComponent {
   public readonly Color = Color;
 
-  public clicked: OutputEmitterRef<void> = output();
+  public clicked: OutputEmitterRef<MouseEvent> = output();
   public color: InputSignal<Color> = input<Color>(Color.White);
   public cssClass: Signal<string> = this.getCssClass();
   public isDisabled: InputSignal<boolean> = input(false);

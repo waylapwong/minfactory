@@ -11,7 +11,7 @@
     <min-card-button class="basis-xs sm:basis-md" (clicked)="navigateToMinRpsMultiplayer(game.id)">
       <div class="flex flex-row items-start justify-between">
         <min-h2 class="grow text-left break-all">{{ game.name }}</min-h2>
-        <min-button [color]="Color.Red" (clicked)="deleteGame(game.id)">
+        <min-button [color]="Color.Red" (clicked)="deleteGame(game.id, $event)">
           <img src="assets/svg/close.svg" alt="Rock" class="h-4 w-4" />
         </min-button>
       </div>

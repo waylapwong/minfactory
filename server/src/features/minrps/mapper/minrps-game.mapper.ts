@@ -13,6 +13,7 @@ export class MinRpsGameMapper {
     const domain: MinRpsGame = new MinRpsGame(entity.name);
     domain.createdAt = entity.createdAt;
     domain.id = entity.id;
+    domain.name = entity.name;
     return domain;
   }
 
@@ -31,6 +32,7 @@ export class MinRpsGameMapper {
 
   public static toEntityFromDomain(domain: MinRpsGame): MinRpsGameEntity {
     const entity: MinRpsGameEntity = new MinRpsGameEntity();
+    entity.createdAt = domain.createdAt;
     entity.id = domain.id;
     entity.name = domain.name;
     return entity;

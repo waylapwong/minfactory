@@ -1,4 +1,4 @@
-import { Column, Entity, PrimaryColumn } from 'typeorm';
+import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity({ name: 'minrps_games' })
 export class MinRpsGameEntity {
@@ -13,6 +13,6 @@ export class MinRpsGameEntity {
     nullable: false,
   })
   public createdAt: Date;
-  @PrimaryColumn('uuid')
+  @PrimaryGeneratedColumn('uuid')
   public id: string;
 }

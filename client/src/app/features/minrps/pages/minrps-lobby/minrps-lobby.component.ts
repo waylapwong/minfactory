@@ -1,7 +1,6 @@
 import { DatePipe } from '@angular/common';
 import { Component, OnInit, Signal, WritableSignal, computed, signal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-
 import { MinRpsGameResponseDto } from '../../../../core/generated';
 import { RoutingService } from '../../../../core/services/routing.service';
 import { ButtonComponent } from '../../../../shared/components/button/button.component';
@@ -59,7 +58,8 @@ export class MinRpsLobbyComponent implements OnInit {
     }
   }
 
-  public async deleteGame(id: string): Promise<void> {
+  public async deleteGame(id: string, event: MouseEvent): Promise<void> {
+    event.stopPropagation();
     await this.minRPSGameService.deleteGameById(id);
   }
 
