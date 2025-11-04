@@ -11,6 +11,9 @@ import { Server, Socket } from 'socket.io';
 import { MinRpsEvent } from '../models/enums/minrps-event.enum';
 import { MinRpsNamespace } from '../models/enums/minrps-namespace.enum';
 import { MinRpsConnectedEvent } from '../models/events/minrps-connected.event';
+import { MinRpsDisconnectedEvent } from '../models/events/minrps-disconnected.event';
+import type { MinRpsJoinEvent } from '../models/events/minrps-join.event';
+import { MinRpsJoinedEvent } from '../models/events/minrps-joined.event';
 import { MinRpsMatchService } from '../services/minrps-match.service';
 
 @WebSocketGateway({
@@ -23,9 +26,13 @@ export class MinRpsGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
   constructor(private readonly matchService: MinRpsMatchService) {}
 
-  @SubscribeMessage('events')
-  public handleEvent(@ConnectedSocket() client: Socket, @MessageBody() data: string) {
-    this.server.emit('events', data);
+  @SubscribeMessage(MinRpsEvent.Join)
+  public handleJoinEvent(
+    @ConnectedSocket() client: Socket,
+    @MessageBody() joinEvent: MinRpsJoinEvent,
+  ) {
+    console.log(`${MinRpsEvent.Join} event received`, joinEvent);
+    this.sendJoinedEvent(joinEvent.playerId);
   }
 
   public handleConnection(client: Socket): void {
@@ -35,10 +42,24 @@ export class MinRpsGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
   public handleDisconnect(client: Socket): void {
     console.log(`Player disconnected: ${client.id}`);
+    this.sendDisconnectedEvent(client.id);
   }
 
   private sendConnectedEvent(client: Socket): void {
-    const event: MinRpsConnectedEvent = { playerId: client.id };
-    client.emit(MinRpsEvent.Connected, event);
+    const connectedEvent: MinRpsConnectedEvent = { playerId: client.id };
+    console.log(`${MinRpsEvent.Connected} event sent`, connectedEvent);
+    client.emit(MinRpsEvent.Connected, connectedEvent);
+  }
+
+  private sendDisconnectedEvent(playerId: string): void {
+    const disconnectedEvent: MinRpsDisconnectedEvent = { playerId };
+    console.log(`${MinRpsEvent.Disconnected} event sent`, disconnectedEvent);
+    this.server.emit(MinRpsEvent.Disconnected, disconnectedEvent);
+  }
+
+  private sendJoinedEvent(playerId: string): void {
+    const joinedEvent: MinRpsJoinedEvent = { playerId };
+    console.log(`${MinRpsEvent.Joined} event sent`, joinedEvent);
+    this.server.emit(MinRpsEvent.Joined, joinedEvent);
   }
 }
