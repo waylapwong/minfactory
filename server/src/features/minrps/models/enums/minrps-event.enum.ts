@@ -4,4 +4,6 @@ export enum MinRpsEvent {
   Disconnected = 'minrps-disconnected',
   Join = 'minrps-join',
   Joined = 'minrps-joined',
+  Leave = 'minrps-leave',
+  Left = 'minrps-left',
 }

@@ -1,4 +1,4 @@
-export interface MinRpsJoinEvent {
+export interface MinRpsLeaveEvent {
   game: string;
   player: string;
 }

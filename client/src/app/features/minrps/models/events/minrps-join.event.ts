@@ -1,4 +1,4 @@
 export interface MinRpsJoinEvent {
-  matchId: string;
-  playerId: string;
+  game: string;
+  player: string;
 }

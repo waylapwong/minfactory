@@ -14,6 +14,8 @@ import { MinRpsConnectedEvent } from '../models/events/minrps-connected.event';
 import { MinRpsDisconnectedEvent } from '../models/events/minrps-disconnected.event';
 import type { MinRpsJoinEvent } from '../models/events/minrps-join.event';
 import { MinRpsJoinedEvent } from '../models/events/minrps-joined.event';
+import type { MinRpsLeaveEvent } from '../models/events/minrps-leave.event';
+import { MinRpsLeftEvent } from '../models/events/minrps-left.event';
 import { MinRpsMatchService } from '../services/minrps-match.service';
 
 @WebSocketGateway({
@@ -30,42 +32,45 @@ export class MinRpsGateway implements OnGatewayConnection, OnGatewayDisconnect {
   public handleJoinEvent(
     @ConnectedSocket() client: Socket,
     @MessageBody() joinEvent: MinRpsJoinEvent,
-  ) {
-    console.log(`${MinRpsEvent.Join} event received`, joinEvent);
-    this.joinRoom(joinEvent.matchId, client);
-    this.sendJoinedEvent(joinEvent.playerId, joinEvent.matchId);
+  ): void {
+    console.log(`Player joined: ${client.id}`, joinEvent);
+    const room: string = joinEvent.game;
+    client.join(room);
+    const joinedEvent: MinRpsJoinedEvent = { player: client.id };
+    this.sendRoomEvent(room, MinRpsEvent.Joined, joinedEvent);
+  }
+
+  @SubscribeMessage(MinRpsEvent.Leave)
+  public handleLeaveEvent(
+    @ConnectedSocket() client: Socket,
+    @MessageBody() leaveEvent: MinRpsLeaveEvent,
+  ): void {
+    console.log(`Player left: ${client.id}`, leaveEvent);
+    const room: string = leaveEvent.game;
+    client.leave(room);
+    const leftEvent: MinRpsLeftEvent = { player: client.id };
+    this.sendRoomEvent(room, MinRpsEvent.Left, leftEvent);
   }
 
   public handleConnection(client: Socket): void {
     console.log(`Player connected: ${client.id}`);
-    this.sendConnectedEvent(client);
+    const connectedEvent: MinRpsConnectedEvent = { player: client.id };
+    this.sendClientEvent(client, MinRpsEvent.Connected, connectedEvent);
   }
 
   public handleDisconnect(client: Socket): void {
     console.log(`Player disconnected: ${client.id}`);
-    this.sendDisconnectedEvent(client.id);
+    const disconnectedEvent: MinRpsDisconnectedEvent = { player: client.id };
+    this.sendRoomEvent('', MinRpsEvent.Disconnected, disconnectedEvent);
   }
 
-  private joinRoom(room: string, client: Socket): void {
-    client.join(room);
-    console.log(`Client ${client.id} joined room ${room}`);
+  private sendClientEvent(client: Socket, event: MinRpsEvent, data: any): void {
+    client.emit(event, data);
+    console.log(`${event} event sent`, data);
   }
 
-  private sendConnectedEvent(client: Socket): void {
-    const connectedEvent: MinRpsConnectedEvent = { playerId: client.id };
-    console.log(`${MinRpsEvent.Connected} event sent`, connectedEvent);
-    client.emit(MinRpsEvent.Connected, connectedEvent);
-  }
-
-  private sendDisconnectedEvent(playerId: string): void {
-    const disconnectedEvent: MinRpsDisconnectedEvent = { playerId };
-    console.log(`${MinRpsEvent.Disconnected} event sent`, disconnectedEvent);
-    this.server.emit(MinRpsEvent.Disconnected, disconnectedEvent);
-  }
-
-  private sendJoinedEvent(playerId: string, room: string): void {
-    const joinedEvent: MinRpsJoinedEvent = { playerId };
-    console.log(`${MinRpsEvent.Joined} event sent`, joinedEvent);
-    this.server.to(room).emit(MinRpsEvent.Joined, joinedEvent);
+  private sendRoomEvent(room: string, event: MinRpsEvent, data: any): void {
+    console.log(`${event} event sent to room: ${room}`, data);
+    this.server.to(room).emit(event, data);
   }
 }

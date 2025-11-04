@@ -1,3 +1,3 @@
 export interface MinRpsConnectedEvent {
-  playerId: string;
+  player: string;
 }
