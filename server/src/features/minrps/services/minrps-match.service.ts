@@ -13,22 +13,14 @@ export class MinRpsMatchService {
   ) {}
 
   public async addObserver(playerId: string, matchId: string): Promise<void> {
-    const gameEntity: MinRpsGameEntity = await this.gameRepository.findById(matchId);
-    const match: MinRpsGame | undefined = this.getMatch(matchId);
+    const match: MinRpsGame | undefined = this.matchRepository.findById(matchId);
     if (match) {
       match.addObserver(playerId);
     } else {
-      const newMatch: MinRpsGame = MinRpsGameMapper.toDomainFromEntity(gameEntity);
-      newMatch.addObserver(playerId);
-      this.saveMatch(matchId, newMatch);
+      const gameEntity: MinRpsGameEntity = await this.gameRepository.findById(matchId);
+      const game: MinRpsGame = MinRpsGameMapper.toDomainFromEntity(gameEntity);
+      game.addObserver(playerId);
+      this.matchRepository.save(matchId, game);
     }
-  }
-
-  private getMatch(id: string): MinRpsGame | undefined {
-    return this.matchRepository.findById(id);
-  }
-
-  private saveMatch(id: string, match: MinRpsGame): void {
-    this.matchRepository.save(id, match);
   }
 }
