@@ -1,17 +1,33 @@
 import { ApiProperty } from '@nestjs/swagger';
-
 import { Type } from 'class-transformer';
-import { IsDate, IsString, IsUUID } from 'class-validator';
+import { IsDate, IsInt, IsString, IsUUID, Max, Min } from 'class-validator';
 
 export class MinRpsGameResponseDto {
   @ApiProperty({
     description: 'Game name',
-    example: 'Jon Doe Game',
+    example: 'Test Game',
     minLength: 2,
-    maxLength: 32,
+    maxLength: 16,
   })
   @IsString()
   public name: string;
+  @ApiProperty({
+    description: 'Number of observers currently watching the game',
+    example: 1,
+    minimum: 0,
+  })
+  @IsInt()
+  @Min(0)
+  public observers: number;
+  @ApiProperty({
+    description: 'Number of players currently in the game',
+    example: 2,
+    minimum: 0,
+  })
+  @IsInt()
+  @Max(2)
+  @Min(0)
+  public players: number;
   @ApiProperty({
     description: 'Timestamp when the game was created (UTC)',
     example: '2025-10-21T18:45:30.000Z',

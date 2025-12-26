@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { MinRpsGame } from '../models/domain/minrps-game';
 
 @Injectable()
-export class MatchRepository {
+export class MinRpsMatchRepository {
   public readonly matches = new Map<string, MinRpsGame>();
 
   public findById(id: string): MinRpsGame | undefined {

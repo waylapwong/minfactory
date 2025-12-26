@@ -42,7 +42,7 @@ export class MinRpsGameService {
 
   public async checkGameById(id: string): Promise<boolean> {
     try {
-      const dto: MinRpsGameResponseDto = await firstValueFrom(this.gameApiService.getById(id));
+      const dto: MinRpsGameResponseDto = await firstValueFrom(this.gameApiService.getGame(id));
       return !!dto;
     } catch (error: unknown) {
       console.error(error);
@@ -51,17 +51,17 @@ export class MinRpsGameService {
   }
 
   public async createNewGame(name: string): Promise<void> {
-    await firstValueFrom(this.gameApiService.create({ name }));
+    await firstValueFrom(this.gameApiService.createGame({ name }));
     this.getAllGames();
   }
 
   public async deleteGameById(id: string): Promise<void> {
-    await firstValueFrom(this.gameApiService.deleteById(id));
+    await firstValueFrom(this.gameApiService.deleteGame(id));
     await this.getAllGames();
   }
 
   public async getAllGames(): Promise<void> {
-    const dtos: MinRpsGameResponseDto[] = await firstValueFrom(this.gameApiService.getAll());
+    const dtos: MinRpsGameResponseDto[] = await firstValueFrom(this.gameApiService.getAllGames());
     this.games.set(dtos);
   }
 

@@ -4,6 +4,9 @@ import { MinRpsGameResponseDto } from '../models/dtos/minrps-game-response.dto';
 import { MinRpsGameEntity } from '../models/entities/minrps-game.entity';
 
 export class MinRpsGameMapper {
+  public MinRpsGameMapper;
+  public urn;
+
   public static toDomainFromDto(dto: MinRpsGameRequestDto): MinRpsGame {
     const domain: MinRpsGame = new MinRpsGame(dto.name);
     return domain;
@@ -17,16 +20,13 @@ export class MinRpsGameMapper {
     return domain;
   }
 
-  public static toDtoFromEntity(entity: MinRpsGameEntity): MinRpsGameResponseDto {
-    const domain: MinRpsGame = MinRpsGameMapper.toDomainFromEntity(entity);
-    return MinRpsGameMapper.toDtofromDomain(domain);
-  }
-
   public static toDtofromDomain(domain: MinRpsGame): MinRpsGameResponseDto {
     const dto: MinRpsGameResponseDto = new MinRpsGameResponseDto();
     dto.createdAt = domain.createdAt;
     dto.id = domain.id;
     dto.name = domain.name;
+    dto.observers = domain.observers.length;
+    dto.players = (domain.player1 ? 1 : 0) + (domain.player2 ? 1 : 0);
     return dto;
   }
 
@@ -36,10 +36,5 @@ export class MinRpsGameMapper {
     entity.id = domain.id;
     entity.name = domain.name;
     return entity;
-  }
-
-  public static toEntityFromDto(dto: MinRpsGameRequestDto): MinRpsGameEntity {
-    const domain: MinRpsGame = MinRpsGameMapper.toDomainFromDto(dto);
-    return MinRpsGameMapper.toEntityFromDomain(domain);
   }
 }

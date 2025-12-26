@@ -3,13 +3,13 @@ import { MinRpsGameMapper } from '../mapper/minrps-game.mapper';
 import { MinRpsGame } from '../models/domain/minrps-game';
 import { MinRpsGameEntity } from '../models/entities/minrps-game.entity';
 import { MinRpsGameRepository } from '../repositories/minrps-game.repository';
-import { MatchRepository } from '../repositories/minrps-match.repository';
+import { MinRpsMatchRepository } from '../repositories/minrps-match.repository';
 
 @Injectable()
 export class MinRpsMatchService {
   constructor(
     private readonly gameRepository: MinRpsGameRepository,
-    private readonly matchRepository: MatchRepository,
+    private readonly matchRepository: MinRpsMatchRepository,
   ) {}
 
   public async addObserver(playerId: string, matchId: string): Promise<void> {

@@ -5,46 +5,72 @@
       "get": {
         "operationId": "AppController_getHealth",
         "parameters": [],
-        "responses": { "200": { "description": "" } },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
         "tags": ["minFactory"]
       }
     },
     "/minrps/games/{id}": {
       "get": {
-        "operationId": "getById",
+        "operationId": "getGame",
         "parameters": [
-          { "name": "id", "required": true, "in": "path", "schema": { "type": "string" } }
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
         ],
         "responses": {
           "200": {
             "description": "OK",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/MinRpsGameResponseDto" }
+                "schema": {
+                  "$ref": "#/components/schemas/MinRpsGameResponseDto"
+                }
               }
             }
           },
-          "400": { "description": "Bad Request" },
-          "500": { "description": "Internal Server Error" }
+          "400": {
+            "description": "Bad Request"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
         },
         "summary": "",
         "tags": ["minRPS Game"]
       },
       "delete": {
-        "operationId": "deleteById",
+        "operationId": "deleteGame",
         "parameters": [
           {
             "name": "id",
             "required": true,
             "in": "path",
             "description": "UUID of ressource",
-            "schema": { "example": "550e8400-e29b-41d4-a716-446655440000", "type": "string" }
+            "schema": {
+              "example": "550e8400-e29b-41d4-a716-446655440000",
+              "type": "string"
+            }
           }
         ],
         "responses": {
-          "204": { "description": "Deleted" },
-          "400": { "description": "Bad Request" },
-          "500": { "description": "Internal Server Error" }
+          "204": {
+            "description": "Deleted"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
         },
         "summary": "",
         "tags": ["minRPS Game"]
@@ -52,7 +78,7 @@
     },
     "/minrps/games": {
       "get": {
-        "operationId": "getAll",
+        "operationId": "getAllGames",
         "parameters": [],
         "responses": {
           "200": {
@@ -61,24 +87,30 @@
               "application/json": {
                 "schema": {
                   "type": "array",
-                  "items": { "$ref": "#/components/schemas/MinRpsGameResponseDto" }
+                  "items": {
+                    "$ref": "#/components/schemas/MinRpsGameResponseDto"
+                  }
                 }
               }
             }
           },
-          "500": { "description": "Internal Server Error" }
+          "500": {
+            "description": "Internal Server Error"
+          }
         },
         "summary": "",
         "tags": ["minRPS Game"]
       },
       "post": {
-        "operationId": "create",
+        "operationId": "createGame",
         "parameters": [],
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
-              "schema": { "$ref": "#/components/schemas/MinRpsGameRequestDto" }
+              "schema": {
+                "$ref": "#/components/schemas/MinRpsGameRequestDto"
+              }
             }
           }
         },
@@ -87,12 +119,18 @@
             "description": "Created",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/MinRpsGameResponseDto" }
+                "schema": {
+                  "$ref": "#/components/schemas/MinRpsGameResponseDto"
+                }
               }
             }
           },
-          "400": { "description": "Bad Request" },
-          "500": { "description": "Internal Server Error" }
+          "400": {
+            "description": "Bad Request"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
         },
         "summary": "",
         "tags": ["minRPS Game"]
@@ -101,9 +139,13 @@
   },
   "info": {
     "title": "minFactory",
-    "description": "minFactory OpenAPI specification. <br/> <a href=\"http://localhost:3000/openapi-json/\" target=\"_blank\">JSON specification</a>",
+    "description": "minFactory OpenAPI specification. \u003Cbr/\u003E \u003Ca href=\"http://localhost:3000/openapi-json/\" target=\"_blank\"\u003EJSON specification\u003C/a\u003E",
     "version": "v0.0.0",
-    "contact": { "name": "minFactory", "url": "https://minFactory.com", "email": "" }
+    "contact": {
+      "name": "minFactory",
+      "url": "https://minFactory.com",
+      "email": ""
+    }
   },
   "tags": [],
   "servers": [],
@@ -115,9 +157,21 @@
           "name": {
             "type": "string",
             "description": "Game name",
-            "example": "Jon Doe Game",
+            "example": "Test Game",
             "minLength": 2,
-            "maxLength": 32
+            "maxLength": 16
+          },
+          "observers": {
+            "type": "number",
+            "description": "Number of observers currently watching the game",
+            "example": 1,
+            "minimum": 0
+          },
+          "players": {
+            "type": "number",
+            "description": "Number of players currently in the game",
+            "example": 2,
+            "minimum": 0
           },
           "createdAt": {
             "format": "date-time",
@@ -132,12 +186,16 @@
             "format": "uuid"
           }
         },
-        "required": ["name", "createdAt", "id"]
+        "required": ["name", "observers", "players", "createdAt", "id"]
       },
       "MinRpsGameRequestDto": {
         "type": "object",
         "properties": {
-          "name": { "type": "string", "description": "player name", "example": "Jon Doe" }
+          "name": {
+            "type": "string",
+            "description": "player name",
+            "example": "Jon Doe"
+          }
         },
         "required": ["name"]
       }
