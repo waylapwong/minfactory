@@ -1,6 +1,5 @@
 import { provideZonelessChangeDetection } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
 import { RoutingServiceMock } from '../../../../core/services/routing.service.mock';
 import { AppsComponent } from './apps.component';
 

@@ -1,5 +1,4 @@
 import { Routes } from '@angular/router';
-
 import { AppName } from './shared/enums/app-name.enum';
 
 export enum AppPath {

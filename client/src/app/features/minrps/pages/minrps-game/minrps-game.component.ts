@@ -1,5 +1,4 @@
 import { Component, OnInit, Signal, WritableSignal, computed, signal } from '@angular/core';
-
 import { ButtonComponent } from '../../../../shared/components/button/button.component';
 import { DividerComponent } from '../../../../shared/components/divider/divider.component';
 import { Color } from '../../../../shared/enums/color.enum';

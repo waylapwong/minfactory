@@ -1,10 +1,9 @@
 import { provideZonelessChangeDetection } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
 import { MinRpsMove } from '../../models/enums/minrps-move.enum';
+import { MinRpsGameService } from '../../services/minrps-game.service';
 import { MinRpsGameServiceMock } from '../../services/minrps-game.service.mock';
 import { MinRpsGameComponent } from './minrps-game.component';
-import { MinRpsGameService } from '../../services/minrps-game.service';
 
 describe('MinRpsGameComponent', () => {
   let component: MinRpsGameComponent;

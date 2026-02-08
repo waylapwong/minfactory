@@ -1,7 +1,5 @@
 import { Injectable, Signal, WritableSignal, computed, signal } from '@angular/core';
-
 import { firstValueFrom } from 'rxjs';
-
 import { MinRPSGameApiService, MinRpsGameResponseDto } from '../../../core/generated';
 import { sleep } from '../../../shared/utils/sleep.util';
 import { MINRPS_FIRST_MESSAGES } from '../models/constants/minrps-first.message';

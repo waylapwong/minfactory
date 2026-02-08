@@ -1,5 +1,4 @@
 import { Component, InputSignal, OutputEmitterRef, input, output } from '@angular/core';
-
 import { MinRpsResult } from '../../models/enums/minrps-result.enum';
 
 @Component({

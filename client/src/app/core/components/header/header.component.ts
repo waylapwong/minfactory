@@ -1,6 +1,5 @@
 import { Component, computed } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
-
 import { AppPath } from '../../../app.routes';
 import { MinFactoryPath } from '../../../features/minfactory/minfactory.routes';
 import { DividerComponent } from '../../../shared/components/divider/divider.component';

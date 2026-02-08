@@ -24,6 +24,7 @@ cd server/ && npm test
 ```
 
 ## Lint
+
 ```bash
 cd client/ && npm run lint
 cd server/ && npm run lint

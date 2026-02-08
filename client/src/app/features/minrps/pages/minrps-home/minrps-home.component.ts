@@ -1,5 +1,4 @@
 import { Component } from '@angular/core';
-
 import { RoutingService } from '../../../../core/services/routing.service';
 import { CardButtonComponent } from '../../../../shared/components/card-button/card-button.component';
 import { H2Component } from '../../../../shared/components/h2/h2.component';

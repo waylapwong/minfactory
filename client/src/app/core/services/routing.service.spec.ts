@@ -1,7 +1,6 @@
 import { provideZonelessChangeDetection } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { Router } from '@angular/router';
-
 import { AppPath } from '../../app.routes';
 import { MinRpsPath } from '../../features/minrps/minrps.routes';
 import { RoutingService } from './routing.service';

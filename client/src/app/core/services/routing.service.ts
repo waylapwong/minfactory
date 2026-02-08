@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-
 import { AppPath } from '../../app.routes';
 import { MinRpsPath } from '../../features/minrps/minrps.routes';
 

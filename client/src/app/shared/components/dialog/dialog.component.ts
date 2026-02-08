@@ -1,5 +1,4 @@
 import { Component, InputSignal, OutputEmitterRef, input, output } from '@angular/core';
-
 import { Color } from '../../enums/color.enum';
 import { ButtonComponent } from '../button/button.component';
 import { H2Component } from '../h2/h2.component';

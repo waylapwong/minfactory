@@ -9,8 +9,7 @@ export class MinRpsSocketService extends Socket {
     super(MINRPS_SOCKET_CONFIG, appRef);
   }
 
-  public emitJoin(gameId: string, playerId: string, move: 'rock' | 'paper' | 'scissors') {
-  }
+  public emitJoin(gameId: string, playerId: string, move: 'rock' | 'paper' | 'scissors') {}
 }
 
 const MINRPS_SOCKET_CONFIG: SocketIoConfig = {
