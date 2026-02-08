@@ -2,7 +2,7 @@ import { Body, Controller, Delete, Get, Param, ParseUUIDPipe, Post } from '@nest
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { MinRpsGameMapper } from '../mapper/minrps-game.mapper';
 import { MinRpsGame } from '../models/domains/minrps-game';
-import { MinRpsGameRequestDto } from '../models/dtos/minrps-game-request';
+import { MinRpsGameRequestDto } from '../models/dtos/minrps-game-request.dto';
 import { MinRpsGameResponseDto } from '../models/dtos/minrps-game-response.dto';
 import { MinRpsGameService } from '../services/minrps-game.service';
 import { API_200 } from 'src/shared/decorators/api-200.decorator';

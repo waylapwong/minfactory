@@ -17,8 +17,8 @@ export class MinRpsGame {
 
   public getResult(): MinRpsResult {
     this.checkRules();
-    const player1Move: MinRpsMove = this.player1!.move!;
-    const player2Move: MinRpsMove = this.player2!.move!;
+    const player1Move: MinRpsMove = this.player1!.move;
+    const player2Move: MinRpsMove = this.player2!.move;
     if (player1Move === player2Move) {
       return MinRpsResult.Draw;
     } else {
@@ -65,6 +65,8 @@ export class MinRpsGame {
         return MinRpsMove.Scissors;
       case MinRpsMove.Scissors:
         return MinRpsMove.Rock;
+      default:
+        return MinRpsMove.None;
     }
   }
 }

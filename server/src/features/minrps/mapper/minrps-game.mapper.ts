@@ -1,5 +1,5 @@
 import { MinRpsGame } from '../models/domains/minrps-game';
-import { MinRpsGameRequestDto } from '../models/dtos/minrps-game-request';
+import { MinRpsGameRequestDto } from '../models/dtos/minrps-game-request.dto';
 import { MinRpsGameResponseDto } from '../models/dtos/minrps-game-response.dto';
 import { MinRpsGameEntity } from '../models/entities/minrps-game.entity';
 
