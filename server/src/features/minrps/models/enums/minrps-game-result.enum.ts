@@ -1,5 +1,5 @@
 export enum MinRpsResult {
-  Player1 = 'player1',
-  Player2 = 'player2',
-  Draw = 'draw',
+  Player1 = 1,
+  Player2 = 2,
+  Draw = 3,
 }

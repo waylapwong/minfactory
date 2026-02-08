@@ -1,5 +1,7 @@
 import { Body, Controller, Delete, Get, Param, ParseUUIDPipe, Post } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { MinRpsGameMapper } from '../mapper/minrps-game.mapper';
+import { MinRpsGame } from '../models/domains/minrps-game';
 import { MinRpsGameRequestDto } from '../models/dtos/minrps-game-request';
 import { MinRpsGameResponseDto } from '../models/dtos/minrps-game-response.dto';
 import { MinRpsGameService } from '../services/minrps-game.service';
@@ -17,41 +19,45 @@ import { MinApp } from 'src/shared/enums/minapp.enum';
 export class MinRpsGameController {
   constructor(private readonly gameService: MinRpsGameService) {}
 
-  @ApiOperation({ operationId: 'getGame' })
-  @API_200({ type: MinRpsGameResponseDto })
-  @API_400()
-  @API_404()
-  @API_500()
-  @Get(':id')
-  public async getGame(@Param('id') id: string): Promise<MinRpsGameResponseDto> {
-    return await this.gameService.getGame(id);
-  }
-
-  @ApiOperation({ operationId: 'getAllGames' })
-  @API_200({ isArray: true, type: MinRpsGameResponseDto })
-  @API_500()
-  @Get()
-  public async getAllGames(): Promise<MinRpsGameResponseDto[]> {
-    return await this.gameService.getAllGames();
-  }
-
-  @ApiOperation({ operationId: 'createGame' })
-  @API_201({ type: MinRpsGameResponseDto })
-  @API_400()
-  @API_500()
-  @Post()
-  public async createGame(@Body() dto: MinRpsGameRequestDto): Promise<MinRpsGameResponseDto> {
-    return await this.gameService.createGame(dto);
-  }
-
-  @ApiOperation({ operationId: 'deleteGame' })
+  @Delete(':id')
+  @ApiOperation({ operationId: 'delete' })
   @API_Param_ID()
   @API_204()
   @API_400()
   @API_404()
   @API_500()
-  @Delete(':id')
-  public async deleteGame(@Param('id', new ParseUUIDPipe()) id: string): Promise<void> {
+  public async delete(@Param('id', new ParseUUIDPipe()) id: string): Promise<void> {
     await this.gameService.deleteGame(id);
+  }
+
+  @Get(':id')
+  @ApiOperation({ operationId: 'get' })
+  @API_200({ type: MinRpsGameResponseDto })
+  @API_400()
+  @API_404()
+  @API_500()
+  public async get(@Param('id') id: string): Promise<MinRpsGameResponseDto> {
+    const domain: MinRpsGame = await this.gameService.getGame(id);
+    return MinRpsGameMapper.domainToDto(domain);
+  }
+
+  @Get()
+  @ApiOperation({ operationId: 'getAll' })
+  @API_200({ isArray: true, type: MinRpsGameResponseDto })
+  @API_500()
+  public async getAll(): Promise<MinRpsGameResponseDto[]> {
+    const domains: MinRpsGame[] = await this.gameService.getAllGames();
+    return domains.map((domain: MinRpsGame) => MinRpsGameMapper.domainToDto(domain));
+  }
+
+  @Post()
+  @ApiOperation({ operationId: 'create' })
+  @API_201({ type: MinRpsGameResponseDto })
+  @API_400()
+  @API_500()
+  public async create(@Body() dto: MinRpsGameRequestDto): Promise<MinRpsGameResponseDto> {
+    const domain: MinRpsGame = MinRpsGameMapper.dtoToDomain(dto);
+    const savedDomain: MinRpsGame = await this.gameService.createGame(domain);
+    return MinRpsGameMapper.domainToDto(savedDomain);
   }
 }

@@ -3,7 +3,7 @@ import { Transform } from 'class-transformer';
 import { IsString, MaxLength, MinLength } from 'class-validator';
 
 export class MinRpsGameRequestDto {
-  @ApiProperty({ required: true, description: 'player name', example: 'Jon Doe' })
+  @ApiProperty({ description: 'Game name', example: 'Test Game', required: true })
   @IsString()
   @MaxLength(16)
   @MinLength(2)

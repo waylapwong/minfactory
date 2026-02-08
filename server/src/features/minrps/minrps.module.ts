@@ -7,7 +7,7 @@ import { MinRpsGameEntity } from './models/entities/minrps-game.entity';
 import { MinRpsGameRepository } from './repositories/minrps-game.repository';
 import { MinRpsMatchRepository } from './repositories/minrps-match.repository';
 import { MinRpsGameService } from './services/minrps-game.service';
-import { MinRpsMatchService } from './services/minrps-match.service';
+import { MinRpsMatchSystem } from './systems/minrps-match.system';
 
 @Module({
   imports: [TypeOrmModule.forFeature([MinRpsGameEntity])],
@@ -16,7 +16,7 @@ import { MinRpsMatchService } from './services/minrps-match.service';
     MinRpsGateway,
     MinRpsGameService,
     MinRpsGameRepository,
-    MinRpsMatchService,
+    MinRpsMatchSystem,
     MinRpsMatchRepository,
   ],
 })

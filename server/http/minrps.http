@@ -1,14 +1,19 @@
-@baseUrl = http://localhost:3000/minrps
-@gamesEndpoint = /games
-@gameId = f00f8ec6-1fce-4446-b0ee-3a476bfe15bb
+@BASE_PATH = http://localhost:3000/minrps
+@GAMES = games
+@ID = f534f71c-d81b-43b1-b963-073cab444708
 
 ### GET /games
-GET {{baseUrl}}{{gamesEndpoint}}
+GET {{BASE_PATH}}/{{GAMES}}
+Accept: application/json
+
+
+### GET /games/{id}
+GET {{BASE_PATH}}/{{GAMES}}/{{ID}}
 Accept: application/json
 
 
 ### POST /games
-POST {{baseUrl}}{{gamesEndpoint}}
+POST {{BASE_PATH}}/{{GAMES}}
 Accept: application/json
 Content-Type: application/json
 
@@ -18,5 +23,5 @@ Content-Type: application/json
 
 
 ### DELETE /games/{id}
-DELETE {{baseUrl}}{{gamesEndpoint}}/{{gameId}}
+DELETE {{BASE_PATH}}/{{GAMES}}/{{ID}}
 Accept: application/json

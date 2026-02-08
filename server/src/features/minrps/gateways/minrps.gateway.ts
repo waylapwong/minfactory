@@ -16,7 +16,7 @@ import type { MinRpsJoinEvent } from '../models/events/minrps-join.event';
 import { MinRpsJoinedEvent } from '../models/events/minrps-joined.event';
 import type { MinRpsLeaveEvent } from '../models/events/minrps-leave.event';
 import { MinRpsLeftEvent } from '../models/events/minrps-left.event';
-import { MinRpsMatchService } from '../services/minrps-match.service';
+import { MinRpsMatchSystem } from '../systems/minrps-match.system';
 
 @WebSocketGateway({
   cors: { origin: '*' },
@@ -26,7 +26,7 @@ export class MinRpsGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer()
   public server: Server;
 
-  constructor(private readonly matchService: MinRpsMatchService) {}
+  constructor(private readonly matchService: MinRpsMatchSystem) {}
 
   @SubscribeMessage(MinRpsEvent.Join)
   public handleJoinEvent(

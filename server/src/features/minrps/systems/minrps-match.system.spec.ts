@@ -1,15 +1,15 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { MinRpsMatchService } from './minrps-match.service';
+import { MinRpsMatchSystem } from './minrps-match.system';
 
-describe('MinRpsMatchService', () => {
-  let service: MinRpsMatchService;
+describe('MinRpsMatchSystem', () => {
+  let service: MinRpsMatchSystem;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [MinRpsMatchService],
+      providers: [MinRpsMatchSystem],
     }).compile();
 
-    service = module.get<MinRpsMatchService>(MinRpsMatchService);
+    service = module.get<MinRpsMatchSystem>(MinRpsMatchSystem);
   });
 
   it('should be defined', () => {

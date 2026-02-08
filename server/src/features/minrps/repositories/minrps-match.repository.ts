@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { MinRpsGame } from '../models/domain/minrps-game';
+import { MinRpsGame } from '../models/domains/minrps-game';
 
 @Injectable()
 export class MinRpsMatchRepository {
