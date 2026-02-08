@@ -1,9 +1,6 @@
-import { HttpCode, HttpStatus, applyDecorators } from '@nestjs/common';
-import { ApiNoContentResponse, ApiResponseNoStatusOptions } from '@nestjs/swagger';
+import { applyDecorators } from '@nestjs/common';
+import { ApiCreatedResponse, ApiResponseNoStatusOptions } from '@nestjs/swagger';
 
 export function API_201(options?: ApiResponseNoStatusOptions) {
-  return applyDecorators(
-    HttpCode(HttpStatus.CREATED),
-    ApiNoContentResponse({ ...options, description: 'Created' }),
-  );
+  return applyDecorators(ApiCreatedResponse({ ...options, description: 'Created' }));
 }

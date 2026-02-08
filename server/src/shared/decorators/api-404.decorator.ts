@@ -1,6 +1,6 @@
 import { applyDecorators } from '@nestjs/common';
-import { ApiBadRequestResponse } from '@nestjs/swagger';
+import { ApiNotFoundResponse } from '@nestjs/swagger';
 
 export function API_404() {
-  return applyDecorators(ApiBadRequestResponse({ description: 'Not Found' }));
+  return applyDecorators(ApiNotFoundResponse({ description: 'Not Found' }));
 }

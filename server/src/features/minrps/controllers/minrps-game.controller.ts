@@ -36,7 +36,7 @@ export class MinRpsGameController {
   @API_400()
   @API_404()
   @API_500()
-  public async get(@Param('id') id: string): Promise<MinRpsGameResponseDto> {
+  public async get(@Param('id', new ParseUUIDPipe()) id: string): Promise<MinRpsGameResponseDto> {
     const domain: MinRpsGame = await this.gameService.getGame(id);
     return MinRpsGameMapper.domainToDto(domain);
   }

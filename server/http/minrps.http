@@ -1,6 +1,6 @@
 @BASE_PATH = http://localhost:3000/minrps
 @GAMES = games
-@ID = f534f71c-d81b-43b1-b963-073cab444708
+@ID = 907edc29-d902-4a89-8204-31cc9439b621
 
 ### GET /games
 GET {{BASE_PATH}}/{{GAMES}}
