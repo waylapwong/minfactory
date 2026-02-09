@@ -8,8 +8,8 @@ export class MinRpsGame {
   public id: string = crypto.randomUUID();
   public name: string = '';
   public observerCount: number = 0;
-  public player1: MinRpsPlayer | null = null;
-  public player2: MinRpsPlayer | null = null;
+  public player1: MinRpsPlayer = new MinRpsPlayer();
+  public player2: MinRpsPlayer = new MinRpsPlayer();
 
   public addObserver(): void {
     this.observerCount++;
@@ -17,8 +17,8 @@ export class MinRpsGame {
 
   public getResult(): MinRpsResult {
     this.checkRules();
-    const player1Move: MinRpsMove = this.player1!.move;
-    const player2Move: MinRpsMove = this.player2!.move;
+    const player1Move: MinRpsMove = this.player1.move;
+    const player2Move: MinRpsMove = this.player2.move;
     if (player1Move === player2Move) {
       return MinRpsResult.Draw;
     } else {
@@ -49,11 +49,8 @@ export class MinRpsGame {
   }
 
   private checkRules(): void {
-    if (!this.player1 || !this.player2) {
-      throw new GameRuleException('Both players must be set before determining the result.');
-    }
-    if (!this.player1.move || !this.player2.move) {
-      throw new GameRuleException('Both players must make a move before determining the result.');
+    if (this.player1.move === MinRpsMove.None || this.player2.move === MinRpsMove.None) {
+      throw new GameRuleException('Player moves cannot be none.');
     }
   }
 

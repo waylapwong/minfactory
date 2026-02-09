@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { MinRpsResult } from '../enums/minrps-game-result.enum';
 import { MinRpsMove } from '../enums/minrps-move.enum';
 
 export class MinRpsMatchResponseDto {
@@ -7,15 +8,15 @@ export class MinRpsMatchResponseDto {
     enumName: 'MinRpsMove',
     example: MinRpsMove.Rock,
   })
-  public opponentMove: MinRpsMove;
+  public player1Move: MinRpsMove;
   @ApiProperty({
     enum: MinRpsMove,
     enumName: 'MinRpsMove',
     example: MinRpsMove.Rock,
   })
-  public playerMove: MinRpsMove;
+  public player2Move: MinRpsMove;
   @ApiProperty({
-    example: true,
+    example: MinRpsResult.Draw,
   })
-  public isPlayerWinner: boolean;
+  public result: MinRpsResult;
 }

@@ -34,5 +34,5 @@ Accept: application/json
 Content-Type: application/json
 
 {
-  "playerMove": "rock"
+  "player1Move": "rock"
 }

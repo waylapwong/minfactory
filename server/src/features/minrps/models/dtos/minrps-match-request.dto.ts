@@ -12,5 +12,5 @@ export class MinRpsMatchRequestDto {
   })
   @IsNotEmpty()
   @IsEnum(MinRpsMove)
-  public playerMove: MinRpsMove;
+  public player1Move: MinRpsMove;
 }
