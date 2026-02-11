@@ -17,7 +17,7 @@ export class MinRpsGameSessionService {
     if (match) {
       match.addObserver();
     } else {
-      const gameEntity: MinRpsGameEntity = await this.gameRepository.find(matchId);
+      const gameEntity: MinRpsGameEntity = await this.gameRepository.findOne(matchId);
       const game: MinRpsGame = MinRpsEntityMapper.entityToDomain(gameEntity);
       game.addObserver();
       this.matchRepository.save(matchId, game);

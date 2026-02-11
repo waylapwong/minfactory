@@ -7,8 +7,9 @@ import { MinRpsController } from './minrps.controller';
 import { MinRpsGameEntity } from './models/entities/minrps-game.entity';
 import { MinRpsGameRepository } from './repositories/minrps-game.repository';
 import { MinRpsMatchRepository } from './repositories/minrps-match.repository';
-import { MinRpsGameService } from './services/minrps-game.service';
 import { MinRpsGameSessionService } from './services/minrps-game-session.service';
+import { MinRpsGameService } from './services/minrps-game.service';
+import { MinRpsSinglePlayerService } from './services/minrps-single-player.service';
 
 @Module({
   imports: [TypeOrmModule.forFeature([MinRpsGameEntity])],
@@ -19,6 +20,7 @@ import { MinRpsGameSessionService } from './services/minrps-game-session.service
     MinRpsGameRepository,
     MinRpsGameSessionService,
     MinRpsMatchRepository,
+    MinRpsSinglePlayerService,
   ],
 })
 export class MinRpsModule {}

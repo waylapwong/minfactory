@@ -13,25 +13,20 @@ export class MinRpsGameRepository {
   ) {}
 
   public async delete(id: string): Promise<void> {
-    const entity: MinRpsGameEntity = await this.find(id);
+    const entity: MinRpsGameEntity = await this.findOne(id);
     await this.repository.delete({ id: entity.id });
   }
 
-  public async find(id: string): Promise<MinRpsGame> {
+  public async findAll(): Promise<MinRpsGameEntity[]> {
+    return await this.repository.find({ order: { createdAt: 'DESC' } });
+  }
+
+  public async findOne(id: string): Promise<MinRpsGameEntity> {
     const entity: MinRpsGameEntity | null = await this.repository.findOne({ where: { id } });
     if (!entity) {
       throw new NotFoundException(`minRPS game with ID ${id} not found`);
     }
-    return MinRpsEntityMapper.entityToDomain(entity);
-  }
-
-  public async findAll(): Promise<MinRpsGame[]> {
-    const entites: MinRpsGameEntity[] = await this.repository.find({
-      order: { createdAt: 'DESC' },
-    });
-    return entites.map((entity: MinRpsGameEntity) => {
-      return MinRpsEntityMapper.entityToDomain(entity);
-    });
+    return entity;
   }
 
   public async save(domain: MinRpsGame): Promise<MinRpsGame> {

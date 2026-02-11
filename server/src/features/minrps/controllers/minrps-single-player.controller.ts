@@ -1,4 +1,4 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, HttpCode, Post } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { MinRpsPlayResultDto } from '../models/dtos/minrps-play-result.dto';
 import { MinRpsPlayDto } from '../models/dtos/minrps-play.dto';
@@ -15,6 +15,7 @@ export class MinRpsSinglePlayerController {
   constructor(private readonly singlePlayerService: MinRpsSinglePlayerService) {}
 
   @Post('play')
+  @HttpCode(201)
   @ApiOperation({ operationId: 'play' })
   @API_201({ type: MinRpsPlayResultDto })
   @API_400()

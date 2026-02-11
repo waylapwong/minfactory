@@ -1,4 +1,13 @@
-import { Body, Controller, Delete, Get, Param, ParseUUIDPipe, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  HttpCode,
+  Param,
+  ParseUUIDPipe,
+  Post,
+} from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { MinRpsDomainMapper } from '../mapper/minrps-domain.mapper';
 import { MinRpsDtoMapper } from '../mapper/minrps-dto.mapper';
@@ -21,6 +30,7 @@ export class MinRpsGameController {
   constructor(private readonly gameService: MinRpsGameService) {}
 
   @Delete(':id')
+  @HttpCode(204)
   @ApiOperation({ operationId: 'delete' })
   @API_Param_ID()
   @API_204()
@@ -28,30 +38,31 @@ export class MinRpsGameController {
   @API_404()
   @API_500()
   public async delete(@Param('id', new ParseUUIDPipe()) id: string): Promise<void> {
-    await this.gameService.deleteGame(id);
+    return await this.gameService.deleteGame(id);
   }
 
   @Get(':id')
+  @HttpCode(200)
   @ApiOperation({ operationId: 'get' })
   @API_200({ type: MinRpsGameDto })
   @API_400()
   @API_404()
   @API_500()
   public async get(@Param('id', new ParseUUIDPipe()) id: string): Promise<MinRpsGameDto> {
-    const domain: MinRpsGame = await this.gameService.getGame(id);
-    return MinRpsDomainMapper.domainToDto(domain);
+    return await this.gameService.getGame(id);
   }
 
   @Get()
+  @HttpCode(200)
   @ApiOperation({ operationId: 'getAll' })
   @API_200({ isArray: true, type: MinRpsGameDto })
   @API_500()
   public async getAll(): Promise<MinRpsGameDto[]> {
-    const domains: MinRpsGame[] = await this.gameService.getAllGames();
-    return domains.map((domain: MinRpsGame) => MinRpsDomainMapper.domainToDto(domain));
+    return await this.gameService.getAllGames();
   }
 
   @Post()
+  @HttpCode(201)
   @ApiOperation({ operationId: 'create' })
   @API_201({ type: MinRpsGameDto })
   @API_400()
