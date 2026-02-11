@@ -1,5 +1,5 @@
 export enum MinApp {
   MinFactory = 'minFactory',
-  MinRpsGame = 'minRPS Game',
-  MinRpsMatch = 'minRPS Match',
+  MinRpsGame = 'minRPS Games',
+  MinRpsMatch = 'minRPS Matches',
 }

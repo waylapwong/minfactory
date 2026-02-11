@@ -9,18 +9,18 @@ import { API_409 } from 'src/shared/decorators/api-409.decorator';
 import { API_500 } from 'src/shared/decorators/api-500.decorator';
 import { MinApp } from 'src/shared/enums/minapp.enum';
 
-@Controller('minrps/matches')
+@Controller('minrps')
 @ApiTags(MinApp.MinRpsMatch)
-export class MinRpsMatchController {
+export class MinRpsSinglePlayerController {
   constructor(private readonly matchService: MinRpsMatchService) {}
 
-  @Post()
-  @ApiOperation({ operationId: 'create' })
+  @Post('play')
+  @ApiOperation({ operationId: 'play' })
   @API_201({ type: MinRpsMatchResponseDto })
   @API_400()
   @API_409()
   @API_500()
-  public async create(@Body() dto: MinRpsMatchRequestDto): Promise<MinRpsMatchResponseDto> {
+  public play(@Body() dto: MinRpsMatchRequestDto): MinRpsMatchResponseDto {
     return this.matchService.computeMatchResult(dto);
   }
 }
