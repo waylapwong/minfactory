@@ -1,6 +1,6 @@
 import { Controller, Get, HttpCode } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
-import { MIN_APP_VERSION } from 'src/core/config/minapp-version.config';
+import { MIN_APP_VERSION } from 'src/core/configs/minapp-version.config';
 import { API_200 } from 'src/shared/decorators/api-200.decorator';
 import { API_500 } from 'src/shared/decorators/api-500.decorator';
 import { MinAppName } from 'src/shared/enums/minapp-name.enum';
