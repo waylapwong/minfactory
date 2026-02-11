@@ -22,6 +22,6 @@ export class MinRpsSinglePlayerController {
   @API_409()
   @API_500()
   public play(@Body() dto: MinRpsPlayDto): MinRpsPlayResultDto {
-    return this.singlePlayerService.play(dto);
+    return this.singlePlayerService.playGame(dto);
   }
 }
