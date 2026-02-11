@@ -1,7 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { MinRpsDomainMapper } from '../mapper/minrps-domain.mapper';
+import { MinRpsDtoMapper } from '../mapper/minrps-dto.mapper';
 import { MinRpsEntityMapper } from '../mapper/minrps-entity.mapper';
 import { MinRpsGame } from '../models/domains/minrps-game';
+import { MinRpsCreateGameDto } from '../models/dtos/minrps-create-game.dto';
 import { MinRpsGameDto } from '../models/dtos/minrps-game.dto';
 import { MinRpsGameEntity } from '../models/entities/minrps-game.entity';
 import { MinRpsGameRepository } from '../repositories/minrps-game.repository';
@@ -10,8 +12,17 @@ import { MinRpsGameRepository } from '../repositories/minrps-game.repository';
 export class MinRpsGameService {
   constructor(private readonly gameRepository: MinRpsGameRepository) {}
 
-  public async createGame(domain: MinRpsGame): Promise<MinRpsGame> {
-    return await this.gameRepository.save(domain);
+  public async createGame(dto: MinRpsCreateGameDto): Promise<MinRpsGameDto> {
+    // Mapping
+    const domain: MinRpsGame = MinRpsDtoMapper.createDtoToDomain(dto);
+    const entity: MinRpsGameEntity = MinRpsDomainMapper.domainToEntity(domain);
+    // Save to DB
+    const savedEntity: MinRpsGameEntity = await this.gameRepository.save(entity);
+    // Mapping
+    const savedDomain: MinRpsGame = MinRpsEntityMapper.entityToDomain(savedEntity);
+    const savedDto: MinRpsGameDto = MinRpsDomainMapper.domainToDto(savedDomain);
+
+    return savedDto;
   }
 
   public async deleteGame(id: string): Promise<void> {

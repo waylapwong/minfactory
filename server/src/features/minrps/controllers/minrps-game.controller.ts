@@ -9,9 +9,6 @@ import {
   Post,
 } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
-import { MinRpsDomainMapper } from '../mapper/minrps-domain.mapper';
-import { MinRpsDtoMapper } from '../mapper/minrps-dto.mapper';
-import { MinRpsGame } from '../models/domains/minrps-game';
 import { MinRpsCreateGameDto } from '../models/dtos/minrps-create-game.dto';
 import { MinRpsGameDto } from '../models/dtos/minrps-game.dto';
 import { MinRpsGameService } from '../services/minrps-game.service';
@@ -38,7 +35,7 @@ export class MinRpsGameController {
   @API_404()
   @API_500()
   public async delete(@Param('id', new ParseUUIDPipe()) id: string): Promise<void> {
-    return await this.gameService.deleteGame(id);
+    await this.gameService.deleteGame(id);
   }
 
   @Get(':id')
@@ -68,8 +65,6 @@ export class MinRpsGameController {
   @API_400()
   @API_500()
   public async create(@Body() dto: MinRpsCreateGameDto): Promise<MinRpsGameDto> {
-    const domain: MinRpsGame = MinRpsDtoMapper.createDtoToDomain(dto);
-    const savedDomain: MinRpsGame = await this.gameService.createGame(domain);
-    return MinRpsDomainMapper.domainToDto(savedDomain);
+    return await this.gameService.createGame(dto);
   }
 }
