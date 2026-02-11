@@ -1,3 +1,4 @@
 export class MinRpsLeftPayload {
-  public player: string;
+  public gameId: string;
+  public playerId: string;
 }

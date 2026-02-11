@@ -17,6 +17,7 @@ import { MinRpsJoinedPayload } from '../models/payloads/minrps-joined.payload';
 import type { MinRpsLeavePayload } from '../models/payloads/minrps-leave.payload';
 import { MinRpsLeftPayload } from '../models/payloads/minrps-left.payload';
 import { MinRpsMultiplayerService } from '../services/minrps-multiplayer.service';
+import { Acknowledgement } from 'src/shared/objects/acknowledgement';
 
 @WebSocketGateway({
   cors: { origin: '*' },
@@ -32,24 +33,25 @@ export class MinRpsGateway implements OnGatewayConnection, OnGatewayDisconnect {
   public handleJoinEvent(
     @ConnectedSocket() client: Socket,
     @MessageBody() joinPayload: MinRpsJoinPayload,
-  ): void {
+  ): Acknowledgement {
     console.log(`Player joined: ${client.id}`, joinPayload);
-    const room: string = joinPayload.gameId;
-    client.join(room);
-    const joinedPayload: MinRpsJoinedPayload = { player: client.id };
-    this.sendRoomEvent(room, MinRpsEvent.Joined, joinedPayload);
+    const joinedPayload: MinRpsJoinedPayload = this.multiplayerService.joinGame(
+      client,
+      joinPayload,
+    );
+    this.sendRoomEvent(joinPayload.gameId, MinRpsEvent.Joined, joinedPayload);
+    return this.getAcknowledgement(true);
   }
 
   @SubscribeMessage(MinRpsEvent.Leave)
   public handleLeaveEvent(
     @ConnectedSocket() client: Socket,
-    @MessageBody() leaveEvent: MinRpsLeavePayload,
-  ): void {
-    console.log(`Player left: ${client.id}`, leaveEvent);
-    const room: string = leaveEvent.game;
-    client.leave(room);
-    const leftEvent: MinRpsLeftPayload = { player: client.id };
-    this.sendRoomEvent(room, MinRpsEvent.Left, leftEvent);
+    @MessageBody() leavePayload: MinRpsLeavePayload,
+  ): Acknowledgement {
+    console.log(`Player left: ${client.id}`, leavePayload);
+    const leftPayload: MinRpsLeftPayload = this.multiplayerService.leaveGame(client, leavePayload);
+    this.sendRoomEvent(leavePayload.gameId, MinRpsEvent.Left, leftPayload);
+    return this.getAcknowledgement(true);
   }
 
   public handleConnection(client: Socket): void {
@@ -62,6 +64,13 @@ export class MinRpsGateway implements OnGatewayConnection, OnGatewayDisconnect {
     console.log(`Player disconnected: ${client.id}`);
     const disconnectedEvent: MinRpsDisconnectedPayload = { player: client.id };
     this.sendRoomEvent('', MinRpsEvent.Disconnected, disconnectedEvent);
+  }
+
+  private getAcknowledgement(isSuccess: boolean, message: string = 'OK'): Acknowledgement {
+    const ack: Acknowledgement = new Acknowledgement();
+    ack.isSuccess = isSuccess;
+    ack.message = message;
+    return ack;
   }
 
   private sendClientEvent(client: Socket, event: MinRpsEvent, payload: any): void {
