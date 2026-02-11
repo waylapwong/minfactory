@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { MinRpsGameMapper } from '../mapper/minrps-game.mapper';
+import { MinRpsEntityMapper } from '../mapper/minrps-entity.mapper';
 import { MinRpsGame } from '../models/domains/minrps-game';
 import { MinRpsGameEntity } from '../models/entities/minrps-game.entity';
 import { MinRpsGameRepository } from '../repositories/minrps-game.repository';
@@ -18,7 +18,7 @@ export class MinRpsGameSessionService {
       match.addObserver();
     } else {
       const gameEntity: MinRpsGameEntity = await this.gameRepository.find(matchId);
-      const game: MinRpsGame = MinRpsGameMapper.entityToDomain(gameEntity);
+      const game: MinRpsGame = MinRpsEntityMapper.entityToDomain(gameEntity);
       game.addObserver();
       this.matchRepository.save(matchId, game);
     }

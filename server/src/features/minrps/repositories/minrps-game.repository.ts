@@ -1,7 +1,8 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { MinRpsGameMapper } from '../mapper/minrps-game.mapper';
+import { MinRpsDomainMapper } from '../mapper/minrps-domain.mapper';
+import { MinRpsEntityMapper } from '../mapper/minrps-entity.mapper';
 import { MinRpsGame } from '../models/domains/minrps-game';
 import { MinRpsGameEntity } from '../models/entities/minrps-game.entity';
 
@@ -21,7 +22,7 @@ export class MinRpsGameRepository {
     if (!entity) {
       throw new NotFoundException(`minRPS game with ID ${id} not found`);
     }
-    return MinRpsGameMapper.entityToDomain(entity);
+    return MinRpsEntityMapper.entityToDomain(entity);
   }
 
   public async findAll(): Promise<MinRpsGame[]> {
@@ -29,13 +30,13 @@ export class MinRpsGameRepository {
       order: { createdAt: 'DESC' },
     });
     return entites.map((entity: MinRpsGameEntity) => {
-      return MinRpsGameMapper.entityToDomain(entity);
+      return MinRpsEntityMapper.entityToDomain(entity);
     });
   }
 
   public async save(domain: MinRpsGame): Promise<MinRpsGame> {
-    const entity: MinRpsGameEntity = MinRpsGameMapper.domainToEntity(domain);
+    const entity: MinRpsGameEntity = MinRpsDomainMapper.domainToEntity(domain);
     const savedEntity: MinRpsGameEntity = await this.repository.save(entity);
-    return MinRpsGameMapper.entityToDomain(savedEntity);
+    return MinRpsEntityMapper.entityToDomain(savedEntity);
   }
 }

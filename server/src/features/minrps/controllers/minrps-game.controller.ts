@@ -1,6 +1,7 @@
 import { Body, Controller, Delete, Get, Param, ParseUUIDPipe, Post } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
-import { MinRpsGameMapper } from '../mapper/minrps-game.mapper';
+import { MinRpsDomainMapper } from '../mapper/minrps-domain.mapper';
+import { MinRpsDtoMapper } from '../mapper/minrps-dto.mapper';
 import { MinRpsGame } from '../models/domains/minrps-game';
 import { MinRpsGameRequestDto } from '../models/dtos/minrps-game-request.dto';
 import { MinRpsGameResponseDto } from '../models/dtos/minrps-game-response.dto';
@@ -38,7 +39,7 @@ export class MinRpsGameController {
   @API_500()
   public async get(@Param('id', new ParseUUIDPipe()) id: string): Promise<MinRpsGameResponseDto> {
     const domain: MinRpsGame = await this.gameService.getGame(id);
-    return MinRpsGameMapper.domainToDto(domain);
+    return MinRpsDomainMapper.domainToDto(domain);
   }
 
   @Get()
@@ -47,7 +48,7 @@ export class MinRpsGameController {
   @API_500()
   public async getAll(): Promise<MinRpsGameResponseDto[]> {
     const domains: MinRpsGame[] = await this.gameService.getAllGames();
-    return domains.map((domain: MinRpsGame) => MinRpsGameMapper.domainToDto(domain));
+    return domains.map((domain: MinRpsGame) => MinRpsDomainMapper.domainToDto(domain));
   }
 
   @Post()
@@ -56,8 +57,8 @@ export class MinRpsGameController {
   @API_400()
   @API_500()
   public async create(@Body() dto: MinRpsGameRequestDto): Promise<MinRpsGameResponseDto> {
-    const domain: MinRpsGame = MinRpsGameMapper.dtoToDomain(dto);
+    const domain: MinRpsGame = MinRpsDtoMapper.dtoToDomain(dto);
     const savedDomain: MinRpsGame = await this.gameService.createGame(domain);
-    return MinRpsGameMapper.domainToDto(savedDomain);
+    return MinRpsDomainMapper.domainToDto(savedDomain);
   }
 }

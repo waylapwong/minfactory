@@ -1,9 +1,10 @@
 import { MinRpsGame } from '../models/domains/minrps-game';
-import { MinRpsGameRequestDto } from '../models/dtos/minrps-game-request.dto';
 import { MinRpsGameResponseDto } from '../models/dtos/minrps-game-response.dto';
+import { MinRpsPlayResultDto } from '../models/dtos/minrps-play-result.dto';
 import { MinRpsGameEntity } from '../models/entities/minrps-game.entity';
+import { MinRpsResult } from '../models/enums/minrps-game-result.enum';
 
-export class MinRpsGameMapper {
+export class MinRpsDomainMapper {
   public static domainToDto(domain: MinRpsGame): MinRpsGameResponseDto {
     const dto: MinRpsGameResponseDto = new MinRpsGameResponseDto();
 
@@ -26,21 +27,13 @@ export class MinRpsGameMapper {
     return entity;
   }
 
-  public static dtoToDomain(dto: MinRpsGameRequestDto): MinRpsGame {
-    const domain: MinRpsGame = new MinRpsGame();
+  public static domainToPlayResultDto(domain: MinRpsGame): MinRpsPlayResultDto {
+    const dto: MinRpsPlayResultDto = new MinRpsPlayResultDto();
 
-    domain.name = dto.name;
+    dto.player1Move = domain.player1.move;
+    dto.player2Move = domain.player2.move;
+    dto.result = MinRpsResult.None;
 
-    return domain;
-  }
-
-  public static entityToDomain(entity: MinRpsGameEntity): MinRpsGame {
-    const domain: MinRpsGame = new MinRpsGame();
-
-    domain.createdAt = entity.createdAt;
-    domain.id = entity.id;
-    domain.name = entity.name;
-
-    return domain;
+    return dto;
   }
 }
