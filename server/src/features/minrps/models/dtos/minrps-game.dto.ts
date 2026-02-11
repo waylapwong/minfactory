@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 
-export class MinRpsGameResponseDto {
+export class MinRpsGameDto {
   @ApiProperty({ example: '2025-10-21T18:45:30.000Z' })
   public createdAt: Date;
   @ApiProperty({ example: 1, minimum: 0 })

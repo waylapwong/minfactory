@@ -1,12 +1,12 @@
 import { MinRpsGame } from '../models/domains/minrps-game';
-import { MinRpsGameResponseDto } from '../models/dtos/minrps-game-response.dto';
+import { MinRpsGameDto } from '../models/dtos/minrps-game.dto';
 import { MinRpsPlayResultDto } from '../models/dtos/minrps-play-result.dto';
 import { MinRpsGameEntity } from '../models/entities/minrps-game.entity';
 import { MinRpsResult } from '../models/enums/minrps-game-result.enum';
 
 export class MinRpsDomainMapper {
-  public static domainToDto(domain: MinRpsGame): MinRpsGameResponseDto {
-    const dto: MinRpsGameResponseDto = new MinRpsGameResponseDto();
+  public static domainToDto(domain: MinRpsGame): MinRpsGameDto {
+    const dto: MinRpsGameDto = new MinRpsGameDto();
 
     dto.createdAt = domain.createdAt;
     dto.id = domain.id;

@@ -1,10 +1,10 @@
 import { MinRpsGame } from '../models/domains/minrps-game';
 import { MinRpsPlayer } from '../models/domains/minrps-player';
-import { MinRpsGameRequestDto } from '../models/dtos/minrps-game-request.dto';
+import { MinRpsCreateGameDto } from '../models/dtos/minrps-create-game.dto';
 import { MinRpsPlayDto } from '../models/dtos/minrps-play.dto';
 
 export class MinRpsDtoMapper {
-  public static dtoToDomain(dto: MinRpsGameRequestDto): MinRpsGame {
+  public static createDtoToDomain(dto: MinRpsCreateGameDto): MinRpsGame {
     const domain: MinRpsGame = new MinRpsGame();
 
     domain.name = dto.name;

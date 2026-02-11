@@ -3,8 +3,8 @@ import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { MinRpsDomainMapper } from '../mapper/minrps-domain.mapper';
 import { MinRpsDtoMapper } from '../mapper/minrps-dto.mapper';
 import { MinRpsGame } from '../models/domains/minrps-game';
-import { MinRpsGameRequestDto } from '../models/dtos/minrps-game-request.dto';
-import { MinRpsGameResponseDto } from '../models/dtos/minrps-game-response.dto';
+import { MinRpsCreateGameDto } from '../models/dtos/minrps-create-game.dto';
+import { MinRpsGameDto } from '../models/dtos/minrps-game.dto';
 import { MinRpsGameService } from '../services/minrps-game.service';
 import { API_200 } from 'src/shared/decorators/api-200.decorator';
 import { API_201 } from 'src/shared/decorators/api-201.decorator';
@@ -33,31 +33,31 @@ export class MinRpsGameController {
 
   @Get(':id')
   @ApiOperation({ operationId: 'get' })
-  @API_200({ type: MinRpsGameResponseDto })
+  @API_200({ type: MinRpsGameDto })
   @API_400()
   @API_404()
   @API_500()
-  public async get(@Param('id', new ParseUUIDPipe()) id: string): Promise<MinRpsGameResponseDto> {
+  public async get(@Param('id', new ParseUUIDPipe()) id: string): Promise<MinRpsGameDto> {
     const domain: MinRpsGame = await this.gameService.getGame(id);
     return MinRpsDomainMapper.domainToDto(domain);
   }
 
   @Get()
   @ApiOperation({ operationId: 'getAll' })
-  @API_200({ isArray: true, type: MinRpsGameResponseDto })
+  @API_200({ isArray: true, type: MinRpsGameDto })
   @API_500()
-  public async getAll(): Promise<MinRpsGameResponseDto[]> {
+  public async getAll(): Promise<MinRpsGameDto[]> {
     const domains: MinRpsGame[] = await this.gameService.getAllGames();
     return domains.map((domain: MinRpsGame) => MinRpsDomainMapper.domainToDto(domain));
   }
 
   @Post()
   @ApiOperation({ operationId: 'create' })
-  @API_201({ type: MinRpsGameResponseDto })
+  @API_201({ type: MinRpsGameDto })
   @API_400()
   @API_500()
-  public async create(@Body() dto: MinRpsGameRequestDto): Promise<MinRpsGameResponseDto> {
-    const domain: MinRpsGame = MinRpsDtoMapper.dtoToDomain(dto);
+  public async create(@Body() dto: MinRpsCreateGameDto): Promise<MinRpsGameDto> {
+    const domain: MinRpsGame = MinRpsDtoMapper.createDtoToDomain(dto);
     const savedDomain: MinRpsGame = await this.gameService.createGame(domain);
     return MinRpsDomainMapper.domainToDto(savedDomain);
   }
