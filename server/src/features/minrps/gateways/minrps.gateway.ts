@@ -8,8 +8,8 @@ import {
   WebSocketServer,
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
+import { Namespace } from '../../../shared/enums/namespace.enum';
 import { MinRpsEvent } from '../models/enums/minrps-event.enum';
-import { MinRpsNamespace } from '../models/enums/minrps-namespace.enum';
 import { MinRpsConnectedPayload } from '../models/payloads/minrps-connected.payload';
 import { MinRpsDisconnectedPayload } from '../models/payloads/minrps-disconnected.payload';
 import type { MinRpsJoinPayload } from '../models/payloads/minrps-join.payload';
@@ -20,7 +20,7 @@ import { MinRpsGameSessionService } from '../services/minrps-game-session.servic
 
 @WebSocketGateway({
   cors: { origin: '*' },
-  namespace: MinRpsNamespace.MinRps,
+  namespace: Namespace.MinRps,
 })
 export class MinRpsGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer()

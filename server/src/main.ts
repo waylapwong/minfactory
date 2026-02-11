@@ -7,7 +7,7 @@ import helmet from 'helmet';
 import * as packageJson from '../package.json';
 
 import { AppModule } from './app.module';
-import { MinAppName } from './shared/enums/minapp-name.enum';
+import { AppName } from './shared/enums/app-name.enum';
 
 async function bootstrap() {
   // APPLICATION
@@ -40,12 +40,12 @@ async function bootstrap() {
 
   // OPENAPI
   const SWAGGER_CONFIG = new DocumentBuilder()
-    .setTitle(MinAppName.MinFactory)
+    .setTitle(AppName.MinFactory)
     .setVersion(`v${packageJson.version}`)
     .setDescription(
-      `${MinAppName.MinFactory} OpenAPI specification. <br/> <a href="http://localhost:3000/openapi-json/" target="_blank">JSON specification</a>`,
+      `${AppName.MinFactory} OpenAPI specification. <br/> <a href="http://localhost:3000/openapi-json/" target="_blank">JSON specification</a>`,
     )
-    .setContact(MinAppName.MinFactory, 'https://minFactory.com', '')
+    .setContact(AppName.MinFactory, 'https://minFactory.com', '')
     .build();
   const SWAGGER_DOCUMENT = SwaggerModule.createDocument(application, SWAGGER_CONFIG);
   SwaggerModule.setup('openapi', application, SWAGGER_DOCUMENT);

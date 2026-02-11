@@ -2,10 +2,10 @@ import { Controller, Get, HttpCode } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { API_200 } from './shared/decorators/api-200.decorator';
 import { API_500 } from './shared/decorators/api-500.decorator';
-import { MinAppName } from './shared/enums/minapp-name.enum';
+import { AppName } from './shared/enums/app-name.enum';
 
 @Controller()
-@ApiTags(MinAppName.MinFactory)
+@ApiTags(AppName.MinFactory)
 export class AppController {
   @Get('health')
   @HttpCode(200)

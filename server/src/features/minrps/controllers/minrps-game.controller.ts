@@ -1,4 +1,13 @@
-import { Body, Controller, Delete, Get, HttpCode, Param, ParseUUIDPipe, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  HttpCode,
+  Param,
+  ParseUUIDPipe,
+  Post,
+} from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { MinRpsCreateGameDto } from '../models/dtos/minrps-create-game.dto';
 import { MinRpsGameDto } from '../models/dtos/minrps-game.dto';
@@ -10,10 +19,10 @@ import { API_400 } from 'src/shared/decorators/api-400.decorator';
 import { API_404 } from 'src/shared/decorators/api-404.decorator';
 import { API_500 } from 'src/shared/decorators/api-500.decorator';
 import { API_Param_ID } from 'src/shared/decorators/param-id.decorator';
-import { MinAppName } from 'src/shared/enums/minapp-name.enum';
+import { AppName } from 'src/shared/enums/app-name.enum';
 
 @Controller('minrps/games')
-@ApiTags(MinAppName.MinRps)
+@ApiTags(AppName.MinRps)
 export class MinRpsGameController {
   constructor(private readonly gameService: MinRpsGameService) {}
 
