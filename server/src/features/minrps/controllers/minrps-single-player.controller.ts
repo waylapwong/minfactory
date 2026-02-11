@@ -7,10 +7,10 @@ import { API_201 } from 'src/shared/decorators/api-201.decorator';
 import { API_400 } from 'src/shared/decorators/api-400.decorator';
 import { API_409 } from 'src/shared/decorators/api-409.decorator';
 import { API_500 } from 'src/shared/decorators/api-500.decorator';
-import { MinApp } from 'src/shared/enums/minapp.enum';
+import { MinAppName } from 'src/shared/enums/minapp-name.enum';
 
 @Controller('minrps')
-@ApiTags(MinApp.MinRpsMatch)
+@ApiTags(MinAppName.MinRps)
 export class MinRpsSinglePlayerController {
   constructor(private readonly singlePlayerService: MinRpsSinglePlayerService) {}
 

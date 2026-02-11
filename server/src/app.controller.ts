@@ -1,12 +1,17 @@
-import { Controller, Get } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
-
-import { MinApp } from './shared/enums/minapp.enum';
+import { Controller, Get, HttpCode } from '@nestjs/common';
+import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { API_200 } from './shared/decorators/api-200.decorator';
+import { API_500 } from './shared/decorators/api-500.decorator';
+import { MinAppName } from './shared/enums/minapp-name.enum';
 
 @Controller()
-@ApiTags(MinApp.MinFactory)
+@ApiTags(MinAppName.MinFactory)
 export class AppController {
   @Get('health')
+  @HttpCode(200)
+  @ApiOperation({ operationId: 'getHealth' })
+  @API_200()
+  @API_500()
   public getHealth(): string {
     return 'application up and running!';
   }

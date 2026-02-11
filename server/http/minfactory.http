@@ -1,6 +1,7 @@
-@baseUrl = http://localhost:3000/
-@healthEndpoint = health/
+@BASE_PATH = http://localhost:3000
+@HEALTH = health
+
 
 ### GET /health
-GET {{baseUrl}}{{healthEndpoint}}
+GET {{BASE_PATH}}/{{HEALTH}}
 Accept: application/json
