@@ -16,7 +16,7 @@ import type { MinRpsJoinPayload } from '../models/payloads/minrps-join.payload';
 import { MinRpsJoinedPayload } from '../models/payloads/minrps-joined.payload';
 import type { MinRpsLeavePayload } from '../models/payloads/minrps-leave.payload';
 import { MinRpsLeftPayload } from '../models/payloads/minrps-left.payload';
-import { MinRpsGameSessionService } from '../services/minrps-game-session.service';
+import { MinRpsMultiplayerService } from '../services/minrps-multiplayer.service';
 
 @WebSocketGateway({
   cors: { origin: '*' },
@@ -26,18 +26,18 @@ export class MinRpsGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer()
   public server: Server;
 
-  constructor(private readonly matchSystem: MinRpsGameSessionService) {}
+  constructor(private readonly multiplayerService: MinRpsMultiplayerService) {}
 
   @SubscribeMessage(MinRpsEvent.Join)
   public handleJoinEvent(
     @ConnectedSocket() client: Socket,
-    @MessageBody() requestPayload: MinRpsJoinPayload,
+    @MessageBody() joinPayload: MinRpsJoinPayload,
   ): void {
-    console.log(`Player joined: ${client.id}`, requestPayload);
-    const room: string = requestPayload.gameId;
+    console.log(`Player joined: ${client.id}`, joinPayload);
+    const room: string = joinPayload.gameId;
     client.join(room);
-    const responsePayload: MinRpsJoinedPayload = { player: client.id };
-    this.sendRoomEvent(room, MinRpsEvent.Joined, responsePayload);
+    const joinedPayload: MinRpsJoinedPayload = { player: client.id };
+    this.sendRoomEvent(room, MinRpsEvent.Joined, joinedPayload);
   }
 
   @SubscribeMessage(MinRpsEvent.Leave)

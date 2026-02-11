@@ -9,7 +9,7 @@ import { MinRpsResult } from '../models/enums/minrps-game-result.enum';
 import { MinRpsMove } from '../models/enums/minrps-move.enum';
 
 @Injectable()
-export class MinRpsSinglePlayerService {
+export class MinRpsSingleplayerService {
   public playGame(playDto: MinRpsPlayDto): MinRpsPlayResultDto {
     // Mapping
     const domain: MinRpsGame = MinRpsDtoMapper.playDtoToDomain(playDto);
