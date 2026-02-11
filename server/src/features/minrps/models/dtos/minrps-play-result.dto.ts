@@ -2,7 +2,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { MinRpsResult } from '../enums/minrps-game-result.enum';
 import { MinRpsMove } from '../enums/minrps-move.enum';
 
-export class MinRpsMatchResponseDto {
+export class MinRpsPlayResultDto {
   @ApiProperty({
     enum: MinRpsMove,
     enumName: 'MinRpsMove',
