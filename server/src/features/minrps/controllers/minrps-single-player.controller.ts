@@ -16,7 +16,7 @@ export class MinRpsSinglePlayerController {
 
   @Post('play')
   @HttpCode(201)
-  @ApiOperation({ operationId: 'play' })
+  @ApiOperation({ operationId: 'playMinRpsGame' })
   @API_201({ type: MinRpsPlayResultDto })
   @API_400()
   @API_409()

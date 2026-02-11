@@ -11,26 +11,10 @@
  */
 
 
-export interface MinRpsGameResponseDto { 
+export interface MinRpsCreateGameDto { 
     /**
      * Game name
      */
     name: string;
-    /**
-     * Number of observers currently watching the game
-     */
-    observers: number;
-    /**
-     * Number of players currently in the game
-     */
-    players: number;
-    /**
-     * Timestamp when the game was created (UTC)
-     */
-    createdAt: string;
-    /**
-     * Unique game identifier
-     */
-    id: string;
 }
 

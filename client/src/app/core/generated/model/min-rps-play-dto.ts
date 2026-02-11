@@ -9,12 +9,13 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
+import { MinRpsMove } from './min-rps-move';
 
 
-export interface MinRpsGameRequestDto { 
-    /**
-     * player name
-     */
-    name: string;
+export interface MinRpsPlayDto { 
+    player1Move: MinRpsMove;
 }
+export namespace MinRpsPlayDto {
+}
+
 

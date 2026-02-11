@@ -1,6 +1,6 @@
 import { Injectable, Signal, WritableSignal, computed, signal } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
-import { MinRPSGameApiService, MinRpsGameResponseDto } from '../../../core/generated';
+import { MinRPSApiService, MinRpsGameDto } from '../../../core/generated';
 import { sleep } from '../../../shared/utils/sleep.util';
 import { MINRPS_FIRST_MESSAGES } from '../models/constants/minrps-first.message';
 import {
@@ -25,9 +25,9 @@ import { MINRPS_SETTINGS } from '../settings/minrps.settings';
 })
 export class MinRpsGameService {
   private readonly game: WritableSignal<MinRpsGame> = signal(new MinRpsGame());
-  private readonly games: WritableSignal<MinRpsGameResponseDto[]> = signal([]);
+  private readonly games: WritableSignal<MinRpsGameDto[]> = signal([]);
 
-  public gamesList: Signal<MinRpsGameResponseDto[]> = computed(() => this.games());
+  public gamesList: Signal<MinRpsGameDto[]> = computed(() => this.games());
   public message: WritableSignal<string> = signal(MINRPS_START_MESSAGE);
   public player1Move: Signal<MinRpsMove> = computed(() => this.game().player1Move);
   public player2Move: Signal<MinRpsMove> = computed(() => this.game().player2Move);
@@ -36,11 +36,11 @@ export class MinRpsGameService {
   private abortController: AbortController | undefined = undefined;
   private gameRunning: boolean = false;
 
-  constructor(private readonly gameApiService: MinRPSGameApiService) {}
+  constructor(private readonly apiService: MinRPSApiService) {}
 
   public async checkGameById(id: string): Promise<boolean> {
     try {
-      const dto: MinRpsGameResponseDto = await firstValueFrom(this.gameApiService.getGame(id));
+      const dto: MinRpsGameDto = await firstValueFrom(this.apiService.getMinRpsGame(id));
       return !!dto;
     } catch (error: unknown) {
       console.error(error);
@@ -49,17 +49,17 @@ export class MinRpsGameService {
   }
 
   public async createNewGame(name: string): Promise<void> {
-    await firstValueFrom(this.gameApiService.createGame({ name }));
+    await firstValueFrom(this.apiService.createMinRpsGame({ name }));
     this.getAllGames();
   }
 
   public async deleteGameById(id: string): Promise<void> {
-    await firstValueFrom(this.gameApiService.deleteGame(id));
+    await firstValueFrom(this.apiService.deleteMinRpsGame(id));
     await this.getAllGames();
   }
 
   public async getAllGames(): Promise<void> {
-    const dtos: MinRpsGameResponseDto[] = await firstValueFrom(this.gameApiService.getAllGames());
+    const dtos: MinRpsGameDto[] = await firstValueFrom(this.apiService.getAllMinRpsGames());
     this.games.set(dtos);
   }
 

@@ -1,5 +1,5 @@
 export * from './min-factory-api.service';
 import { MinFactoryApiService } from './min-factory-api.service';
-export * from './min-rps-game-api.service';
-import { MinRPSGameApiService } from './min-rps-game-api.service';
-export const APIS = [MinFactoryApiService, MinRPSGameApiService];
+export * from './min-rps-api.service';
+import { MinRPSApiService } from './min-rps-api.service';
+export const APIS = [MinFactoryApiService, MinRPSApiService];

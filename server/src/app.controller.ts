@@ -9,7 +9,7 @@ import { MinAppName } from './shared/enums/minapp-name.enum';
 export class AppController {
   @Get('health')
   @HttpCode(200)
-  @ApiOperation({ operationId: 'getHealth' })
+  @ApiOperation({ operationId: 'getMinFactoryHealth' })
   @API_200()
   @API_500()
   public getHealth(): string {

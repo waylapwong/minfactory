@@ -1,13 +1,4 @@
-import {
-  Body,
-  Controller,
-  Delete,
-  Get,
-  HttpCode,
-  Param,
-  ParseUUIDPipe,
-  Post,
-} from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpCode, Param, ParseUUIDPipe, Post } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { MinRpsCreateGameDto } from '../models/dtos/minrps-create-game.dto';
 import { MinRpsGameDto } from '../models/dtos/minrps-game.dto';
@@ -28,7 +19,7 @@ export class MinRpsGameController {
 
   @Delete(':id')
   @HttpCode(204)
-  @ApiOperation({ operationId: 'delete' })
+  @ApiOperation({ operationId: 'deleteMinRpsGame' })
   @API_Param_ID()
   @API_204()
   @API_400()
@@ -40,7 +31,7 @@ export class MinRpsGameController {
 
   @Get(':id')
   @HttpCode(200)
-  @ApiOperation({ operationId: 'get' })
+  @ApiOperation({ operationId: 'getMinRpsGame' })
   @API_200({ type: MinRpsGameDto })
   @API_400()
   @API_404()
@@ -51,7 +42,7 @@ export class MinRpsGameController {
 
   @Get()
   @HttpCode(200)
-  @ApiOperation({ operationId: 'getAll' })
+  @ApiOperation({ operationId: 'getAllMinRpsGames' })
   @API_200({ isArray: true, type: MinRpsGameDto })
   @API_500()
   public async getAll(): Promise<MinRpsGameDto[]> {
@@ -60,7 +51,7 @@ export class MinRpsGameController {
 
   @Post()
   @HttpCode(201)
-  @ApiOperation({ operationId: 'create' })
+  @ApiOperation({ operationId: 'createMinRpsGame' })
   @API_201({ type: MinRpsGameDto })
   @API_400()
   @API_500()

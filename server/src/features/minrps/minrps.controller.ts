@@ -10,7 +10,7 @@ import { MinAppName } from 'src/shared/enums/minapp-name.enum';
 export class MinRpsController {
   @Get('health')
   @HttpCode(200)
-  @ApiOperation({ operationId: 'getHealth' })
+  @ApiOperation({ operationId: 'getMinRpsHealth' })
   @API_200({ type: String })
   @API_500()
   public getHealth(): string {
@@ -19,7 +19,7 @@ export class MinRpsController {
 
   @Get('version')
   @HttpCode(200)
-  @ApiOperation({ operationId: 'getVersion' })
+  @ApiOperation({ operationId: 'getMinRpsVersion' })
   @API_200({ type: String })
   @API_500()
   public getVersion(): string {
