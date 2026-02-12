@@ -1,4 +1,4 @@
 export class Acknowledgement {
-  public isSuccess: boolean;
-  public message: string;
+  public isSuccess: boolean = true;
+  public message: string = 'OK';
 }

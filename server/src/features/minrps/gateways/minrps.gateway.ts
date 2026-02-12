@@ -10,7 +10,6 @@ import {
 import { Server, Socket } from 'socket.io';
 import { Namespace } from '../../../shared/enums/namespace.enum';
 import { MinRpsEvent } from '../models/enums/minrps-event.enum';
-import { MinRpsConnectedPayload } from '../models/payloads/minrps-connected.payload';
 import { MinRpsDisconnectedPayload } from '../models/payloads/minrps-disconnected.payload';
 import type { MinRpsJoinPayload } from '../models/payloads/minrps-join.payload';
 import { MinRpsJoinedPayload } from '../models/payloads/minrps-joined.payload';
@@ -34,13 +33,16 @@ export class MinRpsGateway implements OnGatewayConnection, OnGatewayDisconnect {
     @ConnectedSocket() client: Socket,
     @MessageBody() joinPayload: MinRpsJoinPayload,
   ): Acknowledgement {
-    console.log(`Player joined: ${client.id}`, joinPayload);
+    console.log(
+      `Player: ${joinPayload.playerId} wants to join game: ${joinPayload.gameId}`,
+      joinPayload,
+    );
     const joinedPayload: MinRpsJoinedPayload = this.multiplayerService.joinGame(
       client,
       joinPayload,
     );
-    this.sendRoomEvent(joinPayload.gameId, MinRpsEvent.Joined, joinedPayload);
-    return this.getAcknowledgement(true);
+    this.sendRoomEvent(joinedPayload.gameId, MinRpsEvent.Joined, joinedPayload);
+    return new Acknowledgement();
   }
 
   @SubscribeMessage(MinRpsEvent.Leave)
@@ -48,38 +50,31 @@ export class MinRpsGateway implements OnGatewayConnection, OnGatewayDisconnect {
     @ConnectedSocket() client: Socket,
     @MessageBody() leavePayload: MinRpsLeavePayload,
   ): Acknowledgement {
-    console.log(`Player left: ${client.id}`, leavePayload);
+    console.log(`Player: ${leavePayload.playerId} left game: ${leavePayload.gameId}`, leavePayload);
     const leftPayload: MinRpsLeftPayload = this.multiplayerService.leaveGame(client, leavePayload);
     this.sendRoomEvent(leavePayload.gameId, MinRpsEvent.Left, leftPayload);
-    return this.getAcknowledgement(true);
+    return new Acknowledgement();
   }
 
-  public handleConnection(client: Socket): void {
+  public handleConnection(client: Socket): Acknowledgement {
     console.log(`Player connected: ${client.id}`);
-    const connectedPayload: MinRpsConnectedPayload = { player: client.id };
-    this.sendClientEvent(client, MinRpsEvent.Connected, connectedPayload);
+    return new Acknowledgement();
   }
 
   public handleDisconnect(client: Socket): void {
     console.log(`Player disconnected: ${client.id}`);
-    const disconnectedEvent: MinRpsDisconnectedPayload = { player: client.id };
-    this.sendRoomEvent('', MinRpsEvent.Disconnected, disconnectedEvent);
-  }
-
-  private getAcknowledgement(isSuccess: boolean, message: string = 'OK'): Acknowledgement {
-    const ack: Acknowledgement = new Acknowledgement();
-    ack.isSuccess = isSuccess;
-    ack.message = message;
-    return ack;
-  }
-
-  private sendClientEvent(client: Socket, event: MinRpsEvent, payload: any): void {
-    client.emit(event, payload);
-    console.log(`${event} event sent`, payload);
+    this.multiplayerService.removePlayerFromAllRooms(client);
+    const roomNames: string[] = this.multiplayerService.getAllPlayerRoomNames(client);
+    for (const roomName of roomNames) {
+      const disconnectedPayload: MinRpsDisconnectedPayload = new MinRpsDisconnectedPayload();
+      disconnectedPayload.gameId = roomName;
+      disconnectedPayload.playerId = client.id;
+      this.sendRoomEvent(roomName, MinRpsEvent.Disconnected, disconnectedPayload);
+    }
   }
 
   private sendRoomEvent(room: string, event: MinRpsEvent, payload: any): void {
-    console.log(`${event} event sent to room: ${room}`, payload);
+    console.log(`Event: ${event} sent to room: ${room}`, payload);
     this.server.to(room).emit(event, payload);
   }
 }
