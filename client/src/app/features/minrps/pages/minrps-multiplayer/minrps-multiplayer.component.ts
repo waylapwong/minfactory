@@ -58,13 +58,13 @@ export class MinRpsMultiplayerComponent implements OnInit, OnDestroy {
     }
   }
 
-  private sendEvent(event: MinRpsGameEvent, data: any): void {
-    this.socketService.emit(event, data);
-    console.log(`${event} event sent`, data);
+  private sendEvent(event: MinRpsGameEvent, payload: any): void {
+    this.socketService.emit(event, payload);
+    console.log(`${event} event sent`, payload);
   }
 
   private setGameId(): void {
-    const gameId = this.activatedRoute.snapshot.paramMap.get('id') as string;
+    const gameId: string = this.activatedRoute.snapshot.paramMap.get('id') as string;
     this.gameId.set(gameId);
   }
 
