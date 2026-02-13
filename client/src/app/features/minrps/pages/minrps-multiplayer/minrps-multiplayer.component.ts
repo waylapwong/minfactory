@@ -2,7 +2,7 @@ import { Component, OnDestroy, OnInit, WritableSignal, signal } from '@angular/c
 import { ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { RoutingService } from '../../../../core/services/routing.service';
-import { MinRpsEvent } from '../../models/enums/minrps-event.enum';
+import { MinRpsGameEvent } from '../../models/enums/minrps-game-event.enum';
 import { MinRpsConnectedPayload } from '../../models/payloads/minrps-connected.payload';
 import { MinRpsDisconnectedPayload } from '../../models/payloads/minrps-disconnected.payload';
 import { MinRpsJoinPayload } from '../../models/payloads/minrps-join.payload';
@@ -39,7 +39,7 @@ export class MinRpsMultiplayerComponent implements OnInit, OnDestroy {
 
   public ngOnDestroy(): void {
     const leaveEvent: MinRpsLeavePayload = { gameId: this.gameId(), playerId: this.playerId() };
-    this.sendEvent(MinRpsEvent.Leave, leaveEvent);
+    this.sendEvent(MinRpsGameEvent.Leave, leaveEvent);
     this.subscription.unsubscribe();
     this.socketService.disconnect();
   }
@@ -58,7 +58,7 @@ export class MinRpsMultiplayerComponent implements OnInit, OnDestroy {
     }
   }
 
-  private sendEvent(event: MinRpsEvent, data: any): void {
+  private sendEvent(event: MinRpsGameEvent, data: any): void {
     this.socketService.emit(event, data);
     console.log(`${event} event sent`, data);
   }
@@ -71,15 +71,15 @@ export class MinRpsMultiplayerComponent implements OnInit, OnDestroy {
   private subscribeToConnectedEvent(): void {
     this.subscription.add(
       this.socketService
-        .fromEvent(MinRpsEvent.Connected)
-        .subscribe((connectedEvent: MinRpsConnectedPayload) => {
-          console.log(`${MinRpsEvent.Connected} event received`, connectedEvent);
-          this.playerId.set(connectedEvent.playerId);
+        .fromEvent(MinRpsGameEvent.Connected)
+        .subscribe((payload: MinRpsConnectedPayload) => {
+          console.log(`${MinRpsGameEvent.Connected} event received`, payload);
+          this.playerId.set(payload.playerId);
           const joinPayload: MinRpsJoinPayload = {
             gameId: this.gameId(),
             playerId: this.playerId(),
           };
-          this.sendEvent(MinRpsEvent.Join, joinPayload);
+          this.sendEvent(MinRpsGameEvent.Join, joinPayload);
         }),
     );
   }
@@ -87,9 +87,9 @@ export class MinRpsMultiplayerComponent implements OnInit, OnDestroy {
   private subscribeToDisonnectedEvent(): void {
     this.subscription.add(
       this.socketService
-        .fromEvent(MinRpsEvent.Disconnected)
-        .subscribe((disconnectedEvent: MinRpsDisconnectedPayload) => {
-          console.log(`${MinRpsEvent.Connected} event received`, disconnectedEvent);
+        .fromEvent(MinRpsGameEvent.Disconnected)
+        .subscribe((payload: MinRpsDisconnectedPayload) => {
+          console.log(`${MinRpsGameEvent.Connected} event received`, payload);
         }),
     );
   }
@@ -97,17 +97,17 @@ export class MinRpsMultiplayerComponent implements OnInit, OnDestroy {
   private subscribeToJoinedEvent(): void {
     this.subscription.add(
       this.socketService
-        .fromEvent(MinRpsEvent.Joined)
-        .subscribe((joinedEvent: MinRpsJoinedPayload) => {
-          console.log(`${MinRpsEvent.Joined} event received`, joinedEvent);
+        .fromEvent(MinRpsGameEvent.Joined)
+        .subscribe((payload: MinRpsJoinedPayload) => {
+          console.log(`${MinRpsGameEvent.Joined} event received`, payload);
         }),
     );
   }
 
   private subscribeToLeftEvent(): void {
     this.subscription.add(
-      this.socketService.fromEvent(MinRpsEvent.Left).subscribe((leftEvent: MinRpsLeftPayload) => {
-        console.log(`${MinRpsEvent.Left} event received`, leftEvent);
+      this.socketService.fromEvent(MinRpsGameEvent.Left).subscribe((payload: MinRpsLeftPayload) => {
+        console.log(`${MinRpsGameEvent.Left} event received`, payload);
       }),
     );
   }

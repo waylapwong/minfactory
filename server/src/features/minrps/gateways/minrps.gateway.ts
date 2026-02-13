@@ -9,7 +9,7 @@ import {
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 import { Namespace } from '../../../shared/enums/namespace.enum';
-import { MinRpsEvent } from '../models/enums/minrps-event.enum';
+import { MinRpsGameEvent } from '../models/enums/minrps-game-event.enum';
 import { MinRpsConnectedPayload } from '../models/payloads/minrps-connected.payload';
 import { MinRpsDisconnectedPayload } from '../models/payloads/minrps-disconnected.payload';
 import type { MinRpsJoinPayload } from '../models/payloads/minrps-join.payload';
@@ -29,7 +29,7 @@ export class MinRpsGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
   constructor(private readonly multiplayerService: MinRpsMultiplayerService) {}
 
-  @SubscribeMessage(MinRpsEvent.Join)
+  @SubscribeMessage(MinRpsGameEvent.Join)
   public handleJoinEvent(
     @ConnectedSocket() client: Socket,
     @MessageBody() joinPayload: MinRpsJoinPayload,
@@ -42,18 +42,18 @@ export class MinRpsGateway implements OnGatewayConnection, OnGatewayDisconnect {
       client,
       joinPayload,
     );
-    this.sendRoomEvent(joinedPayload.gameId, MinRpsEvent.Joined, joinedPayload);
+    this.sendRoomEvent(joinedPayload.gameId, MinRpsGameEvent.Joined, joinedPayload);
     return new Acknowledgement();
   }
 
-  @SubscribeMessage(MinRpsEvent.Leave)
+  @SubscribeMessage(MinRpsGameEvent.Leave)
   public handleLeaveEvent(
     @ConnectedSocket() client: Socket,
     @MessageBody() leavePayload: MinRpsLeavePayload,
   ): Acknowledgement {
     console.log(`Player: ${leavePayload.playerId} left game: ${leavePayload.gameId}`, leavePayload);
     const leftPayload: MinRpsLeftPayload = this.multiplayerService.leaveGame(client, leavePayload);
-    this.sendRoomEvent(leavePayload.gameId, MinRpsEvent.Left, leftPayload);
+    this.sendRoomEvent(leavePayload.gameId, MinRpsGameEvent.Left, leftPayload);
     return new Acknowledgement();
   }
 
@@ -61,7 +61,7 @@ export class MinRpsGateway implements OnGatewayConnection, OnGatewayDisconnect {
     console.log(`Player connected: ${client.id}`);
     const connectedPayload: MinRpsConnectedPayload = new MinRpsConnectedPayload();
     connectedPayload.playerId = crypto.randomUUID();
-    this.sendClientEvent(client, MinRpsEvent.Connected, connectedPayload);
+    this.sendClientEvent(client, MinRpsGameEvent.Connected, connectedPayload);
   }
 
   public handleDisconnect(client: Socket): void {
@@ -72,16 +72,16 @@ export class MinRpsGateway implements OnGatewayConnection, OnGatewayDisconnect {
       const disconnectedPayload: MinRpsDisconnectedPayload = new MinRpsDisconnectedPayload();
       disconnectedPayload.gameId = roomName;
       disconnectedPayload.playerId = client.id;
-      this.sendRoomEvent(roomName, MinRpsEvent.Disconnected, disconnectedPayload);
+      this.sendRoomEvent(roomName, MinRpsGameEvent.Disconnected, disconnectedPayload);
     }
   }
 
-  private sendClientEvent(client: Socket, event: MinRpsEvent, payload: any): void {
+  private sendClientEvent(client: Socket, event: MinRpsGameEvent, payload: any): void {
     console.log(`Event: ${event} sent to player: ${payload.playerId}`, payload);
     client.emit(event, payload);
   }
 
-  private sendRoomEvent(room: string, event: MinRpsEvent, payload: any): void {
+  private sendRoomEvent(room: string, event: MinRpsGameEvent, payload: any): void {
     console.log(`Event: ${event} sent to room: ${room}`, payload);
     this.server.to(room).emit(event, payload);
   }
