@@ -6,7 +6,7 @@ import { MinRpsEvent } from '../../models/enums/minrps-event.enum';
 import { MinRpsConnectedPayload } from '../../models/payloads/minrps-connected.payload';
 import { MinRpsDisconnectedPayload } from '../../models/payloads/minrps-disconnected.payload';
 import { MinRpsJoinPayload } from '../../models/payloads/minrps-join.payload';
-import { MinRpsJoinedPayload } from '../../models/payloads/minrps-joined.Payload';
+import { MinRpsJoinedPayload } from '../../models/payloads/minrps-joined.payload';
 import { MinRpsLeavePayload } from '../../models/payloads/minrps-leave.payload';
 import { MinRpsLeftPayload } from '../../models/payloads/minrps-left.payload';
 import { MinRpsGameService } from '../../services/minrps-game.service';
