@@ -18,7 +18,7 @@ export class HeaderComponent {
   public readonly Application: typeof AppName = AppName;
   public readonly MinFactoryPath: typeof MinFactoryPath = MinFactoryPath;
 
-  public logo = computed(() => {
+  public logoText = computed(() => {
     switch (this.contextService.app()) {
       case AppName.MinFactory:
         return 'Factory';

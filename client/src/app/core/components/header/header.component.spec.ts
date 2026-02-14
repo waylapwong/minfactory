@@ -35,17 +35,17 @@ describe('HeaderComponent', () => {
   describe('logo()', () => {
     it('should compute the correct logo for minFactory', () => {
       (component as any).contextService.app.set(AppName.MinFactory);
-      expect(component.logo()).toBe('Factory');
+      expect(component.logoText()).toBe('Factory');
     });
 
     it('should compute the correct logo for minRPS', () => {
       (component as any).contextService.app.set(AppName.MinRps);
-      expect(component.logo()).toBe('RPS');
+      expect(component.logoText()).toBe('RPS');
     });
 
     it('should default to logo for minFactory', () => {
       (component as any).contextService.app.set(undefined);
-      expect(component.logo()).toBe('Factory');
+      expect(component.logoText()).toBe('Factory');
     });
   });
 
