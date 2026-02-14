@@ -1,7 +1,6 @@
 import { DatePipe } from '@angular/common';
-import { Component, OnInit, Signal, WritableSignal, computed, signal } from '@angular/core';
+import { Component, OnInit, Signal, WritableSignal, inject, signal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { MinRpsGameDto } from '../../../../core/generated';
 import { RoutingService } from '../../../../core/services/routing.service';
 import { ButtonComponent } from '../../../../shared/components/button/button.component';
 import { CardButtonComponent } from '../../../../shared/components/card-button/card-button.component';
@@ -10,6 +9,7 @@ import { H1Component } from '../../../../shared/components/h1/h1.component';
 import { H2Component } from '../../../../shared/components/h2/h2.component';
 import { InputComponent } from '../../../../shared/components/input/input.component';
 import { Color } from '../../../../shared/enums/color.enum';
+import { MinRpsGameViewModel } from '../../models/viewmodels/minrps-game.viewmodel';
 import { MinRpsGameService } from '../../services/minrps-game.service';
 
 @Component({
@@ -31,13 +31,13 @@ import { MinRpsGameService } from '../../services/minrps-game.service';
 export class MinRpsLobbyComponent implements OnInit {
   public readonly Color = Color;
 
-  public formGroup!: FormGroup;
-  public games: Signal<MinRpsGameDto[]> = computed(() => this.minRPSGameService.gamesList());
+  public formGroup: FormGroup = this.createFormGroup();
+  public games: Signal<MinRpsGameViewModel[]> = inject(MinRpsGameService).games;
   public isNewGameDialogOpen: WritableSignal<boolean> = signal(false);
 
   constructor(
     public readonly routingService: RoutingService,
-    private readonly minRPSGameService: MinRpsGameService,
+    private readonly gameService: MinRpsGameService,
   ) {}
 
   public get gameName(): FormControl {
@@ -45,20 +45,19 @@ export class MinRpsLobbyComponent implements OnInit {
   }
 
   public ngOnInit(): void {
-    this.minRPSGameService.getAllGames();
-    this.initFormGroup();
+    this.gameService.refreshAllGames();
   }
 
   public async createNewGame(): Promise<void> {
     if (this.formGroup.valid) {
-      await this.minRPSGameService.createNewGame(this.gameName.value);
+      await this.gameService.createNewGame(this.gameName.value);
       this.isNewGameDialogOpen.set(false);
     }
   }
 
   public async deleteGame(id: string, event: MouseEvent): Promise<void> {
     event.stopPropagation();
-    await this.minRPSGameService.deleteGameById(id);
+    await this.gameService.deleteGameById(id);
   }
 
   public navigateToMinRpsMultiplayer(id: string): void {
@@ -66,12 +65,12 @@ export class MinRpsLobbyComponent implements OnInit {
   }
 
   public openNewGameDialog(): void {
-    this.initFormGroup();
+    this.formGroup = this.createFormGroup();
     this.isNewGameDialogOpen.set(true);
   }
 
-  private initFormGroup(): void {
-    this.formGroup = new FormGroup({
+  private createFormGroup(): FormGroup {
+    return new FormGroup({
       gameName: new FormControl<string>('', [
         Validators.maxLength(32),
         Validators.minLength(2),

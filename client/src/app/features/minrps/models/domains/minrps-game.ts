@@ -7,8 +7,13 @@ export class MinRpsGame {
   public static readonly PLAYER_1_ID: string = '1';
   public static readonly PLAYER_2_ID: string = '2';
 
+  public createdAt: Date = new Date();
+  public id: string = crypto.randomUUID();
+  public name: string = '';
+  public observerCount: number = 0;
   public player1Move: MinRpsMove = MinRpsMove.None;
   public player2Move: MinRpsMove = MinRpsMove.None;
+  public playerCount: number = 0;
 
   constructor(partial?: Partial<MinRpsGame>) {
     Object.assign(this, partial);

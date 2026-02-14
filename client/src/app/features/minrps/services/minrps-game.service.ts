@@ -1,6 +1,8 @@
 import { Injectable, Signal, WritableSignal, computed, signal } from '@angular/core';
 import { MinRpsGameDto } from '../../../core/generated';
 import { sleep } from '../../../shared/utils/sleep.util';
+import { MinRpsDomainMapper } from '../mapper/minrps-domain.mapper';
+import { MinRpsDtoMapper } from '../mapper/minrps-dto.mapper';
 import { MINRPS_FIRST_MESSAGES } from '../models/constants/minrps-first.message';
 import {
   MINRPS_FOURTH_MESSAGES_LOSE,
@@ -14,9 +16,10 @@ import {
   MINRPS_THIRD_MESSAGES_ROCK,
   MINRPS_THIRD_MESSAGES_SCISSORS,
 } from '../models/constants/minrps-third.message';
-import { MinRpsGame } from '../models/domain/minrps-game';
+import { MinRpsGame } from '../models/domains/minrps-game';
 import { MinRpsMove } from '../models/enums/minrps-move.enum';
 import { MinRpsResult } from '../models/enums/minrps-result.enum';
+import { MinRpsGameViewModel } from '../models/viewmodels/minrps-game.viewmodel';
 import { MinRpsGameRepository } from '../repositories/minrps-game.repository';
 import { MINRPS_SETTINGS } from '../settings/minrps.settings';
 
@@ -24,10 +27,12 @@ import { MINRPS_SETTINGS } from '../settings/minrps.settings';
   providedIn: 'root',
 })
 export class MinRpsGameService {
+  private readonly cachedGames: WritableSignal<MinRpsGame[]> = signal([]);
   private readonly game: WritableSignal<MinRpsGame> = signal(new MinRpsGame());
-  private readonly games: WritableSignal<MinRpsGameDto[]> = signal([]);
 
-  public gamesList: Signal<MinRpsGameDto[]> = computed(() => this.games());
+  public games: Signal<MinRpsGameViewModel[]> = computed(() =>
+    this.cachedGames().map(MinRpsDomainMapper.domainToViewModel),
+  );
   public message: WritableSignal<string> = signal(MINRPS_START_MESSAGE);
   public player1Move: Signal<MinRpsMove> = computed(() => this.game().player1Move);
   public player2Move: Signal<MinRpsMove> = computed(() => this.game().player2Move);
@@ -40,12 +45,12 @@ export class MinRpsGameService {
 
   public async createNewGame(name: string): Promise<void> {
     await this.gameRepository.create(name);
-    this.getAllGames();
+    this.refreshAllGames();
   }
 
   public async deleteGameById(id: string): Promise<void> {
     await this.gameRepository.delete(id);
-    await this.getAllGames();
+    await this.refreshAllGames();
   }
 
   public async gameExistByID(id: string): Promise<boolean> {
@@ -58,9 +63,10 @@ export class MinRpsGameService {
     }
   }
 
-  public async getAllGames(): Promise<void> {
+  public async refreshAllGames(): Promise<void> {
     const dtos: MinRpsGameDto[] = await this.gameRepository.getAll();
-    this.games.set(dtos);
+    const domains: MinRpsGame[] = dtos.map(MinRpsDtoMapper.dtoToDomain);
+    this.cachedGames.set(domains);
   }
 
   public setPlayer1Move(move: MinRpsMove): void {
