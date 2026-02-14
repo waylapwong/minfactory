@@ -8,7 +8,7 @@
 <!-- GAMES LIST -->
 @for (game of games(); track $index) {
   <div class="flex flex-row justify-center">
-    <min-card-button class="basis-xs sm:basis-md" (clicked)="navigateToMinRpsMultiplayer(game.id)">
+    <min-card-button class="basis-xs sm:basis-md" (clicked)="navigateToMulitplayerPage(game.id)">
       <div class="flex flex-row items-start justify-between">
         <min-h2 class="grow text-left break-all">{{ game.name }}</min-h2>
         <min-button [color]="Color.Red" (clicked)="deleteGame(game.id, $event)">
@@ -17,11 +17,11 @@
       </div>
       <div class="flex flex-row items-end gap-2 text-left text-sm text-gray-500">
         <img src="assets/svg/player.svg" alt="Rock" class="h-6 w-6" />
-        ?/2
+        {{ game.playerCount }}/2
       </div>
       <div class="flex flex-row items-end gap-2 text-left text-sm text-gray-500">
         <img src="assets/svg/observer.svg" alt="Rock" class="h-6 w-6" />
-        ?
+        {{ game.observerCount }}
       </div>
       <div class="flex flex-row items-end gap-2 text-left text-sm text-gray-500">
         <img src="assets/svg/calendar.svg" alt="Rock" class="h-6 w-6" />
@@ -42,11 +42,15 @@
   (closed)="isNewGameDialogOpen.set(false)"
 >
   <div class="mb-4 flex flex-col">
-    <min-input label="Game name" [formControlInput]="gameName" id="game-name-input"></min-input>
+    <min-input label="Game name" [formControlInput]="newGameName" id="game-name-input"></min-input>
   </div>
 
   <div class="flex flex-row justify-end">
-    <min-button [color]="Color.Blue" [isDisabled]="formGroup.invalid" (clicked)="createNewGame()">
+    <min-button
+      [color]="Color.Blue"
+      [isDisabled]="newGameFormGroup.invalid"
+      (clicked)="createGame()"
+    >
       Create Game
     </min-button>
   </div>

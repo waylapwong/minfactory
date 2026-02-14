@@ -31,47 +31,47 @@ import { MinRpsGameService } from '../../services/minrps-game.service';
 export class MinRpsLobbyComponent implements OnInit {
   public readonly Color = Color;
 
-  public formGroup: FormGroup = this.createFormGroup();
   public games: Signal<MinRpsGameViewModel[]> = inject(MinRpsGameService).games;
   public isNewGameDialogOpen: WritableSignal<boolean> = signal(false);
+  public newGameFormGroup: FormGroup = this.createFormGroup();
 
   constructor(
     public readonly routingService: RoutingService,
     private readonly gameService: MinRpsGameService,
   ) {}
 
-  public get gameName(): FormControl {
-    return this.formGroup.get('gameName') as FormControl;
+  public get newGameName(): FormControl {
+    return this.newGameFormGroup.get('name') as FormControl;
   }
 
   public ngOnInit(): void {
-    this.gameService.refreshAllGames();
+    this.gameService.refreshGames();
   }
 
-  public async createNewGame(): Promise<void> {
-    if (this.formGroup.valid) {
-      await this.gameService.createNewGame(this.gameName.value);
+  public async createGame(): Promise<void> {
+    if (this.newGameFormGroup.valid) {
+      await this.gameService.createGame(this.newGameName.value);
       this.isNewGameDialogOpen.set(false);
     }
   }
 
   public async deleteGame(id: string, event: MouseEvent): Promise<void> {
     event.stopPropagation();
-    await this.gameService.deleteGameById(id);
+    await this.gameService.deleteGame(id);
   }
 
-  public navigateToMinRpsMultiplayer(id: string): void {
+  public navigateToMulitplayerPage(id: string): void {
     this.routingService.navigateToMinRpsMultiplayer(id);
   }
 
   public openNewGameDialog(): void {
-    this.formGroup = this.createFormGroup();
+    this.newGameFormGroup = this.createFormGroup();
     this.isNewGameDialogOpen.set(true);
   }
 
   private createFormGroup(): FormGroup {
     return new FormGroup({
-      gameName: new FormControl<string>('', [
+      name: new FormControl('', [
         Validators.maxLength(32),
         Validators.minLength(2),
         Validators.required,

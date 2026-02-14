@@ -43,14 +43,19 @@ export class MinRpsGameService {
 
   constructor(private readonly gameRepository: MinRpsGameRepository) {}
 
-  public async createNewGame(name: string): Promise<void> {
-    await this.gameRepository.create(name);
-    this.refreshAllGames();
+  public async createGame(name: string): Promise<void> {
+    const dto: MinRpsGameDto = await this.gameRepository.create(name);
+    const domain: MinRpsGame = MinRpsDtoMapper.dtoToDomain(dto);
+    this.cachedGames.update((games: MinRpsGame[]) =>
+      [...games, domain].sort(
+        (a: MinRpsGame, b: MinRpsGame) => b.createdAt.getTime() - a.createdAt.getTime(),
+      ),
+    );
   }
 
-  public async deleteGameById(id: string): Promise<void> {
+  public async deleteGame(id: string): Promise<void> {
     await this.gameRepository.delete(id);
-    await this.refreshAllGames();
+    await this.refreshGames();
   }
 
   public async gameExistByID(id: string): Promise<boolean> {
@@ -63,7 +68,7 @@ export class MinRpsGameService {
     }
   }
 
-  public async refreshAllGames(): Promise<void> {
+  public async refreshGames(): Promise<void> {
     const dtos: MinRpsGameDto[] = await this.gameRepository.getAll();
     const domains: MinRpsGame[] = dtos.map(MinRpsDtoMapper.dtoToDomain);
     this.cachedGames.set(domains);
