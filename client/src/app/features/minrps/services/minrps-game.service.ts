@@ -55,7 +55,11 @@ export class MinRpsGameService {
 
   public async deleteGame(id: string): Promise<void> {
     await this.gameRepository.delete(id);
-    await this.refreshGames();
+    this.cachedGames.update((games: MinRpsGame[]) =>
+      games
+        .filter((game: MinRpsGame) => game.id !== id)
+        .sort((a: MinRpsGame, b: MinRpsGame) => b.createdAt.getTime() - a.createdAt.getTime()),
+    );
   }
 
   public async gameExistByID(id: string): Promise<boolean> {

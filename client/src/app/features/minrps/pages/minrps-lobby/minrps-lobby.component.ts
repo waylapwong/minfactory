@@ -72,7 +72,7 @@ export class MinRpsLobbyComponent implements OnInit {
   private createFormGroup(): FormGroup {
     return new FormGroup({
       name: new FormControl('', [
-        Validators.maxLength(32),
+        Validators.maxLength(16),
         Validators.minLength(2),
         Validators.required,
       ]),
