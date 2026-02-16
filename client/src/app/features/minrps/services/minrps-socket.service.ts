@@ -8,7 +8,8 @@ export class MinRpsSocketService extends Socket {
   constructor(appRef: ApplicationRef) {
     super(MINRPS_SOCKET_CONFIG, appRef);
   }
-  public emitJoin(gameId: string, playerId: string, move: 'rock' | 'paper' | 'scissors') {}
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  public emitJoin(_gameId: string, _playerId: string, _move: 'rock' | 'paper' | 'scissors') {}
 }
 
 const MINRPS_SOCKET_CONFIG: SocketIoConfig = {

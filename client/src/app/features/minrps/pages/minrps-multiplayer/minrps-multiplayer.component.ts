@@ -13,7 +13,7 @@ import { MinRpsGameService } from '../../services/minrps-game.service';
 import { MinRpsSocketService } from '../../services/minrps-socket.service';
 
 @Component({
-  selector: 'app-minrps-multiplayer',
+  selector: 'minrps-multiplayer',
   templateUrl: './minrps-multiplayer.component.html',
   styleUrls: ['./minrps-multiplayer.component.scss'],
 })
