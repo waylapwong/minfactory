@@ -1,5 +1,6 @@
 import { provideZonelessChangeDetection } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { FormControl } from '@angular/forms';
 import { InputComponent } from './input.component';
 
 describe('InputComponent', () => {
@@ -14,6 +15,8 @@ describe('InputComponent', () => {
 
     fixture = TestBed.createComponent(InputComponent);
     component = fixture.componentInstance;
+    fixture.componentRef.setInput('formControlInput', new FormControl());
+    fixture.componentRef.setInput('id', 'test-input');
     fixture.detectChanges();
   });
 
