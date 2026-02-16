@@ -1,15 +1,6 @@
 <div class="flex h-full flex-col text-center">
   <!-- OPPONENT SIDE -->
   <div class="flex basis-1/2 flex-col justify-evenly">
-    <!-- MESSAGES -->
-    <div class="relative mx-auto w-fit">
-      <div
-        class="rounded-lg border-8 border-double border-black bg-white px-1 py-0.5 text-xs shadow-2xl sm:text-sm md:px-2 md:py-1"
-      >
-        <p [innerHTML]="message()"></p>
-      </div>
-    </div>
-
     <!-- OPPONENT AVATAR -->
     <div class="flex w-full flex-row justify-center">
       <minrps-card>
@@ -19,12 +10,12 @@
 
     <!-- OPPONENT MOVE -->
     <div class="flex w-full flex-row justify-evenly gap-2">
-      @if (playedVillainMove() !== MinRpsMove.None) {
-        <minrps-card [result]="result()">
+      @if (game().player2Move !== MinRpsMove.None) {
+        <minrps-card [result]="game().result">
           <img
             class="h-16 w-16"
-            [alt]="playedVillainMove()"
-            [src]="`assets/svg/${playedVillainMove()}.svg`"
+            [alt]="game().player2Move"
+            [src]="`assets/svg/${game().player2Move}.svg`"
           />
         </minrps-card>
       } @else {
@@ -44,15 +35,21 @@
   <div class="flex basis-1/2 flex-col justify-evenly">
     <!-- PLAYER MOVES -->
     <div class="flex w-full flex-row justify-evenly gap-2">
-      @for (heroMove of heroMoves; track $index) {
+      @for (selectableMove of selectableMoves; track $index) {
         <minrps-move
-          [isDisabled]="playedHeroMove() !== MinRpsMove.None && playedHeroMove() !== heroMove"
-          [isPlayed]="playedHeroMove() === heroMove"
-          [isSelected]="selectedHeroMove() === heroMove"
-          [result]="result()"
-          (selected)="selectedHeroMove.set(heroMove)"
+          [isDisabled]="
+            game().player1Move !== MinRpsMove.None && game().player1Move !== selectableMove
+          "
+          [isPlayed]="selectableMove === game().player1Move"
+          [isSelected]="selectableMove === game().player1SelectedMove"
+          [result]="game().result"
+          (selected)="selectMove(selectableMove)"
         >
-          <img [src]="`assets/svg/${heroMove}.svg`" [alt]="heroMove" class="h-16 w-16" />
+          <img
+            [src]="`assets/svg/${selectableMove}.svg`"
+            [alt]="selectableMove"
+            class="h-16 w-16"
+          />
         </minrps-move>
       }
     </div>
@@ -63,11 +60,11 @@
         class="basis-3xs"
         [color]="Color.Blue"
         [isDisabled]="
-          selectedHeroMove() === MinRpsMove.None || playedHeroMove() !== MinRpsMove.None
+          game().player1SelectedMove === MinRpsMove.None || game().player1Move !== MinRpsMove.None
         "
-        (clicked)="startGame()"
+        (clicked)="playGame()"
       >
-        {{ buttonText() }}
+        {{ submitText() }}
       </min-button>
     </div>
   </div>

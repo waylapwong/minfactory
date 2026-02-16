@@ -14,6 +14,7 @@ model/min-rps-game-dto.ts
 model/min-rps-move.ts
 model/min-rps-play-dto.ts
 model/min-rps-play-result-dto.ts
+model/min-rps-result.ts
 model/models.ts
 param.ts
 variables.ts

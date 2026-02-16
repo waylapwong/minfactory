@@ -309,6 +309,10 @@
         },
         "required": ["player1Move"]
       },
+      "MinRpsResult": {
+        "type": "string",
+        "enum": ["None", "Player1", "Player2", "Draw"]
+      },
       "MinRpsPlayResultDto": {
         "type": "object",
         "properties": {
@@ -329,8 +333,12 @@
             ]
           },
           "result": {
-            "type": "number",
-            "example": 3
+            "example": "Draw",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/MinRpsResult"
+              }
+            ]
           }
         },
         "required": ["player1Move", "player2Move", "result"]

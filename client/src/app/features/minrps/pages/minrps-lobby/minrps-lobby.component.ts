@@ -9,7 +9,7 @@ import { H1Component } from '../../../../shared/components/h1/h1.component';
 import { H2Component } from '../../../../shared/components/h2/h2.component';
 import { InputComponent } from '../../../../shared/components/input/input.component';
 import { Color } from '../../../../shared/enums/color.enum';
-import { MinRpsGameViewModel } from '../../models/viewmodels/minrps-game.viewmodel';
+import { MinRpsOverviewViewModel } from '../../models/viewmodels/minrps-overview.viewmodel';
 import { MinRpsGameService } from '../../services/minrps-game.service';
 
 @Component({
@@ -31,7 +31,7 @@ import { MinRpsGameService } from '../../services/minrps-game.service';
 export class MinRpsLobbyComponent implements OnInit {
   public readonly Color = Color;
 
-  public games: Signal<MinRpsGameViewModel[]> = inject(MinRpsGameService).games;
+  public games: Signal<MinRpsOverviewViewModel[]> = inject(MinRpsGameService).games;
   public isNewGameDialogOpen: WritableSignal<boolean> = signal(false);
   public newGameFormGroup: FormGroup = this.createFormGroup();
 

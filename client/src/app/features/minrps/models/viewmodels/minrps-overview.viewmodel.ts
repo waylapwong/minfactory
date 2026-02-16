@@ -1,4 +1,4 @@
-export class MinRpsGameViewModel {
+export class MinRpsOverviewViewModel {
   public createdAt!: Date;
   public id!: string;
   public name!: string;

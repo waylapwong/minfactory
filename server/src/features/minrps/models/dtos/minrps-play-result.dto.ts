@@ -16,6 +16,8 @@ export class MinRpsPlayResultDto {
   })
   public player2Move: MinRpsMove;
   @ApiProperty({
+    enum: MinRpsResult,
+    enumName: 'MinRpsResult',
     example: MinRpsResult.Draw,
   })
   public result: MinRpsResult;

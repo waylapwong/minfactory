@@ -1,5 +1,5 @@
 import { Component, InputSignal, input } from '@angular/core';
-import { MinRpsResult } from '../../models/enums/minrps-result.enum';
+import { MinRpsResult } from '../../../../core/generated';
 
 @Component({
   selector: 'minrps-card',
@@ -10,5 +10,5 @@ import { MinRpsResult } from '../../models/enums/minrps-result.enum';
 export class MinRpsCardComponent {
   public readonly MinRpsResult: typeof MinRpsResult = MinRpsResult;
 
-  public result: InputSignal<MinRpsResult> = input(MinRpsResult.None) as any;
+  public result: InputSignal<MinRpsResult> = input(MinRpsResult.None);
 }

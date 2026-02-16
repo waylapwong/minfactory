@@ -1,40 +1,34 @@
-import { MinRpsMove } from '../enums/minrps-move.enum';
-import { MinRpsResult } from '../enums/minrps-result.enum';
+import { MinRpsMove, MinRpsResult } from '../../../../core/generated';
 
 export class MinRpsGame {
-  public static readonly MAX_PLAYERS: number = 2;
-  public static readonly MIN_PLAYERS: number = 2;
-  public static readonly PLAYER_1_ID: string = '1';
-  public static readonly PLAYER_2_ID: string = '2';
-
   public createdAt: Date = new Date();
-  public id: string = crypto.randomUUID();
+  public id: string = '';
   public name: string = '';
   public observerCount: number = 0;
   public player1Move: MinRpsMove = MinRpsMove.None;
+  public player1SelectedMove: MinRpsMove = MinRpsMove.None;
   public player2Move: MinRpsMove = MinRpsMove.None;
+  public player2SelectedMove: MinRpsMove = MinRpsMove.None;
   public playerCount: number = 0;
+  public result: MinRpsResult = MinRpsResult.None;
 
-  constructor(partial?: Partial<MinRpsGame>) {
-    Object.assign(this, partial);
+  constructor(init?: Partial<MinRpsGame>) {
+    Object.assign(this, init);
   }
 
-  public get result(): MinRpsResult {
-    if (this.player1Move === MinRpsMove.None || this.player2Move === MinRpsMove.None) {
-      return MinRpsResult.None;
-    }
+  public setPlayer1Move(move: MinRpsMove): void {
+    this.player1Move = move;
+  }
 
-    if (this.player1Move === this.player2Move) {
-      return MinRpsResult.Draw;
-    }
-    const player1Wins =
-      (this.player1Move === MinRpsMove.Rock && this.player2Move === MinRpsMove.Scissors) ||
-      (this.player1Move === MinRpsMove.Paper && this.player2Move === MinRpsMove.Rock) ||
-      (this.player1Move === MinRpsMove.Scissors && this.player2Move === MinRpsMove.Paper);
-    if (player1Wins) {
-      return MinRpsResult.Player1;
-    } else {
-      return MinRpsResult.Player2;
-    }
+  public setPlayer1SelectedMove(move: MinRpsMove): void {
+    this.player1SelectedMove = move;
+  }
+
+  public setPlayer2Move(move: MinRpsMove): void {
+    this.player2Move = move;
+  }
+
+  public setPlayer2SelectedMove(move: MinRpsMove): void {
+    this.player2SelectedMove = move;
   }
 }

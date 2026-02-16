@@ -32,23 +32,23 @@ describe('MinRpsGameComponent', () => {
 
   describe('buttonText()', () => {
     it('should return "choose-move", if no move is selected', () => {
-      component.selectedHeroMove.set(MinRpsMove.None);
-      expect(component.buttonText()).toBe('choose move');
+      component.selectedMove.set(MinRpsMove.None);
+      expect(component.submitText()).toBe('choose move');
     });
 
     it('should return "play rock!", if a move is selected', () => {
-      component.selectedHeroMove.set(MinRpsMove.Rock);
-      expect(component.buttonText()).toBe('play rock!');
+      component.selectedMove.set(MinRpsMove.Rock);
+      expect(component.submitText()).toBe('play rock!');
     });
 
     it('should return "play paper!", if a move is selected', () => {
-      component.selectedHeroMove.set(MinRpsMove.Paper);
-      expect(component.buttonText()).toBe('play paper!');
+      component.selectedMove.set(MinRpsMove.Paper);
+      expect(component.submitText()).toBe('play paper!');
     });
 
     it('should return "play scissors!", if a move is selected', () => {
-      component.selectedHeroMove.set(MinRpsMove.Scissors);
-      expect(component.buttonText()).toBe('play scissors!');
+      component.selectedMove.set(MinRpsMove.Scissors);
+      expect(component.submitText()).toBe('play scissors!');
     });
   });
 
@@ -63,15 +63,15 @@ describe('MinRpsGameComponent', () => {
   describe('startGame()', () => {
     it('should trigger start game process', async () => {
       const spy = spyOn((component as any).minRPSGameService, 'startGame');
-      await component.startGame();
+      await component.playGame();
       expect(spy).toHaveBeenCalled();
     });
 
     it('should reset selected move', async () => {
-      component.selectedHeroMove.set(MinRpsMove.Rock);
+      component.selectedMove.set(MinRpsMove.Rock);
       spyOn((component as any).minRPSGameService, 'startGame').and.resolveTo();
-      await component.startGame();
-      expect(component.selectedHeroMove()).toBe(MinRpsMove.None);
+      await component.playGame();
+      expect(component.selectedMove()).toBe(MinRpsMove.None);
     });
   });
 });

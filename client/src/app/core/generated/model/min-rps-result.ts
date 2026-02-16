@@ -9,16 +9,14 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
-import { MinRpsMove } from './min-rps-move';
-import { MinRpsResult } from './min-rps-result';
 
 
-export interface MinRpsPlayResultDto { 
-    player1Move: MinRpsMove;
-    player2Move: MinRpsMove;
-    result: MinRpsResult;
-}
-export namespace MinRpsPlayResultDto {
-}
+export type MinRpsResult = 'None' | 'Player1' | 'Player2' | 'Draw';
 
+export const MinRpsResult = {
+    None: 'None' as MinRpsResult,
+    Player1: 'Player1' as MinRpsResult,
+    Player2: 'Player2' as MinRpsResult,
+    Draw: 'Draw' as MinRpsResult
+};
 
