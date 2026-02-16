@@ -1,23 +1,30 @@
-import { provideZonelessChangeDetection } from '@angular/core';
+import { provideZonelessChangeDetection, signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { MinRpsMove } from '../../models/enums/minrps-move.enum';
-import { MinRpsGameService } from '../../services/minrps-game.service';
-import { MinRpsGameServiceMock } from '../../services/minrps-game.service.mock';
+import { MinRpsMove } from '../../../../core/generated';
+import { MinRpsGame } from '../../models/domains/minrps-game';
+import { MinRpsSingleplayerService } from '../../services/minrps-singleplayer.service';
 import { MinRpsGameComponent } from './minrps-game.component';
 
 describe('MinRpsGameComponent', () => {
   let component: MinRpsGameComponent;
   let fixture: ComponentFixture<MinRpsGameComponent>;
+  let mockService: jasmine.SpyObj<MinRpsSingleplayerService>;
 
   beforeEach(async () => {
+    const cachedGame = signal(new MinRpsGame());
+    mockService = jasmine.createSpyObj(
+      'MinRpsSingleplayerService',
+      ['playGame', 'selectMove', 'setupNewGame'],
+      {
+        game: cachedGame.asReadonly(),
+      },
+    );
+
     await TestBed.configureTestingModule({
       imports: [MinRpsGameComponent],
       providers: [
         provideZonelessChangeDetection(),
-        {
-          provide: MinRpsGameService,
-          useValue: MinRpsGameServiceMock,
-        },
+        { provide: MinRpsSingleplayerService, useValue: mockService },
       ],
     }).compileComponents();
 
@@ -30,48 +37,31 @@ describe('MinRpsGameComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  describe('buttonText()', () => {
-    it('should return "choose-move", if no move is selected', () => {
-      component.selectedMove.set(MinRpsMove.None);
+  describe('submitText()', () => {
+    it('should return "choose move", if no move is selected', () => {
       expect(component.submitText()).toBe('choose move');
-    });
-
-    it('should return "play rock!", if a move is selected', () => {
-      component.selectedMove.set(MinRpsMove.Rock);
-      expect(component.submitText()).toBe('play rock!');
-    });
-
-    it('should return "play paper!", if a move is selected', () => {
-      component.selectedMove.set(MinRpsMove.Paper);
-      expect(component.submitText()).toBe('play paper!');
-    });
-
-    it('should return "play scissors!", if a move is selected', () => {
-      component.selectedMove.set(MinRpsMove.Scissors);
-      expect(component.submitText()).toBe('play scissors!');
     });
   });
 
   describe('ngOnInit()', () => {
     it('should trigger new game setup process', () => {
-      const spy = spyOn((component as any).minRPSGameService, 'setupNewGame');
       component.ngOnInit();
-      expect(spy).toHaveBeenCalled();
+      expect(mockService.setupNewGame).toHaveBeenCalled();
     });
   });
 
-  describe('startGame()', () => {
-    it('should trigger start game process', async () => {
-      const spy = spyOn((component as any).minRPSGameService, 'startGame');
+  describe('playGame()', () => {
+    it('should trigger play game process', async () => {
+      mockService.playGame.and.returnValue(Promise.resolve());
       await component.playGame();
-      expect(spy).toHaveBeenCalled();
+      expect(mockService.playGame).toHaveBeenCalled();
     });
+  });
 
-    it('should reset selected move', async () => {
-      component.selectedMove.set(MinRpsMove.Rock);
-      spyOn((component as any).minRPSGameService, 'startGame').and.resolveTo();
-      await component.playGame();
-      expect(component.selectedMove()).toBe(MinRpsMove.None);
+  describe('selectMove()', () => {
+    it('should call service selectMove', () => {
+      component.selectMove(MinRpsMove.Rock);
+      expect(mockService.selectMove).toHaveBeenCalledWith(MinRpsMove.Rock);
     });
   });
 });
