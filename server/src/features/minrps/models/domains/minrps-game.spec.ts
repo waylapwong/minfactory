@@ -181,4 +181,13 @@ describe('MinRpsGame', () => {
       expect(() => game.getResult()).toThrow('Player moves cannot be none.');
     });
   });
+
+  describe('edge cases', () => {
+    it('should handle creating multiple games with unique ids', () => {
+      const game1 = new MinRpsGame();
+      const game2 = new MinRpsGame();
+      
+      expect(game1.id).not.toBe(game2.id);
+    });
+  });
 });
