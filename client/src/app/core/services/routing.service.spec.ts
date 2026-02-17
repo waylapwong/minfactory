@@ -43,11 +43,11 @@ describe('RoutingService', () => {
     });
   });
 
-  describe('navigateToMinRpsGame()', () => {
-    it('should navigate to minRPS game', () => {
+  describe('navigateToMinRpsSingleplayerGame()', () => {
+    it('should navigate to minRPS singleplayer game', () => {
       const spy = spyOn((service as any).router, 'navigate');
-      service.navigateToMinRpsGame();
-      expect(spy).toHaveBeenCalledWith([AppPath.MinRps, MinRpsPath.Game]);
+      service.navigateToMinRpsSingleplayer();
+      expect(spy).toHaveBeenCalledWith([AppPath.MinRps, MinRpsPath.Singleplayer]);
     });
   });
 });

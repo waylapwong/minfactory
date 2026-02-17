@@ -9,13 +9,13 @@ import { MinRpsSingleplayerViewModel } from '../../models/viewmodels/minrps-sing
 import { MinRpsSingleplayerService } from '../../services/minrps-singleplayer.service';
 
 @Component({
-  selector: 'minrps-game',
-  templateUrl: './minrps-game.component.html',
-  styleUrls: ['./minrps-game.component.scss'],
+  selector: 'minrps-singleplayer',
+  templateUrl: './minrps-singleplayer.component.html',
+  styleUrls: ['./minrps-singleplayer.component.scss'],
   host: { class: 'block h-full' },
   imports: [ButtonComponent, DividerComponent, MinRpsMoveComponent, MinRpsCardComponent],
 })
-export class MinRpsGameComponent implements OnInit {
+export class MinRpsSinglePlayerComponent implements OnInit {
   public readonly Color: typeof Color = Color;
   public readonly MinRpsMove: typeof MinRpsMove = MinRpsMove;
 

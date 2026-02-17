@@ -2,7 +2,7 @@ import { Routes } from '@angular/router';
 
 export enum MinRpsPath {
   Root = '',
-  Game = 'game',
+  Singleplayer = 'singleplayer',
   Lobby = 'lobby',
   Multiplayer = 'multiplayer',
 }
@@ -14,9 +14,11 @@ export const MINRPS_ROUTES: Routes = [
       import('./pages/minrps-home/minrps-home.component').then((m) => m.MinRpsHomeComponent),
   },
   {
-    path: MinRpsPath.Game,
+    path: MinRpsPath.Singleplayer,
     loadComponent: () =>
-      import('./pages/minrps-game/minrps-game.component').then((m) => m.MinRpsGameComponent),
+      import('./pages/minrps-singleplayer/minrps-singleplayer.component').then(
+        (m) => m.MinRpsSinglePlayerComponent,
+      ),
   },
   {
     path: MinRpsPath.Lobby,
