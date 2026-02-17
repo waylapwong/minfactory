@@ -4,7 +4,7 @@ import { ActivatedRoute, convertToParamMap } from '@angular/router';
 import { of } from 'rxjs';
 import { RoutingService } from '../../../../core/services/routing.service';
 import { MinRpsGameService } from '../../services/minrps-game.service';
-import { MinRpsSocketService } from '../../services/minrps-socket.service';
+import { MinRpsMultiplayerService } from '../../services/minrps-multiplayer.service';
 import { MinRpsMultiplayerComponent } from './minrps-multiplayer.component';
 
 describe('MinRpsMultiplayerComponent', () => {
@@ -16,11 +16,13 @@ describe('MinRpsMultiplayerComponent', () => {
       games: signal([]),
     });
     const mockRoutingService = jasmine.createSpyObj('RoutingService', ['navigateTo']);
-    const mockSocketService = jasmine.createSpyObj('MinRpsSocketService', [
+    const mockMultiplayerService = jasmine.createSpyObj('MinRpsMultiplayerService', [
       'connect',
       'disconnect',
-      'emit',
-      'fromEvent',
+      'onEvent',
+      'offEvent',
+      'sendJoinEvent',
+      'sendLeaveEvent',
     ]);
     const mockActivatedRoute = {
       snapshot: {
@@ -30,7 +32,6 @@ describe('MinRpsMultiplayerComponent', () => {
     };
 
     // Setup spy return values
-    mockSocketService.fromEvent.and.returnValue(of({}));
     mockGameService.gameExistByID.and.returnValue(Promise.resolve(true));
 
     await TestBed.configureTestingModule({
@@ -39,7 +40,7 @@ describe('MinRpsMultiplayerComponent', () => {
         provideZonelessChangeDetection(),
         { provide: MinRpsGameService, useValue: mockGameService },
         { provide: RoutingService, useValue: mockRoutingService },
-        { provide: MinRpsSocketService, useValue: mockSocketService },
+        { provide: MinRpsMultiplayerService, useValue: mockMultiplayerService },
         { provide: ActivatedRoute, useValue: mockActivatedRoute },
       ],
     }).compileComponents();
