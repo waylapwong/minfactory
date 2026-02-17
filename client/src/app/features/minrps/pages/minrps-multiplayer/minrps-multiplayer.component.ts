@@ -44,7 +44,7 @@ export class MinRpsMultiplayerComponent implements OnInit, OnDestroy {
   private async checkGameExists(id: string): Promise<void> {
     const gameExists: boolean = await this.gameService.gameExistByID(id);
     if (!gameExists) {
-      this.routingService.navigateToMinRpsLobby();
+      this.routingService.navigateToMinRpsOverview();
     }
   }
 

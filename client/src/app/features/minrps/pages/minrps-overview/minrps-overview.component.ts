@@ -13,9 +13,9 @@ import { MinRpsOverviewViewModel } from '../../models/viewmodels/minrps-overview
 import { MinRpsGameService } from '../../services/minrps-game.service';
 
 @Component({
-  selector: 'min-minrps-lobby',
-  templateUrl: './minrps-lobby.component.html',
-  styleUrls: ['./minrps-lobby.component.scss'],
+  selector: 'min-minrps-overview',
+  templateUrl: './minrps-overview.component.html',
+  styleUrls: ['./minrps-overview.component.scss'],
   host: { class: 'h-full flex flex-col gap-2' },
   imports: [
     CardButtonComponent,
@@ -28,7 +28,7 @@ import { MinRpsGameService } from '../../services/minrps-game.service';
     DatePipe,
   ],
 })
-export class MinRpsLobbyComponent implements OnInit {
+export class MinRpsOverviewComponent implements OnInit {
   public readonly Color = Color;
 
   public games: Signal<MinRpsOverviewViewModel[]> = inject(MinRpsGameService).games;

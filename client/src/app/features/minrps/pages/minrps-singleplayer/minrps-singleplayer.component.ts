@@ -15,7 +15,7 @@ import { MinRpsSingleplayerService } from '../../services/minrps-singleplayer.se
   host: { class: 'block h-full' },
   imports: [ButtonComponent, DividerComponent, MinRpsMoveComponent, MinRpsCardComponent],
 })
-export class MinRpsSinglePlayerComponent implements OnInit {
+export class MinRpsSingleplayerComponent implements OnInit {
   public readonly Color: typeof Color = Color;
   public readonly MinRpsMove: typeof MinRpsMove = MinRpsMove;
 

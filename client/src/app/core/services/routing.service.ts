@@ -21,8 +21,8 @@ export class RoutingService {
     this.router.navigate([AppPath.MinRps, MinRpsPath.Singleplayer]);
   }
 
-  public navigateToMinRpsLobby(): void {
-    this.router.navigate([AppPath.MinRps, MinRpsPath.Lobby]);
+  public navigateToMinRpsOverview(): void {
+    this.router.navigate([AppPath.MinRps, MinRpsPath.Overview]);
   }
 
   public navigateToMinRpsMultiplayer(id: string): void {

@@ -3,11 +3,11 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MinRpsMove } from '../../../../core/generated';
 import { MinRpsGame } from '../../models/domains/minrps-game';
 import { MinRpsSingleplayerService } from '../../services/minrps-singleplayer.service';
-import { MinRpsSinglePlayerComponent } from './minrps-singleplayer.component';
+import { MinRpsSingleplayerComponent } from './minrps-singleplayer.component';
 
-describe('MinRpsSinglePlayerComponent', () => {
-  let component: MinRpsSinglePlayerComponent;
-  let fixture: ComponentFixture<MinRpsSinglePlayerComponent>;
+describe('MinRpsSingleplayerComponent', () => {
+  let component: MinRpsSingleplayerComponent;
+  let fixture: ComponentFixture<MinRpsSingleplayerComponent>;
   let mockService: jasmine.SpyObj<MinRpsSingleplayerService>;
 
   beforeEach(async () => {
@@ -21,14 +21,14 @@ describe('MinRpsSinglePlayerComponent', () => {
     );
 
     await TestBed.configureTestingModule({
-      imports: [MinRpsSinglePlayerComponent],
+      imports: [MinRpsSingleplayerComponent],
       providers: [
         provideZonelessChangeDetection(),
         { provide: MinRpsSingleplayerService, useValue: mockService },
       ],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(MinRpsSinglePlayerComponent);
+    fixture = TestBed.createComponent(MinRpsSingleplayerComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

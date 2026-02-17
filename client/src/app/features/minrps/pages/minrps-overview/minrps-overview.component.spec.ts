@@ -2,11 +2,11 @@ import { provideZonelessChangeDetection, signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { RoutingService } from '../../../../core/services/routing.service';
 import { MinRpsGameService } from '../../services/minrps-game.service';
-import { MinRpsLobbyComponent } from './minrps-lobby.component';
+import { MinRpsOverviewComponent } from './minrps-overview.component';
 
-describe('MinRpsLobbyComponent', () => {
-  let component: MinRpsLobbyComponent;
-  let fixture: ComponentFixture<MinRpsLobbyComponent>;
+describe('MinRpsOverviewComponent', () => {
+  let component: MinRpsOverviewComponent;
+  let fixture: ComponentFixture<MinRpsOverviewComponent>;
 
   beforeEach(async () => {
     const mockGameService = jasmine.createSpyObj(
@@ -19,7 +19,7 @@ describe('MinRpsLobbyComponent', () => {
     const mockRoutingService = jasmine.createSpyObj('RoutingService', ['navigateTo']);
 
     await TestBed.configureTestingModule({
-      imports: [MinRpsLobbyComponent],
+      imports: [MinRpsOverviewComponent],
       providers: [
         provideZonelessChangeDetection(),
         { provide: MinRpsGameService, useValue: mockGameService },
@@ -27,7 +27,7 @@ describe('MinRpsLobbyComponent', () => {
       ],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(MinRpsLobbyComponent);
+    fixture = TestBed.createComponent(MinRpsOverviewComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
