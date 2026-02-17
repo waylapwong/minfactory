@@ -1,1 +1,183 @@
-<div>Player ID: {{ playerId() }}</div>
+<div class="flex h-full flex-col text-center">
+  @if (isSpectator()) {
+    <!-- PLAYER 1 SIDE (SPECTATOR) -->
+    <div class="flex basis-1/2 flex-col justify-evenly">
+      <div class="flex w-full flex-row justify-center">
+        <minrps-card>
+          <div class="flex flex-col items-center gap-2">
+            <img src="assets/svg/player.svg" alt="Player" class="h-16 w-16" />
+            <div class="text-sm font-bold">{{ player1Label() }}</div>
+            @if (canTakePlayer1Seat()) {
+              <min-button [color]="Color.Blue" (clicked)="openSeatDialog(1)">
+                Take seat
+              </min-button>
+            }
+          </div>
+        </minrps-card>
+      </div>
+
+      <div class="flex w-full flex-row justify-evenly gap-2">
+        @if (game().player1Move !== MinRpsMove.None) {
+          <minrps-card [result]="game().player1Result">
+            <img
+              class="h-16 w-16"
+              [alt]="game().player1Move"
+              [src]="`assets/svg/${game().player1Move}.svg`"
+            />
+          </minrps-card>
+        } @else if (game().player1HasSelectedMove) {
+          <minrps-card>
+            <img src="assets/svg/lock.svg" alt="Selected" class="h-16 w-16" />
+          </minrps-card>
+        } @else {
+          <minrps-card>
+            <img src="assets/svg/uncertainty.svg" alt="?" class="h-16 w-16" />
+          </minrps-card>
+        }
+      </div>
+    </div>
+
+    <!-- DIVIDER -->
+    <div class="flex flex-row justify-center">
+      <min-divider class="basis-3/4"></min-divider>
+    </div>
+
+    <!-- PLAYER 2 SIDE (SPECTATOR) -->
+    <div class="flex basis-1/2 flex-col justify-evenly">
+      <div class="flex w-full flex-row justify-center">
+        <minrps-card>
+          <div class="flex flex-col items-center gap-2">
+            <img src="assets/svg/player.svg" alt="Player" class="h-16 w-16" />
+            <div class="text-sm font-bold">{{ player2Label() }}</div>
+            @if (canTakePlayer2Seat()) {
+              <min-button [color]="Color.Blue" (clicked)="openSeatDialog(2)">
+                Take seat
+              </min-button>
+            }
+          </div>
+        </minrps-card>
+      </div>
+
+      <div class="flex w-full flex-row justify-evenly gap-2">
+        @if (game().player2Move !== MinRpsMove.None) {
+          <minrps-card [result]="game().player2Result">
+            <img
+              class="h-16 w-16"
+              [alt]="game().player2Move"
+              [src]="`assets/svg/${game().player2Move}.svg`"
+            />
+          </minrps-card>
+        } @else if (game().player2HasSelectedMove) {
+          <minrps-card>
+            <img src="assets/svg/lock.svg" alt="Selected" class="h-16 w-16" />
+          </minrps-card>
+        } @else {
+          <minrps-card>
+            <img src="assets/svg/uncertainty.svg" alt="?" class="h-16 w-16" />
+          </minrps-card>
+        }
+      </div>
+    </div>
+  } @else {
+    <!-- OPPONENT SIDE -->
+    <div class="flex basis-1/2 flex-col justify-evenly">
+      <div class="flex w-full flex-row justify-center">
+        <minrps-card>
+          <div class="flex flex-col items-center gap-2">
+            <img src="assets/svg/player.svg" alt="Player" class="h-16 w-16" />
+            <div class="text-sm font-bold">{{ opponentName() }}</div>
+          </div>
+        </minrps-card>
+      </div>
+
+      <div class="flex w-full flex-row justify-evenly gap-2">
+        @if (game().opponentMove !== MinRpsMove.None) {
+          <minrps-card [result]="game().result">
+            <img
+              class="h-16 w-16"
+              [alt]="game().opponentMove"
+              [src]="`assets/svg/${game().opponentMove}.svg`"
+            />
+          </minrps-card>
+        } @else if (game().opponentHasSelectedMove) {
+          <minrps-card>
+            <img src="assets/svg/lock.svg" alt="Selected" class="h-16 w-16" />
+          </minrps-card>
+        } @else {
+          <minrps-card>
+            <img src="assets/svg/uncertainty.svg" alt="?" class="h-16 w-16" />
+          </minrps-card>
+        }
+      </div>
+    </div>
+
+    <!-- DIVIDER -->
+    <div class="flex flex-row justify-center">
+      <min-divider class="basis-3/4"></min-divider>
+    </div>
+
+    <!-- PLAYER SIDE -->
+    <div class="flex basis-1/2 flex-col justify-evenly">
+      <div class="flex w-full flex-row justify-center">
+        <minrps-card>
+          <div class="flex flex-col items-center gap-2">
+            <img src="assets/svg/player.svg" alt="Player" class="h-16 w-16" />
+            <div class="text-sm font-bold">{{ playerName() }}</div>
+          </div>
+        </minrps-card>
+      </div>
+
+      <div class="flex w-full flex-row justify-evenly gap-2">
+        @for (selectableMove of selectableMoves; track $index) {
+          <minrps-move
+            [isDisabled]="
+              game().playerMove !== MinRpsMove.None && game().playerMove !== selectableMove
+            "
+            [isPlayed]="selectableMove === game().playerMove"
+            [isSelected]="selectableMove === game().playerSelectedMove"
+            [result]="game().result"
+            (selected)="selectMove(selectableMove)"
+          >
+            <img
+              [src]="`assets/svg/${selectableMove}.svg`"
+              [alt]="selectableMove"
+              class="h-16 w-16"
+            />
+          </minrps-move>
+        }
+      </div>
+
+      <div class="flex w-full flex-row justify-center">
+        <min-button
+          class="basis-3xs"
+          [color]="Color.Blue"
+          [isDisabled]="
+            game().playerSelectedMove === MinRpsMove.None ||
+            game().playerMove !== MinRpsMove.None ||
+            !game().opponentHasSelectedMove
+          "
+          (clicked)="playGame()"
+        >
+          {{ submitText() }}
+        </min-button>
+      </div>
+    </div>
+  }
+</div>
+
+<min-dialog title="Take Seat" [isOpen]="isSeatDialogOpen()" (closed)="closeSeatDialog()">
+  <div class="mb-4 flex flex-col">
+    <min-input
+      label="Player name"
+      [formControlInput]="seatName"
+      id="seat-name-input"
+      placeholder="Enter name"
+    ></min-input>
+  </div>
+
+  <div class="flex flex-row justify-end">
+    <min-button [color]="Color.Blue" [isDisabled]="seatFormGroup.invalid" (clicked)="takeSeat()">
+      Join
+    </min-button>
+  </div>
+</min-dialog>

@@ -23,6 +23,8 @@ describe('MinRpsMultiplayerComponent', () => {
       'offEvent',
       'sendJoinEvent',
       'sendLeaveEvent',
+      'sendSelectMoveEvent',
+      'sendPlayEvent',
     ]);
     const mockActivatedRoute = {
       snapshot: {
