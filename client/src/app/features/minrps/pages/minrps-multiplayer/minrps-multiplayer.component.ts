@@ -36,8 +36,7 @@ export class MinRpsMultiplayerComponent implements OnInit, OnDestroy {
   }
 
   public ngOnDestroy(): void {
-    const leavePayload: MinRpsLeavePayload = { gameId: this.gameId(), playerId: this.playerId() };
-    this.multiplayerService.sendLeaveEvent(leavePayload);
+    this.sendLeaveEvent();
     this.unsubscribeFromEvents();
     this.multiplayerService.disconnect();
   }
@@ -49,28 +48,37 @@ export class MinRpsMultiplayerComponent implements OnInit, OnDestroy {
     }
   }
 
-  private readonly onConnected = (payload: MinRpsConnectedPayload): void => {
+  private sendJoinEvent(): void {
+    const payload: MinRpsJoinPayload = new MinRpsJoinPayload();
+    payload.gameId = this.gameId();
+    payload.playerId = this.playerId();
+    this.multiplayerService.sendJoinEvent(payload);
+  }
+
+  private readonly onConnectedEvent = (payload: MinRpsConnectedPayload): void => {
     console.log(`${MinRpsGameEvent.Connected} event received`, payload);
     this.playerId.set(payload.playerId);
-
-    const joinPayload: MinRpsJoinPayload = new MinRpsJoinPayload();
-    joinPayload.gameId = this.gameId();
-    joinPayload.playerId = this.playerId();
-
-    this.multiplayerService.sendJoinEvent(joinPayload);
+    this.sendJoinEvent();
   };
 
-  private readonly onDisconnected = (payload: MinRpsDisconnectedPayload): void => {
+  private readonly onDisconnectedEvent = (payload: MinRpsDisconnectedPayload): void => {
     console.log(`${MinRpsGameEvent.Disconnected} event received`, payload);
   };
 
-  private readonly onJoined = (payload: MinRpsJoinedPayload): void => {
+  private readonly onJoinedEvent = (payload: MinRpsJoinedPayload): void => {
     console.log(`${MinRpsGameEvent.Joined} event received`, payload);
   };
 
-  private readonly onLeft = (payload: MinRpsLeftPayload): void => {
+  private readonly onLeftEvent = (payload: MinRpsLeftPayload): void => {
     console.log(`${MinRpsGameEvent.Left} event received`, payload);
   };
+
+  private sendLeaveEvent(): void {
+    const payload: MinRpsLeavePayload = new MinRpsLeavePayload();
+    payload.gameId = this.gameId();
+    payload.playerId = this.playerId();
+    this.multiplayerService.sendLeaveEvent(payload);
+  }
 
   private setGameId(): void {
     const gameId: string = this.activatedRoute.snapshot.paramMap.get('id') as string;
@@ -78,16 +86,16 @@ export class MinRpsMultiplayerComponent implements OnInit, OnDestroy {
   }
 
   private subscribeToEvents(): void {
-    this.multiplayerService.onEvent(MinRpsGameEvent.Connected, this.onConnected);
-    this.multiplayerService.onEvent(MinRpsGameEvent.Joined, this.onJoined);
-    this.multiplayerService.onEvent(MinRpsGameEvent.Left, this.onLeft);
-    this.multiplayerService.onEvent(MinRpsGameEvent.Disconnected, this.onDisconnected);
+    this.multiplayerService.onEvent(MinRpsGameEvent.Connected, this.onConnectedEvent);
+    this.multiplayerService.onEvent(MinRpsGameEvent.Joined, this.onJoinedEvent);
+    this.multiplayerService.onEvent(MinRpsGameEvent.Left, this.onLeftEvent);
+    this.multiplayerService.onEvent(MinRpsGameEvent.Disconnected, this.onDisconnectedEvent);
   }
 
   private unsubscribeFromEvents(): void {
-    this.multiplayerService.offEvent(MinRpsGameEvent.Connected, this.onConnected);
-    this.multiplayerService.offEvent(MinRpsGameEvent.Joined, this.onJoined);
-    this.multiplayerService.offEvent(MinRpsGameEvent.Left, this.onLeft);
-    this.multiplayerService.offEvent(MinRpsGameEvent.Disconnected, this.onDisconnected);
+    this.multiplayerService.offEvent(MinRpsGameEvent.Connected, this.onConnectedEvent);
+    this.multiplayerService.offEvent(MinRpsGameEvent.Joined, this.onJoinedEvent);
+    this.multiplayerService.offEvent(MinRpsGameEvent.Left, this.onLeftEvent);
+    this.multiplayerService.offEvent(MinRpsGameEvent.Disconnected, this.onDisconnectedEvent);
   }
 }
