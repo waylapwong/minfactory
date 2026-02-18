@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { MinRpsRoomSystem } from './minrps-room.system';
 import { Socket } from 'socket.io';
+import { MinRpsRoomSystem } from './minrps-room.system';
 
 describe('MinRpsRoomSystem', () => {
   let system: MinRpsRoomSystem;
@@ -12,7 +12,7 @@ describe('MinRpsRoomSystem', () => {
     }).compile();
 
     system = module.get<MinRpsRoomSystem>(MinRpsRoomSystem);
-    
+
     mockSocket = {
       id: 'test-socket-id',
       join: jest.fn(),
@@ -40,13 +40,13 @@ describe('MinRpsRoomSystem', () => {
 
     it('should add player to existing room', () => {
       system.addPlayerToRoom(mockSocket, 'room1');
-      
+
       const mockSocket2 = {
         id: 'socket-2',
         join: jest.fn(),
         leave: jest.fn(),
       } as any;
-      
+
       system.addPlayerToRoom(mockSocket2, 'room1');
 
       expect(mockSocket.join).toHaveBeenCalledWith('room1');
@@ -57,7 +57,7 @@ describe('MinRpsRoomSystem', () => {
   describe('getAllPlayerRoomNames', () => {
     it('should return empty array when player is not in any rooms', () => {
       const rooms = system.getAllPlayerRoomNames(mockSocket);
-      
+
       expect(rooms).toEqual([]);
     });
 
@@ -92,7 +92,7 @@ describe('MinRpsRoomSystem', () => {
   describe('removePlayerFromRoom', () => {
     it('should remove player from room and call socket.leave', () => {
       system.addPlayerToRoom(mockSocket, 'room1');
-      
+
       system.removePlayerFromRoom(mockSocket, 'room1');
 
       expect(mockSocket.leave).toHaveBeenCalledWith('room1');
@@ -103,7 +103,7 @@ describe('MinRpsRoomSystem', () => {
       system.removePlayerFromRoom(mockSocket, 'room1');
 
       const rooms = system.getAllPlayerRoomNames(mockSocket);
-      
+
       expect(rooms).not.toContain('room1');
     });
 
@@ -124,7 +124,7 @@ describe('MinRpsRoomSystem', () => {
 
       system.addPlayerToRoom(mockSocket, 'room1');
       system.addPlayerToRoom(mockSocket2, 'room1');
-      
+
       system.removePlayerFromRoom(mockSocket, 'room1');
 
       const rooms = system.getAllPlayerRoomNames(mockSocket2);
@@ -135,7 +135,7 @@ describe('MinRpsRoomSystem', () => {
       expect(() => {
         system.removePlayerFromRoom(mockSocket, 'non-existent-room');
       }).not.toThrow();
-      
+
       expect(mockSocket.leave).toHaveBeenCalledWith('non-existent-room');
     });
   });

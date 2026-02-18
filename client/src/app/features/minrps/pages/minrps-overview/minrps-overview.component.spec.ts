@@ -2,7 +2,6 @@ import { provideZonelessChangeDetection, signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { RoutingService } from '../../../../core/services/routing.service';
 import { Color } from '../../../../shared/enums/color.enum';
-import { MinRpsOverviewViewModel } from '../../models/viewmodels/minrps-overview.viewmodel';
 import { MinRpsGameService } from '../../services/minrps-game.service';
 import { MinRpsOverviewComponent } from './minrps-overview.component';
 

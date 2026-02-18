@@ -58,7 +58,7 @@ export class MinRpsMultiplayerService {
 
     // Player joins room
     this.roomSystem.addPlayerToRoom(client, joinPayload.gameId);
-    
+
     // Initialize or update game state
     let state = this.gameRoomStates.get(joinPayload.gameId);
     if (!state) {

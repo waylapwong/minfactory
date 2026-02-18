@@ -1,18 +1,17 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { MinRpsMultiplayerService } from './minrps-multiplayer.service';
-import { MinRpsRoomSystem } from '../systems/minrps-room.system';
 import { Socket } from 'socket.io';
+import { MinRpsResult } from '../models/enums/minrps-game-result.enum';
+import { MinRpsMove } from '../models/enums/minrps-move.enum';
 import { MinRpsJoinPayload } from '../models/payloads/minrps-join.payload';
 import { MinRpsLeavePayload } from '../models/payloads/minrps-leave.payload';
-import { MinRpsTakeSeatPayload } from '../models/payloads/minrps-take-seat.payload';
-import { MinRpsSelectMovePayload } from '../models/payloads/minrps-select-move.payload';
 import { MinRpsPlayPayload } from '../models/payloads/minrps-play.payload';
-import { MinRpsMove } from '../models/enums/minrps-move.enum';
-import { MinRpsResult } from '../models/enums/minrps-game-result.enum';
+import { MinRpsSelectMovePayload } from '../models/payloads/minrps-select-move.payload';
+import { MinRpsTakeSeatPayload } from '../models/payloads/minrps-take-seat.payload';
+import { MinRpsRoomSystem } from '../systems/minrps-room.system';
+import { MinRpsMultiplayerService } from './minrps-multiplayer.service';
 
 describe('MinRpsMultiplayerService', () => {
   let service: MinRpsMultiplayerService;
-  let roomSystem: MinRpsRoomSystem;
   let mockSocket: jest.Mocked<Socket>;
 
   beforeEach(async () => {
@@ -21,8 +20,7 @@ describe('MinRpsMultiplayerService', () => {
     }).compile();
 
     service = module.get<MinRpsMultiplayerService>(MinRpsMultiplayerService);
-    roomSystem = module.get<MinRpsRoomSystem>(MinRpsRoomSystem);
-    
+
     mockSocket = {
       id: 'test-socket-id',
       join: jest.fn(),

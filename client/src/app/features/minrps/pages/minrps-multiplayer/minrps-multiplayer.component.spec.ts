@@ -2,7 +2,7 @@ import { provideZonelessChangeDetection, signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ActivatedRoute, convertToParamMap } from '@angular/router';
 import { of } from 'rxjs';
-import { MinRpsMove, MinRpsResult } from '../../../../core/generated';
+import { MinRpsMove } from '../../../../core/generated';
 import { RoutingService } from '../../../../core/services/routing.service';
 import { Color } from '../../../../shared/enums/color.enum';
 import { MinRpsGameEvent } from '../../models/enums/minrps-game-event.enum';

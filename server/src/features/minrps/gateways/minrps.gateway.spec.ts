@@ -223,7 +223,7 @@ describe('MinRpsGateway', () => {
       gateway.handleConnection(mockSocket);
 
       expect(mockSocket.emit).toHaveBeenCalled();
-      
+
       cryptoSpy.mockRestore();
     });
   });

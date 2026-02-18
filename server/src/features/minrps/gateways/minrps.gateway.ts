@@ -1,4 +1,12 @@
-import { ConnectedSocket, MessageBody, OnGatewayConnection, OnGatewayDisconnect, SubscribeMessage, WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
+import {
+  ConnectedSocket,
+  MessageBody,
+  OnGatewayConnection,
+  OnGatewayDisconnect,
+  SubscribeMessage,
+  WebSocketGateway,
+  WebSocketServer,
+} from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 import { Namespace } from '../../../shared/enums/namespace.enum';
 import { MinRpsGameEvent } from '../models/enums/minrps-game-event.enum';
@@ -41,13 +49,13 @@ export class MinRpsGateway implements OnGatewayConnection, OnGatewayDisconnect {
       joinPayload,
     );
     this.sendRoomEvent(joinedPayload.gameId, MinRpsGameEvent.Joined, joinedPayload);
-    
+
     // Send current game state to the joining player
     const gameState: MinRpsGameStateUpdatePayload = this.multiplayerService.getGameState(
       joinPayload.gameId,
     );
     this.sendRoomEvent(joinedPayload.gameId, MinRpsGameEvent.GameStateUpdate, gameState);
-    
+
     return new Acknowledgement();
   }
 
@@ -74,9 +82,8 @@ export class MinRpsGateway implements OnGatewayConnection, OnGatewayDisconnect {
       `Player: ${takeSeatPayload.playerId} wants seat ${takeSeatPayload.seat} in game: ${takeSeatPayload.gameId}`,
       takeSeatPayload,
     );
-    const gameState: MinRpsGameStateUpdatePayload = this.multiplayerService.takeSeat(
-      takeSeatPayload,
-    );
+    const gameState: MinRpsGameStateUpdatePayload =
+      this.multiplayerService.takeSeat(takeSeatPayload);
     this.sendRoomEvent(takeSeatPayload.gameId, MinRpsGameEvent.GameStateUpdate, gameState);
     return new Acknowledgement();
   }
@@ -88,18 +95,18 @@ export class MinRpsGateway implements OnGatewayConnection, OnGatewayDisconnect {
   ): Acknowledgement {
     console.log(`Player: ${playPayload.playerId} wants to play`, playPayload);
     const playedPayload: MinRpsPlayedPayload | null = this.multiplayerService.playGame(playPayload);
-    
+
     if (playedPayload) {
       // Both players have selected moves, reveal and send results
       this.sendRoomEvent(playPayload.gameId, MinRpsGameEvent.Played, playedPayload);
-      
+
       // Send updated game state
       const gameState: MinRpsGameStateUpdatePayload = this.multiplayerService.getGameState(
         playPayload.gameId,
       );
       this.sendRoomEvent(playPayload.gameId, MinRpsGameEvent.GameStateUpdate, gameState);
     }
-    
+
     return new Acknowledgement();
   }
 
@@ -114,16 +121,16 @@ export class MinRpsGateway implements OnGatewayConnection, OnGatewayDisconnect {
     );
     const moveSelectedPayload: MinRpsMoveSelectedPayload =
       this.multiplayerService.selectMove(selectMovePayload);
-    
+
     // Only notify the player who selected the move (keep it secret from opponent)
     this.sendClientEvent(client, MinRpsGameEvent.MoveSelected, moveSelectedPayload);
-    
+
     // Send game state update to all players (without revealing moves)
     const gameState: MinRpsGameStateUpdatePayload = this.multiplayerService.getGameState(
       selectMovePayload.gameId,
     );
     this.sendRoomEvent(selectMovePayload.gameId, MinRpsGameEvent.GameStateUpdate, gameState);
-    
+
     return new Acknowledgement();
   }
 
@@ -148,9 +155,8 @@ export class MinRpsGateway implements OnGatewayConnection, OnGatewayDisconnect {
       disconnectedPayload.gameId = roomName;
       disconnectedPayload.playerId = playerId ?? client.id;
       this.sendRoomEvent(roomName, MinRpsGameEvent.Disconnected, disconnectedPayload);
-      const gameState: MinRpsGameStateUpdatePayload = this.multiplayerService.getGameState(
-        roomName,
-      );
+      const gameState: MinRpsGameStateUpdatePayload =
+        this.multiplayerService.getGameState(roomName);
       this.sendRoomEvent(roomName, MinRpsGameEvent.GameStateUpdate, gameState);
     }
   }

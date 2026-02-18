@@ -35,7 +35,7 @@ describe('MinRpsGameRepository', () => {
       const entity = new MinRpsGameEntity();
       entity.id = 'test-id';
       entity.name = 'Test Game';
-      
+
       mockTypeOrmRepository.save.mockResolvedValue(entity);
 
       const result = await repository.save(entity);
@@ -51,7 +51,7 @@ describe('MinRpsGameRepository', () => {
         Object.assign(new MinRpsGameEntity(), { id: '1', name: 'Game 1' }),
         Object.assign(new MinRpsGameEntity(), { id: '2', name: 'Game 2' }),
       ];
-      
+
       mockTypeOrmRepository.find.mockResolvedValue(entities);
 
       const result = await repository.findAll();
@@ -66,7 +66,7 @@ describe('MinRpsGameRepository', () => {
       const entity = new MinRpsGameEntity();
       entity.id = 'test-id';
       entity.name = 'Test Game';
-      
+
       mockTypeOrmRepository.findOne.mockResolvedValue(entity);
 
       const result = await repository.findOne('test-id');
@@ -79,7 +79,9 @@ describe('MinRpsGameRepository', () => {
       mockTypeOrmRepository.findOne.mockResolvedValue(null);
 
       await expect(repository.findOne('non-existent-id')).rejects.toThrow(NotFoundException);
-      await expect(repository.findOne('non-existent-id')).rejects.toThrow('minRPS game with ID non-existent-id not found');
+      await expect(repository.findOne('non-existent-id')).rejects.toThrow(
+        'minRPS game with ID non-existent-id not found',
+      );
     });
   });
 
@@ -87,7 +89,7 @@ describe('MinRpsGameRepository', () => {
     it('should delete entity when found', async () => {
       const entity = new MinRpsGameEntity();
       entity.id = 'test-id';
-      
+
       mockTypeOrmRepository.findOne.mockResolvedValue(entity);
       mockTypeOrmRepository.delete.mockResolvedValue({} as any);
 

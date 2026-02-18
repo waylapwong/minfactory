@@ -31,11 +31,11 @@ describe('MinRpsSingleplayerService', () => {
       expect(result.player2Move).toBeDefined();
       expect(result.player2Move).not.toBe(MinRpsMove.None);
       expect([MinRpsMove.Rock, MinRpsMove.Paper, MinRpsMove.Scissors]).toContain(
-        result.player2Move
+        result.player2Move,
       );
       expect(result.result).toBeDefined();
       expect([MinRpsResult.Player1, MinRpsResult.Player2, MinRpsResult.Draw]).toContain(
-        result.result
+        result.result,
       );
     });
 
@@ -68,7 +68,7 @@ describe('MinRpsSingleplayerService', () => {
       playDto.player1Move = MinRpsMove.Rock;
 
       const moves = new Set<MinRpsMove>();
-      
+
       // Play 50 times to get different random moves
       for (let i = 0; i < 50; i++) {
         const result = service.playGame(playDto);
