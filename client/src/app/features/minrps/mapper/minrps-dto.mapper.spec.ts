@@ -1,4 +1,9 @@
-import { MinRpsGameDto, MinRpsMove, MinRpsPlayResultDto, MinRpsResult } from '../../../core/generated';
+import {
+  MinRpsGameDto,
+  MinRpsMove,
+  MinRpsPlayResultDto,
+  MinRpsResult,
+} from '../../../core/generated';
 import { MinRpsDtoMapper } from './minrps-dto.mapper';
 
 describe('MinRpsDtoMapper', () => {

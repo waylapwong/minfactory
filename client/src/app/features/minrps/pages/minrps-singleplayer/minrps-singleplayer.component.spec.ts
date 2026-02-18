@@ -52,7 +52,11 @@ describe('MinRpsSingleplayerComponent', () => {
   });
 
   it('should have selectable moves array', () => {
-    expect(component.selectableMoves).toEqual([MinRpsMove.Rock, MinRpsMove.Paper, MinRpsMove.Scissors]);
+    expect(component.selectableMoves).toEqual([
+      MinRpsMove.Rock,
+      MinRpsMove.Paper,
+      MinRpsMove.Scissors,
+    ]);
   });
 
   describe('submitText computed signal', () => {

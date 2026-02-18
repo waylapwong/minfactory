@@ -1,7 +1,13 @@
 import { provideZonelessChangeDetection } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { of } from 'rxjs';
-import { MinRPSApiService, MinRpsMove, MinRpsPlayDto, MinRpsPlayResultDto, MinRpsResult } from '../../../core/generated';
+import {
+  MinRPSApiService,
+  MinRpsMove,
+  MinRpsPlayDto,
+  MinRpsPlayResultDto,
+  MinRpsResult,
+} from '../../../core/generated';
 import { MinRpsPlayRepository } from './minrps-play.repository';
 
 describe('MinRpsPlayRepository', () => {

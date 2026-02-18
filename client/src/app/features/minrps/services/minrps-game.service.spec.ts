@@ -62,10 +62,7 @@ describe('MinRpsGameService', () => {
         observerCount: 0,
         playerCount: 0,
       };
-      mockRepository.create.and.returnValues(
-        Promise.resolve(mockDto1),
-        Promise.resolve(mockDto2),
-      );
+      mockRepository.create.and.returnValues(Promise.resolve(mockDto1), Promise.resolve(mockDto2));
 
       await service.createGame('Test Game 1');
       await service.createGame('Test Game 2');

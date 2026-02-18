@@ -1,11 +1,19 @@
-import { Component, OnDestroy, OnInit, Signal, WritableSignal, computed, signal } from '@angular/core';
+import {
+  Component,
+  OnDestroy,
+  OnInit,
+  Signal,
+  WritableSignal,
+  computed,
+  signal,
+} from '@angular/core';
+import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
-import { FormControl, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MinRpsMove, MinRpsResult } from '../../../../core/generated';
 import { RoutingService } from '../../../../core/services/routing.service';
 import { ButtonComponent } from '../../../../shared/components/button/button.component';
-import { DividerComponent } from '../../../../shared/components/divider/divider.component';
 import { DialogComponent } from '../../../../shared/components/dialog/dialog.component';
+import { DividerComponent } from '../../../../shared/components/divider/divider.component';
 import { InputComponent } from '../../../../shared/components/input/input.component';
 import { Color } from '../../../../shared/enums/color.enum';
 import { MinRpsCardComponent } from '../../components/minrps-card/minrps-card.component';
@@ -43,36 +51,14 @@ import { MinRpsMultiplayerService } from '../../services/minrps-multiplayer.serv
   ],
 })
 export class MinRpsMultiplayerComponent implements OnInit, OnDestroy {
-  private readonly ROUND_CLEAR_DELAY = 2000;
-
   public readonly Color: typeof Color = Color;
   public readonly MinRpsMove: typeof MinRpsMove = MinRpsMove;
+
+  private readonly ROUND_CLEAR_DELAY = 2000;
 
   public game: WritableSignal<MinRpsMultiplayerViewModel> = signal(
     new MinRpsMultiplayerViewModel(),
   );
-  public isSeatDialogOpen: WritableSignal<boolean> = signal(false);
-  public selectedSeat: WritableSignal<number | null> = signal(null);
-  public seatFormGroup: FormGroup = this.createSeatFormGroup();
-  public selectableMoves: MinRpsMove[] = [MinRpsMove.Rock, MinRpsMove.Paper, MinRpsMove.Scissors];
-  public submitText: Signal<string> = computed(() => {
-    const currentGame = this.game();
-    if (currentGame.playerHasSelectedMove && !currentGame.opponentHasSelectedMove) {
-      return 'waiting for opponent...';
-    }
-    switch (currentGame.playerSelectedMove) {
-      case MinRpsMove.None:
-        return 'choose move';
-      case MinRpsMove.Rock:
-        return 'play rock!';
-      case MinRpsMove.Paper:
-        return 'play paper!';
-      case MinRpsMove.Scissors:
-        return 'play scissors!';
-      default:
-        return '';
-    }
-  });
   public isSpectator: Signal<boolean> = computed(() => {
     const currentGame = this.game();
     return (
@@ -81,17 +67,16 @@ export class MinRpsMultiplayerComponent implements OnInit, OnDestroy {
       currentGame.playerId !== currentGame.player2Id
     );
   });
-  public isPlayer: Signal<boolean> = computed(() => !this.isSpectator());
-  public playerName: Signal<string> = computed(() => {
+  public canTakePlayer1Seat: Signal<boolean> = computed(() => {
     const currentGame = this.game();
-    if (currentGame.isPlayer1) {
-      return currentGame.player1Name || 'Player 1';
-    }
-    if (currentGame.isPlayer2) {
-      return currentGame.player2Name || 'Player 2';
-    }
-    return '';
+    return this.isSpectator() && !currentGame.player1Id;
   });
+  public canTakePlayer2Seat: Signal<boolean> = computed(() => {
+    const currentGame = this.game();
+    return this.isSpectator() && !currentGame.player2Id;
+  });
+  public isPlayer: Signal<boolean> = computed(() => !this.isSpectator());
+  public isSeatDialogOpen: WritableSignal<boolean> = signal(false);
   public opponentName: Signal<string> = computed(() => {
     const currentGame = this.game();
     if (currentGame.isPlayer1) {
@@ -116,13 +101,36 @@ export class MinRpsMultiplayerComponent implements OnInit, OnDestroy {
     }
     return currentGame.player2Id ? 'Player 2' : 'Seat open';
   });
-  public canTakePlayer1Seat: Signal<boolean> = computed(() => {
+  public playerName: Signal<string> = computed(() => {
     const currentGame = this.game();
-    return this.isSpectator() && !currentGame.player1Id;
+    if (currentGame.isPlayer1) {
+      return currentGame.player1Name || 'Player 1';
+    }
+    if (currentGame.isPlayer2) {
+      return currentGame.player2Name || 'Player 2';
+    }
+    return '';
   });
-  public canTakePlayer2Seat: Signal<boolean> = computed(() => {
+  public seatFormGroup: FormGroup = this.createSeatFormGroup();
+  public selectableMoves: MinRpsMove[] = [MinRpsMove.Rock, MinRpsMove.Paper, MinRpsMove.Scissors];
+  public selectedSeat: WritableSignal<number | null> = signal(null);
+  public submitText: Signal<string> = computed(() => {
     const currentGame = this.game();
-    return this.isSpectator() && !currentGame.player2Id;
+    if (currentGame.playerHasSelectedMove && !currentGame.opponentHasSelectedMove) {
+      return 'waiting for opponent...';
+    }
+    switch (currentGame.playerSelectedMove) {
+      case MinRpsMove.None:
+        return 'choose move';
+      case MinRpsMove.Rock:
+        return 'play rock!';
+      case MinRpsMove.Paper:
+        return 'play paper!';
+      case MinRpsMove.Scissors:
+        return 'play scissors!';
+      default:
+        return '';
+    }
   });
 
   private roundClearTimeoutId: number | null = null;
@@ -133,6 +141,10 @@ export class MinRpsMultiplayerComponent implements OnInit, OnDestroy {
     private readonly multiplayerService: MinRpsMultiplayerService,
     private readonly routingService: RoutingService,
   ) {}
+
+  public get seatName(): FormControl {
+    return this.seatFormGroup.get('name') as FormControl;
+  }
 
   public ngOnInit() {
     this.setGameId();
@@ -146,6 +158,22 @@ export class MinRpsMultiplayerComponent implements OnInit, OnDestroy {
     this.sendLeaveEvent();
     this.unsubscribeFromEvents();
     this.multiplayerService.disconnect();
+  }
+
+  public closeSeatDialog(): void {
+    this.isSeatDialogOpen.set(false);
+  }
+
+  public openSeatDialog(seat: number): void {
+    if (seat === 1 && !this.canTakePlayer1Seat()) {
+      return;
+    }
+    if (seat === 2 && !this.canTakePlayer2Seat()) {
+      return;
+    }
+    this.seatFormGroup = this.createSeatFormGroup();
+    this.selectedSeat.set(seat);
+    this.isSeatDialogOpen.set(true);
   }
 
   public playGame(): void {
@@ -174,31 +202,13 @@ export class MinRpsMultiplayerComponent implements OnInit, OnDestroy {
     this.multiplayerService.sendSelectMoveEvent(payload);
   }
 
-  public get seatName(): FormControl {
-    return this.seatFormGroup.get('name') as FormControl;
-  }
-
-  public openSeatDialog(seat: number): void {
-    if (seat === 1 && !this.canTakePlayer1Seat()) {
-      return;
-    }
-    if (seat === 2 && !this.canTakePlayer2Seat()) {
-      return;
-    }
-    this.seatFormGroup = this.createSeatFormGroup();
-    this.selectedSeat.set(seat);
-    this.isSeatDialogOpen.set(true);
-  }
-
-  public closeSeatDialog(): void {
-    this.isSeatDialogOpen.set(false);
-  }
-
   public takeSeat(): void {
     if (this.seatFormGroup.invalid || this.selectedSeat() === null) {
       return;
     }
-    const name = String(this.seatName.value || '').trim().slice(0, 16);
+    const name = String(this.seatName.value || '')
+      .trim()
+      .slice(0, 16);
     if (!name) {
       return;
     }
@@ -217,6 +227,19 @@ export class MinRpsMultiplayerComponent implements OnInit, OnDestroy {
     if (!gameExists) {
       this.routingService.navigateToMinRpsOverview();
     }
+  }
+
+  private clearRoundTimer(): void {
+    if (this.roundClearTimeoutId !== null) {
+      window.clearTimeout(this.roundClearTimeoutId);
+      this.roundClearTimeoutId = null;
+    }
+  }
+
+  private createSeatFormGroup(): FormGroup {
+    return new FormGroup({
+      name: new FormControl('', [Validators.maxLength(16), Validators.required]),
+    });
   }
 
   private sendJoinEvent(): void {
@@ -307,6 +330,22 @@ export class MinRpsMultiplayerComponent implements OnInit, OnDestroy {
     });
   };
 
+  private scheduleRoundClear(): void {
+    this.clearRoundTimer();
+    this.roundClearTimeoutId = window.setTimeout(() => {
+      this.game.update((g) => {
+        g.playerMove = MinRpsMove.None;
+        g.opponentMove = MinRpsMove.None;
+        g.player1Move = MinRpsMove.None;
+        g.player2Move = MinRpsMove.None;
+        g.result = MinRpsResult.None;
+        g.player1Result = MinRpsResult.None;
+        g.player2Result = MinRpsResult.None;
+        return { ...g };
+      });
+    }, this.ROUND_CLEAR_DELAY);
+  }
+
   private readonly onPlayedEvent = (payload: MinRpsPlayedPayload): void => {
     console.log(`${MinRpsGameEvent.Played} event received`, payload);
     this.game.update((g) => {
@@ -374,34 +413,5 @@ export class MinRpsMultiplayerComponent implements OnInit, OnDestroy {
     this.multiplayerService.offEvent(MinRpsGameEvent.MoveSelected, this.onMoveSelectedEvent);
     this.multiplayerService.offEvent(MinRpsGameEvent.Played, this.onPlayedEvent);
     this.multiplayerService.offEvent(MinRpsGameEvent.GameStateUpdate, this.onGameStateUpdateEvent);
-  }
-
-  private scheduleRoundClear(): void {
-    this.clearRoundTimer();
-    this.roundClearTimeoutId = window.setTimeout(() => {
-      this.game.update((g) => {
-        g.playerMove = MinRpsMove.None;
-        g.opponentMove = MinRpsMove.None;
-        g.player1Move = MinRpsMove.None;
-        g.player2Move = MinRpsMove.None;
-        g.result = MinRpsResult.None;
-        g.player1Result = MinRpsResult.None;
-        g.player2Result = MinRpsResult.None;
-        return { ...g };
-      });
-    }, this.ROUND_CLEAR_DELAY);
-  }
-
-  private clearRoundTimer(): void {
-    if (this.roundClearTimeoutId !== null) {
-      window.clearTimeout(this.roundClearTimeoutId);
-      this.roundClearTimeoutId = null;
-    }
-  }
-
-  private createSeatFormGroup(): FormGroup {
-    return new FormGroup({
-      name: new FormControl('', [Validators.maxLength(16), Validators.required]),
-    });
   }
 }
