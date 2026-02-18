@@ -1,5 +1,6 @@
 import { ApplicationRef, Injectable } from '@angular/core';
 import { Socket, SocketIoConfig } from 'ngx-socket-io';
+import { ENVIRONMENT } from '../../../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
@@ -11,5 +12,5 @@ export class MinRpsSocketRepository extends Socket {
 }
 
 const MINRPS_SOCKET_CONFIG: SocketIoConfig = {
-  url: 'http://localhost:3000/minrps',
+  url: `${ENVIRONMENT.API_BASE_PATH}/minrps`,
 };

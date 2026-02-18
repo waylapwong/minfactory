@@ -11,7 +11,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
       host: process.env.DB_HOST,
       password: process.env.DB_PASSWORD,
       port: +process.env.DB_PORT!,
-      synchronize: !!process.env.DB_SYNCHRONIZE,
+      synchronize: process.env.DB_SYNCHRONIZE === 'true',
       type: process.env.DB_TYPE as 'mariadb',
       username: process.env.DB_USERNAME,
     }),
