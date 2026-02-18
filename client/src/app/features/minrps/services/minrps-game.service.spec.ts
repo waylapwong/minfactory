@@ -46,6 +46,35 @@ describe('MinRpsGameService', () => {
       expect(mockRepository.create).toHaveBeenCalledWith('Test Game');
       expect(service.games().length).toBe(1);
     });
+
+    it('should sort games by creation date descending when adding multiple games', async () => {
+      const mockDto1: MinRpsGameDto = {
+        id: 'test-id-1',
+        name: 'Test Game 1',
+        createdAt: new Date('2024-01-01').toISOString(),
+        observerCount: 0,
+        playerCount: 0,
+      };
+      const mockDto2: MinRpsGameDto = {
+        id: 'test-id-2',
+        name: 'Test Game 2',
+        createdAt: new Date('2024-01-02').toISOString(),
+        observerCount: 0,
+        playerCount: 0,
+      };
+      mockRepository.create.and.returnValues(
+        Promise.resolve(mockDto1),
+        Promise.resolve(mockDto2),
+      );
+
+      await service.createGame('Test Game 1');
+      await service.createGame('Test Game 2');
+
+      const games = service.games();
+      expect(games.length).toBe(2);
+      expect(games[0].id).toBe('test-id-2');
+      expect(games[1].id).toBe('test-id-1');
+    });
   });
 
   describe('deleteGame()', () => {
@@ -65,6 +94,46 @@ describe('MinRpsGameService', () => {
 
       expect(mockRepository.delete).toHaveBeenCalledWith('test-id');
       expect(service.games().length).toBe(0);
+    });
+
+    it('should maintain sort order after deleting a game', async () => {
+      const mockDto1: MinRpsGameDto = {
+        id: 'test-id-1',
+        name: 'Test Game 1',
+        createdAt: new Date('2024-01-01').toISOString(),
+        observerCount: 0,
+        playerCount: 0,
+      };
+      const mockDto2: MinRpsGameDto = {
+        id: 'test-id-2',
+        name: 'Test Game 2',
+        createdAt: new Date('2024-01-02').toISOString(),
+        observerCount: 0,
+        playerCount: 0,
+      };
+      const mockDto3: MinRpsGameDto = {
+        id: 'test-id-3',
+        name: 'Test Game 3',
+        createdAt: new Date('2024-01-03').toISOString(),
+        observerCount: 0,
+        playerCount: 0,
+      };
+      mockRepository.create.and.returnValues(
+        Promise.resolve(mockDto1),
+        Promise.resolve(mockDto2),
+        Promise.resolve(mockDto3),
+      );
+      mockRepository.delete.and.returnValue(Promise.resolve());
+
+      await service.createGame('Test Game 1');
+      await service.createGame('Test Game 2');
+      await service.createGame('Test Game 3');
+      await service.deleteGame('test-id-2');
+
+      const games = service.games();
+      expect(games.length).toBe(2);
+      expect(games[0].id).toBe('test-id-3');
+      expect(games[1].id).toBe('test-id-1');
     });
   });
 

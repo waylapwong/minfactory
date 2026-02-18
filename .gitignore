@@ -7,6 +7,7 @@ client/node_modules
 
 # SERVER IGNORES
 server/coverage
+server/src/coverage
 server/dist
 server/docs
 server/node_modules
