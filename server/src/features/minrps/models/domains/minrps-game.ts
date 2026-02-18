@@ -48,6 +48,19 @@ export class MinRpsGame {
     }
   }
 
+  public hasPlayer1SelectedMove(): boolean {
+    return this.player1.move !== MinRpsMove.None;
+  }
+
+  public hasPlayer2SelectedMove(): boolean {
+    return this.player2.move !== MinRpsMove.None;
+  }
+
+  public resetMoves(): void {
+    this.player1.move = MinRpsMove.None;
+    this.player2.move = MinRpsMove.None;
+  }
+
   private checkRules(): void {
     if (this.player1.move === MinRpsMove.None || this.player2.move === MinRpsMove.None) {
       throw new GameRuleException('Player moves cannot be none.');

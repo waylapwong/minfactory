@@ -12,4 +12,8 @@ export class MinRpsMatchRepository {
   public save(id: string, match: MinRpsGame): void {
     this.matches.set(id, match);
   }
+
+  public delete(id: string): void {
+    this.matches.delete(id);
+  }
 }

@@ -1,5 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { Socket } from 'socket.io';
+import { MinRpsDomainMapper } from '../mapper/minrps-domain.mapper';
+import { MinRpsGame } from '../models/domains/minrps-game';
+import { MinRpsPlayer } from '../models/domains/minrps-player';
 import { MinRpsResult } from '../models/enums/minrps-game-result.enum';
 import { MinRpsMove } from '../models/enums/minrps-move.enum';
 import { MinRpsGameStateUpdatePayload } from '../models/payloads/minrps-game-state-update.payload';
@@ -15,18 +18,8 @@ import { MinRpsTakeSeatPayload } from '../models/payloads/minrps-take-seat.paylo
 import { MinRpsMatchRepository } from '../repositories/minrps-match.repository';
 import { MinRpsRoomSystem } from '../systems/minrps-room.system';
 
-interface GameRoomState {
-  player1Id: string;
-  player1Move: MinRpsMove;
-  player1Name: string;
-  player2Id: string;
-  player2Move: MinRpsMove;
-  player2Name: string;
-}
-
 @Injectable()
 export class MinRpsMultiplayerService {
-  private readonly gameState: Map<string, GameRoomState> = new Map();
   private readonly socketIdPlayerIdMap: Map<string, string> = new Map();
 
   constructor(
@@ -43,18 +36,21 @@ export class MinRpsMultiplayerService {
   }
 
   public getGameState(gameId: string): MinRpsGameStateUpdatePayload {
-    const state = this.gameState.get(gameId);
-    const payload = new MinRpsGameStateUpdatePayload();
-    payload.gameId = gameId;
-    payload.player1Id = state?.player1Id || '';
-    payload.player1Name = state?.player1Name || '';
-    payload.player1HasSelectedMove = state?.player1Move !== MinRpsMove.None;
-    payload.player1Move = MinRpsMove.None;
-    payload.player2Id = state?.player2Id || '';
-    payload.player2Name = state?.player2Name || '';
-    payload.player2HasSelectedMove = state?.player2Move !== MinRpsMove.None;
-    payload.player2Move = MinRpsMove.None;
-    return payload;
+    const game = this.matchRepository.findOne(gameId);
+    if (!game) {
+      const emptyPayload = new MinRpsGameStateUpdatePayload();
+      emptyPayload.gameId = gameId;
+      emptyPayload.player1Id = '';
+      emptyPayload.player1Name = '';
+      emptyPayload.player1HasSelectedMove = false;
+      emptyPayload.player1Move = MinRpsMove.None;
+      emptyPayload.player2Id = '';
+      emptyPayload.player2Name = '';
+      emptyPayload.player2HasSelectedMove = false;
+      emptyPayload.player2Move = MinRpsMove.None;
+      return emptyPayload;
+    }
+    return MinRpsDomainMapper.domainToGameStateUpdatePayload(game);
   }
 
   public getPlayerIdForSocket(client: Socket): string | undefined {
@@ -68,17 +64,11 @@ export class MinRpsMultiplayerService {
     this.roomSystem.addPlayerToRoom(client, joinPayload.gameId);
 
     // Initialize or update game state
-    let state = this.gameState.get(joinPayload.gameId);
-    if (!state) {
-      state = {
-        player1Id: '',
-        player1Name: '',
-        player1Move: MinRpsMove.None,
-        player2Id: '',
-        player2Name: '',
-        player2Move: MinRpsMove.None,
-      };
-      this.gameState.set(joinPayload.gameId, state);
+    let game = this.matchRepository.findOne(joinPayload.gameId);
+    if (!game) {
+      game = new MinRpsGame();
+      game.id = joinPayload.gameId;
+      this.matchRepository.save(joinPayload.gameId, game);
     }
 
     // Build payload
@@ -104,35 +94,35 @@ export class MinRpsMultiplayerService {
   }
 
   public playGame(playPayload: MinRpsPlayPayload): MinRpsPlayedPayload | null {
-    const state = this.gameState.get(playPayload.gameId);
-    if (!state || !state.player1Id || !state.player2Id) {
+    const game = this.matchRepository.findOne(playPayload.gameId);
+    if (!game || !game.player1.id || !game.player2.id) {
       return null;
     }
 
-    if (playPayload.playerId !== state.player1Id && playPayload.playerId !== state.player2Id) {
+    if (playPayload.playerId !== game.player1.id && playPayload.playerId !== game.player2.id) {
       return null;
     }
 
     // Check if both players have selected moves
-    if (state.player1Move === MinRpsMove.None || state.player2Move === MinRpsMove.None) {
+    if (!game.hasPlayer1SelectedMove() || !game.hasPlayer2SelectedMove()) {
       return null;
     }
 
     // Calculate results
-    const gameResult = this.calculateGameResult(state.player1Move, state.player2Move);
+    const gameResult = game.getResult();
 
     const playedPayload = new MinRpsPlayedPayload();
     playedPayload.gameId = playPayload.gameId;
-    playedPayload.player1Id = state.player1Id;
-    playedPayload.player1Move = state.player1Move;
+    playedPayload.player1Id = game.player1.id;
+    playedPayload.player1Move = game.player1.move;
     playedPayload.player1Result = gameResult;
-    playedPayload.player2Id = state.player2Id;
-    playedPayload.player2Move = state.player2Move;
+    playedPayload.player2Id = game.player2.id;
+    playedPayload.player2Move = game.player2.move;
     playedPayload.player2Result = this.invertResult(gameResult);
 
     // Reset moves for next round
-    state.player1Move = MinRpsMove.None;
-    state.player2Move = MinRpsMove.None;
+    game.resetMoves();
+    this.matchRepository.save(playPayload.gameId, game);
 
     return playedPayload;
   }
@@ -148,13 +138,14 @@ export class MinRpsMultiplayerService {
   }
 
   public selectMove(selectMovePayload: MinRpsSelectMovePayload): MinRpsMoveSelectedPayload {
-    const state = this.gameState.get(selectMovePayload.gameId);
-    if (state) {
-      if (state.player1Id === selectMovePayload.playerId) {
-        state.player1Move = selectMovePayload.move;
-      } else if (state.player2Id === selectMovePayload.playerId) {
-        state.player2Move = selectMovePayload.move;
+    const game = this.matchRepository.findOne(selectMovePayload.gameId);
+    if (game) {
+      if (game.player1.id === selectMovePayload.playerId) {
+        game.setPlayer1Move(selectMovePayload.move);
+      } else if (game.player2.id === selectMovePayload.playerId) {
+        game.setPlayer2Move(selectMovePayload.move);
       }
+      this.matchRepository.save(selectMovePayload.gameId, game);
     }
 
     const moveSelectedPayload = new MinRpsMoveSelectedPayload();
@@ -166,69 +157,52 @@ export class MinRpsMultiplayerService {
   }
 
   public takeSeat(selectSeatPayload: MinRpsTakeSeatPayload): MinRpsGameStateUpdatePayload {
-    const state = this.getOrCreateState(selectSeatPayload.gameId);
+    const game = this.getOrCreateGame(selectSeatPayload.gameId);
     const cleanedName = selectSeatPayload.playerName.trim().slice(0, 16);
 
     if (!cleanedName) {
       return this.getGameState(selectSeatPayload.gameId);
     }
 
-    const isPlayer1 = state.player1Id === selectSeatPayload.playerId;
-    const isPlayer2 = state.player2Id === selectSeatPayload.playerId;
+    const isPlayer1 = game.player1.id === selectSeatPayload.playerId;
+    const isPlayer2 = game.player2.id === selectSeatPayload.playerId;
 
     if (selectSeatPayload.seat === 1) {
       if (isPlayer2) {
         return this.getGameState(selectSeatPayload.gameId);
       }
-      if (!state.player1Id || isPlayer1) {
-        state.player1Id = selectSeatPayload.playerId;
-        state.player1Name = cleanedName;
-        state.player1Move = MinRpsMove.None;
+      if (!game.player1.id || isPlayer1) {
+        const player = new MinRpsPlayer();
+        player.id = selectSeatPayload.playerId;
+        player.name = cleanedName;
+        player.move = MinRpsMove.None;
+        game.setPlayer1(player);
       }
     } else if (selectSeatPayload.seat === 2) {
       if (isPlayer1) {
         return this.getGameState(selectSeatPayload.gameId);
       }
-      if (!state.player2Id || isPlayer2) {
-        state.player2Id = selectSeatPayload.playerId;
-        state.player2Name = cleanedName;
-        state.player2Move = MinRpsMove.None;
+      if (!game.player2.id || isPlayer2) {
+        const player = new MinRpsPlayer();
+        player.id = selectSeatPayload.playerId;
+        player.name = cleanedName;
+        player.move = MinRpsMove.None;
+        game.setPlayer2(player);
       }
     }
 
+    this.matchRepository.save(selectSeatPayload.gameId, game);
     return this.getGameState(selectSeatPayload.gameId);
   }
 
-  private calculateGameResult(player1Move: MinRpsMove, player2Move: MinRpsMove): MinRpsResult {
-    if (player1Move === player2Move) {
-      return MinRpsResult.Draw;
+  private getOrCreateGame(gameId: string): MinRpsGame {
+    let game = this.matchRepository.findOne(gameId);
+    if (!game) {
+      game = new MinRpsGame();
+      game.id = gameId;
+      this.matchRepository.save(gameId, game);
     }
-
-    if (
-      (player1Move === MinRpsMove.Rock && player2Move === MinRpsMove.Scissors) ||
-      (player1Move === MinRpsMove.Paper && player2Move === MinRpsMove.Rock) ||
-      (player1Move === MinRpsMove.Scissors && player2Move === MinRpsMove.Paper)
-    ) {
-      return MinRpsResult.Player1;
-    }
-
-    return MinRpsResult.Player2;
-  }
-
-  private getOrCreateState(gameId: string): GameRoomState {
-    let state = this.gameState.get(gameId);
-    if (!state) {
-      state = {
-        player1Id: '',
-        player1Name: '',
-        player1Move: MinRpsMove.None,
-        player2Id: '',
-        player2Name: '',
-        player2Move: MinRpsMove.None,
-      };
-      this.gameState.set(gameId, state);
-    }
-    return state;
+    return game;
   }
 
   private invertResult(result: MinRpsResult): MinRpsResult {
@@ -241,23 +215,23 @@ export class MinRpsMultiplayerService {
   }
 
   private removePlayerFromGame(gameId: string, playerId: string): void {
-    const state = this.gameState.get(gameId);
-    if (!state) {
+    const game = this.matchRepository.findOne(gameId);
+    if (!game) {
       return;
     }
 
-    if (state.player1Id === playerId) {
-      state.player1Id = '';
-      state.player1Name = '';
-      state.player1Move = MinRpsMove.None;
-    } else if (state.player2Id === playerId) {
-      state.player2Id = '';
-      state.player2Name = '';
-      state.player2Move = MinRpsMove.None;
+    if (game.player1.id === playerId) {
+      const emptyPlayer = new MinRpsPlayer();
+      game.setPlayer1(emptyPlayer);
+    } else if (game.player2.id === playerId) {
+      const emptyPlayer = new MinRpsPlayer();
+      game.setPlayer2(emptyPlayer);
     }
 
-    if (!state.player1Id && !state.player2Id) {
-      this.gameState.delete(gameId);
+    if (!game.player1.id && !game.player2.id) {
+      this.matchRepository.delete(gameId);
+    } else {
+      this.matchRepository.save(gameId, game);
     }
   }
 }

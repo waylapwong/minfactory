@@ -182,6 +182,40 @@ describe('MinRpsGame', () => {
     });
   });
 
+  describe('hasPlayer1SelectedMove', () => {
+    it('should return false when player1 has no move selected', () => {
+      expect(game.hasPlayer1SelectedMove()).toBe(false);
+    });
+
+    it('should return true when player1 has selected a move', () => {
+      game.setPlayer1Move(MinRpsMove.Rock);
+      expect(game.hasPlayer1SelectedMove()).toBe(true);
+    });
+  });
+
+  describe('hasPlayer2SelectedMove', () => {
+    it('should return false when player2 has no move selected', () => {
+      expect(game.hasPlayer2SelectedMove()).toBe(false);
+    });
+
+    it('should return true when player2 has selected a move', () => {
+      game.setPlayer2Move(MinRpsMove.Paper);
+      expect(game.hasPlayer2SelectedMove()).toBe(true);
+    });
+  });
+
+  describe('resetMoves', () => {
+    it('should reset both player moves to None', () => {
+      game.setPlayer1Move(MinRpsMove.Rock);
+      game.setPlayer2Move(MinRpsMove.Scissors);
+
+      game.resetMoves();
+
+      expect(game.player1.move).toBe(MinRpsMove.None);
+      expect(game.player2.move).toBe(MinRpsMove.None);
+    });
+  });
+
   describe('edge cases', () => {
     it('should handle creating multiple games with unique ids', () => {
       const game1 = new MinRpsGame();

@@ -7,6 +7,7 @@ import { MinRpsLeavePayload } from '../models/payloads/minrps-leave.payload';
 import { MinRpsPlayPayload } from '../models/payloads/minrps-play.payload';
 import { MinRpsSelectMovePayload } from '../models/payloads/minrps-select-move.payload';
 import { MinRpsTakeSeatPayload } from '../models/payloads/minrps-take-seat.payload';
+import { MinRpsMatchRepository } from '../repositories/minrps-match.repository';
 import { MinRpsRoomSystem } from '../systems/minrps-room.system';
 import { MinRpsMultiplayerService } from './minrps-multiplayer.service';
 
@@ -16,7 +17,7 @@ describe('MinRpsMultiplayerService', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [MinRpsMultiplayerService, MinRpsRoomSystem],
+      providers: [MinRpsMultiplayerService, MinRpsRoomSystem, MinRpsMatchRepository],
     }).compile();
 
     service = module.get<MinRpsMultiplayerService>(MinRpsMultiplayerService);

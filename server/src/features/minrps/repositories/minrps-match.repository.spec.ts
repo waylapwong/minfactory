@@ -64,4 +64,25 @@ describe('MinRpsMatchRepository', () => {
       expect(result).toBeNull();
     });
   });
+
+  describe('delete', () => {
+    it('should delete a match from the map', () => {
+      const game = new MinRpsGame();
+      game.id = 'test-id';
+      game.name = 'Test Game';
+
+      repository.save('test-id', game);
+      expect(repository.findOne('test-id')).toBe(game);
+
+      repository.delete('test-id');
+
+      expect(repository.findOne('test-id')).toBeNull();
+    });
+
+    it('should not throw when deleting non-existent match', () => {
+      expect(() => {
+        repository.delete('non-existent-id');
+      }).not.toThrow();
+    });
+  });
 });

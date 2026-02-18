@@ -5,8 +5,16 @@ describe('MinRpsPlayer', () => {
   it('should create with default values', () => {
     const player = new MinRpsPlayer();
 
+    expect(player.id).toBe('');
     expect(player.name).toBe('');
     expect(player.move).toBe(MinRpsMove.None);
+  });
+
+  it('should allow setting id', () => {
+    const player = new MinRpsPlayer();
+    player.id = 'test-player-id';
+
+    expect(player.id).toBe('test-player-id');
   });
 
   it('should allow setting name', () => {
