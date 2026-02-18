@@ -7,6 +7,7 @@ import { MinRpsLeavePayload } from '../models/payloads/minrps-leave.payload';
 import { MinRpsPlayPayload } from '../models/payloads/minrps-play.payload';
 import { MinRpsSelectMovePayload } from '../models/payloads/minrps-select-move.payload';
 import { MinRpsTakeSeatPayload } from '../models/payloads/minrps-take-seat.payload';
+import { MinRpsMatchRepository } from '../repositories/minrps-match.repository';
 import { MinRpsRoomSystem } from '../systems/minrps-room.system';
 import { MinRpsMultiplayerService } from './minrps-multiplayer.service';
 
@@ -15,8 +16,19 @@ describe('MinRpsMultiplayerService', () => {
   let mockSocket: jest.Mocked<Socket>;
 
   beforeEach(async () => {
+    const mockMatchRepository = {
+      // Add any methods that might be needed
+    };
+
     const module: TestingModule = await Test.createTestingModule({
-      providers: [MinRpsMultiplayerService, MinRpsRoomSystem],
+      providers: [
+        MinRpsMultiplayerService,
+        MinRpsRoomSystem,
+        {
+          provide: MinRpsMatchRepository,
+          useValue: mockMatchRepository,
+        },
+      ],
     }).compile();
 
     service = module.get<MinRpsMultiplayerService>(MinRpsMultiplayerService);
