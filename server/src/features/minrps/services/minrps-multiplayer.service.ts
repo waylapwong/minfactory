@@ -20,7 +20,6 @@ import { MinRpsRoomSystem } from '../systems/minrps-room.system';
 
 @Injectable()
 export class MinRpsMultiplayerService {
-  private readonly gameState: Map<string, MinRpsGame> = new Map();
   private readonly socketIdPlayerIdMap: Map<string, string> = new Map();
 
   constructor(
@@ -37,7 +36,7 @@ export class MinRpsMultiplayerService {
   }
 
   public getGameState(gameId: string): MinRpsGameStateUpdatePayload {
-    const game = this.gameState.get(gameId);
+    const game = this.matchRepository.findOne(gameId);
     if (!game) {
       const emptyPayload = new MinRpsGameStateUpdatePayload();
       emptyPayload.gameId = gameId;
@@ -65,11 +64,11 @@ export class MinRpsMultiplayerService {
     this.roomSystem.addPlayerToRoom(client, joinPayload.gameId);
 
     // Initialize or update game state
-    let game = this.gameState.get(joinPayload.gameId);
+    let game = this.matchRepository.findOne(joinPayload.gameId);
     if (!game) {
       game = new MinRpsGame();
       game.id = joinPayload.gameId;
-      this.gameState.set(joinPayload.gameId, game);
+      this.matchRepository.save(joinPayload.gameId, game);
     }
 
     // Build payload
@@ -95,7 +94,7 @@ export class MinRpsMultiplayerService {
   }
 
   public playGame(playPayload: MinRpsPlayPayload): MinRpsPlayedPayload | null {
-    const game = this.gameState.get(playPayload.gameId);
+    const game = this.matchRepository.findOne(playPayload.gameId);
     if (!game || !game.player1.id || !game.player2.id) {
       return null;
     }
@@ -123,6 +122,7 @@ export class MinRpsMultiplayerService {
 
     // Reset moves for next round
     game.resetMoves();
+    this.matchRepository.save(playPayload.gameId, game);
 
     return playedPayload;
   }
@@ -138,13 +138,14 @@ export class MinRpsMultiplayerService {
   }
 
   public selectMove(selectMovePayload: MinRpsSelectMovePayload): MinRpsMoveSelectedPayload {
-    const game = this.gameState.get(selectMovePayload.gameId);
+    const game = this.matchRepository.findOne(selectMovePayload.gameId);
     if (game) {
       if (game.player1.id === selectMovePayload.playerId) {
         game.setPlayer1Move(selectMovePayload.move);
       } else if (game.player2.id === selectMovePayload.playerId) {
         game.setPlayer2Move(selectMovePayload.move);
       }
+      this.matchRepository.save(selectMovePayload.gameId, game);
     }
 
     const moveSelectedPayload = new MinRpsMoveSelectedPayload();
@@ -190,15 +191,16 @@ export class MinRpsMultiplayerService {
       }
     }
 
+    this.matchRepository.save(selectSeatPayload.gameId, game);
     return this.getGameState(selectSeatPayload.gameId);
   }
 
   private getOrCreateGame(gameId: string): MinRpsGame {
-    let game = this.gameState.get(gameId);
+    let game = this.matchRepository.findOne(gameId);
     if (!game) {
       game = new MinRpsGame();
       game.id = gameId;
-      this.gameState.set(gameId, game);
+      this.matchRepository.save(gameId, game);
     }
     return game;
   }
@@ -213,7 +215,7 @@ export class MinRpsMultiplayerService {
   }
 
   private removePlayerFromGame(gameId: string, playerId: string): void {
-    const game = this.gameState.get(gameId);
+    const game = this.matchRepository.findOne(gameId);
     if (!game) {
       return;
     }
@@ -227,7 +229,9 @@ export class MinRpsMultiplayerService {
     }
 
     if (!game.player1.id && !game.player2.id) {
-      this.gameState.delete(gameId);
+      this.matchRepository.delete(gameId);
+    } else {
+      this.matchRepository.save(gameId, game);
     }
   }
 }

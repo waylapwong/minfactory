@@ -16,19 +16,8 @@ describe('MinRpsMultiplayerService', () => {
   let mockSocket: jest.Mocked<Socket>;
 
   beforeEach(async () => {
-    const mockMatchRepository = {
-      // Add any methods that might be needed
-    };
-
     const module: TestingModule = await Test.createTestingModule({
-      providers: [
-        MinRpsMultiplayerService,
-        MinRpsRoomSystem,
-        {
-          provide: MinRpsMatchRepository,
-          useValue: mockMatchRepository,
-        },
-      ],
+      providers: [MinRpsMultiplayerService, MinRpsRoomSystem, MinRpsMatchRepository],
     }).compile();
 
     service = module.get<MinRpsMultiplayerService>(MinRpsMultiplayerService);
