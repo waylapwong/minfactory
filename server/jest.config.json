@@ -1,13 +1,16 @@
 {
   "collectCoverageFrom": [
     "**/*.(t|j)s",
+    "!**/*main.(t|j)s",
     "!**/*.decorator.(t|j)s",
     "!**/*.dto.(t|j)s",
     "!**/*.entity.(t|j)s",
+    "!**/*.enum.(t|j)s",
+    "!**/*.exception.(t|j)s",
     "!**/*.mock.(t|j)s",
-    "!**/*.model.(t|j)s",
     "!**/*.module.(t|j)s",
-    "!**/*main.(t|j)s"
+    "!**/*.payload.(t|j)s",
+    "!**/*.settings.(t|j)s"
   ],
   "coverageDirectory": "../coverage",
   "moduleFileExtensions": ["js", "json", "ts"],
