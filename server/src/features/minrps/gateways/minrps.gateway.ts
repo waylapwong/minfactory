@@ -40,10 +40,6 @@ export class MinRpsGateway implements OnGatewayConnection, OnGatewayDisconnect {
     @ConnectedSocket() client: Socket,
     @MessageBody() joinPayload: MinRpsJoinPayload,
   ): Acknowledgement {
-    console.log(
-      `Player: ${joinPayload.playerId} wants to join game: ${joinPayload.gameId}`,
-      joinPayload,
-    );
     const joinedPayload: MinRpsJoinedPayload = this.multiplayerService.joinGame(
       client,
       joinPayload,
@@ -71,20 +67,6 @@ export class MinRpsGateway implements OnGatewayConnection, OnGatewayDisconnect {
       leavePayload.gameId,
     );
     this.sendRoomEvent(leavePayload.gameId, MinRpsGameEvent.GameStateUpdate, gameState);
-    return new Acknowledgement();
-  }
-
-  @SubscribeMessage(MinRpsGameEvent.TakeSeat)
-  public handleTakeSeatEvent(
-    @MessageBody() takeSeatPayload: MinRpsTakeSeatPayload,
-  ): Acknowledgement {
-    console.log(
-      `Player: ${takeSeatPayload.playerId} wants seat ${takeSeatPayload.seat} in game: ${takeSeatPayload.gameId}`,
-      takeSeatPayload,
-    );
-    const gameState: MinRpsGameStateUpdatePayload =
-      this.multiplayerService.takeSeat(takeSeatPayload);
-    this.sendRoomEvent(takeSeatPayload.gameId, MinRpsGameEvent.GameStateUpdate, gameState);
     return new Acknowledgement();
   }
 
@@ -131,6 +113,20 @@ export class MinRpsGateway implements OnGatewayConnection, OnGatewayDisconnect {
     );
     this.sendRoomEvent(selectMovePayload.gameId, MinRpsGameEvent.GameStateUpdate, gameState);
 
+    return new Acknowledgement();
+  }
+
+  @SubscribeMessage(MinRpsGameEvent.TakeSeat)
+  public handleTakeSeatEvent(
+    @MessageBody() takeSeatPayload: MinRpsTakeSeatPayload,
+  ): Acknowledgement {
+    console.log(
+      `Player: ${takeSeatPayload.playerId} wants seat ${takeSeatPayload.seat} in game: ${takeSeatPayload.gameId}`,
+      takeSeatPayload,
+    );
+    const gameState: MinRpsGameStateUpdatePayload =
+      this.multiplayerService.takeSeat(takeSeatPayload);
+    this.sendRoomEvent(takeSeatPayload.gameId, MinRpsGameEvent.GameStateUpdate, gameState);
     return new Acknowledgement();
   }
 

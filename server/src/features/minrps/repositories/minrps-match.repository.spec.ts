@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { MinRpsMatchRepository } from './minrps-match.repository';
 import { MinRpsGame } from '../models/domains/minrps-game';
+import { MinRpsMatchRepository } from './minrps-match.repository';
 
 describe('MinRpsMatchRepository', () => {
   let repository: MinRpsMatchRepository;
@@ -15,7 +15,6 @@ describe('MinRpsMatchRepository', () => {
 
   it('should be defined', () => {
     expect(repository).toBeDefined();
-    expect(repository.matches).toBeInstanceOf(Map);
   });
 
   describe('save', () => {
@@ -26,7 +25,7 @@ describe('MinRpsMatchRepository', () => {
 
       repository.save('test-id', game);
 
-      expect(repository.matches.get('test-id')).toBe(game);
+      expect(repository.findOne('test-id')).toBe(game);
     });
 
     it('should overwrite existing match with same id', () => {
@@ -41,12 +40,12 @@ describe('MinRpsMatchRepository', () => {
       repository.save('test-id', game1);
       repository.save('test-id', game2);
 
-      expect(repository.matches.get('test-id')).toBe(game2);
-      expect(repository.matches.get('test-id')?.name).toBe('Game 2');
+      expect(repository.findOne('test-id')).toBe(game2);
+      expect(repository.findOne('test-id')?.name).toBe('Game 2');
     });
   });
 
-  describe('findById', () => {
+  describe('findOne', () => {
     it('should return match when found', () => {
       const game = new MinRpsGame();
       game.id = 'test-id';
@@ -54,15 +53,15 @@ describe('MinRpsMatchRepository', () => {
 
       repository.save('test-id', game);
 
-      const result = repository.findById('test-id');
+      const result = repository.findOne('test-id');
 
       expect(result).toBe(game);
     });
 
-    it('should return undefined when match not found', () => {
-      const result = repository.findById('non-existent-id');
+    it('should return null when match not found', () => {
+      const result = repository.findOne('non-existent-id');
 
-      expect(result).toBeUndefined();
+      expect(result).toBeNull();
     });
   });
 });

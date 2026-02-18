@@ -12,34 +12,38 @@ import { MinRpsPlayPayload } from '../models/payloads/minrps-play.payload';
 import { MinRpsPlayedPayload } from '../models/payloads/minrps-played.payload';
 import { MinRpsSelectMovePayload } from '../models/payloads/minrps-select-move.payload';
 import { MinRpsTakeSeatPayload } from '../models/payloads/minrps-take-seat.payload';
+import { MinRpsMatchRepository } from '../repositories/minrps-match.repository';
 import { MinRpsRoomSystem } from '../systems/minrps-room.system';
 
 interface GameRoomState {
   player1Id: string;
-  player1Name: string;
   player1Move: MinRpsMove;
+  player1Name: string;
   player2Id: string;
-  player2Name: string;
   player2Move: MinRpsMove;
+  player2Name: string;
 }
 
 @Injectable()
 export class MinRpsMultiplayerService {
-  private gameRoomStates: Map<string, GameRoomState> = new Map();
-  private readonly socketPlayerIds: Map<string, string> = new Map();
+  private readonly gameState: Map<string, GameRoomState> = new Map();
+  private readonly socketIdPlayerIdMap: Map<string, string> = new Map();
 
-  constructor(private readonly roomSystem: MinRpsRoomSystem) {}
+  constructor(
+    private readonly roomSystem: MinRpsRoomSystem,
+    private readonly matchRepository: MinRpsMatchRepository,
+  ) {}
+
+  public clearPlayerSocket(client: Socket): void {
+    this.socketIdPlayerIdMap.delete(client.id);
+  }
 
   public getAllPlayerRoomNames(client: Socket): string[] {
     return this.roomSystem.getAllPlayerRoomNames(client);
   }
 
-  public getPlayerIdForSocket(client: Socket): string | undefined {
-    return this.socketPlayerIds.get(client.id);
-  }
-
   public getGameState(gameId: string): MinRpsGameStateUpdatePayload {
-    const state = this.gameRoomStates.get(gameId);
+    const state = this.gameState.get(gameId);
     const payload = new MinRpsGameStateUpdatePayload();
     payload.gameId = gameId;
     payload.player1Id = state?.player1Id || '';
@@ -53,14 +57,18 @@ export class MinRpsMultiplayerService {
     return payload;
   }
 
-  public joinGame(client: Socket, joinPayload: MinRpsJoinPayload): MinRpsJoinedPayload {
-    this.socketPlayerIds.set(client.id, joinPayload.playerId);
+  public getPlayerIdForSocket(client: Socket): string | undefined {
+    return this.socketIdPlayerIdMap.get(client.id);
+  }
 
-    // Player joins room
+  public joinGame(client: Socket, joinPayload: MinRpsJoinPayload): MinRpsJoinedPayload {
+    // TODO: what for? maybe on disconnect to retrieve the playerid by socket id?
+    this.socketIdPlayerIdMap.set(client.id, joinPayload.playerId);
+
     this.roomSystem.addPlayerToRoom(client, joinPayload.gameId);
 
     // Initialize or update game state
-    let state = this.gameRoomStates.get(joinPayload.gameId);
+    let state = this.gameState.get(joinPayload.gameId);
     if (!state) {
       state = {
         player1Id: '',
@@ -70,7 +78,7 @@ export class MinRpsMultiplayerService {
         player2Name: '',
         player2Move: MinRpsMove.None,
       };
-      this.gameRoomStates.set(joinPayload.gameId, state);
+      this.gameState.set(joinPayload.gameId, state);
     }
 
     // Build payload
@@ -96,7 +104,7 @@ export class MinRpsMultiplayerService {
   }
 
   public playGame(playPayload: MinRpsPlayPayload): MinRpsPlayedPayload | null {
-    const state = this.gameRoomStates.get(playPayload.gameId);
+    const state = this.gameState.get(playPayload.gameId);
     if (!state || !state.player1Id || !state.player2Id) {
       return null;
     }
@@ -139,12 +147,8 @@ export class MinRpsMultiplayerService {
     }
   }
 
-  public clearPlayerSocket(client: Socket): void {
-    this.socketPlayerIds.delete(client.id);
-  }
-
   public selectMove(selectMovePayload: MinRpsSelectMovePayload): MinRpsMoveSelectedPayload {
-    const state = this.gameRoomStates.get(selectMovePayload.gameId);
+    const state = this.gameState.get(selectMovePayload.gameId);
     if (state) {
       if (state.player1Id === selectMovePayload.playerId) {
         state.player1Move = selectMovePayload.move;
@@ -211,6 +215,22 @@ export class MinRpsMultiplayerService {
     return MinRpsResult.Player2;
   }
 
+  private getOrCreateState(gameId: string): GameRoomState {
+    let state = this.gameState.get(gameId);
+    if (!state) {
+      state = {
+        player1Id: '',
+        player1Name: '',
+        player1Move: MinRpsMove.None,
+        player2Id: '',
+        player2Name: '',
+        player2Move: MinRpsMove.None,
+      };
+      this.gameState.set(gameId, state);
+    }
+    return state;
+  }
+
   private invertResult(result: MinRpsResult): MinRpsResult {
     if (result === MinRpsResult.Player1) {
       return MinRpsResult.Player2;
@@ -221,7 +241,7 @@ export class MinRpsMultiplayerService {
   }
 
   private removePlayerFromGame(gameId: string, playerId: string): void {
-    const state = this.gameRoomStates.get(gameId);
+    const state = this.gameState.get(gameId);
     if (!state) {
       return;
     }
@@ -237,23 +257,7 @@ export class MinRpsMultiplayerService {
     }
 
     if (!state.player1Id && !state.player2Id) {
-      this.gameRoomStates.delete(gameId);
+      this.gameState.delete(gameId);
     }
-  }
-
-  private getOrCreateState(gameId: string): GameRoomState {
-    let state = this.gameRoomStates.get(gameId);
-    if (!state) {
-      state = {
-        player1Id: '',
-        player1Name: '',
-        player1Move: MinRpsMove.None,
-        player2Id: '',
-        player2Name: '',
-        player2Move: MinRpsMove.None,
-      };
-      this.gameRoomStates.set(gameId, state);
-    }
-    return state;
   }
 }
