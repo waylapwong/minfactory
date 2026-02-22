@@ -2,8 +2,8 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { Socket } from 'socket.io';
 import { MinRpsResult } from '../models/enums/minrps-game-result.enum';
 import { MinRpsMove } from '../models/enums/minrps-move.enum';
-import { MinRpsJoinPayload } from '../models/payloads/minrps-join.payload';
-import { MinRpsLeavePayload } from '../models/payloads/minrps-leave.payload';
+import { MinRpsMatchJoinPayload } from '../models/payloads/minrps-match-join.payload';
+import { MinRpsMatchLeavePayload } from '../models/payloads/minrps-match-leave.payload';
 import { MinRpsPlayPayload } from '../models/payloads/minrps-play.payload';
 import { MinRpsSelectMovePayload } from '../models/payloads/minrps-select-move.payload';
 import { MinRpsTakeSeatPayload } from '../models/payloads/minrps-take-seat.payload';
@@ -35,8 +35,8 @@ describe('MinRpsMultiplayerService', () => {
 
   describe('joinGame', () => {
     it('should add player to room and return joined payload', () => {
-      const joinPayload: MinRpsJoinPayload = {
-        gameId: 'game-1',
+      const joinPayload: MinRpsMatchJoinPayload = {
+        matchId: 'game-1',
         playerId: 'player-1',
       };
 
@@ -48,8 +48,8 @@ describe('MinRpsMultiplayerService', () => {
     });
 
     it('should track socket to player mapping', () => {
-      const joinPayload: MinRpsJoinPayload = {
-        gameId: 'game-1',
+      const joinPayload: MinRpsMatchJoinPayload = {
+        matchId: 'game-1',
         playerId: 'player-1',
       };
 
@@ -61,13 +61,13 @@ describe('MinRpsMultiplayerService', () => {
 
   describe('leaveGame', () => {
     it('should remove player from room and return left payload', () => {
-      const joinPayload: MinRpsJoinPayload = {
-        gameId: 'game-1',
+      const joinPayload: MinRpsMatchJoinPayload = {
+        matchId: 'game-1',
         playerId: 'player-1',
       };
       service.joinGame(mockSocket, joinPayload);
 
-      const leavePayload: MinRpsLeavePayload = {
+      const leavePayload: MinRpsMatchLeavePayload = {
         gameId: 'game-1',
         playerId: 'player-1',
       };
@@ -91,9 +91,9 @@ describe('MinRpsMultiplayerService', () => {
 
       const result = service.takeSeat(takeSeatPayload);
 
-      expect(result.gameId).toBe('game-1');
-      expect(result.player1Id).toBe('player-1');
-      expect(result.player1Name).toBe('Player One');
+      expect(result.matchId).toBe('game-1');
+      expect(result.playerId).toBe('player-1');
+      expect(result.playerName).toBe('Player One');
     });
 
     it('should assign player2 when seat 2 is taken', () => {
@@ -106,7 +106,7 @@ describe('MinRpsMultiplayerService', () => {
 
       const result = service.takeSeat(takeSeatPayload);
 
-      expect(result.gameId).toBe('game-1');
+      expect(result.matchId).toBe('game-1');
       expect(result.player2Id).toBe('player-2');
       expect(result.player2Name).toBe('Player Two');
     });
@@ -121,8 +121,8 @@ describe('MinRpsMultiplayerService', () => {
 
       const result = service.takeSeat(takeSeatPayload);
 
-      expect(result.player1Name).toBe('Very Long Player');
-      expect(result.player1Name.length).toBeLessThanOrEqual(16);
+      expect(result.playerName).toBe('Very Long Player');
+      expect(result.playerName.length).toBeLessThanOrEqual(16);
     });
 
     it('should not assign seat if name is empty after trimming', () => {
@@ -135,7 +135,7 @@ describe('MinRpsMultiplayerService', () => {
 
       const result = service.takeSeat(takeSeatPayload);
 
-      expect(result.player1Id).toBe('');
+      expect(result.playerId).toBe('');
     });
 
     it('should not allow player to take both seats', () => {
@@ -156,7 +156,7 @@ describe('MinRpsMultiplayerService', () => {
 
       const result = service.takeSeat(takeSeat2);
 
-      expect(result.player1Id).toBe('player-1');
+      expect(result.playerId).toBe('player-1');
       expect(result.player2Id).toBe('');
     });
 
@@ -179,7 +179,7 @@ describe('MinRpsMultiplayerService', () => {
 
       // Should still be in seat 2, not moved to seat 1
       expect(result.player2Id).toBe('player-1');
-      expect(result.player1Id).toBe('');
+      expect(result.playerId).toBe('');
     });
 
     it('should not allow seat to be taken if already occupied by another player', () => {
@@ -198,8 +198,8 @@ describe('MinRpsMultiplayerService', () => {
       });
 
       // Seat 1 should still belong to player-1
-      expect(result.player1Id).toBe('player-1');
-      expect(result.player1Name).toBe('Player One');
+      expect(result.playerId).toBe('player-1');
+      expect(result.playerName).toBe('Player One');
     });
   });
 
@@ -373,8 +373,8 @@ describe('MinRpsMultiplayerService', () => {
     it('should return game state with no players', () => {
       const state = service.getGameState('game-1');
 
-      expect(state.gameId).toBe('game-1');
-      expect(state.player1Id).toBe('');
+      expect(state.matchId).toBe('game-1');
+      expect(state.playerId).toBe('');
       expect(state.player2Id).toBe('');
       // When game state doesn't exist, the check for MinRpsMove.None returns true
       expect(state.player1HasSelectedMove).toBeDefined();
@@ -397,15 +397,15 @@ describe('MinRpsMultiplayerService', () => {
       const state = service.getGameState('game-1');
 
       expect(state.player1HasSelectedMove).toBe(true);
-      expect(state.player1Move).toBe(MinRpsMove.None); // Move should be hidden
+      expect(state.playerMove).toBe(MinRpsMove.None); // Move should be hidden
       expect(state.player2HasSelectedMove).toBe(false);
     });
   });
 
   describe('getAllPlayerRoomNames', () => {
     it('should return all rooms player is in', () => {
-      service.joinGame(mockSocket, { gameId: 'game-1', playerId: 'player-1' });
-      service.joinGame(mockSocket, { gameId: 'game-2', playerId: 'player-1' });
+      service.joinGame(mockSocket, { matchId: 'game-1', playerId: 'player-1' });
+      service.joinGame(mockSocket, { matchId: 'game-2', playerId: 'player-1' });
 
       const rooms = service.getAllPlayerRoomNames(mockSocket);
 
@@ -416,7 +416,7 @@ describe('MinRpsMultiplayerService', () => {
 
   describe('getPlayerIdForSocket', () => {
     it('should return player ID for socket', () => {
-      service.joinGame(mockSocket, { gameId: 'game-1', playerId: 'player-1' });
+      service.joinGame(mockSocket, { matchId: 'game-1', playerId: 'player-1' });
 
       const playerId = service.getPlayerIdForSocket(mockSocket);
 
@@ -452,8 +452,8 @@ describe('MinRpsMultiplayerService', () => {
       const state1 = service.getGameState('game-1');
       const state2 = service.getGameState('game-2');
 
-      expect(state1.player1Id).toBe('');
-      expect(state2.player1Id).toBe('');
+      expect(state1.playerId).toBe('');
+      expect(state2.playerId).toBe('');
     });
 
     it('should handle removing player from non-existent game', () => {
@@ -465,7 +465,7 @@ describe('MinRpsMultiplayerService', () => {
 
   describe('clearPlayerSocket', () => {
     it('should clear player socket mapping', () => {
-      service.joinGame(mockSocket, { gameId: 'game-1', playerId: 'player-1' });
+      service.joinGame(mockSocket, { matchId: 'game-1', playerId: 'player-1' });
 
       service.clearPlayerSocket(mockSocket);
 
@@ -476,8 +476,8 @@ describe('MinRpsMultiplayerService', () => {
 
   describe('removePlayerFromAllRooms', () => {
     it('should remove player from all rooms', () => {
-      service.joinGame(mockSocket, { gameId: 'game-1', playerId: 'player-1' });
-      service.joinGame(mockSocket, { gameId: 'game-2', playerId: 'player-1' });
+      service.joinGame(mockSocket, { matchId: 'game-1', playerId: 'player-1' });
+      service.joinGame(mockSocket, { matchId: 'game-2', playerId: 'player-1' });
 
       service.removePlayerFromAllRooms(mockSocket);
 

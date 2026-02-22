@@ -14,7 +14,7 @@ describe('MinRpsGame', () => {
   it('should create with default values', () => {
     expect(game.id).toBeDefined();
     expect(game.name).toBe('');
-    expect(game.observerCount).toBe(0);
+    expect(game.observers).toBe(0);
     expect(game.createdAt).toBeInstanceOf(Date);
     expect(game.player1).toBeInstanceOf(MinRpsPlayer);
     expect(game.player2).toBeInstanceOf(MinRpsPlayer);
@@ -22,13 +22,13 @@ describe('MinRpsGame', () => {
 
   describe('addObserver', () => {
     it('should increment observer count', () => {
-      expect(game.observerCount).toBe(0);
+      expect(game.observers).toBe(0);
 
       game.addObserver();
-      expect(game.observerCount).toBe(1);
+      expect(game.observers).toBe(1);
 
       game.addObserver();
-      expect(game.observerCount).toBe(2);
+      expect(game.observers).toBe(2);
     });
   });
 

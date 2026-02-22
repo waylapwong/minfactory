@@ -2,14 +2,14 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { MinRpsGateway } from './minrps.gateway';
 import { MinRpsMultiplayerService } from '../services/minrps-multiplayer.service';
 import { Socket, Server } from 'socket.io';
-import { MinRpsJoinPayload } from '../models/payloads/minrps-join.payload';
-import { MinRpsLeavePayload } from '../models/payloads/minrps-leave.payload';
+import { MinRpsMatchJoinPayload } from '../models/payloads/minrps-match-join.payload';
+import { MinRpsMatchLeavePayload } from '../models/payloads/minrps-match-leave.payload';
 import { MinRpsTakeSeatPayload } from '../models/payloads/minrps-take-seat.payload';
 import { MinRpsSelectMovePayload } from '../models/payloads/minrps-select-move.payload';
 import { MinRpsPlayPayload } from '../models/payloads/minrps-play.payload';
 import { MinRpsJoinedPayload } from '../models/payloads/minrps-joined.payload';
 import { MinRpsLeftPayload } from '../models/payloads/minrps-left.payload';
-import { MinRpsGameStateUpdatePayload } from '../models/payloads/minrps-game-state-update.payload';
+import { MinRpsMatchUpdatePayload } from '../models/payloads/minrps-update.payload';
 import { MinRpsMoveSelectedPayload } from '../models/payloads/minrps-move-selected.payload';
 import { MinRpsPlayedPayload } from '../models/payloads/minrps-played.payload';
 import { MinRpsMove } from '../models/enums/minrps-move.enum';
@@ -71,8 +71,8 @@ describe('MinRpsGateway', () => {
 
   describe('handleJoinEvent', () => {
     it('should handle join event and emit joined payload', () => {
-      const joinPayload: MinRpsJoinPayload = {
-        gameId: 'game-1',
+      const joinPayload: MinRpsMatchJoinPayload = {
+        matchId: 'game-1',
         playerId: 'player-1',
       };
 
@@ -80,8 +80,8 @@ describe('MinRpsGateway', () => {
       joinedPayload.gameId = 'game-1';
       joinedPayload.playerId = 'player-1';
 
-      const gameState = new MinRpsGameStateUpdatePayload();
-      gameState.gameId = 'game-1';
+      const gameState = new MinRpsMatchUpdatePayload();
+      gameState.matchId = 'game-1';
 
       multiplayerService.joinGame.mockReturnValue(joinedPayload);
       multiplayerService.getGameState.mockReturnValue(gameState);
@@ -97,7 +97,7 @@ describe('MinRpsGateway', () => {
 
   describe('handleLeaveEvent', () => {
     it('should handle leave event and emit left payload', () => {
-      const leavePayload: MinRpsLeavePayload = {
+      const leavePayload: MinRpsMatchLeavePayload = {
         gameId: 'game-1',
         playerId: 'player-1',
       };
@@ -106,8 +106,8 @@ describe('MinRpsGateway', () => {
       leftPayload.gameId = 'game-1';
       leftPayload.playerId = 'player-1';
 
-      const gameState = new MinRpsGameStateUpdatePayload();
-      gameState.gameId = 'game-1';
+      const gameState = new MinRpsMatchUpdatePayload();
+      gameState.matchId = 'game-1';
 
       multiplayerService.leaveGame.mockReturnValue(leftPayload);
       multiplayerService.getGameState.mockReturnValue(gameState);
@@ -129,10 +129,10 @@ describe('MinRpsGateway', () => {
         seat: 1,
       };
 
-      const gameState = new MinRpsGameStateUpdatePayload();
-      gameState.gameId = 'game-1';
-      gameState.player1Id = 'player-1';
-      gameState.player1Name = 'Player One';
+      const gameState = new MinRpsMatchUpdatePayload();
+      gameState.matchId = 'game-1';
+      gameState.playerId = 'player-1';
+      gameState.playerName = 'Player One';
 
       multiplayerService.takeSeat.mockReturnValue(gameState);
 
@@ -158,8 +158,8 @@ describe('MinRpsGateway', () => {
       playedPayload.player1Result = MinRpsResult.Player1;
       playedPayload.player2Result = MinRpsResult.Player2;
 
-      const gameState = new MinRpsGameStateUpdatePayload();
-      gameState.gameId = 'game-1';
+      const gameState = new MinRpsMatchUpdatePayload();
+      gameState.matchId = 'game-1';
 
       multiplayerService.playGame.mockReturnValue(playedPayload);
       multiplayerService.getGameState.mockReturnValue(gameState);
@@ -200,8 +200,8 @@ describe('MinRpsGateway', () => {
       moveSelectedPayload.playerId = 'player-1';
       moveSelectedPayload.move = MinRpsMove.Rock;
 
-      const gameState = new MinRpsGameStateUpdatePayload();
-      gameState.gameId = 'game-1';
+      const gameState = new MinRpsMatchUpdatePayload();
+      gameState.matchId = 'game-1';
       gameState.player1HasSelectedMove = true;
 
       multiplayerService.selectMove.mockReturnValue(moveSelectedPayload);
@@ -236,8 +236,8 @@ describe('MinRpsGateway', () => {
       multiplayerService.getAllPlayerRoomNames.mockReturnValue(roomNames);
       multiplayerService.getPlayerIdForSocket.mockReturnValue(playerId);
 
-      const gameState = new MinRpsGameStateUpdatePayload();
-      gameState.gameId = 'game-1';
+      const gameState = new MinRpsMatchUpdatePayload();
+      gameState.matchId = 'game-1';
 
       multiplayerService.getGameState.mockReturnValue(gameState);
 
@@ -256,8 +256,8 @@ describe('MinRpsGateway', () => {
       multiplayerService.getAllPlayerRoomNames.mockReturnValue(roomNames);
       multiplayerService.getPlayerIdForSocket.mockReturnValue(undefined);
 
-      const gameState = new MinRpsGameStateUpdatePayload();
-      gameState.gameId = 'game-1';
+      const gameState = new MinRpsMatchUpdatePayload();
+      gameState.matchId = 'game-1';
 
       multiplayerService.getGameState.mockReturnValue(gameState);
 

@@ -1,20 +1,21 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { Socket } from 'socket.io';
 import { MinRpsDomainMapper } from '../mapper/minrps-domain.mapper';
 import { MinRpsGame } from '../models/domains/minrps-game';
 import { MinRpsPlayer } from '../models/domains/minrps-player';
 import { MinRpsResult } from '../models/enums/minrps-game-result.enum';
 import { MinRpsMove } from '../models/enums/minrps-move.enum';
-import { MinRpsGameStateUpdatePayload } from '../models/payloads/minrps-game-state-update.payload';
-import { MinRpsJoinPayload } from '../models/payloads/minrps-join.payload';
-import { MinRpsJoinedPayload } from '../models/payloads/minrps-joined.payload';
-import { MinRpsLeavePayload } from '../models/payloads/minrps-leave.payload';
 import { MinRpsLeftPayload } from '../models/payloads/minrps-left.payload';
+import { MinRpsMatchJoinPayload } from '../models/payloads/minrps-match-join.payload';
+import { MinRpsMatchLeavePayload } from '../models/payloads/minrps-match-leave.payload';
+import { MinRpsMatchUpdatedPayload } from '../models/payloads/minrps-match-updated.payload';
 import { MinRpsMoveSelectedPayload } from '../models/payloads/minrps-move-selected.payload';
 import { MinRpsPlayPayload } from '../models/payloads/minrps-play.payload';
 import { MinRpsPlayedPayload } from '../models/payloads/minrps-played.payload';
 import { MinRpsSelectMovePayload } from '../models/payloads/minrps-select-move.payload';
 import { MinRpsTakeSeatPayload } from '../models/payloads/minrps-take-seat.payload';
+import { MinRpsMatchUpdatePayload } from '../models/payloads/minrps-update.payload';
+import { MinRpsGameRepository } from '../repositories/minrps-game.repository';
 import { MinRpsMatchRepository } from '../repositories/minrps-match.repository';
 import { MinRpsRoomSystem } from '../systems/minrps-room.system';
 
@@ -25,6 +26,7 @@ export class MinRpsMultiplayerService {
   constructor(
     private readonly roomSystem: MinRpsRoomSystem,
     private readonly matchRepository: MinRpsMatchRepository,
+    private readonly gameRepository: MinRpsGameRepository,
   ) {}
 
   public clearPlayerSocket(client: Socket): void {
@@ -35,51 +37,41 @@ export class MinRpsMultiplayerService {
     return this.roomSystem.getAllPlayerRoomNames(client);
   }
 
-  public getGameState(gameId: string): MinRpsGameStateUpdatePayload {
-    const game = this.matchRepository.findOne(gameId);
-    if (!game) {
-      const emptyPayload = new MinRpsGameStateUpdatePayload();
-      emptyPayload.gameId = gameId;
-      emptyPayload.player1Id = '';
-      emptyPayload.player1Name = '';
-      emptyPayload.player1HasSelectedMove = false;
-      emptyPayload.player1Move = MinRpsMove.None;
-      emptyPayload.player2Id = '';
-      emptyPayload.player2Name = '';
-      emptyPayload.player2HasSelectedMove = false;
-      emptyPayload.player2Move = MinRpsMove.None;
-      return emptyPayload;
+  public getGameState(gameId: string): MinRpsMatchUpdatedPayload {
+    const match: MinRpsGame | null = this.matchRepository.findOne(gameId);
+    if (!match) {
+      throw new NotFoundException(`Match with ID ${gameId} not found`);
     }
-    return MinRpsDomainMapper.domainToGameStateUpdatePayload(game);
+    return MinRpsDomainMapper.domainToMatchUpdatedPayload(match);
   }
 
   public getPlayerIdForSocket(client: Socket): string | undefined {
     return this.socketIdPlayerIdMap.get(client.id);
   }
 
-  public joinGame(client: Socket, joinPayload: MinRpsJoinPayload): MinRpsJoinedPayload {
-    // TODO: what for? maybe on disconnect to retrieve the playerid by socket id?
-    this.socketIdPlayerIdMap.set(client.id, joinPayload.playerId);
+  public joinGame(
+    client: Socket,
+    commandPayload: MinRpsMatchJoinPayload,
+  ): MinRpsMatchUpdatedPayload {
+    this.socketIdPlayerIdMap.set(client.id, commandPayload.playerId);
+    this.roomSystem.addPlayerToRoom(client, commandPayload.matchId);
 
-    this.roomSystem.addPlayerToRoom(client, joinPayload.gameId);
+    this.gameRepository.findOne(commandPayload.matchId);
 
-    // Initialize or update game state
-    let game = this.matchRepository.findOne(joinPayload.gameId);
+    let game: MinRpsGame | null = this.matchRepository.findOne(commandPayload.matchId);
     if (!game) {
       game = new MinRpsGame();
-      game.id = joinPayload.gameId;
-      this.matchRepository.save(joinPayload.gameId, game);
+      game.id = commandPayload.matchId;
     }
 
-    // Build payload
-    const joinedPayload: MinRpsJoinedPayload = new MinRpsJoinedPayload();
-    joinedPayload.gameId = joinPayload.gameId;
-    joinedPayload.playerId = joinPayload.playerId;
+    game.addObserver(commandPayload.playerId);
 
-    return joinedPayload;
+    const updatedMatch: MinRpsGame = this.matchRepository.save(commandPayload.matchId, game);
+
+    return MinRpsDomainMapper.domainToMatchUpdatedPayload(updatedMatch);
   }
 
-  public leaveGame(client: Socket, leavePayload: MinRpsLeavePayload): MinRpsLeftPayload {
+  public leaveGame(client: Socket, leavePayload: MinRpsMatchLeavePayload): MinRpsLeftPayload {
     // Player leaves room
     this.roomSystem.removePlayerFromRoom(client, leavePayload.gameId);
 
@@ -156,7 +148,7 @@ export class MinRpsMultiplayerService {
     return moveSelectedPayload;
   }
 
-  public takeSeat(selectSeatPayload: MinRpsTakeSeatPayload): MinRpsGameStateUpdatePayload {
+  public takeSeat(selectSeatPayload: MinRpsTakeSeatPayload): MinRpsMatchUpdatePayload {
     const game = this.getOrCreateGame(selectSeatPayload.gameId);
     const cleanedName = selectSeatPayload.playerName.trim().slice(0, 16);
 

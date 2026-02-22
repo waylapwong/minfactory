@@ -3,17 +3,19 @@ import { MinRpsGame } from '../models/domains/minrps-game';
 
 @Injectable()
 export class MinRpsMatchRepository {
-  private readonly matches = new Map<string, MinRpsGame>();
-
-  public findOne(id: string): MinRpsGame | null {
-    return this.matches.get(id) || null;
-  }
-
-  public save(id: string, match: MinRpsGame): void {
-    this.matches.set(id, match);
-  }
+  private readonly matches: Map<string, MinRpsGame> = new Map<string, MinRpsGame>();
 
   public delete(id: string): void {
     this.matches.delete(id);
+  }
+
+  public findOne(id: string): MinRpsGame | null {
+    const match: MinRpsGame | undefined = this.matches.get(id);
+    return match ?? null;
+  }
+
+  public save(id: string, match: MinRpsGame): MinRpsGame {
+    this.matches.set(id, match);
+    return this.findOne(id) as MinRpsGame;
   }
 }

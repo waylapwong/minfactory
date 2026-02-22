@@ -7,12 +7,14 @@ export class MinRpsGame {
   public createdAt: Date = new Date();
   public id: string = crypto.randomUUID();
   public name: string = '';
-  public observerCount: number = 0;
+  public observers: Map<string, MinRpsPlayer> = new Map<string, MinRpsPlayer>();
   public player1: MinRpsPlayer = new MinRpsPlayer();
   public player2: MinRpsPlayer = new MinRpsPlayer();
 
-  public addObserver(): void {
-    this.observerCount++;
+  public addObserver(observerId: string): void {
+    const observer: MinRpsPlayer = new MinRpsPlayer();
+    observer.id = observerId;
+    this.observers.set(observerId, observer);
   }
 
   public getResult(): MinRpsResult {
@@ -26,6 +28,19 @@ export class MinRpsGame {
         ? MinRpsResult.Player1
         : MinRpsResult.Player2;
     }
+  }
+
+  public hasPlayer1SelectedMove(): boolean {
+    return this.player1.move !== MinRpsMove.None;
+  }
+
+  public hasPlayer2SelectedMove(): boolean {
+    return this.player2.move !== MinRpsMove.None;
+  }
+
+  public resetMoves(): void {
+    this.player1.move = MinRpsMove.None;
+    this.player2.move = MinRpsMove.None;
   }
 
   public setPlayer1(player: MinRpsPlayer): void {
@@ -48,22 +63,12 @@ export class MinRpsGame {
     }
   }
 
-  public hasPlayer1SelectedMove(): boolean {
-    return this.player1.move !== MinRpsMove.None;
-  }
-
-  public hasPlayer2SelectedMove(): boolean {
-    return this.player2.move !== MinRpsMove.None;
-  }
-
-  public resetMoves(): void {
-    this.player1.move = MinRpsMove.None;
-    this.player2.move = MinRpsMove.None;
-  }
-
   private checkRules(): void {
+    if (!this.player1.id || !this.player2.id) {
+      throw new GameRuleException('Both players must be seated to determine the result.');
+    }
     if (this.player1.move === MinRpsMove.None || this.player2.move === MinRpsMove.None) {
-      throw new GameRuleException('Player moves cannot be none.');
+      throw new GameRuleException('Player must select a move.');
     }
   }
 
