@@ -17,14 +17,6 @@ export class MinRpsGame {
     this.observers.set(observerId, observer);
   }
 
-  public addPlayer1(player: MinRpsPlayer): void {
-    this.player1 = player;
-  }
-
-  public addPlayer2(player: MinRpsPlayer): void {
-    this.player2 = player;
-  }
-
   public getResult(): MinRpsResult {
     this.checkRules();
     const player1Move: MinRpsMove = this.player1.move;
@@ -52,20 +44,30 @@ export class MinRpsGame {
     }
   }
 
-  public isObserver(id: string): boolean {
-    return this.observers.has(id);
+  public isObserver(observerId: string): boolean {
+    return this.observers.has(observerId);
   }
 
-  public isPlayer1(id: string): boolean {
-    return this.player1.id === id;
+  public isPlayer1(playerId: string): boolean {
+    return this.player1.id === playerId;
   }
 
-  public isPlayer2(id: string): boolean {
-    return this.player2.id === id;
+  public isPlayer2(playerId: string): boolean {
+    return this.player2.id === playerId;
   }
 
   public removeObserver(observerId: string): void {
     this.observers.delete(observerId);
+  }
+
+  public removePlayer(playerId: string): void {
+    if (this.isPlayer1(playerId)) {
+      this.removePlayer1();
+    } else if (this.isPlayer2(playerId)) {
+      this.removePlayer2();
+    } else if (this.isObserver(playerId)) {
+      this.removeObserver(playerId);
+    }
   }
 
   public removePlayer1(): void {
@@ -89,26 +91,34 @@ export class MinRpsGame {
     this.resetPlayer2Move();
   }
 
+  public seatPlayer(player: MinRpsPlayer): void {
+    if (this.player1.id !== '' && this.player2.id !== '') {
+      throw new GameRuleException('Both player seats are already occupied.');
+    }
+    if (this.player1.id === '') {
+      this.setPlayer1(player);
+    } else if (this.player2.id === '') {
+      this.setPlayer2(player);
+    }
+  }
+
+  public setPlayer1(player: MinRpsPlayer): void {
+    this.player1 = player;
+  }
+
   public setPlayer1Move(move: MinRpsMove): void {
     if (this.player1) {
       this.player1.move = move;
     }
   }
 
+  public setPlayer2(player: MinRpsPlayer): void {
+    this.player2 = player;
+  }
+
   public setPlayer2Move(move: MinRpsMove): void {
     if (this.player2) {
       this.player2.move = move;
-    }
-  }
-
-  public sitPlayer(player: MinRpsPlayer): void {
-    if (this.player1.id !== '' && this.player2.id !== '') {
-      throw new GameRuleException('Both player seats are already occupied.');
-    }
-    if (this.player1.id === '') {
-      this.addPlayer1(player);
-    } else if (this.player2.id === '') {
-      this.addPlayer2(player);
     }
   }
 

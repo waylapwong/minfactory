@@ -3,6 +3,7 @@ import { MinRpsGame } from '../models/domains/minrps-game';
 
 @Injectable()
 export class MinRpsMatchRepository {
+  // Match ID - Match
   private readonly matches: Map<string, MinRpsGame> = new Map<string, MinRpsGame>();
 
   public delete(id: string): void {
@@ -10,8 +11,7 @@ export class MinRpsMatchRepository {
   }
 
   public findOne(id: string): MinRpsGame | null {
-    const match: MinRpsGame | undefined = this.matches.get(id);
-    return match ?? null;
+    return this.matches.get(id) ?? null;
   }
 
   public findOrCreate(id: string): MinRpsGame {

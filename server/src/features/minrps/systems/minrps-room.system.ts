@@ -13,14 +13,13 @@ export class MinRpsRoomSystem {
     this.rooms.get(roomName)!.add(client.id);
   }
 
-  public getAllPlayerRoomNames(client: Socket): string[] {
-    const roomNames: string[] = [];
+  public getPlayerRoomName(client: Socket): string | null {
     for (const roomName of this.rooms.keys()) {
       if (this.rooms.get(roomName)!.has(client.id)) {
-        roomNames.push(roomName);
+        return roomName;
       }
     }
-    return roomNames;
+    return null;
   }
 
   public removePlayerFromAllRooms(client: Socket): void {

@@ -13,7 +13,6 @@ import { MinRpsMatchCommand } from '../models/enums/minrps-match-command.enum';
 import { MinRpsMatchEvent } from '../models/enums/minrps-match-event.enum';
 import { MinRpsMove } from '../models/enums/minrps-move.enum';
 import { MinRpsMatchConnectedPayload } from '../models/payloads/minrps-match-connected.payload';
-import { MinRpsMatchDisconnectedPayload } from '../models/payloads/minrps-match-disconnected.payload';
 import type { MinRpsMatchJoinPayload } from '../models/payloads/minrps-match-join.payload';
 import type { MinRpsMatchLeavePayload } from '../models/payloads/minrps-match-leave.payload';
 import { MinRpsMatchPlayPayload } from '../models/payloads/minrps-match-play.payload';
@@ -62,37 +61,19 @@ export class MinRpsGateway implements OnGatewayConnection, OnGatewayDisconnect {
     }
   }
 
-  @SubscribeMessage(MinRpsMatchCommand.Sit)
-  public handleSitCommand(@MessageBody() command: MinRpsMatchSitPayload): void {
-    const event: MinRpsMatchUpdatedPayload = this.multiplayerService.sitMatch(command);
+  @SubscribeMessage(MinRpsMatchCommand.Seat)
+  public handleSeatCommand(@MessageBody() command: MinRpsMatchSitPayload): void {
+    const event: MinRpsMatchUpdatedPayload = this.multiplayerService.seatPlayer(command);
     this.sendMatchUpdatedEvent(event);
   }
 
   public handleConnection(client: Socket): void {
-    console.log(`Player connected: ${client.id}`);
-    const connectedPayload: MinRpsMatchConnectedPayload = new MinRpsMatchConnectedPayload();
-    connectedPayload.playerId = crypto.randomUUID();
-    this.sendClientEvent(client, MinRpsMatchEvent.Connected, connectedPayload);
+    const event: MinRpsMatchConnectedPayload = this.multiplayerService.handleConnection(client);
+    this.sendClientEvent(client, MinRpsMatchEvent.Connected, event);
   }
 
   public handleDisconnect(client: Socket): void {
-    console.log(`Player disconnected: ${client.id}`);
-    const roomNames: string[] = this.multiplayerService.getAllPlayerRoomNames(client);
-    const playerId: string | undefined = this.multiplayerService.getPlayerIdForSocket(client);
-    this.multiplayerService.removePlayerFromAllRooms(client);
-    if (playerId) {
-      this.multiplayerService.removePlayerFromGames(roomNames, playerId);
-    }
-    this.multiplayerService.clearPlayerSocket(client);
-    for (const roomName of roomNames) {
-      const disconnectedPayload: MinRpsMatchDisconnectedPayload =
-        new MinRpsMatchDisconnectedPayload();
-      disconnectedPayload.gameId = roomName;
-      disconnectedPayload.playerId = playerId ?? client.id;
-      this.sendRoomEvent(roomName, MinRpsMatchEvent.Disconnected, disconnectedPayload);
-      const gameState: MinRpsMatchPlayPayload = this.multiplayerService.getGameState(roomName);
-      this.sendRoomEvent(roomName, MinRpsMatchEvent.GameStateUpdate, gameState);
-    }
+    this.multiplayerService.handleDisconnect(client);
   }
 
   private sendClientEvent(client: Socket, event: MinRpsMatchEvent, payload: any): void {

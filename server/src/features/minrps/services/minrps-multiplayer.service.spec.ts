@@ -89,7 +89,7 @@ describe('MinRpsMultiplayerService', () => {
         seat: 1,
       };
 
-      const result = service.sitMatch(takeSeatPayload);
+      const result = service.seatPlayer(takeSeatPayload);
 
       expect(result.matchId).toBe('game-1');
       expect(result.playerId).toBe('player-1');
@@ -104,7 +104,7 @@ describe('MinRpsMultiplayerService', () => {
         seat: 2,
       };
 
-      const result = service.sitMatch(takeSeatPayload);
+      const result = service.seatPlayer(takeSeatPayload);
 
       expect(result.matchId).toBe('game-1');
       expect(result.player2Id).toBe('player-2');
@@ -119,7 +119,7 @@ describe('MinRpsMultiplayerService', () => {
         seat: 1,
       };
 
-      const result = service.sitMatch(takeSeatPayload);
+      const result = service.seatPlayer(takeSeatPayload);
 
       expect(result.playerName).toBe('Very Long Player');
       expect(result.playerName.length).toBeLessThanOrEqual(16);
@@ -133,7 +133,7 @@ describe('MinRpsMultiplayerService', () => {
         seat: 1,
       };
 
-      const result = service.sitMatch(takeSeatPayload);
+      const result = service.seatPlayer(takeSeatPayload);
 
       expect(result.playerId).toBe('');
     });
@@ -145,7 +145,7 @@ describe('MinRpsMultiplayerService', () => {
         playerName: 'Player One',
         seat: 1,
       };
-      service.sitMatch(takeSeat1);
+      service.seatPlayer(takeSeat1);
 
       const takeSeat2: MinRpsTakeSeatPayload = {
         gameId: 'game-1',
@@ -154,7 +154,7 @@ describe('MinRpsMultiplayerService', () => {
         seat: 2,
       };
 
-      const result = service.sitMatch(takeSeat2);
+      const result = service.seatPlayer(takeSeat2);
 
       expect(result.playerId).toBe('player-1');
       expect(result.player2Id).toBe('');
@@ -162,7 +162,7 @@ describe('MinRpsMultiplayerService', () => {
 
     it('should not allow player2 to take seat 1', () => {
       // Player takes seat 2 first
-      service.sitMatch({
+      service.seatPlayer({
         gameId: 'game-1',
         playerId: 'player-1',
         playerName: 'Player One',
@@ -170,7 +170,7 @@ describe('MinRpsMultiplayerService', () => {
       });
 
       // Same player tries to take seat 1
-      const result = service.sitMatch({
+      const result = service.seatPlayer({
         gameId: 'game-1',
         playerId: 'player-1',
         playerName: 'Player One',
@@ -183,14 +183,14 @@ describe('MinRpsMultiplayerService', () => {
     });
 
     it('should not allow seat to be taken if already occupied by another player', () => {
-      service.sitMatch({
+      service.seatPlayer({
         gameId: 'game-1',
         playerId: 'player-1',
         playerName: 'Player One',
         seat: 1,
       });
 
-      const result = service.sitMatch({
+      const result = service.seatPlayer({
         gameId: 'game-1',
         playerId: 'player-2',
         playerName: 'Player Two',
@@ -211,7 +211,7 @@ describe('MinRpsMultiplayerService', () => {
         playerName: 'Player One',
         seat: 1,
       };
-      service.sitMatch(takeSeatPayload);
+      service.seatPlayer(takeSeatPayload);
 
       const selectMovePayload: MinRpsSelectMovePayload = {
         gameId: 'game-1',
@@ -233,7 +233,7 @@ describe('MinRpsMultiplayerService', () => {
         playerName: 'Player Two',
         seat: 2,
       };
-      service.sitMatch(takeSeatPayload);
+      service.seatPlayer(takeSeatPayload);
 
       const selectMovePayload: MinRpsSelectMovePayload = {
         gameId: 'game-1',
@@ -251,13 +251,13 @@ describe('MinRpsMultiplayerService', () => {
   describe('playGame', () => {
     beforeEach(() => {
       // Setup two players in seats
-      service.sitMatch({
+      service.seatPlayer({
         gameId: 'game-1',
         playerId: 'player-1',
         playerName: 'Player One',
         seat: 1,
       });
-      service.sitMatch({
+      service.seatPlayer({
         gameId: 'game-1',
         playerId: 'player-2',
         playerName: 'Player Two',
@@ -382,7 +382,7 @@ describe('MinRpsMultiplayerService', () => {
     });
 
     it('should show when players have selected moves without revealing them', () => {
-      service.sitMatch({
+      service.seatPlayer({
         gameId: 'game-1',
         playerId: 'player-1',
         playerName: 'Player One',
@@ -434,13 +434,13 @@ describe('MinRpsMultiplayerService', () => {
 
   describe('removePlayerFromGames', () => {
     it('should remove player from multiple games', () => {
-      service.sitMatch({
+      service.seatPlayer({
         gameId: 'game-1',
         playerId: 'player-1',
         playerName: 'Player One',
         seat: 1,
       });
-      service.sitMatch({
+      service.seatPlayer({
         gameId: 'game-2',
         playerId: 'player-1',
         playerName: 'Player One',

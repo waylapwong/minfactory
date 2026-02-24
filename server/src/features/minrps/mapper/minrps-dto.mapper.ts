@@ -15,7 +15,7 @@ export class MinRpsDtoMapper {
   public static playDtoToDomain(dto: MinRpsPlayDto): MinRpsGame {
     const domain: MinRpsGame = new MinRpsGame();
 
-    domain.addPlayer1(new MinRpsPlayer());
+    domain.setPlayer1(new MinRpsPlayer());
     domain.setPlayer1Move(dto.player1Move);
 
     return domain;

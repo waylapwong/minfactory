@@ -3,26 +3,55 @@ import { Socket } from 'socket.io';
 import { MinRpsDomainMapper } from '../mapper/minrps-domain.mapper';
 import { MinRpsGame } from '../models/domains/minrps-game';
 import { MinRpsPlayer } from '../models/domains/minrps-player';
+import { MinRpsMatchConnectedPayload } from '../models/payloads/minrps-match-connected.payload';
 import { MinRpsMatchJoinPayload } from '../models/payloads/minrps-match-join.payload';
 import { MinRpsMatchLeavePayload } from '../models/payloads/minrps-match-leave.payload';
 import { MinRpsMatchPlayPayload } from '../models/payloads/minrps-match-play.payload';
 import { MinRpsMatchSitPayload } from '../models/payloads/minrps-match-sit.payload';
 import { MinRpsMatchUpdatedPayload } from '../models/payloads/minrps-match-updated.payload';
 import { MinRpsMatchRepository } from '../repositories/minrps-match.repository';
+import { MinRpsPlayerIdRepository } from '../repositories/minrps-player-id.repository';
 import { MinRpsRoomSystem } from '../systems/minrps-room.system';
 import { GameRuleException } from 'src/shared/exceptions/game-rule.exception';
 
 @Injectable()
 export class MinRpsMultiplayerService {
-  private readonly socketIdPlayerIdMap: Map<string, string> = new Map();
-
   constructor(
-    private readonly roomSystem: MinRpsRoomSystem,
     private readonly matchRepository: MinRpsMatchRepository,
+    private readonly playerIdRepository: MinRpsPlayerIdRepository,
+    private readonly roomSystem: MinRpsRoomSystem,
   ) {}
 
+  public handleConnection(client: Socket): MinRpsMatchConnectedPayload {
+    // Build event payload
+    const event: MinRpsMatchConnectedPayload = new MinRpsMatchConnectedPayload();
+    event.playerId = crypto.randomUUID();
+    // Register player in registry
+    this.playerIdRepository.save(client.id, event.playerId);
+    // Return event payload
+    return event;
+  }
+
+  public handleDisconnect(client: Socket): void {
+    // Remove player from room if needed
+    const roomName: string | null = this.roomSystem.getPlayerRoomName(client);
+    if (roomName) {
+      this.roomSystem.removePlayerFromRoom(client, roomName);
+    }
+
+    const playerId: string | null = this.playerIdRepository.findOne(client.id);
+
+    if (roomName && playerId) {
+      const match: MinRpsGame | null = this.matchRepository.findOne(roomName);
+      if (match) {
+        match.removePlayer(playerId);
+        this.matchRepository.save(match);
+      }
+    }
+    this.playerIdRepository.delete(client.id);
+  }
+
   public joinMatch(client: Socket, command: MinRpsMatchJoinPayload): MinRpsMatchUpdatedPayload {
-    this.socketIdPlayerIdMap.set(client.id, command.playerId);
     // Add observer to room
     this.roomSystem.addPlayerToRoom(client, command.matchId);
     // Get or create match
@@ -41,9 +70,10 @@ export class MinRpsMultiplayerService {
     if (!match) {
       throw new NotFoundException(`Match with ID ${command.matchId} not found`);
     }
-    // Remove player from room & match
+    // Remove player from room
     this.roomSystem.removePlayerFromRoom(client, command.matchId);
-    this.removePlayerFromMatch(command.playerId, match);
+    // Remove player from match
+    match.removePlayer(command.playerId);
     // Update match
     const updatedMatch: MinRpsGame = this.matchRepository.save(match);
     // Return match state
@@ -80,57 +110,17 @@ export class MinRpsMultiplayerService {
     return MinRpsDomainMapper.domainToMatchUpdatedPayload(updatedMatch);
   }
 
-  public sitMatch(command: MinRpsMatchSitPayload): MinRpsMatchUpdatedPayload {
+  public seatPlayer(command: MinRpsMatchSitPayload): MinRpsMatchUpdatedPayload {
     // Get match
     const match: MinRpsGame = this.matchRepository.findOrCreate(command.matchId);
     // Build player
     const player: MinRpsPlayer = new MinRpsPlayer();
     player.id = command.playerId;
     player.name = command.playerName;
-    match.sitPlayer(player);
+    match.seatPlayer(player);
     // Update match
     const updatedMatch: MinRpsGame = this.matchRepository.save(match);
     // Return match state
     return MinRpsDomainMapper.domainToMatchUpdatedPayload(updatedMatch);
-  }
-
-  private clearPlayerSocket(client: Socket): void {
-    this.socketIdPlayerIdMap.delete(client.id);
-  }
-
-  private getAllPlayerRoomNames(client: Socket): string[] {
-    return this.roomSystem.getAllPlayerRoomNames(client);
-  }
-
-  private getGameState(gameId: string): MinRpsMatchUpdatedPayload {
-    const match: MinRpsGame | null = this.matchRepository.findOne(gameId);
-    if (!match) {
-      throw new NotFoundException(`Match with ID ${gameId} not found`);
-    }
-    return MinRpsDomainMapper.domainToMatchUpdatedPayload(match);
-  }
-
-  private getPlayerIdForSocket(client: Socket): string | undefined {
-    return this.socketIdPlayerIdMap.get(client.id);
-  }
-
-  private removePlayerFromAllRooms(client: Socket): void {
-    this.roomSystem.removePlayerFromAllRooms(client);
-  }
-
-  private removePlayerFromGames(gameIds: string[], playerId: string): void {
-    for (const gameId of gameIds) {
-      this.removePlayerFromMatch(gameId, playerId);
-    }
-  }
-
-  private removePlayerFromMatch(playerId: string, match: MinRpsGame): void {
-    if (playerId === match.player1.id) {
-      match.removePlayer1();
-    } else if (playerId === match.player2.id) {
-      match.removePlayer2();
-    } else if (match.observers.has(playerId)) {
-      match.removeObserver(playerId);
-    }
   }
 }

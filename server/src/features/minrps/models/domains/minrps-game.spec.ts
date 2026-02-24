@@ -37,7 +37,7 @@ describe('MinRpsGame', () => {
       const player = new MinRpsPlayer();
       player.name = 'test-player-name';
 
-      game.addPlayer1(player);
+      game.setPlayer1(player);
 
       expect(game.player1).toBe(player);
       expect(game.player1.name).toBe('test-player-name');
@@ -49,7 +49,7 @@ describe('MinRpsGame', () => {
       const player = new MinRpsPlayer();
       player.name = 'test-player-name';
 
-      game.addPlayer2(player);
+      game.setPlayer2(player);
 
       expect(game.player2).toBe(player);
       expect(game.player2.name).toBe('test-player-name');
@@ -58,14 +58,14 @@ describe('MinRpsGame', () => {
 
   describe('setPlayer1Move', () => {
     it('should set player1 move when player1 exists', () => {
-      game.addPlayer1(new MinRpsPlayer());
+      game.setPlayer1(new MinRpsPlayer());
       game.setPlayer1Move(MinRpsMove.Rock);
 
       expect(game.player1.move).toBe(MinRpsMove.Rock);
     });
 
     it('should handle setting move when player1 exists', () => {
-      game.addPlayer1(new MinRpsPlayer());
+      game.setPlayer1(new MinRpsPlayer());
       game.setPlayer1Move(MinRpsMove.Paper);
 
       expect(game.player1.move).toBe(MinRpsMove.Paper);
@@ -74,14 +74,14 @@ describe('MinRpsGame', () => {
 
   describe('setPlayer2Move', () => {
     it('should set player2 move when player2 exists', () => {
-      game.addPlayer2(new MinRpsPlayer());
+      game.setPlayer2(new MinRpsPlayer());
       game.setPlayer2Move(MinRpsMove.Scissors);
 
       expect(game.player2.move).toBe(MinRpsMove.Scissors);
     });
 
     it('should handle setting move when player2 exists', () => {
-      game.addPlayer2(new MinRpsPlayer());
+      game.setPlayer2(new MinRpsPlayer());
       game.setPlayer2Move(MinRpsMove.Rock);
 
       expect(game.player2.move).toBe(MinRpsMove.Rock);
@@ -90,8 +90,8 @@ describe('MinRpsGame', () => {
 
   describe('getResult', () => {
     beforeEach(() => {
-      game.addPlayer1(new MinRpsPlayer());
-      game.addPlayer2(new MinRpsPlayer());
+      game.setPlayer1(new MinRpsPlayer());
+      game.setPlayer2(new MinRpsPlayer());
     });
 
     it('should return Draw when both players choose Rock', () => {

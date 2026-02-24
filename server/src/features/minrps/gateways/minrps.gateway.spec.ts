@@ -1,19 +1,19 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { MinRpsGateway } from './minrps.gateway';
-import { MinRpsMultiplayerService } from '../services/minrps-multiplayer.service';
-import { Socket, Server } from 'socket.io';
-import { MinRpsMatchJoinPayload } from '../models/payloads/minrps-match-join.payload';
-import { MinRpsMatchLeavePayload } from '../models/payloads/minrps-match-leave.payload';
-import { MinRpsTakeSeatPayload } from '../models/payloads/minrps-take-seat.payload';
-import { MinRpsSelectMovePayload } from '../models/payloads/minrps-select-move.payload';
-import { MinRpsPlayPayload } from '../models/payloads/minrps-play.payload';
+import { Server, Socket } from 'socket.io';
+import { MinRpsResult } from '../models/enums/minrps-game-result.enum';
+import { MinRpsMove } from '../models/enums/minrps-move.enum';
 import { MinRpsJoinedPayload } from '../models/payloads/minrps-joined.payload';
 import { MinRpsLeftPayload } from '../models/payloads/minrps-left.payload';
+import { MinRpsMatchJoinPayload } from '../models/payloads/minrps-match-join.payload';
+import { MinRpsMatchLeavePayload } from '../models/payloads/minrps-match-leave.payload';
 import { MinRpsMatchPlayPayload } from '../models/payloads/minrps-match-play.payload';
 import { MinRpsMoveSelectedPayload } from '../models/payloads/minrps-move-selected.payload';
+import { MinRpsPlayPayload } from '../models/payloads/minrps-play.payload';
 import { MinRpsPlayedPayload } from '../models/payloads/minrps-played.payload';
-import { MinRpsMove } from '../models/enums/minrps-move.enum';
-import { MinRpsResult } from '../models/enums/minrps-game-result.enum';
+import { MinRpsSelectMovePayload } from '../models/payloads/minrps-select-move.payload';
+import { MinRpsTakeSeatPayload } from '../models/payloads/minrps-take-seat.payload';
+import { MinRpsMultiplayerService } from '../services/minrps-multiplayer.service';
+import { MinRpsGateway } from './minrps.gateway';
 import { Acknowledgement } from 'src/shared/objects/acknowledgement';
 
 describe('MinRpsGateway', () => {
@@ -134,12 +134,12 @@ describe('MinRpsGateway', () => {
       gameState.playerId = 'player-1';
       gameState.playerName = 'Player One';
 
-      multiplayerService.sitMatch.mockReturnValue(gameState);
+      multiplayerService.seatPlayer.mockReturnValue(gameState);
 
-      const result = gateway.handleSitCommand(takeSeatPayload);
+      const result = gateway.handleSeatCommand(takeSeatPayload);
 
       expect(result).toBeInstanceOf(Acknowledgement);
-      expect(multiplayerService.sitMatch).toHaveBeenCalledWith(takeSeatPayload);
+      expect(multiplayerService.seatPlayer).toHaveBeenCalledWith(takeSeatPayload);
       expect(mockServer.to).toHaveBeenCalledWith('game-1');
     });
   });
