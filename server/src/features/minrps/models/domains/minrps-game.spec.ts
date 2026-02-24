@@ -240,7 +240,7 @@ describe('MinRpsGame', () => {
       const player = new MinRpsPlayer();
       player.id = 'player-1-id';
       game.setPlayer1(player);
-      
+
       game.setPlayer1Move(MinRpsMove.Rock);
 
       expect(game.player1.move).toBe(MinRpsMove.Rock);
@@ -250,7 +250,7 @@ describe('MinRpsGame', () => {
       const player = new MinRpsPlayer();
       player.id = 'player-1-id';
       game.setPlayer1(player);
-      
+
       game.setPlayer1Move(MinRpsMove.Paper);
       expect(game.player1.move).toBe(MinRpsMove.Paper);
 
@@ -264,7 +264,7 @@ describe('MinRpsGame', () => {
       const player = new MinRpsPlayer();
       player.id = 'player-2-id';
       game.setPlayer2(player);
-      
+
       game.setPlayer2Move(MinRpsMove.Scissors);
 
       expect(game.player2.move).toBe(MinRpsMove.Scissors);
@@ -274,7 +274,7 @@ describe('MinRpsGame', () => {
       const player = new MinRpsPlayer();
       player.id = 'player-2-id';
       game.setPlayer2(player);
-      
+
       game.setPlayer2Move(MinRpsMove.Rock);
       expect(game.player2.move).toBe(MinRpsMove.Rock);
 
@@ -463,7 +463,9 @@ describe('MinRpsGame', () => {
       game.setPlayer2Move(MinRpsMove.Rock);
 
       expect(() => game.getResult()).toThrow(GameRuleException);
-      expect(() => game.getResult()).toThrow('Both players must be seated to determine the result.');
+      expect(() => game.getResult()).toThrow(
+        'Both players must be seated to determine the result.',
+      );
     });
 
     it('should throw GameRuleException when player2 is not seated', () => {
@@ -471,7 +473,9 @@ describe('MinRpsGame', () => {
       game.setPlayer1Move(MinRpsMove.Rock);
 
       expect(() => game.getResult()).toThrow(GameRuleException);
-      expect(() => game.getResult()).toThrow('Both players must be seated to determine the result.');
+      expect(() => game.getResult()).toThrow(
+        'Both players must be seated to determine the result.',
+      );
     });
 
     it('should throw GameRuleException when player1 move is None', () => {
