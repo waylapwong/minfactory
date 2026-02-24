@@ -134,12 +134,12 @@ describe('MinRpsGateway', () => {
       gameState.playerId = 'player-1';
       gameState.playerName = 'Player One';
 
-      multiplayerService.takeSeat.mockReturnValue(gameState);
+      multiplayerService.sitMatch.mockReturnValue(gameState);
 
-      const result = gateway.handleTakeSeatEvent(takeSeatPayload);
+      const result = gateway.handleSitCommand(takeSeatPayload);
 
       expect(result).toBeInstanceOf(Acknowledgement);
-      expect(multiplayerService.takeSeat).toHaveBeenCalledWith(takeSeatPayload);
+      expect(multiplayerService.sitMatch).toHaveBeenCalledWith(takeSeatPayload);
       expect(mockServer.to).toHaveBeenCalledWith('game-1');
     });
   });

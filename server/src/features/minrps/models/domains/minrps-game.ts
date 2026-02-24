@@ -101,6 +101,17 @@ export class MinRpsGame {
     }
   }
 
+  public sitPlayer(player: MinRpsPlayer): void {
+    if (this.player1.id !== '' && this.player2.id !== '') {
+      throw new GameRuleException('Both player seats are already occupied.');
+    }
+    if (this.player1.id === '') {
+      this.addPlayer1(player);
+    } else if (this.player2.id === '') {
+      this.addPlayer2(player);
+    }
+  }
+
   private checkRules(): void {
     if (!this.player1.id || !this.player2.id) {
       throw new GameRuleException('Both players must be seated to determine the result.');

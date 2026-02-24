@@ -17,9 +17,9 @@ import { MinRpsMatchDisconnectedPayload } from '../models/payloads/minrps-match-
 import type { MinRpsMatchJoinPayload } from '../models/payloads/minrps-match-join.payload';
 import type { MinRpsMatchLeavePayload } from '../models/payloads/minrps-match-leave.payload';
 import { MinRpsMatchPlayPayload } from '../models/payloads/minrps-match-play.payload';
+import { MinRpsMatchSitPayload } from '../models/payloads/minrps-match-sit.payload';
 import { MinRpsMatchUpdatedPayload } from '../models/payloads/minrps-match-updated.payload';
 import { MinRpsMultiplayerService } from '../services/minrps-multiplayer.service';
-import { Acknowledgement } from 'src/shared/objects/acknowledgement';
 
 @WebSocketGateway({
   cors: { origin: '*' },
@@ -62,17 +62,10 @@ export class MinRpsGateway implements OnGatewayConnection, OnGatewayDisconnect {
     }
   }
 
-  @SubscribeMessage(MinRpsMatchEvent.TakeSeat)
-  public handleTakeSeatEvent(
-    @MessageBody() takeSeatPayload: MinRpsTakeSeatPayload,
-  ): Acknowledgement {
-    console.log(
-      `Player: ${takeSeatPayload.playerId} wants seat ${takeSeatPayload.seat} in game: ${takeSeatPayload.gameId}`,
-      takeSeatPayload,
-    );
-    const gameState: MinRpsMatchPlayPayload = this.multiplayerService.takeSeat(takeSeatPayload);
-    this.sendRoomEvent(takeSeatPayload.gameId, MinRpsMatchEvent.GameStateUpdate, gameState);
-    return new Acknowledgement();
+  @SubscribeMessage(MinRpsMatchCommand.Sit)
+  public handleSitCommand(@MessageBody() command: MinRpsMatchSitPayload): void {
+    const event: MinRpsMatchUpdatedPayload = this.multiplayerService.sitMatch(command);
+    this.sendMatchUpdatedEvent(event);
   }
 
   public handleConnection(client: Socket): void {
