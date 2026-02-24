@@ -40,7 +40,7 @@ describe('MinRpsMultiplayerService', () => {
         playerId: 'player-1',
       };
 
-      const result = service.joinGame(mockSocket, joinPayload);
+      const result = service.joinMatch(mockSocket, joinPayload);
 
       expect(result.gameId).toBe('game-1');
       expect(result.playerId).toBe('player-1');
@@ -53,7 +53,7 @@ describe('MinRpsMultiplayerService', () => {
         playerId: 'player-1',
       };
 
-      service.joinGame(mockSocket, joinPayload);
+      service.joinMatch(mockSocket, joinPayload);
 
       expect(service.getPlayerIdForSocket(mockSocket)).toBe('player-1');
     });
@@ -65,14 +65,14 @@ describe('MinRpsMultiplayerService', () => {
         matchId: 'game-1',
         playerId: 'player-1',
       };
-      service.joinGame(mockSocket, joinPayload);
+      service.joinMatch(mockSocket, joinPayload);
 
       const leavePayload: MinRpsMatchLeavePayload = {
         matchId: 'game-1',
         playerId: 'player-1',
       };
 
-      const result = service.leaveGame(mockSocket, leavePayload);
+      const result = service.leaveMatch(mockSocket, leavePayload);
 
       expect(result.gameId).toBe('game-1');
       expect(result.playerId).toBe('player-1');
@@ -271,7 +271,7 @@ describe('MinRpsMultiplayerService', () => {
         playerId: 'player-1',
       };
 
-      const result = service.playGame(playPayload);
+      const result = service.playMatch(playPayload);
 
       expect(result).toBeNull();
     });
@@ -293,7 +293,7 @@ describe('MinRpsMultiplayerService', () => {
         playerId: 'player-1',
       };
 
-      const result = service.playGame(playPayload);
+      const result = service.playMatch(playPayload);
 
       expect(result).not.toBeNull();
       expect(result?.player1Move).toBe(MinRpsMove.Rock);
@@ -314,7 +314,7 @@ describe('MinRpsMultiplayerService', () => {
         move: MinRpsMove.Paper,
       });
 
-      service.playGame({ gameId: 'game-1', playerId: 'player-1' });
+      service.playMatch({ gameId: 'game-1', playerId: 'player-1' });
 
       const state = service.getGameState('game-1');
       expect(state.player1HasSelectedMove).toBe(false);
@@ -333,14 +333,14 @@ describe('MinRpsMultiplayerService', () => {
         move: MinRpsMove.Rock,
       });
 
-      const result = service.playGame({ gameId: 'game-1', playerId: 'player-1' });
+      const result = service.playMatch({ gameId: 'game-1', playerId: 'player-1' });
 
       expect(result?.player1Result).toBe(MinRpsResult.Draw);
       expect(result?.player2Result).toBe(MinRpsResult.Draw);
     });
 
     it('should return null if game does not exist', () => {
-      const result = service.playGame({
+      const result = service.playMatch({
         gameId: 'non-existent-game',
         playerId: 'player-1',
       });
@@ -360,7 +360,7 @@ describe('MinRpsMultiplayerService', () => {
         move: MinRpsMove.Paper,
       });
 
-      const result = service.playGame({
+      const result = service.playMatch({
         gameId: 'game-1',
         playerId: 'unknown-player',
       });
@@ -404,8 +404,8 @@ describe('MinRpsMultiplayerService', () => {
 
   describe('getAllPlayerRoomNames', () => {
     it('should return all rooms player is in', () => {
-      service.joinGame(mockSocket, { matchId: 'game-1', playerId: 'player-1' });
-      service.joinGame(mockSocket, { matchId: 'game-2', playerId: 'player-1' });
+      service.joinMatch(mockSocket, { matchId: 'game-1', playerId: 'player-1' });
+      service.joinMatch(mockSocket, { matchId: 'game-2', playerId: 'player-1' });
 
       const rooms = service.getAllPlayerRoomNames(mockSocket);
 
@@ -416,7 +416,7 @@ describe('MinRpsMultiplayerService', () => {
 
   describe('getPlayerIdForSocket', () => {
     it('should return player ID for socket', () => {
-      service.joinGame(mockSocket, { matchId: 'game-1', playerId: 'player-1' });
+      service.joinMatch(mockSocket, { matchId: 'game-1', playerId: 'player-1' });
 
       const playerId = service.getPlayerIdForSocket(mockSocket);
 
@@ -465,7 +465,7 @@ describe('MinRpsMultiplayerService', () => {
 
   describe('clearPlayerSocket', () => {
     it('should clear player socket mapping', () => {
-      service.joinGame(mockSocket, { matchId: 'game-1', playerId: 'player-1' });
+      service.joinMatch(mockSocket, { matchId: 'game-1', playerId: 'player-1' });
 
       service.clearPlayerSocket(mockSocket);
 
@@ -476,8 +476,8 @@ describe('MinRpsMultiplayerService', () => {
 
   describe('removePlayerFromAllRooms', () => {
     it('should remove player from all rooms', () => {
-      service.joinGame(mockSocket, { matchId: 'game-1', playerId: 'player-1' });
-      service.joinGame(mockSocket, { matchId: 'game-2', playerId: 'player-1' });
+      service.joinMatch(mockSocket, { matchId: 'game-1', playerId: 'player-1' });
+      service.joinMatch(mockSocket, { matchId: 'game-2', playerId: 'player-1' });
 
       service.removePlayerFromAllRooms(mockSocket);
 

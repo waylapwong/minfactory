@@ -38,12 +38,30 @@ export class MinRpsGame {
     }
   }
 
-  public hasPlayer1SelectedMove(): boolean {
-    return this.player1.move !== MinRpsMove.None;
+  public isGameReady(): boolean {
+    try {
+      this.checkRules();
+      return true;
+    } catch (error: unknown) {
+      if (error instanceof GameRuleException) {
+        console.error('Game not ready:', error.message);
+      } else {
+        console.error('Unexpected error:', error);
+      }
+      return false;
+    }
   }
 
-  public hasPlayer2SelectedMove(): boolean {
-    return this.player2.move !== MinRpsMove.None;
+  public isObserver(id: string): boolean {
+    return this.observers.has(id);
+  }
+
+  public isPlayer1(id: string): boolean {
+    return this.player1.id === id;
+  }
+
+  public isPlayer2(id: string): boolean {
+    return this.player2.id === id;
   }
 
   public removeObserver(observerId: string): void {
@@ -58,9 +76,17 @@ export class MinRpsGame {
     this.player2 = new MinRpsPlayer();
   }
 
-  public resetPlayerMoves(): void {
+  public resetPlayer1Move(): void {
     this.player1.move = MinRpsMove.None;
+  }
+
+  public resetPlayer2Move(): void {
     this.player2.move = MinRpsMove.None;
+  }
+
+  public resetPlayerMoves(): void {
+    this.resetPlayer1Move();
+    this.resetPlayer2Move();
   }
 
   public setPlayer1Move(move: MinRpsMove): void {

@@ -6,7 +6,7 @@ import { MinRpsPlayResultDto } from '../models/dtos/minrps-play-result.dto';
 import { MinRpsGameEntity } from '../models/entities/minrps-game.entity';
 import { MinRpsMove } from '../models/enums/minrps-move.enum';
 import { MinRpsResult } from '../models/enums/minrps-game-result.enum';
-import { MinRpsMatchUpdatePayload } from '../models/payloads/minrps-update.payload';
+import { MinRpsMatchPlayPayload } from '../models/payloads/minrps-match-play.payload';
 
 describe('MinRpsDomainMapper', () => {
   describe('domainToDto', () => {
@@ -122,7 +122,7 @@ describe('MinRpsDomainMapper', () => {
       player2.move = MinRpsMove.None;
       domain.addPlayer2(player2);
 
-      const payload: MinRpsMatchUpdatePayload =
+      const payload: MinRpsMatchPlayPayload =
         MinRpsDomainMapper.domainToMatchUpdatedPayload(domain);
 
       expect(payload.matchId).toBe('test-game-id');
@@ -139,7 +139,7 @@ describe('MinRpsDomainMapper', () => {
 
   describe('gameStateUpdatePayloadToDomain', () => {
     it('should map game state update payload to domain', () => {
-      const payload = new MinRpsMatchUpdatePayload();
+      const payload = new MinRpsMatchPlayPayload();
       payload.matchId = 'test-game-id';
       payload.playerId = 'player-1-id';
       payload.playerName = 'Player 1';

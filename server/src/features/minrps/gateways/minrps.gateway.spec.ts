@@ -9,7 +9,7 @@ import { MinRpsSelectMovePayload } from '../models/payloads/minrps-select-move.p
 import { MinRpsPlayPayload } from '../models/payloads/minrps-play.payload';
 import { MinRpsJoinedPayload } from '../models/payloads/minrps-joined.payload';
 import { MinRpsLeftPayload } from '../models/payloads/minrps-left.payload';
-import { MinRpsMatchUpdatePayload } from '../models/payloads/minrps-update.payload';
+import { MinRpsMatchPlayPayload } from '../models/payloads/minrps-match-play.payload';
 import { MinRpsMoveSelectedPayload } from '../models/payloads/minrps-move-selected.payload';
 import { MinRpsPlayedPayload } from '../models/payloads/minrps-played.payload';
 import { MinRpsMove } from '../models/enums/minrps-move.enum';
@@ -80,16 +80,16 @@ describe('MinRpsGateway', () => {
       joinedPayload.gameId = 'game-1';
       joinedPayload.playerId = 'player-1';
 
-      const gameState = new MinRpsMatchUpdatePayload();
+      const gameState = new MinRpsMatchPlayPayload();
       gameState.matchId = 'game-1';
 
-      multiplayerService.joinGame.mockReturnValue(joinedPayload);
+      multiplayerService.joinMatch.mockReturnValue(joinedPayload);
       multiplayerService.getGameState.mockReturnValue(gameState);
 
       const result = gateway.handleJoinCommand(mockSocket, joinPayload);
 
       expect(result).toBeInstanceOf(Acknowledgement);
-      expect(multiplayerService.joinGame).toHaveBeenCalledWith(mockSocket, joinPayload);
+      expect(multiplayerService.joinMatch).toHaveBeenCalledWith(mockSocket, joinPayload);
       expect(multiplayerService.getGameState).toHaveBeenCalledWith('game-1');
       expect(mockServer.to).toHaveBeenCalledWith('game-1');
     });
@@ -106,16 +106,16 @@ describe('MinRpsGateway', () => {
       leftPayload.gameId = 'game-1';
       leftPayload.playerId = 'player-1';
 
-      const gameState = new MinRpsMatchUpdatePayload();
+      const gameState = new MinRpsMatchPlayPayload();
       gameState.matchId = 'game-1';
 
-      multiplayerService.leaveGame.mockReturnValue(leftPayload);
+      multiplayerService.leaveMatch.mockReturnValue(leftPayload);
       multiplayerService.getGameState.mockReturnValue(gameState);
 
       const result = gateway.handleLeaveCommand(mockSocket, leavePayload);
 
       expect(result).toBeInstanceOf(Acknowledgement);
-      expect(multiplayerService.leaveGame).toHaveBeenCalledWith(mockSocket, leavePayload);
+      expect(multiplayerService.leaveMatch).toHaveBeenCalledWith(mockSocket, leavePayload);
       expect(multiplayerService.getGameState).toHaveBeenCalledWith('game-1');
     });
   });
@@ -129,7 +129,7 @@ describe('MinRpsGateway', () => {
         seat: 1,
       };
 
-      const gameState = new MinRpsMatchUpdatePayload();
+      const gameState = new MinRpsMatchPlayPayload();
       gameState.matchId = 'game-1';
       gameState.playerId = 'player-1';
       gameState.playerName = 'Player One';
@@ -158,16 +158,16 @@ describe('MinRpsGateway', () => {
       playedPayload.player1Result = MinRpsResult.Player1;
       playedPayload.player2Result = MinRpsResult.Player2;
 
-      const gameState = new MinRpsMatchUpdatePayload();
+      const gameState = new MinRpsMatchPlayPayload();
       gameState.matchId = 'game-1';
 
-      multiplayerService.playGame.mockReturnValue(playedPayload);
+      multiplayerService.playMatch.mockReturnValue(playedPayload);
       multiplayerService.getGameState.mockReturnValue(gameState);
 
-      const result = gateway.handlePlayEvent(mockSocket, playPayload);
+      const result = gateway.handlePlayCommand(mockSocket, playPayload);
 
       expect(result).toBeInstanceOf(Acknowledgement);
-      expect(multiplayerService.playGame).toHaveBeenCalledWith(playPayload);
+      expect(multiplayerService.playMatch).toHaveBeenCalledWith(playPayload);
       expect(multiplayerService.getGameState).toHaveBeenCalledWith('game-1');
     });
 
@@ -177,12 +177,12 @@ describe('MinRpsGateway', () => {
         playerId: 'player-1',
       };
 
-      multiplayerService.playGame.mockReturnValue(null);
+      multiplayerService.playMatch.mockReturnValue(null);
 
-      const result = gateway.handlePlayEvent(mockSocket, playPayload);
+      const result = gateway.handlePlayCommand(mockSocket, playPayload);
 
       expect(result).toBeInstanceOf(Acknowledgement);
-      expect(multiplayerService.playGame).toHaveBeenCalledWith(playPayload);
+      expect(multiplayerService.playMatch).toHaveBeenCalledWith(playPayload);
       expect(multiplayerService.getGameState).not.toHaveBeenCalled();
     });
   });
@@ -200,7 +200,7 @@ describe('MinRpsGateway', () => {
       moveSelectedPayload.playerId = 'player-1';
       moveSelectedPayload.move = MinRpsMove.Rock;
 
-      const gameState = new MinRpsMatchUpdatePayload();
+      const gameState = new MinRpsMatchPlayPayload();
       gameState.matchId = 'game-1';
       gameState.player1HasSelectedMove = true;
 
@@ -236,7 +236,7 @@ describe('MinRpsGateway', () => {
       multiplayerService.getAllPlayerRoomNames.mockReturnValue(roomNames);
       multiplayerService.getPlayerIdForSocket.mockReturnValue(playerId);
 
-      const gameState = new MinRpsMatchUpdatePayload();
+      const gameState = new MinRpsMatchPlayPayload();
       gameState.matchId = 'game-1';
 
       multiplayerService.getGameState.mockReturnValue(gameState);
@@ -256,7 +256,7 @@ describe('MinRpsGateway', () => {
       multiplayerService.getAllPlayerRoomNames.mockReturnValue(roomNames);
       multiplayerService.getPlayerIdForSocket.mockReturnValue(undefined);
 
-      const gameState = new MinRpsMatchUpdatePayload();
+      const gameState = new MinRpsMatchPlayPayload();
       gameState.matchId = 'game-1';
 
       multiplayerService.getGameState.mockReturnValue(gameState);

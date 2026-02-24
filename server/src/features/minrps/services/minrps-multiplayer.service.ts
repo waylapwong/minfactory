@@ -7,16 +7,15 @@ import { MinRpsResult } from '../models/enums/minrps-game-result.enum';
 import { MinRpsMove } from '../models/enums/minrps-move.enum';
 import { MinRpsMatchJoinPayload } from '../models/payloads/minrps-match-join.payload';
 import { MinRpsMatchLeavePayload } from '../models/payloads/minrps-match-leave.payload';
+import { MinRpsMatchPlayPayload } from '../models/payloads/minrps-match-play.payload';
 import { MinRpsMatchUpdatedPayload } from '../models/payloads/minrps-match-updated.payload';
 import { MinRpsMoveSelectedPayload } from '../models/payloads/minrps-move-selected.payload';
-import { MinRpsPlayPayload } from '../models/payloads/minrps-play.payload';
-import { MinRpsPlayedPayload } from '../models/payloads/minrps-played.payload';
 import { MinRpsSelectMovePayload } from '../models/payloads/minrps-select-move.payload';
 import { MinRpsTakeSeatPayload } from '../models/payloads/minrps-take-seat.payload';
-import { MinRpsMatchUpdatePayload } from '../models/payloads/minrps-update.payload';
 import { MinRpsGameRepository } from '../repositories/minrps-game.repository';
 import { MinRpsMatchRepository } from '../repositories/minrps-match.repository';
 import { MinRpsRoomSystem } from '../systems/minrps-room.system';
+import { GameRuleException } from 'src/shared/exceptions/game-rule.exception';
 
 @Injectable()
 export class MinRpsMultiplayerService {
@@ -48,76 +47,73 @@ export class MinRpsMultiplayerService {
     return this.socketIdPlayerIdMap.get(client.id);
   }
 
-  public joinGame(
-    client: Socket,
-    commandPayload: MinRpsMatchJoinPayload,
-  ): MinRpsMatchUpdatedPayload {
-    this.socketIdPlayerIdMap.set(client.id, commandPayload.playerId);
-    this.roomSystem.addPlayerToRoom(client, commandPayload.matchId);
+  public joinMatch(client: Socket, command: MinRpsMatchJoinPayload): MinRpsMatchUpdatedPayload {
+    this.socketIdPlayerIdMap.set(client.id, command.playerId);
+    this.roomSystem.addPlayerToRoom(client, command.matchId);
 
-    let game: MinRpsGame | null = this.matchRepository.findOne(commandPayload.matchId);
+    let game: MinRpsGame | null = this.matchRepository.findOne(command.matchId);
     if (!game) {
       game = new MinRpsGame();
-      game.id = commandPayload.matchId;
+      game.id = command.matchId;
     }
 
-    game.addObserver(commandPayload.playerId);
+    game.addObserver(command.playerId);
 
     const updatedMatch: MinRpsGame = this.matchRepository.save(game);
 
     return MinRpsDomainMapper.domainToMatchUpdatedPayload(updatedMatch);
   }
 
-  public leaveGame(
-    client: Socket,
-    commandPayload: MinRpsMatchLeavePayload,
-  ): MinRpsMatchUpdatedPayload {
+  public leaveMatch(client: Socket, command: MinRpsMatchLeavePayload): MinRpsMatchUpdatedPayload {
     // Get match
-    const match: MinRpsGame | null = this.matchRepository.findOne(commandPayload.matchId);
+    const match: MinRpsGame | null = this.matchRepository.findOne(command.matchId);
     if (!match) {
-      throw new NotFoundException(`Match with ID ${commandPayload.matchId} not found`);
+      throw new NotFoundException(`Match with ID ${command.matchId} not found`);
     }
     // Remove player from room & match
-    this.roomSystem.removePlayerFromRoom(client, commandPayload.matchId);
-    this.removePlayerFromMatch(commandPayload.playerId, match);
+    this.roomSystem.removePlayerFromRoom(client, command.matchId);
+    this.removePlayerFromMatch(command.playerId, match);
     // Update match
     const updatedMatch: MinRpsGame = this.matchRepository.save(match);
     // Return match state
     return MinRpsDomainMapper.domainToMatchUpdatedPayload(updatedMatch);
   }
 
-  public playGame(playPayload: MinRpsPlayPayload): MinRpsPlayedPayload | null {
-    const game = this.matchRepository.findOne(playPayload.gameId);
-    if (!game || !game.player1.id || !game.player2.id) {
-      return null;
+  public playMatch(command: MinRpsMatchPlayPayload): MinRpsMatchUpdatedPayload {
+    // Get match
+    const match: MinRpsGame | null = this.matchRepository.findOne(command.matchId);
+    // Validations
+    if (!match) {
+      throw new NotFoundException(`Match with ID ${command.matchId} not found`);
     }
-
-    if (playPayload.playerId !== game.player1.id && playPayload.playerId !== game.player2.id) {
-      return null;
+    if (command.playerId !== match.player1.id && command.playerId !== match.player2.id) {
+      throw new GameRuleException(`Player with ID ${command.playerId} is not part of the match`);
     }
-
-    // Check if both players have selected moves
-    if (!game.hasPlayer1SelectedMove() || !game.hasPlayer2SelectedMove()) {
-      return null;
+    // Set player move
+    if (match.player1.id === command.playerId) {
+      match.setPlayer1Move(command.playerMove);
+    } else if (match.player2.id === command.playerId) {
+      match.setPlayer2Move(command.playerMove);
     }
+    // Update match
+    const updatedMatch: MinRpsGame = this.matchRepository.save(match);
+    // Hide opponent's move until both players have played
+    if (!updatedMatch.isGameReady()) {
+      if (updatedMatch.isPlayer1(command.playerId)) {
+        updatedMatch.resetPlayer2Move();
+      } else if (updatedMatch.isPlayer2(command.playerId)) {
+        updatedMatch.resetPlayer1Move();
+      }
+    }
+    // Return match state
+    return MinRpsDomainMapper.domainToMatchUpdatedPayload(updatedMatch);
 
     // Calculate results
-    const gameResult = game.getResult();
-
-    const playedPayload = new MinRpsPlayedPayload();
-    playedPayload.gameId = playPayload.gameId;
-    playedPayload.player1Id = game.player1.id;
-    playedPayload.player1Move = game.player1.move;
-    playedPayload.player1Result = gameResult;
-    playedPayload.player2Id = game.player2.id;
-    playedPayload.player2Move = game.player2.move;
-    playedPayload.player2Result = this.invertResult(gameResult);
+    const gameResult = match.getResult();
 
     // Reset moves for next round
-    game.resetPlayerMoves();
-    this.matchRepository.save(playPayload.gameId, game);
-
-    return playedPayload;
+    match.resetPlayerMoves();
+    this.matchRepository.save(command.gameId, match);
   }
 
   public removePlayerFromAllRooms(client: Socket): void {
@@ -149,7 +145,7 @@ export class MinRpsMultiplayerService {
     return moveSelectedPayload;
   }
 
-  public takeSeat(selectSeatPayload: MinRpsTakeSeatPayload): MinRpsMatchUpdatePayload {
+  public takeSeat(selectSeatPayload: MinRpsTakeSeatPayload): MinRpsMatchPlayPayload {
     const game = this.getOrCreateGame(selectSeatPayload.gameId);
     const cleanedName = selectSeatPayload.playerName.trim().slice(0, 16);
 

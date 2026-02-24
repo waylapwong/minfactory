@@ -1,3 +1,4 @@
+import { MinRpsResult } from '../enums/minrps-game-result.enum';
 import { MinRpsMove } from '../enums/minrps-move.enum';
 
 export class MinRpsMatchUpdatedPayload {
@@ -9,4 +10,5 @@ export class MinRpsMatchUpdatedPayload {
   public player2Id: string;
   public player2Move: MinRpsMove;
   public player2Name: string;
+  public result: MinRpsResult;
 }

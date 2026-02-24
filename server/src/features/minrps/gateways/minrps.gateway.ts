@@ -9,13 +9,15 @@ import {
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 import { Namespace } from '../../../shared/enums/namespace.enum';
+import { MinRpsMatchCommand } from '../models/enums/minrps-match-command.enum';
 import { MinRpsMatchEvent } from '../models/enums/minrps-match-event.enum';
+import { MinRpsMove } from '../models/enums/minrps-move.enum';
 import { MinRpsMatchConnectedPayload } from '../models/payloads/minrps-match-connected.payload';
 import { MinRpsMatchDisconnectedPayload } from '../models/payloads/minrps-match-disconnected.payload';
 import type { MinRpsMatchJoinPayload } from '../models/payloads/minrps-match-join.payload';
 import type { MinRpsMatchLeavePayload } from '../models/payloads/minrps-match-leave.payload';
+import { MinRpsMatchPlayPayload } from '../models/payloads/minrps-match-play.payload';
 import { MinRpsMatchUpdatedPayload } from '../models/payloads/minrps-match-updated.payload';
-import { MinRpsMatchUpdatePayload } from '../models/payloads/minrps-update.payload';
 import { MinRpsMultiplayerService } from '../services/minrps-multiplayer.service';
 import { Acknowledgement } from 'src/shared/objects/acknowledgement';
 
@@ -29,74 +31,35 @@ export class MinRpsGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
   constructor(private readonly multiplayerService: MinRpsMultiplayerService) {}
 
-  @SubscribeMessage(MinRpsMatchEvent.Join)
+  @SubscribeMessage(MinRpsMatchCommand.Join)
   public handleJoinCommand(
     @ConnectedSocket() client: Socket,
-    @MessageBody() commandPayload: MinRpsMatchJoinPayload,
+    @MessageBody() command: MinRpsMatchJoinPayload,
   ): void {
-    const eventPayload: MinRpsMatchUpdatedPayload = this.multiplayerService.joinGame(
-      client,
-      commandPayload,
-    );
-    this.sendMatchUpdatedEvent(eventPayload);
+    const event: MinRpsMatchUpdatedPayload = this.multiplayerService.joinMatch(client, command);
+    this.sendMatchUpdatedEvent(event);
   }
 
-  @SubscribeMessage(MinRpsMatchEvent.Leave)
+  @SubscribeMessage(MinRpsMatchCommand.Leave)
   public handleLeaveCommand(
     @ConnectedSocket() client: Socket,
-    @MessageBody() commandPayload: MinRpsMatchLeavePayload,
+    @MessageBody() command: MinRpsMatchLeavePayload,
   ): void {
-    const eventPayload: MinRpsMatchUpdatedPayload = this.multiplayerService.leaveGame(
-      client,
-      commandPayload,
-    );
-    this.sendMatchUpdatedEvent(eventPayload);
+    const event: MinRpsMatchUpdatedPayload = this.multiplayerService.leaveMatch(client, command);
+    this.sendMatchUpdatedEvent(event);
   }
 
-  @SubscribeMessage(MinRpsMatchEvent.Play)
-  public handlePlayEvent(
+  @SubscribeMessage(MinRpsMatchCommand.Play)
+  public handlePlayCommand(
     @ConnectedSocket() client: Socket,
-    @MessageBody() playPayload: MinRpsPlayPayload,
-  ): Acknowledgement {
-    console.log(`Player: ${playPayload.playerId} wants to play`, playPayload);
-    const playedPayload: MinRpsPlayedPayload | null = this.multiplayerService.playGame(playPayload);
-
-    if (playedPayload) {
-      // Both players have selected moves, reveal and send results
-      this.sendRoomEvent(playPayload.gameId, MinRpsMatchEvent.Played, playedPayload);
-
-      // Send updated game state
-      const gameState: MinRpsMatchUpdatePayload = this.multiplayerService.getGameState(
-        playPayload.gameId,
-      );
-      this.sendRoomEvent(playPayload.gameId, MinRpsMatchEvent.GameStateUpdate, gameState);
+    @MessageBody() command: MinRpsMatchPlayPayload,
+  ): void {
+    const event: MinRpsMatchUpdatedPayload = this.multiplayerService.playMatch(command);
+    if (event.player1Move !== MinRpsMove.None && event.player2Move !== MinRpsMove.None) {
+      this.sendMatchUpdatedEvent(event);
+    } else {
+      this.sendClientEvent(client, MinRpsMatchEvent.Updated, event);
     }
-
-    return new Acknowledgement();
-  }
-
-  @SubscribeMessage(MinRpsMatchEvent.SelectMove)
-  public handleSelectMoveEvent(
-    @ConnectedSocket() client: Socket,
-    @MessageBody() selectMovePayload: MinRpsSelectMovePayload,
-  ): Acknowledgement {
-    console.log(
-      `Player: ${selectMovePayload.playerId} selected move: ${selectMovePayload.move}`,
-      selectMovePayload,
-    );
-    const moveSelectedPayload: MinRpsMoveSelectedPayload =
-      this.multiplayerService.selectMove(selectMovePayload);
-
-    // Only notify the player who selected the move (keep it secret from opponent)
-    this.sendClientEvent(client, MinRpsMatchEvent.MoveSelected, moveSelectedPayload);
-
-    // Send game state update to all players (without revealing moves)
-    const gameState: MinRpsMatchUpdatePayload = this.multiplayerService.getGameState(
-      selectMovePayload.gameId,
-    );
-    this.sendRoomEvent(selectMovePayload.gameId, MinRpsMatchEvent.GameStateUpdate, gameState);
-
-    return new Acknowledgement();
   }
 
   @SubscribeMessage(MinRpsMatchEvent.TakeSeat)
@@ -107,7 +70,7 @@ export class MinRpsGateway implements OnGatewayConnection, OnGatewayDisconnect {
       `Player: ${takeSeatPayload.playerId} wants seat ${takeSeatPayload.seat} in game: ${takeSeatPayload.gameId}`,
       takeSeatPayload,
     );
-    const gameState: MinRpsMatchUpdatePayload = this.multiplayerService.takeSeat(takeSeatPayload);
+    const gameState: MinRpsMatchPlayPayload = this.multiplayerService.takeSeat(takeSeatPayload);
     this.sendRoomEvent(takeSeatPayload.gameId, MinRpsMatchEvent.GameStateUpdate, gameState);
     return new Acknowledgement();
   }
@@ -134,7 +97,7 @@ export class MinRpsGateway implements OnGatewayConnection, OnGatewayDisconnect {
       disconnectedPayload.gameId = roomName;
       disconnectedPayload.playerId = playerId ?? client.id;
       this.sendRoomEvent(roomName, MinRpsMatchEvent.Disconnected, disconnectedPayload);
-      const gameState: MinRpsMatchUpdatePayload = this.multiplayerService.getGameState(roomName);
+      const gameState: MinRpsMatchPlayPayload = this.multiplayerService.getGameState(roomName);
       this.sendRoomEvent(roomName, MinRpsMatchEvent.GameStateUpdate, gameState);
     }
   }
@@ -143,8 +106,8 @@ export class MinRpsGateway implements OnGatewayConnection, OnGatewayDisconnect {
     client.emit(event, payload);
   }
 
-  private sendMatchUpdatedEvent(eventPayload: MinRpsMatchUpdatedPayload): void {
-    this.sendRoomEvent(eventPayload.matchId, MinRpsMatchEvent.Updated, eventPayload);
+  private sendMatchUpdatedEvent(payload: MinRpsMatchUpdatedPayload): void {
+    this.sendRoomEvent(payload.matchId, MinRpsMatchEvent.Updated, payload);
   }
 
   private sendRoomEvent(room: string, event: MinRpsMatchEvent, payload: any): void {

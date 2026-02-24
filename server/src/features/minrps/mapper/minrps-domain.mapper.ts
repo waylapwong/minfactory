@@ -39,6 +39,7 @@ export class MinRpsDomainMapper {
     payload.player2Id = domain.player2.id;
     payload.player2Name = domain.player2.name;
     payload.player2Move = domain.player2.move;
+    payload.result = domain.getResult();
 
     return payload;
   }
