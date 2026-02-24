@@ -23,7 +23,7 @@ describe('MinRpsMatchRepository', () => {
       game.id = 'test-id';
       game.name = 'Test Game';
 
-      repository.save('test-id', game);
+      repository.save(game);
 
       expect(repository.findOne('test-id')).toBe(game);
     });
@@ -37,8 +37,8 @@ describe('MinRpsMatchRepository', () => {
       game2.id = 'test-id';
       game2.name = 'Game 2';
 
-      repository.save('test-id', game1);
-      repository.save('test-id', game2);
+      repository.save(game1);
+      repository.save(game2);
 
       expect(repository.findOne('test-id')).toBe(game2);
       expect(repository.findOne('test-id')?.name).toBe('Game 2');
@@ -51,7 +51,7 @@ describe('MinRpsMatchRepository', () => {
       game.id = 'test-id';
       game.name = 'Test Game';
 
-      repository.save('test-id', game);
+      repository.save(game);
 
       const result = repository.findOne('test-id');
 
@@ -71,7 +71,7 @@ describe('MinRpsMatchRepository', () => {
       game.id = 'test-id';
       game.name = 'Test Game';
 
-      repository.save('test-id', game);
+      repository.save(game);
       expect(repository.findOne('test-id')).toBe(game);
 
       repository.delete('test-id');
@@ -83,6 +83,26 @@ describe('MinRpsMatchRepository', () => {
       expect(() => {
         repository.delete('non-existent-id');
       }).not.toThrow();
+    });
+  });
+
+  describe('findOrCreate', () => {
+    it('should create a match when it does not exist', () => {
+      const match = repository.findOrCreate('new-match');
+
+      expect(match).toBeDefined();
+      expect(match.id).toBe('new-match');
+      expect(repository.findOne('new-match')).toBe(match);
+    });
+
+    it('should return existing match when it exists', () => {
+      const game = new MinRpsGame();
+      game.id = 'existing-match';
+      repository.save(game);
+
+      const match = repository.findOrCreate('existing-match');
+
+      expect(match).toBe(game);
     });
   });
 });

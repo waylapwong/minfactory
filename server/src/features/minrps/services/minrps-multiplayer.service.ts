@@ -111,6 +111,20 @@ export class MinRpsMultiplayerService {
     return MinRpsDomainMapper.domainToMatchUpdatedPayload(updatedMatch);
   }
 
+  public resetMatch(matchId: string): MinRpsMatchUpdatedPayload {
+    // Get match
+    const match: MinRpsGame | null = this.matchRepository.findOne(matchId);
+    if (!match) {
+      throw new NotFoundException(`Match with ID ${matchId} not found`);
+    }
+    // Reset player moves
+    match.resetPlayerMoves();
+    // Update match
+    const updatedMatch: MinRpsGame = this.matchRepository.save(match);
+    // Return match state
+    return MinRpsDomainMapper.domainToMatchUpdatedPayload(updatedMatch);
+  }
+
   public seatPlayer(command: MinRpsMatchSitPayload): MinRpsMatchUpdatedPayload {
     // Get match
     const match: MinRpsGame = this.matchRepository.findOrCreate(command.matchId);

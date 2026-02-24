@@ -1,62 +1,45 @@
-import { MinRpsDomainMapper } from './minrps-domain.mapper';
 import { MinRpsGame } from '../models/domains/minrps-game';
 import { MinRpsPlayer } from '../models/domains/minrps-player';
 import { MinRpsGameDto } from '../models/dtos/minrps-game.dto';
 import { MinRpsPlayResultDto } from '../models/dtos/minrps-play-result.dto';
 import { MinRpsGameEntity } from '../models/entities/minrps-game.entity';
-import { MinRpsMove } from '../models/enums/minrps-move.enum';
 import { MinRpsResult } from '../models/enums/minrps-game-result.enum';
-import { MinRpsMatchPlayPayload } from '../models/payloads/minrps-match-play.payload';
+import { MinRpsMove } from '../models/enums/minrps-move.enum';
+import { MinRpsDomainMapper } from './minrps-domain.mapper';
 
 describe('MinRpsDomainMapper', () => {
   describe('domainToDto', () => {
-    it('should map domain to DTO with both players', () => {
+    it('should map domain to DTO', () => {
       const domain = new MinRpsGame();
       domain.id = 'test-id';
       domain.name = 'Test Game';
       domain.createdAt = new Date('2024-01-01');
-      domain.observers = 5;
-      domain.player1 = new MinRpsPlayer();
-      domain.player1.name = 'player1-name';
-      domain.player2 = new MinRpsPlayer();
-      domain.player2.name = 'player2-name';
+
+      const player1 = new MinRpsPlayer();
+      player1.id = 'player-1';
+      domain.setPlayer1(player1);
+
+      const player2 = new MinRpsPlayer();
+      player2.id = 'player-2';
+      domain.setPlayer2(player2);
 
       const dto: MinRpsGameDto = MinRpsDomainMapper.domainToDto(domain);
 
       expect(dto.id).toBe('test-id');
       expect(dto.name).toBe('Test Game');
       expect(dto.createdAt).toEqual(new Date('2024-01-01'));
-      expect(dto.observerCount).toBe(5);
       expect(dto.playerCount).toBe(2);
+      expect(dto.observerCount).toBe(0);
     });
 
-    it('should map domain to DTO with one player', () => {
+    it('should count observers correctly', () => {
       const domain = new MinRpsGame();
-      domain.id = 'test-id';
-      domain.name = 'Test Game';
-      domain.createdAt = new Date('2024-01-01');
-      domain.observers = 3;
-      domain.player1 = new MinRpsPlayer();
-      domain.player1.name = 'player1-name';
-      domain.player2 = null as any;
+      domain.addObserver('observer-1');
+      domain.addObserver('observer-2');
 
       const dto: MinRpsGameDto = MinRpsDomainMapper.domainToDto(domain);
 
-      expect(dto.playerCount).toBe(1);
-    });
-
-    it('should map domain to DTO with no players', () => {
-      const domain = new MinRpsGame();
-      domain.id = 'test-id';
-      domain.name = 'Test Game';
-      domain.createdAt = new Date('2024-01-01');
-      domain.observers = 0;
-      domain.player1 = null as any;
-      domain.player2 = null as any;
-
-      const dto: MinRpsGameDto = MinRpsDomainMapper.domainToDto(domain);
-
-      expect(dto.playerCount).toBe(0);
+      expect(dto.observerCount).toBe(2);
     });
   });
 
@@ -66,7 +49,6 @@ describe('MinRpsDomainMapper', () => {
       domain.id = 'test-id';
       domain.name = 'Test Game';
       domain.createdAt = new Date('2024-01-01');
-      domain.observers = 5;
 
       const entity: MinRpsGameEntity = MinRpsDomainMapper.domainToEntity(domain);
 
@@ -79,10 +61,13 @@ describe('MinRpsDomainMapper', () => {
   describe('domainToPlayResultDto', () => {
     it('should map domain to play result DTO', () => {
       const domain = new MinRpsGame();
-      domain.player1 = new MinRpsPlayer();
-      domain.player1.move = MinRpsMove.Rock;
-      domain.player2 = new MinRpsPlayer();
-      domain.player2.move = MinRpsMove.Scissors;
+      const player1 = new MinRpsPlayer();
+      player1.move = MinRpsMove.Rock;
+      domain.setPlayer1(player1);
+
+      const player2 = new MinRpsPlayer();
+      player2.move = MinRpsMove.Scissors;
+      domain.setPlayer2(player2);
 
       const dto: MinRpsPlayResultDto = MinRpsDomainMapper.domainToPlayResultDto(domain);
 
@@ -90,75 +75,43 @@ describe('MinRpsDomainMapper', () => {
       expect(dto.player2Move).toBe(MinRpsMove.Scissors);
       expect(dto.result).toBe(MinRpsResult.None);
     });
-
-    it('should map domain to play result DTO with different moves', () => {
-      const domain = new MinRpsGame();
-      domain.player1 = new MinRpsPlayer();
-      domain.player1.move = MinRpsMove.Paper;
-      domain.player2 = new MinRpsPlayer();
-      domain.player2.move = MinRpsMove.Rock;
-
-      const dto: MinRpsPlayResultDto = MinRpsDomainMapper.domainToPlayResultDto(domain);
-
-      expect(dto.player1Move).toBe(MinRpsMove.Paper);
-      expect(dto.player2Move).toBe(MinRpsMove.Rock);
-      expect(dto.result).toBe(MinRpsResult.None);
-    });
   });
 
-  describe('domainToGameStateUpdatePayload', () => {
-    it('should map domain to game state update payload', () => {
+  describe('domainToMatchUpdatedPayload', () => {
+    it('should map domain to match updated payload', () => {
       const domain = new MinRpsGame();
-      domain.id = 'test-game-id';
+      domain.id = 'match-1';
+
       const player1 = new MinRpsPlayer();
-      player1.id = 'player-1-id';
-      player1.name = 'Player 1';
+      player1.id = 'player-1';
+      player1.name = 'Alice';
       player1.move = MinRpsMove.Rock;
       domain.setPlayer1(player1);
 
       const player2 = new MinRpsPlayer();
-      player2.id = 'player-2-id';
-      player2.name = 'Player 2';
-      player2.move = MinRpsMove.None;
+      player2.id = 'player-2';
+      player2.name = 'Bob';
+      player2.move = MinRpsMove.Paper;
       domain.setPlayer2(player2);
 
-      const payload: MinRpsMatchPlayPayload =
-        MinRpsDomainMapper.domainToMatchUpdatedPayload(domain);
+      const payload = MinRpsDomainMapper.domainToMatchUpdatedPayload(domain);
 
-      expect(payload.matchId).toBe('test-game-id');
-      expect(payload.playerId).toBe('player-1-id');
-      expect(payload.playerName).toBe('Player 1');
-      expect(payload.player1HasSelectedMove).toBe(true);
-      expect(payload.playerMove).toBe(MinRpsMove.None); // Should not reveal move
-      expect(payload.player2Id).toBe('player-2-id');
-      expect(payload.player2Name).toBe('Player 2');
-      expect(payload.player2HasSelectedMove).toBe(false);
-      expect(payload.player2Move).toBe(MinRpsMove.None);
+      expect(payload.matchId).toBe('match-1');
+      expect(payload.player1Id).toBe('player-1');
+      expect(payload.player1Name).toBe('Alice');
+      expect(payload.player1Move).toBe(MinRpsMove.Rock);
+      expect(payload.player2Id).toBe('player-2');
+      expect(payload.player2Name).toBe('Bob');
+      expect(payload.player2Move).toBe(MinRpsMove.Paper);
     });
-  });
 
-  describe('gameStateUpdatePayloadToDomain', () => {
-    it('should map game state update payload to domain', () => {
-      const payload = new MinRpsMatchPlayPayload();
-      payload.matchId = 'test-game-id';
-      payload.playerId = 'player-1-id';
-      payload.playerName = 'Player 1';
-      payload.playerMove = MinRpsMove.Rock;
-      payload.player1HasSelectedMove = true;
-      payload.player2Id = 'player-2-id';
-      payload.player2Name = 'Player 2';
-      payload.player2Move = MinRpsMove.Scissors;
-      payload.player2HasSelectedMove = true;
+    it('should set result to None when game is not ready', () => {
+      const domain = new MinRpsGame();
+      domain.id = 'match-1';
 
-      const domain: MinRpsGame = MinRpsDomainMapper.gameStateUpdatePayloadToDomain(payload);
+      const payload = MinRpsDomainMapper.domainToMatchUpdatedPayload(domain);
 
-      expect(domain.id).toBe('test-game-id');
-      expect(domain.player1.id).toBe('player-1-id');
-      expect(domain.player1.name).toBe('Player 1');
-      expect(domain.player1.move).toBe(MinRpsMove.Rock);
-      expect(domain.player2.id).toBe('player-2-id');
-      expect(domain.player2.name).toBe('Player 2');
-      expect(domain.player2.move).toBe(MinRpsMove.Scissors);
+      expect(payload.result).toBe(MinRpsResult.None);
     });
   });
 });

@@ -31,13 +31,6 @@ describe('MinRpsRoomSystem', () => {
       expect(mockSocket.join).toHaveBeenCalledWith('room1');
     });
 
-    it('should create room if it does not exist', () => {
-      system.addPlayerToRoom(mockSocket, 'new-room');
-
-      const roomNames = system.getAllPlayerRoomNames(mockSocket);
-      expect(roomNames).toContain('new-room');
-    });
-
     it('should add player to existing room', () => {
       system.addPlayerToRoom(mockSocket, 'room1');
 
@@ -51,41 +44,24 @@ describe('MinRpsRoomSystem', () => {
 
       expect(mockSocket.join).toHaveBeenCalledWith('room1');
       expect(mockSocket2.join).toHaveBeenCalledWith('room1');
+      expect(system.getPlayerRoomName(mockSocket)).toBe('room1');
+      expect(system.getPlayerRoomName(mockSocket2)).toBe('room1');
     });
   });
 
-  describe('getAllPlayerRoomNames', () => {
-    it('should return empty array when player is not in any rooms', () => {
-      const rooms = system.getAllPlayerRoomNames(mockSocket);
+  describe('getPlayerRoomName', () => {
+    it('should return null when player is not in any rooms', () => {
+      const roomName = system.getPlayerRoomName(mockSocket);
 
-      expect(rooms).toEqual([]);
+      expect(roomName).toBeNull();
     });
 
-    it('should return rooms player is in', () => {
+    it('should return room player is in', () => {
       system.addPlayerToRoom(mockSocket, 'room1');
-      system.addPlayerToRoom(mockSocket, 'room2');
 
-      const rooms = system.getAllPlayerRoomNames(mockSocket);
+      const roomName = system.getPlayerRoomName(mockSocket);
 
-      expect(rooms).toContain('room1');
-      expect(rooms).toContain('room2');
-      expect(rooms).toHaveLength(2);
-    });
-
-    it('should not return rooms player is not in', () => {
-      const mockSocket2 = {
-        id: 'socket-2',
-        join: jest.fn(),
-        leave: jest.fn(),
-      } as any;
-
-      system.addPlayerToRoom(mockSocket, 'room1');
-      system.addPlayerToRoom(mockSocket2, 'room2');
-
-      const rooms = system.getAllPlayerRoomNames(mockSocket);
-
-      expect(rooms).toContain('room1');
-      expect(rooms).not.toContain('room2');
+      expect(roomName).toBe('room1');
     });
   });
 
@@ -102,17 +78,9 @@ describe('MinRpsRoomSystem', () => {
       system.addPlayerToRoom(mockSocket, 'room1');
       system.removePlayerFromRoom(mockSocket, 'room1');
 
-      const rooms = system.getAllPlayerRoomNames(mockSocket);
+      const roomName = system.getPlayerRoomName(mockSocket);
 
-      expect(rooms).not.toContain('room1');
-    });
-
-    it('should delete room when last player leaves', () => {
-      system.addPlayerToRoom(mockSocket, 'room1');
-      system.removePlayerFromRoom(mockSocket, 'room1');
-
-      const rooms = system.getAllPlayerRoomNames(mockSocket);
-      expect(rooms).toEqual([]);
+      expect(roomName).toBeNull();
     });
 
     it('should not delete room when other players remain', () => {
@@ -127,8 +95,8 @@ describe('MinRpsRoomSystem', () => {
 
       system.removePlayerFromRoom(mockSocket, 'room1');
 
-      const rooms = system.getAllPlayerRoomNames(mockSocket2);
-      expect(rooms).toContain('room1');
+      const roomName = system.getPlayerRoomName(mockSocket2);
+      expect(roomName).toBe('room1');
     });
 
     it('should handle removing player from non-existent room', () => {
@@ -148,8 +116,8 @@ describe('MinRpsRoomSystem', () => {
 
       system.removePlayerFromAllRooms(mockSocket);
 
-      const rooms = system.getAllPlayerRoomNames(mockSocket);
-      expect(rooms).toEqual([]);
+      const roomName = system.getPlayerRoomName(mockSocket);
+      expect(roomName).toBeNull();
       expect(mockSocket.leave).toHaveBeenCalledWith('room1');
       expect(mockSocket.leave).toHaveBeenCalledWith('room2');
       expect(mockSocket.leave).toHaveBeenCalledWith('room3');

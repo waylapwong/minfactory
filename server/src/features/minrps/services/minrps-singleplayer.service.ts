@@ -13,8 +13,11 @@ export class MinRpsSingleplayerService {
   public playGame(playDto: MinRpsPlayDto): MinRpsPlayResultDto {
     // Mapping
     const domain: MinRpsGame = MinRpsDtoMapper.playDtoToDomain(playDto);
-    // NPC move
-    domain.setPlayer2(new MinRpsPlayer());
+    // NPC setup
+    const npcPlayer: MinRpsPlayer = new MinRpsPlayer();
+    npcPlayer.id = 'npc'; // Set NPC ID
+    npcPlayer.name = 'NPC';
+    domain.setPlayer2(npcPlayer);
     domain.setPlayer2Move(this.getRandomMove());
     // Game result
     const result: MinRpsResult = domain.getResult();
