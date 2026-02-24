@@ -73,7 +73,11 @@ export class MinRpsGateway implements OnGatewayConnection, OnGatewayDisconnect {
   }
 
   public handleDisconnect(client: Socket): void {
-    this.multiplayerService.handleDisconnect(client);
+    const event: MinRpsMatchUpdatedPayload | null =
+      this.multiplayerService.handleDisconnect(client);
+    if (event) {
+      this.sendMatchUpdatedEvent(event);
+    }
   }
 
   private sendClientEvent(client: Socket, event: MinRpsMatchEvent, payload: any): void {

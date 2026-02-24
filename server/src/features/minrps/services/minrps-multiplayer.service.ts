@@ -32,23 +32,24 @@ export class MinRpsMultiplayerService {
     return event;
   }
 
-  public handleDisconnect(client: Socket): void {
-    // Remove player from room if needed
-    const roomName: string | null = this.roomSystem.getPlayerRoomName(client);
-    if (roomName) {
-      this.roomSystem.removePlayerFromRoom(client, roomName);
-    }
-
+  public handleDisconnect(client: Socket): MinRpsMatchUpdatedPayload | null {
     const playerId: string | null = this.playerIdRepository.findOne(client.id);
+    const roomName: string | null = this.roomSystem.getPlayerRoomName(client);
 
     if (roomName && playerId) {
       const match: MinRpsGame | null = this.matchRepository.findOne(roomName);
       if (match) {
         match.removePlayer(playerId);
         this.matchRepository.save(match);
+        this.roomSystem.removePlayerFromRoom(client, roomName);
+        this.playerIdRepository.delete(client.id);
+        return MinRpsDomainMapper.domainToMatchUpdatedPayload(match);
       }
+      this.roomSystem.removePlayerFromRoom(client, roomName);
     }
+
     this.playerIdRepository.delete(client.id);
+    return null;
   }
 
   public joinMatch(client: Socket, command: MinRpsMatchJoinPayload): MinRpsMatchUpdatedPayload {
