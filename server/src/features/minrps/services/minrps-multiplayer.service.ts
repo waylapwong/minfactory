@@ -5,7 +5,6 @@ import { MinRpsGame } from '../models/domains/minrps-game';
 import { MinRpsPlayer } from '../models/domains/minrps-player';
 import { MinRpsResult } from '../models/enums/minrps-game-result.enum';
 import { MinRpsMove } from '../models/enums/minrps-move.enum';
-import { MinRpsLeftPayload } from '../models/payloads/minrps-left.payload';
 import { MinRpsMatchJoinPayload } from '../models/payloads/minrps-match-join.payload';
 import { MinRpsMatchLeavePayload } from '../models/payloads/minrps-match-leave.payload';
 import { MinRpsMatchUpdatedPayload } from '../models/payloads/minrps-match-updated.payload';
@@ -56,8 +55,6 @@ export class MinRpsMultiplayerService {
     this.socketIdPlayerIdMap.set(client.id, commandPayload.playerId);
     this.roomSystem.addPlayerToRoom(client, commandPayload.matchId);
 
-    this.gameRepository.findOne(commandPayload.matchId);
-
     let game: MinRpsGame | null = this.matchRepository.findOne(commandPayload.matchId);
     if (!game) {
       game = new MinRpsGame();
@@ -66,23 +63,27 @@ export class MinRpsMultiplayerService {
 
     game.addObserver(commandPayload.playerId);
 
-    const updatedMatch: MinRpsGame = this.matchRepository.save(commandPayload.matchId, game);
+    const updatedMatch: MinRpsGame = this.matchRepository.save(game);
 
     return MinRpsDomainMapper.domainToMatchUpdatedPayload(updatedMatch);
   }
 
-  public leaveGame(client: Socket, leavePayload: MinRpsMatchLeavePayload): MinRpsLeftPayload {
-    // Player leaves room
-    this.roomSystem.removePlayerFromRoom(client, leavePayload.gameId);
-
-    this.removePlayerFromGame(leavePayload.gameId, leavePayload.playerId);
-
-    // Build payload
-    const leftPayload: MinRpsLeftPayload = new MinRpsLeftPayload();
-    leftPayload.gameId = leavePayload.gameId;
-    leftPayload.playerId = leavePayload.playerId;
-
-    return leftPayload;
+  public leaveGame(
+    client: Socket,
+    commandPayload: MinRpsMatchLeavePayload,
+  ): MinRpsMatchUpdatedPayload {
+    // Get match
+    const match: MinRpsGame | null = this.matchRepository.findOne(commandPayload.matchId);
+    if (!match) {
+      throw new NotFoundException(`Match with ID ${commandPayload.matchId} not found`);
+    }
+    // Remove player from room & match
+    this.roomSystem.removePlayerFromRoom(client, commandPayload.matchId);
+    this.removePlayerFromMatch(commandPayload.playerId, match);
+    // Update match
+    const updatedMatch: MinRpsGame = this.matchRepository.save(match);
+    // Return match state
+    return MinRpsDomainMapper.domainToMatchUpdatedPayload(updatedMatch);
   }
 
   public playGame(playPayload: MinRpsPlayPayload): MinRpsPlayedPayload | null {
@@ -113,7 +114,7 @@ export class MinRpsMultiplayerService {
     playedPayload.player2Result = this.invertResult(gameResult);
 
     // Reset moves for next round
-    game.resetMoves();
+    game.resetPlayerMoves();
     this.matchRepository.save(playPayload.gameId, game);
 
     return playedPayload;
@@ -125,7 +126,7 @@ export class MinRpsMultiplayerService {
 
   public removePlayerFromGames(gameIds: string[], playerId: string): void {
     for (const gameId of gameIds) {
-      this.removePlayerFromGame(gameId, playerId);
+      this.removePlayerFromMatch(gameId, playerId);
     }
   }
 
@@ -168,7 +169,7 @@ export class MinRpsMultiplayerService {
         player.id = selectSeatPayload.playerId;
         player.name = cleanedName;
         player.move = MinRpsMove.None;
-        game.setPlayer1(player);
+        game.addPlayer1(player);
       }
     } else if (selectSeatPayload.seat === 2) {
       if (isPlayer1) {
@@ -179,7 +180,7 @@ export class MinRpsMultiplayerService {
         player.id = selectSeatPayload.playerId;
         player.name = cleanedName;
         player.move = MinRpsMove.None;
-        game.setPlayer2(player);
+        game.addPlayer2(player);
       }
     }
 
@@ -206,24 +207,13 @@ export class MinRpsMultiplayerService {
     return MinRpsResult.Draw;
   }
 
-  private removePlayerFromGame(gameId: string, playerId: string): void {
-    const game = this.matchRepository.findOne(gameId);
-    if (!game) {
-      return;
-    }
-
-    if (game.player1.id === playerId) {
-      const emptyPlayer = new MinRpsPlayer();
-      game.setPlayer1(emptyPlayer);
-    } else if (game.player2.id === playerId) {
-      const emptyPlayer = new MinRpsPlayer();
-      game.setPlayer2(emptyPlayer);
-    }
-
-    if (!game.player1.id && !game.player2.id) {
-      this.matchRepository.delete(gameId);
-    } else {
-      this.matchRepository.save(gameId, game);
+  private removePlayerFromMatch(playerId: string, match: MinRpsGame): void {
+    if (playerId === match.player1.id) {
+      match.removePlayer1();
+    } else if (playerId === match.player2.id) {
+      match.removePlayer2();
+    } else if (match.observers.has(playerId)) {
+      match.removeObserver(playerId);
     }
   }
 }

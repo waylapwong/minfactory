@@ -30,7 +30,7 @@ export class MinRpsGateway implements OnGatewayConnection, OnGatewayDisconnect {
   constructor(private readonly multiplayerService: MinRpsMultiplayerService) {}
 
   @SubscribeMessage(MinRpsMatchEvent.Join)
-  public handleJoinEvent(
+  public handleJoinCommand(
     @ConnectedSocket() client: Socket,
     @MessageBody() commandPayload: MinRpsMatchJoinPayload,
   ): void {
@@ -38,22 +38,19 @@ export class MinRpsGateway implements OnGatewayConnection, OnGatewayDisconnect {
       client,
       commandPayload,
     );
-    this.sendRoomEvent(eventPayload.matchId, MinRpsMatchEvent.Updated, eventPayload);
+    this.sendMatchUpdatedEvent(eventPayload);
   }
 
   @SubscribeMessage(MinRpsMatchEvent.Leave)
-  public handleLeaveEvent(
+  public handleLeaveCommand(
     @ConnectedSocket() client: Socket,
-    @MessageBody() leavePayload: MinRpsMatchLeavePayload,
-  ): Acknowledgement {
-    console.log(`Player: ${leavePayload.playerId} left game: ${leavePayload.gameId}`, leavePayload);
-    const leftPayload: MinRpsLeftPayload = this.multiplayerService.leaveGame(client, leavePayload);
-    this.sendRoomEvent(leavePayload.gameId, MinRpsMatchEvent.Left, leftPayload);
-    const gameState: MinRpsMatchUpdatePayload = this.multiplayerService.getGameState(
-      leavePayload.gameId,
+    @MessageBody() commandPayload: MinRpsMatchLeavePayload,
+  ): void {
+    const eventPayload: MinRpsMatchUpdatedPayload = this.multiplayerService.leaveGame(
+      client,
+      commandPayload,
     );
-    this.sendRoomEvent(leavePayload.gameId, MinRpsMatchEvent.GameStateUpdate, gameState);
-    return new Acknowledgement();
+    this.sendMatchUpdatedEvent(eventPayload);
   }
 
   @SubscribeMessage(MinRpsMatchEvent.Play)
@@ -143,12 +140,14 @@ export class MinRpsGateway implements OnGatewayConnection, OnGatewayDisconnect {
   }
 
   private sendClientEvent(client: Socket, event: MinRpsMatchEvent, payload: any): void {
-    console.log(`Event: ${event} sent to player: ${payload.playerId}`, payload);
     client.emit(event, payload);
   }
 
+  private sendMatchUpdatedEvent(eventPayload: MinRpsMatchUpdatedPayload): void {
+    this.sendRoomEvent(eventPayload.matchId, MinRpsMatchEvent.Updated, eventPayload);
+  }
+
   private sendRoomEvent(room: string, event: MinRpsMatchEvent, payload: any): void {
-    console.log(`Event: ${event} sent to room: ${room}`, payload);
     this.server.to(room).emit(event, payload);
   }
 }

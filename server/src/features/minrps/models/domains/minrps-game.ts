@@ -17,6 +17,14 @@ export class MinRpsGame {
     this.observers.set(observerId, observer);
   }
 
+  public addPlayer1(player: MinRpsPlayer): void {
+    this.player1 = player;
+  }
+
+  public addPlayer2(player: MinRpsPlayer): void {
+    this.player2 = player;
+  }
+
   public getResult(): MinRpsResult {
     this.checkRules();
     const player1Move: MinRpsMove = this.player1.move;
@@ -38,23 +46,27 @@ export class MinRpsGame {
     return this.player2.move !== MinRpsMove.None;
   }
 
-  public resetMoves(): void {
-    this.player1.move = MinRpsMove.None;
-    this.player2.move = MinRpsMove.None;
+  public removeObserver(observerId: string): void {
+    this.observers.delete(observerId);
   }
 
-  public setPlayer1(player: MinRpsPlayer): void {
-    this.player1 = player;
+  public removePlayer1(): void {
+    this.player1 = new MinRpsPlayer();
+  }
+
+  public removePlayer2(): void {
+    this.player2 = new MinRpsPlayer();
+  }
+
+  public resetPlayerMoves(): void {
+    this.player1.move = MinRpsMove.None;
+    this.player2.move = MinRpsMove.None;
   }
 
   public setPlayer1Move(move: MinRpsMove): void {
     if (this.player1) {
       this.player1.move = move;
     }
-  }
-
-  public setPlayer2(player: MinRpsPlayer): void {
-    this.player2 = player;
   }
 
   public setPlayer2Move(move: MinRpsMove): void {

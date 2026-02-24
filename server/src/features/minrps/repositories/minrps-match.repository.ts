@@ -14,8 +14,8 @@ export class MinRpsMatchRepository {
     return match ?? null;
   }
 
-  public save(id: string, match: MinRpsGame): MinRpsGame {
-    this.matches.set(id, match);
-    return this.findOne(id) as MinRpsGame;
+  public save(match: MinRpsGame): MinRpsGame {
+    this.matches.set(match.id, match);
+    return this.findOne(match.id) as MinRpsGame;
   }
 }

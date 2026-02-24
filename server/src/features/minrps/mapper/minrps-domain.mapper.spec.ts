@@ -114,13 +114,13 @@ describe('MinRpsDomainMapper', () => {
       player1.id = 'player-1-id';
       player1.name = 'Player 1';
       player1.move = MinRpsMove.Rock;
-      domain.setPlayer1(player1);
+      domain.addPlayer1(player1);
 
       const player2 = new MinRpsPlayer();
       player2.id = 'player-2-id';
       player2.name = 'Player 2';
       player2.move = MinRpsMove.None;
-      domain.setPlayer2(player2);
+      domain.addPlayer2(player2);
 
       const payload: MinRpsMatchUpdatePayload =
         MinRpsDomainMapper.domainToMatchUpdatedPayload(domain);

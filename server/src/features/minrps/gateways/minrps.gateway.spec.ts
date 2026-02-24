@@ -86,7 +86,7 @@ describe('MinRpsGateway', () => {
       multiplayerService.joinGame.mockReturnValue(joinedPayload);
       multiplayerService.getGameState.mockReturnValue(gameState);
 
-      const result = gateway.handleJoinEvent(mockSocket, joinPayload);
+      const result = gateway.handleJoinCommand(mockSocket, joinPayload);
 
       expect(result).toBeInstanceOf(Acknowledgement);
       expect(multiplayerService.joinGame).toHaveBeenCalledWith(mockSocket, joinPayload);
@@ -98,7 +98,7 @@ describe('MinRpsGateway', () => {
   describe('handleLeaveEvent', () => {
     it('should handle leave event and emit left payload', () => {
       const leavePayload: MinRpsMatchLeavePayload = {
-        gameId: 'game-1',
+        matchId: 'game-1',
         playerId: 'player-1',
       };
 
@@ -112,7 +112,7 @@ describe('MinRpsGateway', () => {
       multiplayerService.leaveGame.mockReturnValue(leftPayload);
       multiplayerService.getGameState.mockReturnValue(gameState);
 
-      const result = gateway.handleLeaveEvent(mockSocket, leavePayload);
+      const result = gateway.handleLeaveCommand(mockSocket, leavePayload);
 
       expect(result).toBeInstanceOf(Acknowledgement);
       expect(multiplayerService.leaveGame).toHaveBeenCalledWith(mockSocket, leavePayload);

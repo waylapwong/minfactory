@@ -1,4 +1,4 @@
 export class MinRpsMatchLeavePayload {
-  public gameId: string;
+  public matchId: string;
   public playerId: string;
 }

@@ -68,7 +68,7 @@ describe('MinRpsMultiplayerService', () => {
       service.joinGame(mockSocket, joinPayload);
 
       const leavePayload: MinRpsMatchLeavePayload = {
-        gameId: 'game-1',
+        matchId: 'game-1',
         playerId: 'player-1',
       };
 
