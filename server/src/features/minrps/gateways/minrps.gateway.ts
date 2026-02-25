@@ -16,7 +16,7 @@ import { MinRpsMatchConnectedPayload } from '../models/payloads/minrps-match-con
 import type { MinRpsMatchJoinPayload } from '../models/payloads/minrps-match-join.payload';
 import type { MinRpsMatchLeavePayload } from '../models/payloads/minrps-match-leave.payload';
 import { MinRpsMatchPlayPayload } from '../models/payloads/minrps-match-play.payload';
-import { MinRpsMatchSitPayload } from '../models/payloads/minrps-match-sit.payload';
+import { MinRpsMatchSeatPayload } from '../models/payloads/minrps-match-seat.payload';
 import { MinRpsMatchUpdatedPayload } from '../models/payloads/minrps-match-updated.payload';
 import { MinRpsMultiplayerService } from '../services/minrps-multiplayer.service';
 
@@ -68,7 +68,7 @@ export class MinRpsGateway implements OnGatewayConnection, OnGatewayDisconnect {
   }
 
   @SubscribeMessage(MinRpsMatchCommand.Seat)
-  public handleSeatCommand(@MessageBody() command: MinRpsMatchSitPayload): void {
+  public handleSeatCommand(@MessageBody() command: MinRpsMatchSeatPayload): void {
     const event: MinRpsMatchUpdatedPayload = this.multiplayerService.seatPlayer(command);
     this.sendMatchUpdatedEvent(event);
   }

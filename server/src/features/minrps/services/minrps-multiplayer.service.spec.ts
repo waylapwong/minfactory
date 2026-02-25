@@ -3,7 +3,7 @@ import { Socket } from 'socket.io';
 import { MinRpsMatchJoinPayload } from '../models/payloads/minrps-match-join.payload';
 import { MinRpsMatchLeavePayload } from '../models/payloads/minrps-match-leave.payload';
 import { MinRpsMatchPlayPayload } from '../models/payloads/minrps-match-play.payload';
-import { MinRpsMatchSitPayload } from '../models/payloads/minrps-match-sit.payload';
+import { MinRpsMatchSeatPayload } from '../models/payloads/minrps-match-seat.payload';
 import { MinRpsMove } from '../models/enums/minrps-move.enum';
 import { MinRpsMatchRepository } from '../repositories/minrps-match.repository';
 import { MinRpsPlayerIdRepository } from '../repositories/minrps-player-id.repository';
@@ -84,7 +84,7 @@ describe('MinRpsMultiplayerService', () => {
 
   describe('seatPlayer', () => {
     it('should seat player1', () => {
-      const seatPayload: MinRpsMatchSitPayload = {
+      const seatPayload: MinRpsMatchSeatPayload = {
         matchId: 'match-1',
         playerId: 'player-1',
         playerName: 'Alice',
@@ -97,14 +97,14 @@ describe('MinRpsMultiplayerService', () => {
     });
 
     it('should seat two players in the same match', () => {
-      const seat1: MinRpsMatchSitPayload = {
+      const seat1: MinRpsMatchSeatPayload = {
         matchId: 'match-1',
         playerId: 'player-1',
         playerName: 'Alice',
       };
       service.seatPlayer(seat1);
 
-      const seat2: MinRpsMatchSitPayload = {
+      const seat2: MinRpsMatchSeatPayload = {
         matchId: 'match-1',
         playerId: 'player-2',
         playerName: 'Bob',

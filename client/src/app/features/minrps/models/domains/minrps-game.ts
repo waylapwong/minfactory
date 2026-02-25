@@ -1,14 +1,13 @@
 import { MinRpsMove, MinRpsResult } from '../../../../core/generated';
+import { MinRpsPlayer } from './minrps-player';
 
 export class MinRpsGame {
   public createdAt: Date = new Date();
   public id: string = '';
   public name: string = '';
-  public observerCount: number = 0;
-  public player1Move: MinRpsMove = MinRpsMove.None;
-  public player1SelectedMove: MinRpsMove = MinRpsMove.None;
-  public player2Move: MinRpsMove = MinRpsMove.None;
-  public player2SelectedMove: MinRpsMove = MinRpsMove.None;
+  public observers: Map<string, MinRpsPlayer> = new Map();
+  public player1: MinRpsPlayer = new MinRpsPlayer();
+  public player2: MinRpsPlayer = new MinRpsPlayer();
   public playerCount: number = 0;
   public result: MinRpsResult = MinRpsResult.None;
 
@@ -16,19 +15,31 @@ export class MinRpsGame {
     Object.assign(this, init);
   }
 
+  public get observerCount(): number {
+    return this.observers.size;
+  }
+
+  public setPlayer1(player: MinRpsPlayer): void {
+    this.player1 = player;
+  }
+
   public setPlayer1Move(move: MinRpsMove): void {
-    this.player1Move = move;
+    this.player1.move = move;
   }
 
   public setPlayer1SelectedMove(move: MinRpsMove): void {
-    this.player1SelectedMove = move;
+    this.player1.selectedMove = move;
+  }
+
+  public setPlayer2(player: MinRpsPlayer): void {
+    this.player2 = player;
   }
 
   public setPlayer2Move(move: MinRpsMove): void {
-    this.player2Move = move;
+    this.player2.move = move;
   }
 
   public setPlayer2SelectedMove(move: MinRpsMove): void {
-    this.player2SelectedMove = move;
+    this.player2.selectedMove = move;
   }
 }

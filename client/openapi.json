@@ -71,7 +71,7 @@
             "name": "id",
             "required": true,
             "in": "path",
-            "description": "UUID of ressource",
+            "description": "UUID of resource",
             "schema": {
               "example": "550e8400-e29b-41d4-a716-446655440000",
               "type": "string"

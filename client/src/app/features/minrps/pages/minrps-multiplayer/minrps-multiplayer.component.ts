@@ -18,7 +18,6 @@ import { InputComponent } from '../../../../shared/components/input/input.compon
 import { Color } from '../../../../shared/enums/color.enum';
 import { MinRpsCardComponent } from '../../components/minrps-card/minrps-card.component';
 import { MinRpsMoveComponent } from '../../components/minrps-move/minrps-move.component';
-import { MinRpsGameEvent } from '../../models/enums/minrps-game-event.enum';
 import { MinRpsConnectedPayload } from '../../models/payloads/minrps-connected.payload';
 import { MinRpsDisconnectedPayload } from '../../models/payloads/minrps-disconnected.payload';
 import { MinRpsGameStateUpdatePayload } from '../../models/payloads/minrps-game-state-update.payload';
@@ -183,7 +182,7 @@ export class MinRpsMultiplayerComponent implements OnInit, OnDestroy {
     const payload: MinRpsPlayPayload = new MinRpsPlayPayload();
     payload.gameId = this.game().gameId;
     payload.playerId = this.game().playerId;
-    this.multiplayerService.sendPlayEvent(payload);
+    this.multiplayerService.sendPlayCommand(payload);
   }
 
   public selectMove(move: MinRpsMove): void {
@@ -218,7 +217,7 @@ export class MinRpsMultiplayerComponent implements OnInit, OnDestroy {
     payload.playerId = this.game().playerId;
     payload.seat = this.selectedSeat() as number;
     payload.playerName = name;
-    this.multiplayerService.sendTakeSeatEvent(payload);
+    this.multiplayerService.sendSeatCommand(payload);
     this.isSeatDialogOpen.set(false);
   }
 
@@ -246,11 +245,10 @@ export class MinRpsMultiplayerComponent implements OnInit, OnDestroy {
     const payload: MinRpsJoinPayload = new MinRpsJoinPayload();
     payload.gameId = this.game().gameId;
     payload.playerId = this.game().playerId;
-    this.multiplayerService.sendJoinEvent(payload);
+    this.multiplayerService.sendJoinCommand(payload);
   }
 
   private readonly onConnectedEvent = (payload: MinRpsConnectedPayload): void => {
-    console.log(`${MinRpsGameEvent.Connected} event received`, payload);
     this.game.update((g) => {
       g.playerId = payload.playerId;
       return { ...g };
@@ -384,7 +382,7 @@ export class MinRpsMultiplayerComponent implements OnInit, OnDestroy {
     const payload: MinRpsLeavePayload = new MinRpsLeavePayload();
     payload.gameId = this.game().gameId;
     payload.playerId = this.game().playerId;
-    this.multiplayerService.sendLeaveEvent(payload);
+    this.multiplayerService.sendLeaveCommand(payload);
   }
 
   private setGameId(): void {

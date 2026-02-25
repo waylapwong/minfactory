@@ -4,7 +4,7 @@ import { MinRpsMove } from '../models/enums/minrps-move.enum';
 import { MinRpsMatchJoinPayload } from '../models/payloads/minrps-match-join.payload';
 import { MinRpsMatchLeavePayload } from '../models/payloads/minrps-match-leave.payload';
 import { MinRpsMatchPlayPayload } from '../models/payloads/minrps-match-play.payload';
-import { MinRpsMatchSitPayload } from '../models/payloads/minrps-match-sit.payload';
+import { MinRpsMatchSeatPayload } from '../models/payloads/minrps-match-seat.payload';
 import { MinRpsMultiplayerService } from '../services/minrps-multiplayer.service';
 import { MinRpsGateway } from './minrps.gateway';
 
@@ -164,7 +164,7 @@ describe('MinRpsGateway', () => {
 
   describe('handleSeatCommand', () => {
     it('should handle seat command and broadcast match updated event', () => {
-      const seatPayload: MinRpsMatchSitPayload = {
+      const seatPayload: MinRpsMatchSeatPayload = {
         matchId: 'match-1',
         playerId: 'player-1',
         playerName: 'Alice',

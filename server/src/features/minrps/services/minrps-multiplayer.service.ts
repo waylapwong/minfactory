@@ -7,7 +7,7 @@ import { MinRpsMatchConnectedPayload } from '../models/payloads/minrps-match-con
 import { MinRpsMatchJoinPayload } from '../models/payloads/minrps-match-join.payload';
 import { MinRpsMatchLeavePayload } from '../models/payloads/minrps-match-leave.payload';
 import { MinRpsMatchPlayPayload } from '../models/payloads/minrps-match-play.payload';
-import { MinRpsMatchSitPayload } from '../models/payloads/minrps-match-sit.payload';
+import { MinRpsMatchSeatPayload } from '../models/payloads/minrps-match-seat.payload';
 import { MinRpsMatchUpdatedPayload } from '../models/payloads/minrps-match-updated.payload';
 import { MinRpsMatchRepository } from '../repositories/minrps-match.repository';
 import { MinRpsPlayerIdRepository } from '../repositories/minrps-player-id.repository';
@@ -125,7 +125,7 @@ export class MinRpsMultiplayerService {
     return MinRpsDomainMapper.domainToMatchUpdatedPayload(updatedMatch);
   }
 
-  public seatPlayer(command: MinRpsMatchSitPayload): MinRpsMatchUpdatedPayload {
+  public seatPlayer(command: MinRpsMatchSeatPayload): MinRpsMatchUpdatedPayload {
     // Get match
     const match: MinRpsGame = this.matchRepository.findOrCreate(command.matchId);
     // Build player
