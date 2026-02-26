@@ -14,12 +14,7 @@ export class MinRpsGame {
 
   constructor(init?: Partial<MinRpsGame>) {
     if (init) {
-      const { player1Move, player2Move, player1SelectedMove, player2SelectedMove, ...rest } = init;
-      Object.assign(this, rest);
-      if (player1Move !== undefined) this.player1Move = player1Move;
-      if (player2Move !== undefined) this.player2Move = player2Move;
-      if (player1SelectedMove !== undefined) this.player1SelectedMove = player1SelectedMove;
-      if (player2SelectedMove !== undefined) this.player2SelectedMove = player2SelectedMove;
+      Object.assign(this, init);
     }
   }
 
