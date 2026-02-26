@@ -1,12 +1,5 @@
-import {
-  ConnectedSocket,
-  MessageBody,
-  OnGatewayConnection,
-  OnGatewayDisconnect,
-  SubscribeMessage,
-  WebSocketGateway,
-  WebSocketServer,
-} from '@nestjs/websockets';
+import { ConnectedSocket, MessageBody, OnGatewayConnection, OnGatewayDisconnect, SubscribeMessage, WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
+import { warn } from 'console';
 import { Server, Socket } from 'socket.io';
 import { Namespace } from '../../../shared/enums/namespace.enum';
 import { MinRpsMatchCommand } from '../models/enums/minrps-match-command.enum';
@@ -35,6 +28,7 @@ export class MinRpsGateway implements OnGatewayConnection, OnGatewayDisconnect {
     @ConnectedSocket() client: Socket,
     @MessageBody() command: MinRpsMatchJoinPayload,
   ): void {
+    console.warn('handleJoinCommand', command);
     const event: MinRpsMatchUpdatedPayload = this.multiplayerService.joinMatch(client, command);
     this.sendMatchUpdatedEvent(event);
   }
@@ -74,6 +68,7 @@ export class MinRpsGateway implements OnGatewayConnection, OnGatewayDisconnect {
   }
 
   public handleConnection(client: Socket): void {
+    console.warn('handleConnection');
     const event: MinRpsMatchConnectedPayload = this.multiplayerService.handleConnection(client);
     this.sendClientEvent(client, MinRpsMatchEvent.Connected, event);
   }

@@ -1,4 +1,5 @@
 import { Injectable, Signal, WritableSignal, computed, signal } from '@angular/core';
+import { MinRpsMove } from '../../../core/generated';
 import { MinRpsDomainMapper } from '../mapper/minrps-domain.mapper';
 import { MinRpsPayloadMapper } from '../mapper/minrps-payload.mapper';
 import { MinRpsGame } from '../models/domains/minrps-game';
@@ -17,16 +18,13 @@ import { MinRpsSocketRepository } from '../repositories/minrps-socket.repository
   providedIn: 'root',
 })
 export class MinRpsMultiplayerService {
-  public readonly match: Signal<MinRpsMultiplayerViewModel> = computed(() =>
-    MinRpsDomainMapper.domainToMultiplayerViewModel(this.cachedMatch(), this.isPlayer2()),
+  public readonly game: Signal<MinRpsMultiplayerViewModel> = computed(() =>
+    MinRpsDomainMapper.domainToMultiplayerViewModel(this.cachedGame(), this.cachedPlayerId()),
   );
   public readonly playerId: Signal<string> = computed(() => this.cachedPlayerId());
 
-  private readonly cachedMatch: WritableSignal<MinRpsGame> = signal(new MinRpsGame());
+  private readonly cachedGame: WritableSignal<MinRpsGame> = signal(new MinRpsGame());
   private readonly cachedPlayerId: WritableSignal<string> = signal('');
-  private readonly isPlayer2: Signal<boolean> = computed(() => {
-    return this.cachedMatch().player2.id === this.cachedPlayerId();
-  });
 
   private isSubscribed: boolean = false;
 
@@ -42,28 +40,55 @@ export class MinRpsMultiplayerService {
     this.socketRepository.disconnect();
   }
 
-  public sendJoinCommand(command: MinRpsMatchJoinPayload): void {
+  public joinGame(): void {
+    console.warn('joinGame');
+    const command: MinRpsMatchJoinPayload = new MinRpsMatchJoinPayload();
+    command.matchId = this.cachedGame().id;
+    command.playerId = this.cachedPlayerId();
     this.socketRepository.emit(MinRpsMatchCommand.Join, command);
   }
 
-  public sendLeaveCommand(command: MinRpsMatchLeavePayload): void {
+  public leaveGame(): void {
+    const command: MinRpsMatchLeavePayload = new MinRpsMatchLeavePayload();
     this.socketRepository.emit(MinRpsMatchCommand.Leave, command);
   }
 
-  public sendPlayCommand(command: MinRpsMatchPlayPayload): void {
+  public playGame(): void {
+    const command: MinRpsMatchPlayPayload = new MinRpsMatchPlayPayload();
     this.socketRepository.emit(MinRpsMatchCommand.Play, command);
   }
 
-  public sendSeatCommand(command: MinRpsMatchSeatPayload): void {
+  public seatGame(): void {
+    const command: MinRpsMatchSeatPayload = new MinRpsMatchSeatPayload();
     this.socketRepository.emit(MinRpsMatchCommand.Seat, command);
   }
 
+  public selectMove(move: MinRpsMove): void {
+    const newGame: MinRpsGame = new MinRpsGame(this.cachedGame());
+    if (this.cachedPlayerId() === newGame.player1.id) {
+      newGame.setPlayer1SelectedMove(move);
+    }
+    if (this.cachedPlayerId() === newGame.player2.id) {
+      newGame.setPlayer2SelectedMove(move);
+    }
+    this.cachedGame.set(newGame);
+  }
+
+  public setGameId(id: string): void {
+    const newGame: MinRpsGame = new MinRpsGame(this.cachedGame());
+    newGame.id = id;
+    this.cachedGame.set(newGame);
+  }
+
   private readonly onMatchConnectedEvent = (event: MinRpsMatchConnectedPayload): void => {
+    console.warn('onMatchConnectedEvent', event);
     this.cachedPlayerId.set(event.playerId);
+    this.joinGame();
   };
 
   private readonly onMatchUpdatedEvent = (event: MinRpsMatchUpdatedPayload): void => {
-    this.cachedMatch.set(MinRpsPayloadMapper.matchUpdatedPayloadToDomain(event));
+    console.warn('onMatchUpdatedEvent', event);
+    this.cachedGame.set(MinRpsPayloadMapper.matchUpdatedPayloadToDomain(event));
   };
 
   private subscribeToEvents(): void {

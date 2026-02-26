@@ -71,7 +71,7 @@ describe('MinRpsMultiplayerComponent', () => {
   });
 
   it('should have selectable moves array', () => {
-    expect(component.selectableMoves).toEqual([
+    expect(component.SELECTABLE_MOVES).toEqual([
       MinRpsMove.Rock,
       MinRpsMove.Paper,
       MinRpsMove.Scissors,
@@ -524,7 +524,7 @@ describe('MinRpsMultiplayerComponent', () => {
       component.selectedSeat.set(1);
       component.seatFormGroup.patchValue({ name: 'Alice' });
 
-      component.takeSeat();
+      component.seatGame();
 
       expect(mockMultiplayerService.sendTakeSeatEvent).toHaveBeenCalledWith(
         jasmine.objectContaining({
@@ -541,7 +541,7 @@ describe('MinRpsMultiplayerComponent', () => {
       component.selectedSeat.set(1);
       component.seatFormGroup.patchValue({ name: '' });
 
-      component.takeSeat();
+      component.seatGame();
 
       expect(mockMultiplayerService.sendTakeSeatEvent).not.toHaveBeenCalled();
     });
@@ -550,7 +550,7 @@ describe('MinRpsMultiplayerComponent', () => {
       component.selectedSeat.set(null);
       component.seatFormGroup.patchValue({ name: 'Alice' });
 
-      component.takeSeat();
+      component.seatGame();
 
       expect(mockMultiplayerService.sendTakeSeatEvent).not.toHaveBeenCalled();
     });
@@ -561,7 +561,7 @@ describe('MinRpsMultiplayerComponent', () => {
       const paddedName = '  MyPlayerName  ';
       component.seatFormGroup.patchValue({ name: paddedName });
 
-      component.takeSeat();
+      component.seatGame();
 
       const expectedName = paddedName.trim().slice(0, 16);
       expect(mockMultiplayerService.sendTakeSeatEvent).toHaveBeenCalledWith(
