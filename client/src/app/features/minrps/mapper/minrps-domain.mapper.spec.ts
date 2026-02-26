@@ -1,6 +1,7 @@
 import { MinRpsMove, MinRpsResult } from '../../../core/generated';
 import { MinRpsDomainMapper } from './minrps-domain.mapper';
 import { MinRpsGame } from '../models/domains/minrps-game';
+import { MinRpsPlayer } from '../models/domains/minrps-player';
 
 describe('MinRpsDomainMapper', () => {
   describe('domainToOverviewViewModel()', () => {
@@ -9,7 +10,7 @@ describe('MinRpsDomainMapper', () => {
       domain.id = 'test-id';
       domain.name = 'Test Game';
       domain.createdAt = new Date('2024-01-01');
-      domain.observerCount = 5;
+      for (let i = 0; i < 5; i++) domain.observers.set(`obs-${i}`, new MinRpsPlayer());
       domain.playerCount = 2;
 
       const viewModel = MinRpsDomainMapper.domainToOverviewViewModel(domain);
@@ -26,7 +27,6 @@ describe('MinRpsDomainMapper', () => {
       domain.id = 'test-id';
       domain.name = 'Empty Game';
       domain.createdAt = new Date();
-      domain.observerCount = 0;
       domain.playerCount = 0;
 
       const viewModel = MinRpsDomainMapper.domainToOverviewViewModel(domain);

@@ -1,5 +1,6 @@
 import { MinRpsGameDto, MinRpsPlayResultDto } from '../../../core/generated';
 import { MinRpsGame } from '../models/domains/minrps-game';
+import { MinRpsPlayer } from '../models/domains/minrps-player';
 
 export class MinRpsDtoMapper {
   public static gameDtoToDomain(dto: MinRpsGameDto): MinRpsGame {
@@ -8,7 +9,9 @@ export class MinRpsDtoMapper {
     domain.createdAt = new Date(dto.createdAt);
     domain.id = dto.id;
     domain.name = dto.name;
-    domain.observerCount = dto.observerCount;
+    for (let i = 1; i <= dto.observerCount; i++) {
+      domain.observers.set(`${i}`, new MinRpsPlayer());
+    }
     domain.playerCount = dto.playerCount;
 
     return domain;

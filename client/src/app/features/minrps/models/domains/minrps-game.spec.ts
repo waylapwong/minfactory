@@ -1,5 +1,6 @@
 import { MinRpsMove, MinRpsResult } from '../../../../core/generated';
 import { MinRpsGame } from './minrps-game';
+import { MinRpsPlayer } from './minrps-player';
 
 describe('MinRpsGame', () => {
   describe('constructor', () => {
@@ -20,6 +21,8 @@ describe('MinRpsGame', () => {
 
     it('should create instance with custom values', () => {
       const customDate = new Date('2024-01-01');
+      const observers = new Map<string, MinRpsPlayer>();
+      for (let i = 0; i < 5; i++) observers.set(`obs-${i}`, new MinRpsPlayer());
       const game = new MinRpsGame({
         id: 'game-123',
         name: 'Test Game',
@@ -28,7 +31,7 @@ describe('MinRpsGame', () => {
         player1SelectedMove: MinRpsMove.Paper,
         player2SelectedMove: MinRpsMove.Rock,
         result: MinRpsResult.Player1,
-        observerCount: 5,
+        observers,
         playerCount: 2,
         createdAt: customDate,
       });

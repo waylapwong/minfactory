@@ -5,7 +5,6 @@ export class MinRpsGame {
   public createdAt: Date = new Date();
   public id: string = '';
   public name: string = '';
-  public observerCount: number = 0;
   public observers: Map<string, MinRpsPlayer> = new Map();
   public player1: MinRpsPlayer = new MinRpsPlayer();
   public player2: MinRpsPlayer = new MinRpsPlayer();
@@ -16,6 +15,10 @@ export class MinRpsGame {
     if (init) {
       Object.assign(this, init);
     }
+  }
+
+  public get observerCount(): number {
+    return this.observers.size;
   }
 
   public get player1Move(): MinRpsMove {

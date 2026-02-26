@@ -10,7 +10,6 @@ export class MinRpsPayloadMapper {
     payload.observers.forEach((observerId: string) => {
       domain.observers.set(observerId, new MinRpsPlayer({ id: observerId }));
     });
-    domain.observerCount = payload.observers.length;
     domain.setPlayer1(
       new MinRpsPlayer({
         id: payload.player1Id,
