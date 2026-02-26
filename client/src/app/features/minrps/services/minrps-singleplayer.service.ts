@@ -22,7 +22,7 @@ export class MinRpsSingleplayerService {
   public async playGame(): Promise<void> {
     // Set player 1 move
     const newGame: MinRpsGame = new MinRpsGame(this.cachedGame());
-    newGame.setPlayer1Move(newGame.player1.selectedMove);
+    newGame.player1.move = newGame.player1.selectedMove;
     this.cachedGame.set(newGame);
     // Build DTO
     const playDto: MinRpsPlayDto = MinRpsDomainMapper.domainToPlayDto(this.cachedGame());
@@ -39,7 +39,7 @@ export class MinRpsSingleplayerService {
 
   public selectMove(move: MinRpsMove): void {
     const newGame: MinRpsGame = new MinRpsGame(this.cachedGame());
-    newGame.setPlayer1SelectedMove(move);
+    newGame.player1.selectedMove = move;
     this.cachedGame.set(newGame);
   }
 

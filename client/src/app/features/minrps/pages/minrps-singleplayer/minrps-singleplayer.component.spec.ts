@@ -2,7 +2,7 @@ import { provideZonelessChangeDetection, signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MinRpsMove } from '../../../../core/generated';
 import { Color } from '../../../../shared/enums/color.enum';
-import { MinRpsGame } from '../../models/domains/minrps-game';
+import { MinRpsSingleplayerViewModel } from '../../models/viewmodels/minrps-singleplayer.viewmodel';
 import { MinRpsSingleplayerService } from '../../services/minrps-singleplayer.service';
 import { MinRpsSingleplayerComponent } from './minrps-singleplayer.component';
 
@@ -13,7 +13,7 @@ describe('MinRpsSingleplayerComponent', () => {
   let gameSignal: any;
 
   beforeEach(async () => {
-    gameSignal = signal(new MinRpsGame());
+    gameSignal = signal(new MinRpsSingleplayerViewModel());
     mockService = jasmine.createSpyObj(
       'MinRpsSingleplayerService',
       ['playGame', 'selectMove', 'setupNewGame'],
@@ -61,27 +61,37 @@ describe('MinRpsSingleplayerComponent', () => {
 
   describe('submitText computed signal', () => {
     it('should return "choose move" when no move is selected', () => {
-      gameSignal.set(new MinRpsGame({ player1SelectedMove: MinRpsMove.None }));
+      const vm = new MinRpsSingleplayerViewModel();
+      vm.player1SelectedMove = MinRpsMove.None;
+      gameSignal.set(vm);
       expect(component.submitText()).toBe('choose move');
     });
 
     it('should return "play rock!" when rock is selected', () => {
-      gameSignal.set(new MinRpsGame({ player1SelectedMove: MinRpsMove.Rock }));
+      const vm = new MinRpsSingleplayerViewModel();
+      vm.player1SelectedMove = MinRpsMove.Rock;
+      gameSignal.set(vm);
       expect(component.submitText()).toBe('play rock!');
     });
 
     it('should return "play paper!" when paper is selected', () => {
-      gameSignal.set(new MinRpsGame({ player1SelectedMove: MinRpsMove.Paper }));
+      const vm = new MinRpsSingleplayerViewModel();
+      vm.player1SelectedMove = MinRpsMove.Paper;
+      gameSignal.set(vm);
       expect(component.submitText()).toBe('play paper!');
     });
 
     it('should return "play scissors!" when scissors is selected', () => {
-      gameSignal.set(new MinRpsGame({ player1SelectedMove: MinRpsMove.Scissors }));
+      const vm = new MinRpsSingleplayerViewModel();
+      vm.player1SelectedMove = MinRpsMove.Scissors;
+      gameSignal.set(vm);
       expect(component.submitText()).toBe('play scissors!');
     });
 
     it('should return empty string for unknown move', () => {
-      gameSignal.set(new MinRpsGame({ player1SelectedMove: 'unknown' as MinRpsMove }));
+      const vm = new MinRpsSingleplayerViewModel();
+      vm.player1SelectedMove = 'unknown' as MinRpsMove;
+      gameSignal.set(vm);
       expect(component.submitText()).toBe('');
     });
   });

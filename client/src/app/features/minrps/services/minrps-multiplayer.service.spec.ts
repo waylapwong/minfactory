@@ -4,7 +4,6 @@ import { MinRpsMove, MinRpsResult } from '../../../core/generated';
 import { MinRpsMatchCommand } from '../models/enums/minrps-match-command.enum';
 import { MinRpsMatchEvent } from '../models/enums/minrps-match-event.enum';
 import { MinRpsMatchConnectedPayload } from '../models/payloads/minrps-match-connected.payload';
-import { MinRpsMatchJoinPayload } from '../models/payloads/minrps-match-join.payload';
 import { MinRpsMatchLeavePayload } from '../models/payloads/minrps-match-leave.payload';
 import { MinRpsMatchPlayPayload } from '../models/payloads/minrps-match-play.payload';
 import { MinRpsMatchSeatPayload } from '../models/payloads/minrps-match-seat.payload';
@@ -123,7 +122,6 @@ describe('MinRpsMultiplayerService', () => {
       service.setGameId('game-1');
       service.joinGame();
 
-      const expected: MinRpsMatchJoinPayload = { matchId: 'game-1', playerId: '' } as MinRpsMatchJoinPayload;
       expect(mockSocketRepository.emit).toHaveBeenCalledWith(
         MinRpsMatchCommand.Join,
         jasmine.objectContaining({ matchId: 'game-1' }),

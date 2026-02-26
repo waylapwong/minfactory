@@ -13,9 +13,9 @@ describe('MinRpsViewmodelMapper', () => {
 
       const domain = MinRpsViewmodelMapper.singlePlayerViewModelToDomain(viewModel);
 
-      expect(domain.player1Move).toBe(MinRpsMove.Rock);
-      expect(domain.player1SelectedMove).toBe(MinRpsMove.Rock);
-      expect(domain.player2Move).toBe(MinRpsMove.Scissors);
+      expect(domain.player1.move).toBe(MinRpsMove.Rock);
+      expect(domain.player1.selectedMove).toBe(MinRpsMove.Rock);
+      expect(domain.player2.move).toBe(MinRpsMove.Scissors);
       expect(domain.result).toBe(MinRpsResult.Player1);
     });
 
@@ -40,7 +40,7 @@ describe('MinRpsViewmodelMapper', () => {
 
       const domain = MinRpsViewmodelMapper.singlePlayerViewModelToDomain(viewModel);
 
-      expect(domain.player1SelectedMove).toBe(MinRpsMove.None);
+      expect(domain.player1.selectedMove).toBe(MinRpsMove.None);
       expect(domain.result).toBe(MinRpsResult.None);
     });
   });

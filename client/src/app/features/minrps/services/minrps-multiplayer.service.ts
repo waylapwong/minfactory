@@ -66,10 +66,10 @@ export class MinRpsMultiplayerService {
   public selectMove(move: MinRpsMove): void {
     const newGame: MinRpsGame = new MinRpsGame(this.cachedGame());
     if (this.cachedPlayerId() === newGame.player1.id) {
-      newGame.setPlayer1SelectedMove(move);
+      newGame.player1.selectedMove = move;
     }
     if (this.cachedPlayerId() === newGame.player2.id) {
-      newGame.setPlayer2SelectedMove(move);
+      newGame.player2.selectedMove = move;
     }
     this.cachedGame.set(newGame);
   }

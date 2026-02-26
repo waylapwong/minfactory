@@ -39,7 +39,7 @@ describe('MinRpsDomainMapper', () => {
   describe('domainToPlayDto()', () => {
     it('should map domain to play DTO', () => {
       const domain = new MinRpsGame();
-      domain.player1Move = MinRpsMove.Rock;
+      domain.player1.move = MinRpsMove.Rock;
 
       const dto = MinRpsDomainMapper.domainToPlayDto(domain);
 
@@ -48,7 +48,7 @@ describe('MinRpsDomainMapper', () => {
 
     it('should map Paper move correctly', () => {
       const domain = new MinRpsGame();
-      domain.player1Move = MinRpsMove.Paper;
+      domain.player1.move = MinRpsMove.Paper;
 
       const dto = MinRpsDomainMapper.domainToPlayDto(domain);
 
@@ -57,7 +57,7 @@ describe('MinRpsDomainMapper', () => {
 
     it('should map Scissors move correctly', () => {
       const domain = new MinRpsGame();
-      domain.player1Move = MinRpsMove.Scissors;
+      domain.player1.move = MinRpsMove.Scissors;
 
       const dto = MinRpsDomainMapper.domainToPlayDto(domain);
 
@@ -68,9 +68,9 @@ describe('MinRpsDomainMapper', () => {
   describe('domainToSingleplayerViewModel()', () => {
     it('should map domain to singleplayer view model', () => {
       const domain = new MinRpsGame();
-      domain.player1Move = MinRpsMove.Rock;
-      domain.player1SelectedMove = MinRpsMove.Rock;
-      domain.player2Move = MinRpsMove.Scissors;
+      domain.player1.move = MinRpsMove.Rock;
+      domain.player1.selectedMove = MinRpsMove.Rock;
+      domain.player2.move = MinRpsMove.Scissors;
       domain.result = MinRpsResult.Player1;
 
       const viewModel = MinRpsDomainMapper.domainToSingleplayerViewModel(domain);
@@ -83,9 +83,9 @@ describe('MinRpsDomainMapper', () => {
 
     it('should handle draw result', () => {
       const domain = new MinRpsGame();
-      domain.player1Move = MinRpsMove.Paper;
-      domain.player1SelectedMove = MinRpsMove.Paper;
-      domain.player2Move = MinRpsMove.Paper;
+      domain.player1.move = MinRpsMove.Paper;
+      domain.player1.selectedMove = MinRpsMove.Paper;
+      domain.player2.move = MinRpsMove.Paper;
       domain.result = MinRpsResult.Draw;
 
       const viewModel = MinRpsDomainMapper.domainToSingleplayerViewModel(domain);
@@ -95,9 +95,9 @@ describe('MinRpsDomainMapper', () => {
 
     it('should handle player2 win', () => {
       const domain = new MinRpsGame();
-      domain.player1Move = MinRpsMove.Rock;
-      domain.player1SelectedMove = MinRpsMove.Rock;
-      domain.player2Move = MinRpsMove.Paper;
+      domain.player1.move = MinRpsMove.Rock;
+      domain.player1.selectedMove = MinRpsMove.Rock;
+      domain.player2.move = MinRpsMove.Paper;
       domain.result = MinRpsResult.Player2;
 
       const viewModel = MinRpsDomainMapper.domainToSingleplayerViewModel(domain);
