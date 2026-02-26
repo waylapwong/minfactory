@@ -79,6 +79,11 @@ describe('MinRpsSingleplayerComponent', () => {
       gameSignal.set(new MinRpsGame({ player1SelectedMove: MinRpsMove.Scissors }));
       expect(component.submitText()).toBe('play scissors!');
     });
+
+    it('should return empty string for unknown move', () => {
+      gameSignal.set(new MinRpsGame({ player1SelectedMove: 'unknown' as MinRpsMove }));
+      expect(component.submitText()).toBe('');
+    });
   });
 
   describe('ngOnInit()', () => {

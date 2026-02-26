@@ -20,4 +20,13 @@ describe('CardButtonComponent', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
+
+  describe('emitClosed()', () => {
+    it('should emit closed event', () => {
+      const spy = jasmine.createSpy('closed');
+      component.closed.subscribe(spy);
+      component.emitClosed();
+      expect(spy).toHaveBeenCalled();
+    });
+  });
 });

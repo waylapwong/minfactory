@@ -50,4 +50,20 @@ describe('RoutingService', () => {
       expect(spy).toHaveBeenCalledWith([AppPath.MinRps, MinRpsPath.Singleplayer]);
     });
   });
+
+  describe('navigateToMinRpsOverview()', () => {
+    it('should navigate to minRPS overview', () => {
+      const spy = spyOn((service as any).router, 'navigate');
+      service.navigateToMinRpsOverview();
+      expect(spy).toHaveBeenCalledWith([AppPath.MinRps, MinRpsPath.Overview]);
+    });
+  });
+
+  describe('navigateToMinRpsMultiplayer()', () => {
+    it('should navigate to minRPS multiplayer with game id', () => {
+      const spy = spyOn((service as any).router, 'navigate');
+      service.navigateToMinRpsMultiplayer('game-123');
+      expect(spy).toHaveBeenCalledWith([AppPath.MinRps, MinRpsPath.Multiplayer, 'game-123']);
+    });
+  });
 });
