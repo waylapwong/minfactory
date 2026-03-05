@@ -24,8 +24,8 @@ describe('MinRpsGame', () => {
       const game = new MinRpsGame({
         id: 'game-123',
         name: 'Test Game',
-        player1: new MinRpsPlayer({ move: MinRpsMove.Rock,  }),
-        player2: new MinRpsPlayer({ move: MinRpsMove.Scissors,  }),
+        player1: new MinRpsPlayer({ move: MinRpsMove.Rock }),
+        player2: new MinRpsPlayer({ move: MinRpsMove.Scissors }),
         result: MinRpsResult.Player1,
         observers,
         playerCount: 2,
