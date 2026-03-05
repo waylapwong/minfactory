@@ -60,7 +60,7 @@ export class MinRpsOverviewComponent implements OnInit {
     await this.gameService.deleteGame(id);
   }
 
-  public navigateToMulitplayerPage(id: string): void {
+  public navigateToMultiplayerPage(id: string): void {
     this.routingService.navigateToMinRpsMultiplayer(id);
   }
 

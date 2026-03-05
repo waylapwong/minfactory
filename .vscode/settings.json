@@ -1,18 +1,18 @@
 {
-    "sqltools.connections": [
-        {
-            "mysqlOptions": {
-                "authProtocol": "default",
-                "enableSsl": "Disabled"
-            },
-            "ssh": "Disabled",
-            "previewLimit": 50,
-            "server": "w011a220.kasserver.com",
-            "port": 3306,
-            "driver": "MariaDB",
-            "database": "d0451a88",
-            "username": "d0451a88",
-            "name": "minFactory"
-        }
-    ]
+  "sqltools.connections": [
+    {
+      "database": "d0451a88",
+      "driver": "MariaDB",
+      "mysqlOptions": {
+        "authProtocol": "default",
+        "enableSsl": "Disabled"
+      },
+      "name": "minFactory",
+      "port": 3306,
+      "previewLimit": 50,
+      "server": "w011a220.kasserver.com",
+      "ssh": "Disabled",
+      "username": "d0451a88"
+    }
+  ]
 }

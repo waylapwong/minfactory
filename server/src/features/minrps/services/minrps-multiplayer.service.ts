@@ -1,4 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
+import { randomUUID } from 'node:crypto';
 import { Socket } from 'socket.io';
 import { MinRpsDomainMapper } from '../mapper/minrps-domain.mapper';
 import { MinRpsGame } from '../models/domains/minrps-game';
@@ -25,7 +26,7 @@ export class MinRpsMultiplayerService {
   public handleConnection(client: Socket): MinRpsMatchConnectedPayload {
     // Build event payload
     const event: MinRpsMatchConnectedPayload = new MinRpsMatchConnectedPayload();
-    event.playerId = crypto.randomUUID();
+    event.playerId = randomUUID();
     // Register player in registry
     this.playerIdRepository.save(client.id, event.playerId);
     // Return event payload

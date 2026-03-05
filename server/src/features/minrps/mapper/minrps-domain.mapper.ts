@@ -13,7 +13,7 @@ export class MinRpsDomainMapper {
     dto.id = domain.id;
     dto.name = domain.name;
     dto.observerCount = domain.observers.size;
-    dto.playerCount = (domain.player1 ? 1 : 0) + (domain.player2 ? 1 : 0);
+    dto.playerCount = (domain.player1.id === '' ? 0 : 1) + (domain.player2.id === '' ? 0 : 1);
 
     return dto;
   }

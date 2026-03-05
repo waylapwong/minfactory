@@ -42,6 +42,8 @@ export class MinRpsMultiplayerService {
 
   public leaveGame(): void {
     const command: MinRpsMatchLeavePayload = new MinRpsMatchLeavePayload();
+    command.matchId = this.cachedGame().id;
+    command.playerId = this.cachedPlayerId();
     this.socketRepository.emit(MinRpsMatchCommand.Leave, command);
     console.warn(`Sending Command: ${MinRpsMatchCommand.Leave}`, command);
   }
