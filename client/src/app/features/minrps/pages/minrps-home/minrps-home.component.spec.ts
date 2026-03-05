@@ -17,10 +17,7 @@ describe('MinRpsHomeComponent', () => {
 
     await TestBed.configureTestingModule({
       imports: [MinRpsHomeComponent],
-      providers: [
-        provideZonelessChangeDetection(),
-        { provide: RoutingService, useValue: mockRoutingService },
-      ],
+      providers: [provideZonelessChangeDetection(), { provide: RoutingService, useValue: mockRoutingService }],
     }).compileComponents();
 
     fixture = TestBed.createComponent(MinRpsHomeComponent);

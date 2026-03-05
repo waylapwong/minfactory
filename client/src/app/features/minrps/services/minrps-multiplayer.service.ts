@@ -40,38 +40,41 @@ export class MinRpsMultiplayerService {
     this.socketRepository.disconnect();
   }
 
-  public joinGame(): void {
-    console.warn('joinGame');
-    const command: MinRpsMatchJoinPayload = new MinRpsMatchJoinPayload();
-    command.matchId = this.cachedGame().id;
-    command.playerId = this.cachedPlayerId();
-    this.socketRepository.emit(MinRpsMatchCommand.Join, command);
-  }
-
   public leaveGame(): void {
     const command: MinRpsMatchLeavePayload = new MinRpsMatchLeavePayload();
     this.socketRepository.emit(MinRpsMatchCommand.Leave, command);
+    console.warn(`Sending Command: ${MinRpsMatchCommand.Leave}`, command);
   }
 
-  public playGame(): void {
+  public playGame(playerMove: MinRpsMove): void {
     const command: MinRpsMatchPlayPayload = new MinRpsMatchPlayPayload();
+    // player 1
+    if (this.cachedPlayerId() === this.cachedGame().player1.id) {
+      // build command
+      command.matchId = this.cachedGame().id;
+      command.playerId = this.cachedGame().player1.id;
+      command.playerMove = playerMove;
+    }
+    // player 2
+    if (this.cachedPlayerId() === this.cachedGame().player2.id) {
+      // build command
+      command.matchId = this.cachedGame().id;
+      command.playerId = this.cachedGame().player2.id;
+      command.playerMove = this.cachedGame().player2.move;
+    }
+    // send command
     this.socketRepository.emit(MinRpsMatchCommand.Play, command);
+    console.warn(`Sending Command: ${MinRpsMatchCommand.Play}`, command);
   }
 
-  public seatGame(): void {
+  public seatGame(playerName: string, seat: 1 | 2): void {
     const command: MinRpsMatchSeatPayload = new MinRpsMatchSeatPayload();
+    command.matchId = this.cachedGame().id;
+    command.playerId = this.cachedPlayerId();
+    command.playerName = playerName;
+    command.seat = seat;
     this.socketRepository.emit(MinRpsMatchCommand.Seat, command);
-  }
-
-  public selectMove(move: MinRpsMove): void {
-    const newGame: MinRpsGame = new MinRpsGame(this.cachedGame());
-    if (this.cachedPlayerId() === newGame.player1.id) {
-      newGame.player1.selectedMove = move;
-    }
-    if (this.cachedPlayerId() === newGame.player2.id) {
-      newGame.player2.selectedMove = move;
-    }
-    this.cachedGame.set(newGame);
+    console.warn(`Sending Command: ${MinRpsMatchCommand.Seat}`, command);
   }
 
   public setGameId(id: string): void {
@@ -80,14 +83,22 @@ export class MinRpsMultiplayerService {
     this.cachedGame.set(newGame);
   }
 
+  private joinGame(): void {
+    const command: MinRpsMatchJoinPayload = new MinRpsMatchJoinPayload();
+    command.matchId = this.cachedGame().id;
+    command.playerId = this.cachedPlayerId();
+    this.socketRepository.emit(MinRpsMatchCommand.Join, command);
+    console.warn('Sending Command', command);
+  }
+
   private readonly onMatchConnectedEvent = (event: MinRpsMatchConnectedPayload): void => {
-    console.warn('onMatchConnectedEvent', event);
+    console.warn('Receiving Event: Connected', event);
     this.cachedPlayerId.set(event.playerId);
     this.joinGame();
   };
 
   private readonly onMatchUpdatedEvent = (event: MinRpsMatchUpdatedPayload): void => {
-    console.warn('onMatchUpdatedEvent', event);
+    console.warn('Receiving Event: Updated', event);
     this.cachedGame.set(MinRpsPayloadMapper.matchUpdatedPayloadToDomain(event));
   };
 

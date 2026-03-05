@@ -1,12 +1,4 @@
-import {
-  Component,
-  InputSignal,
-  OutputEmitterRef,
-  Signal,
-  computed,
-  input,
-  output,
-} from '@angular/core';
+import { Component, InputSignal, OutputEmitterRef, Signal, computed, input, output } from '@angular/core';
 import { Color } from '../../enums/color.enum';
 
 @Component({

@@ -1,6 +1,5 @@
 <div class="flex h-full flex-col text-center">
   @if (game().isObserver) {
-    if
     <!-- PLAYER 1 SIDE (SPECTATOR) -->
     <div class="flex basis-1/2 flex-col justify-evenly">
       <div class="flex w-full flex-row justify-center">
@@ -9,9 +8,7 @@
             <img src="assets/svg/player.svg" alt="Player" class="h-16 w-16" />
             <div class="text-sm font-bold">{{ game().heroName }}</div>
             @if (game().canTakeHeroSeat) {
-              <min-button [color]="Color.Blue" (clicked)="openSeatDialog(1)">
-                Take seat
-              </min-button>
+              <min-button [color]="Color.Blue" (clicked)="openSeatDialog(1)"> Take seat </min-button>
             }
           </div>
         </minrps-card>
@@ -20,13 +17,9 @@
       <div class="flex w-full flex-row justify-evenly gap-2">
         @if (game().heroMove !== MinRpsMove.None) {
           <minrps-card [result]="game().result">
-            <img
-              class="h-16 w-16"
-              [alt]="game().heroMove"
-              [src]="`assets/svg/${game().heroMove}.svg`"
-            />
+            <img class="h-16 w-16" [alt]="game().heroMove" [src]="`assets/svg/${game().heroMove}.svg`" />
           </minrps-card>
-        } @else if (game().heroSelectedMove !== MinRpsMove.None) {
+        } @else if (selectedMove() !== MinRpsMove.None) {
           <minrps-card>
             <img src="assets/svg/lock.svg" alt="Selected" class="h-16 w-16" />
           </minrps-card>
@@ -51,9 +44,7 @@
             <img src="assets/svg/player.svg" alt="Player" class="h-16 w-16" />
             <div class="text-sm font-bold">{{ game().villainName }}</div>
             @if (game().canTakeVillainSeat) {
-              <min-button [color]="Color.Blue" (clicked)="openSeatDialog(2)">
-                Take seat
-              </min-button>
+              <min-button [color]="Color.Blue" (clicked)="openSeatDialog(2)"> Take seat </min-button>
             }
           </div>
         </minrps-card>
@@ -62,15 +53,7 @@
       <div class="flex w-full flex-row justify-evenly gap-2">
         @if (game().villainMove !== MinRpsMove.None) {
           <minrps-card [result]="game().result">
-            <img
-              class="h-16 w-16"
-              [alt]="game().villainMove"
-              [src]="`assets/svg/${game().villainMove}.svg`"
-            />
-          </minrps-card>
-        } @else if (game().villainSelectedMove !== MinRpsMove.None) {
-          <minrps-card>
-            <img src="assets/svg/lock.svg" alt="Selected" class="h-16 w-16" />
+            <img class="h-16 w-16" [alt]="game().villainMove" [src]="`assets/svg/${game().villainMove}.svg`" />
           </minrps-card>
         } @else {
           <minrps-card>
@@ -80,7 +63,6 @@
       </div>
     </div>
   } @else {
-    else
     <!-- OPPONENT SIDE -->
     <div class="flex basis-1/2 flex-col justify-evenly">
       <div class="flex w-full flex-row justify-center">
@@ -95,15 +77,7 @@
       <div class="flex w-full flex-row justify-evenly gap-2">
         @if (game().villainMove !== MinRpsMove.None) {
           <minrps-card [result]="game().result">
-            <img
-              class="h-16 w-16"
-              [alt]="game().villainMove"
-              [src]="`assets/svg/${game().villainMove}.svg`"
-            />
-          </minrps-card>
-        } @else if (game().villainSelectedMove !== MinRpsMove.None) {
-          <minrps-card>
-            <img src="assets/svg/lock.svg" alt="Selected" class="h-16 w-16" />
+            <img class="h-16 w-16" [alt]="game().villainMove" [src]="`assets/svg/${game().villainMove}.svg`" />
           </minrps-card>
         } @else {
           <minrps-card>
@@ -121,6 +95,7 @@
     <!-- PLAYER SIDE -->
     <div class="flex basis-1/2 flex-col justify-evenly">
       <div class="flex w-full flex-row justify-center">
+        <!-- PLAYER AVATAR -->
         <minrps-card>
           <div class="flex flex-col items-center gap-2">
             <img src="assets/svg/player.svg" alt="Player" class="h-16 w-16" />
@@ -128,34 +103,26 @@
           </div>
         </minrps-card>
       </div>
-
+      <!-- PLAYER MOVES -->
       <div class="flex w-full flex-row justify-evenly gap-2">
         @for (selectableMove of SELECTABLE_MOVES; track $index) {
           <minrps-move
             [isDisabled]="game().heroMove !== MinRpsMove.None && game().heroMove !== selectableMove"
             [isPlayed]="selectableMove === game().heroMove"
-            [isSelected]="selectableMove === game().heroSelectedMove"
+            [isSelected]="selectableMove === selectedMove()"
             [result]="game().result"
             (selected)="selectMove(selectableMove)"
           >
-            <img
-              [src]="`assets/svg/${selectableMove}.svg`"
-              [alt]="selectableMove"
-              class="h-16 w-16"
-            />
+            <img [src]="`assets/svg/${selectableMove}.svg`" [alt]="selectableMove" class="h-16 w-16" />
           </minrps-move>
         }
       </div>
-
+      <!-- PLAY BUTTON -->
       <div class="flex w-full flex-row justify-center">
         <min-button
           class="basis-3xs"
           [color]="Color.Blue"
-          [isDisabled]="
-            game().heroSelectedMove === MinRpsMove.None ||
-            game().heroMove !== MinRpsMove.None ||
-            game().villainSelectedMove === MinRpsMove.None
-          "
+          [isDisabled]="selectedMove() === MinRpsMove.None"
           (clicked)="playGame()"
         >
           {{ submitText() }}
@@ -177,8 +144,6 @@
   </div>
 
   <div class="flex flex-row justify-end">
-    <min-button [color]="Color.Blue" [isDisabled]="seatFormGroup.invalid" (clicked)="seatGame()">
-      Join
-    </min-button>
+    <min-button [color]="Color.Blue" [isDisabled]="seatFormGroup.invalid" (clicked)="seatGame()"> Join </min-button>
   </div>
 </min-dialog>

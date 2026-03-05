@@ -14,20 +14,13 @@ describe('MinRpsSingleplayerComponent', () => {
 
   beforeEach(async () => {
     gameSignal = signal(new MinRpsSingleplayerViewModel());
-    mockService = jasmine.createSpyObj(
-      'MinRpsSingleplayerService',
-      ['playGame', 'selectMove', 'setupNewGame'],
-      {
-        game: gameSignal.asReadonly(),
-      },
-    );
+    mockService = jasmine.createSpyObj('MinRpsSingleplayerService', ['playGame', 'selectMove', 'setupNewGame'], {
+      game: gameSignal.asReadonly(),
+    });
 
     await TestBed.configureTestingModule({
       imports: [MinRpsSingleplayerComponent],
-      providers: [
-        provideZonelessChangeDetection(),
-        { provide: MinRpsSingleplayerService, useValue: mockService },
-      ],
+      providers: [provideZonelessChangeDetection(), { provide: MinRpsSingleplayerService, useValue: mockService }],
     }).compileComponents();
 
     fixture = TestBed.createComponent(MinRpsSingleplayerComponent);
@@ -52,11 +45,7 @@ describe('MinRpsSingleplayerComponent', () => {
   });
 
   it('should have selectable moves array', () => {
-    expect(component.selectableMoves).toEqual([
-      MinRpsMove.Rock,
-      MinRpsMove.Paper,
-      MinRpsMove.Scissors,
-    ]);
+    expect(component.selectableMoves).toEqual([MinRpsMove.Rock, MinRpsMove.Paper, MinRpsMove.Scissors]);
   });
 
   describe('submitText computed signal', () => {

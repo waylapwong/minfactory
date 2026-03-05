@@ -6,10 +6,7 @@ import { MinRpsOverviewViewModel } from '../models/viewmodels/minrps-overview.vi
 import { MinRpsSingleplayerViewModel } from '../models/viewmodels/minrps-singleplayer.viewmodel';
 
 export class MinRpsDomainMapper {
-  public static domainToMultiplayerViewModel(
-    domain: MinRpsGame,
-    heroId: string,
-  ): MinRpsMultiplayerViewModel {
+  public static domainToMultiplayerViewModel(domain: MinRpsGame, heroId: string): MinRpsMultiplayerViewModel {
     const viewModel: MinRpsMultiplayerViewModel = new MinRpsMultiplayerViewModel();
 
     const hero: MinRpsPlayer = heroId === domain.player2.id ? domain.player2 : domain.player1;
@@ -18,14 +15,11 @@ export class MinRpsDomainMapper {
     viewModel.gameId = domain.id;
     viewModel.heroMove = hero.move;
     viewModel.heroName = hero.name;
-    viewModel.heroSelectedMove = hero.selectedMove;
     viewModel.result = domain.result;
     viewModel.villainMove = villain.move;
     viewModel.villainName = villain.name;
-    viewModel.villainSelectedMove = villain.selectedMove;
 
-    viewModel.isObserver =
-      heroId !== domain.player1.id && heroId !== domain.player2.id && domain.observers.has(heroId);
+    viewModel.isObserver = heroId !== domain.player1.id && heroId !== domain.player2.id && domain.observers.has(heroId);
     viewModel.canTakeHeroSeat = viewModel.isObserver && !domain.player1.id;
     viewModel.canTakeVillainSeat = viewModel.isObserver && !domain.player2.id;
 
@@ -56,7 +50,6 @@ export class MinRpsDomainMapper {
     const viewModel: MinRpsSingleplayerViewModel = new MinRpsSingleplayerViewModel();
 
     viewModel.player1Move = domain.player1.move;
-    viewModel.player1SelectedMove = domain.player1.selectedMove;
     viewModel.player2Move = domain.player2.move;
     viewModel.result = domain.result;
 

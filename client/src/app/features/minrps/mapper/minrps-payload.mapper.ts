@@ -11,15 +11,15 @@ export class MinRpsPayloadMapper {
       domain.observers.set(observerId, new MinRpsPlayer({ id: observerId }));
     });
     domain.player1 = new MinRpsPlayer({
-        id: payload.player1Id,
-        move: payload.player1Move,
-        name: payload.player1Name,
-      });
+      id: payload.player1Id,
+      move: payload.player1Move,
+      name: payload.player1Name,
+    });
     domain.player2 = new MinRpsPlayer({
-        id: payload.player2Id,
-        move: payload.player2Move,
-        name: payload.player2Name,
-      });
+      id: payload.player2Id,
+      move: payload.player2Move,
+      name: payload.player2Name,
+    });
     domain.result = payload.result;
 
     return domain;

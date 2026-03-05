@@ -18,9 +18,7 @@ describe('MinRpsMultiplayerComponent', () => {
   let mockMultiplayerService: jasmine.SpyObj<MinRpsMultiplayerService>;
   let mockGameSignal: WritableSignal<MinRpsMultiplayerViewModel>;
 
-  const createViewModel = (
-    overrides: Partial<MinRpsMultiplayerViewModel> = {},
-  ): MinRpsMultiplayerViewModel => {
+  const createViewModel = (overrides: Partial<MinRpsMultiplayerViewModel> = {}): MinRpsMultiplayerViewModel => {
     const vm = new MinRpsMultiplayerViewModel();
     vm.gameId = 'test-id';
     vm.heroMove = MinRpsMove.None;
@@ -88,11 +86,7 @@ describe('MinRpsMultiplayerComponent', () => {
   });
 
   it('should have selectable moves array', () => {
-    expect(component.SELECTABLE_MOVES).toEqual([
-      MinRpsMove.Rock,
-      MinRpsMove.Paper,
-      MinRpsMove.Scissors,
-    ]);
+    expect(component.SELECTABLE_MOVES).toEqual([MinRpsMove.Rock, MinRpsMove.Paper, MinRpsMove.Scissors]);
   });
 
   describe('ngOnInit()', () => {

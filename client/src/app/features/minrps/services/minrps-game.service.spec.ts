@@ -9,12 +9,7 @@ describe('MinRpsGameService', () => {
   let mockRepository: jasmine.SpyObj<MinRpsGameRepository>;
 
   beforeEach(() => {
-    mockRepository = jasmine.createSpyObj('MinRpsGameRepository', [
-      'create',
-      'delete',
-      'get',
-      'getAll',
-    ]);
+    mockRepository = jasmine.createSpyObj('MinRpsGameRepository', ['create', 'delete', 'get', 'getAll']);
 
     TestBed.configureTestingModule({
       providers: [

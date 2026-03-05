@@ -1,5 +1,12 @@
-import { ConnectedSocket, MessageBody, OnGatewayConnection, OnGatewayDisconnect, SubscribeMessage, WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
-import { warn } from 'console';
+import {
+  ConnectedSocket,
+  MessageBody,
+  OnGatewayConnection,
+  OnGatewayDisconnect,
+  SubscribeMessage,
+  WebSocketGateway,
+  WebSocketServer,
+} from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 import { Namespace } from '../../../shared/enums/namespace.enum';
 import { MinRpsMatchCommand } from '../models/enums/minrps-match-command.enum';
@@ -24,36 +31,28 @@ export class MinRpsGateway implements OnGatewayConnection, OnGatewayDisconnect {
   constructor(private readonly multiplayerService: MinRpsMultiplayerService) {}
 
   @SubscribeMessage(MinRpsMatchCommand.Join)
-  public handleJoinCommand(
-    @ConnectedSocket() client: Socket,
-    @MessageBody() command: MinRpsMatchJoinPayload,
-  ): void {
-    console.warn('handleJoinCommand', command);
+  public handleJoinCommand(@ConnectedSocket() client: Socket, @MessageBody() command: MinRpsMatchJoinPayload): void {
+    console.warn(`Receiving Command: ${MinRpsMatchCommand.Join}`, command);
     const event: MinRpsMatchUpdatedPayload = this.multiplayerService.joinMatch(client, command);
     this.sendMatchUpdatedEvent(event);
+    console.warn(`Sending Event: ${MinRpsMatchEvent.Updated}`, event);
   }
 
   @SubscribeMessage(MinRpsMatchCommand.Leave)
-  public handleLeaveCommand(
-    @ConnectedSocket() client: Socket,
-    @MessageBody() command: MinRpsMatchLeavePayload,
-  ): void {
+  public handleLeaveCommand(@ConnectedSocket() client: Socket, @MessageBody() command: MinRpsMatchLeavePayload): void {
+    console.warn(`Receiving Command: ${MinRpsMatchCommand.Leave}`, command);
     const event: MinRpsMatchUpdatedPayload = this.multiplayerService.leaveMatch(client, command);
     this.sendMatchUpdatedEvent(event);
+    console.warn(`Sending Event: ${MinRpsMatchEvent.Updated}`, event);
   }
 
   @SubscribeMessage(MinRpsMatchCommand.Play)
-  public handlePlayCommand(
-    @ConnectedSocket() client: Socket,
-    @MessageBody() command: MinRpsMatchPlayPayload,
-  ): void {
+  public handlePlayCommand(@ConnectedSocket() client: Socket, @MessageBody() command: MinRpsMatchPlayPayload): void {
     const event: MinRpsMatchUpdatedPayload = this.multiplayerService.playMatch(command);
     if (event.player1Move !== MinRpsMove.None && event.player2Move !== MinRpsMove.None) {
       this.sendMatchUpdatedEvent(event);
       setTimeout(() => {
-        const resetEvent: MinRpsMatchUpdatedPayload = this.multiplayerService.resetMatch(
-          command.matchId,
-        );
+        const resetEvent: MinRpsMatchUpdatedPayload = this.multiplayerService.resetMatch(command.matchId);
         this.sendMatchUpdatedEvent(resetEvent);
       }, 3000);
     } else {
@@ -63,21 +62,27 @@ export class MinRpsGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
   @SubscribeMessage(MinRpsMatchCommand.Seat)
   public handleSeatCommand(@MessageBody() command: MinRpsMatchSeatPayload): void {
+    console.warn(`Receiving Command: ${MinRpsMatchCommand.Seat}`, command);
     const event: MinRpsMatchUpdatedPayload = this.multiplayerService.seatPlayer(command);
     this.sendMatchUpdatedEvent(event);
+    console.warn(`Sending Event: ${MinRpsMatchEvent.Updated}`, event);
   }
 
   public handleConnection(client: Socket): void {
-    console.warn('handleConnection');
+    console.warn('Receiving Command: Connect');
     const event: MinRpsMatchConnectedPayload = this.multiplayerService.handleConnection(client);
     this.sendClientEvent(client, MinRpsMatchEvent.Connected, event);
+    console.warn('Sending Event: Connected', event);
   }
 
   public handleDisconnect(client: Socket): void {
-    const event: MinRpsMatchUpdatedPayload | null =
-      this.multiplayerService.handleDisconnect(client);
+    console.warn('Receiving Command: Disconnect');
+    const event: MinRpsMatchUpdatedPayload | null = this.multiplayerService.handleDisconnect(client);
     if (event) {
       this.sendMatchUpdatedEvent(event);
+      console.warn(`Sending Event: ${MinRpsMatchEvent.Updated}`, event);
+    } else {
+      console.warn('No event to send on disconnect');
     }
   }
 
