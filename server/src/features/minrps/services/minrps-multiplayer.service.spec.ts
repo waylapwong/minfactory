@@ -1,10 +1,10 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { Socket } from 'socket.io';
+import { MinRpsMove } from '../models/enums/minrps-move.enum';
 import { MinRpsMatchJoinPayload } from '../models/payloads/minrps-match-join.payload';
 import { MinRpsMatchLeavePayload } from '../models/payloads/minrps-match-leave.payload';
 import { MinRpsMatchPlayPayload } from '../models/payloads/minrps-match-play.payload';
 import { MinRpsMatchSeatPayload } from '../models/payloads/minrps-match-seat.payload';
-import { MinRpsMove } from '../models/enums/minrps-move.enum';
 import { MinRpsMatchRepository } from '../repositories/minrps-match.repository';
 import { MinRpsPlayerIdRepository } from '../repositories/minrps-player-id.repository';
 import { MinRpsRoomSystem } from '../systems/minrps-room.system';
@@ -83,6 +83,7 @@ describe('MinRpsMultiplayerService', () => {
         matchId: 'match-1',
         playerId: 'player-1',
         playerName: 'Alice',
+        seat: 1,
       };
 
       const result = service.seatPlayer(seatPayload);
@@ -96,6 +97,7 @@ describe('MinRpsMultiplayerService', () => {
         matchId: 'match-1',
         playerId: 'player-1',
         playerName: 'Alice',
+        seat: 1,
       };
       service.seatPlayer(seat1);
 
@@ -103,6 +105,7 @@ describe('MinRpsMultiplayerService', () => {
         matchId: 'match-1',
         playerId: 'player-2',
         playerName: 'Bob',
+        seat: 2,
       };
       const result = service.seatPlayer(seat2);
 
@@ -117,11 +120,13 @@ describe('MinRpsMultiplayerService', () => {
         matchId: 'match-1',
         playerId: 'player-1',
         playerName: 'Alice',
+        seat: 1,
       });
       service.seatPlayer({
         matchId: 'match-1',
         playerId: 'player-2',
         playerName: 'Bob',
+        seat: 2,
       });
     });
 
@@ -183,11 +188,13 @@ describe('MinRpsMultiplayerService', () => {
         matchId: 'match-1',
         playerId: 'player-1',
         playerName: 'Alice',
+        seat: 1,
       });
       service.seatPlayer({
         matchId: 'match-1',
         playerId: 'player-2',
         playerName: 'Bob',
+        seat: 2,
       });
 
       service.playMatch({
@@ -228,6 +235,7 @@ describe('MinRpsMultiplayerService', () => {
         matchId: 'match-1',
         playerId: connectionPayload.playerId,
         playerName: 'Alice',
+        seat: 1,
       });
 
       const result = service.handleDisconnect(mockSocket);

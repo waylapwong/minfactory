@@ -35,7 +35,6 @@ export class MinRpsGateway implements OnGatewayConnection, OnGatewayDisconnect {
     console.warn(`Receiving Command: ${MinRpsMatchCommand.Join}`, command);
     const event: MinRpsMatchUpdatedPayload = this.multiplayerService.joinMatch(client, command);
     this.sendMatchUpdatedEvent(event);
-    console.warn(`Sending Event: ${MinRpsMatchEvent.Updated}`, event);
   }
 
   @SubscribeMessage(MinRpsMatchCommand.Leave)
@@ -43,11 +42,11 @@ export class MinRpsGateway implements OnGatewayConnection, OnGatewayDisconnect {
     console.warn(`Receiving Command: ${MinRpsMatchCommand.Leave}`, command);
     const event: MinRpsMatchUpdatedPayload = this.multiplayerService.leaveMatch(client, command);
     this.sendMatchUpdatedEvent(event);
-    console.warn(`Sending Event: ${MinRpsMatchEvent.Updated}`, event);
   }
 
   @SubscribeMessage(MinRpsMatchCommand.Play)
   public handlePlayCommand(@ConnectedSocket() client: Socket, @MessageBody() command: MinRpsMatchPlayPayload): void {
+    console.warn(`Receiving Command: ${MinRpsMatchCommand.Play}`, command);
     const event: MinRpsMatchUpdatedPayload = this.multiplayerService.playMatch(command);
     if (event.player1Move !== MinRpsMove.None && event.player2Move !== MinRpsMove.None) {
       this.sendMatchUpdatedEvent(event);
@@ -65,14 +64,12 @@ export class MinRpsGateway implements OnGatewayConnection, OnGatewayDisconnect {
     console.warn(`Receiving Command: ${MinRpsMatchCommand.Seat}`, command);
     const event: MinRpsMatchUpdatedPayload = this.multiplayerService.seatPlayer(command);
     this.sendMatchUpdatedEvent(event);
-    console.warn(`Sending Event: ${MinRpsMatchEvent.Updated}`, event);
   }
 
   public handleConnection(client: Socket): void {
     console.warn('Receiving Command: Connect');
     const event: MinRpsMatchConnectedPayload = this.multiplayerService.handleConnection(client);
     this.sendClientEvent(client, MinRpsMatchEvent.Connected, event);
-    console.warn('Sending Event: Connected', event);
   }
 
   public handleDisconnect(client: Socket): void {
@@ -80,7 +77,6 @@ export class MinRpsGateway implements OnGatewayConnection, OnGatewayDisconnect {
     const event: MinRpsMatchUpdatedPayload | null = this.multiplayerService.handleDisconnect(client);
     if (event) {
       this.sendMatchUpdatedEvent(event);
-      console.warn(`Sending Event: ${MinRpsMatchEvent.Updated}`, event);
     } else {
       console.warn('No event to send on disconnect');
     }
@@ -88,13 +84,11 @@ export class MinRpsGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
   private sendClientEvent(client: Socket, event: MinRpsMatchEvent, payload: any): void {
     client.emit(event, payload);
+    console.warn(`Sending Event: ${event}`, payload);
   }
 
   private sendMatchUpdatedEvent(payload: MinRpsMatchUpdatedPayload): void {
-    this.sendRoomEvent(payload.matchId, MinRpsMatchEvent.Updated, payload);
-  }
-
-  private sendRoomEvent(room: string, event: MinRpsMatchEvent, payload: any): void {
-    this.server.to(room).emit(event, payload);
+    this.server.to(payload.matchId).emit(MinRpsMatchEvent.Updated, payload);
+    console.warn(`Sending Event: ${MinRpsMatchEvent.Updated}`, payload);
   }
 }

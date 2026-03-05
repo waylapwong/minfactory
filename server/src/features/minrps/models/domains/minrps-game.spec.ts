@@ -131,7 +131,7 @@ describe('MinRpsGame', () => {
       player.id = 'new-player-id';
       player.name = 'New Player';
 
-      game.seatPlayer(player);
+      game.seatPlayer(player, 1);
 
       expect(game.player1).toBe(player);
       expect(game.player2.id).toBe('');
@@ -146,7 +146,7 @@ describe('MinRpsGame', () => {
       player2.id = 'player-2-id';
       player2.name = 'Player 2';
 
-      game.seatPlayer(player2);
+      game.seatPlayer(player2, 2);
 
       expect(game.player1.id).toBe('player-1-id');
       expect(game.player2).toBe(player2);
@@ -164,8 +164,8 @@ describe('MinRpsGame', () => {
       const player3 = new MinRpsPlayer();
       player3.id = 'player-3-id';
 
-      expect(() => game.seatPlayer(player3)).toThrow(GameRuleException);
-      expect(() => game.seatPlayer(player3)).toThrow('Both player seats are already occupied.');
+      expect(() => game.seatPlayer(player3, 1)).toThrow(GameRuleException);
+      expect(() => game.seatPlayer(player3, 1)).toThrow('Player 1 seat is already occupied');
     });
   });
 
@@ -463,7 +463,7 @@ describe('MinRpsGame', () => {
       game.setPlayer2Move(MinRpsMove.Rock);
 
       expect(() => game.getResult()).toThrow(GameRuleException);
-      expect(() => game.getResult()).toThrow('Both players must be seated to determine the result.');
+      expect(() => game.getResult()).toThrow('Both players must be seated to determine the result');
     });
 
     it('should throw GameRuleException when player2 is not seated', () => {
@@ -471,7 +471,7 @@ describe('MinRpsGame', () => {
       game.setPlayer1Move(MinRpsMove.Rock);
 
       expect(() => game.getResult()).toThrow(GameRuleException);
-      expect(() => game.getResult()).toThrow('Both players must be seated to determine the result.');
+      expect(() => game.getResult()).toThrow('Both players must be seated to determine the result');
     });
 
     it('should throw GameRuleException when player1 move is None', () => {
@@ -479,7 +479,7 @@ describe('MinRpsGame', () => {
       game.setPlayer2Move(MinRpsMove.Rock);
 
       expect(() => game.getResult()).toThrow(GameRuleException);
-      expect(() => game.getResult()).toThrow('Player must select a move.');
+      expect(() => game.getResult()).toThrow('Player must select a move');
     });
 
     it('should throw GameRuleException when player2 move is None', () => {
@@ -487,7 +487,7 @@ describe('MinRpsGame', () => {
       game.setPlayer2Move(MinRpsMove.None);
 
       expect(() => game.getResult()).toThrow(GameRuleException);
-      expect(() => game.getResult()).toThrow('Player must select a move.');
+      expect(() => game.getResult()).toThrow('Player must select a move');
     });
 
     it('should throw GameRuleException when both moves are None', () => {
@@ -495,7 +495,7 @@ describe('MinRpsGame', () => {
       game.setPlayer2Move(MinRpsMove.None);
 
       expect(() => game.getResult()).toThrow(GameRuleException);
-      expect(() => game.getResult()).toThrow('Player must select a move.');
+      expect(() => game.getResult()).toThrow('Player must select a move');
     });
   });
 

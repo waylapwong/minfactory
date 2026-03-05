@@ -60,7 +60,7 @@ export class MinRpsMultiplayerService {
       // build command
       command.matchId = this.cachedGame().id;
       command.playerId = this.cachedGame().player2.id;
-      command.playerMove = this.cachedGame().player2.move;
+      command.playerMove = playerMove;
     }
     // send command
     this.socketRepository.emit(MinRpsMatchCommand.Play, command);

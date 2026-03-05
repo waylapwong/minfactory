@@ -91,10 +91,10 @@ export class MinRpsGame {
 
   public seatPlayer(player: MinRpsPlayer, seat: 1 | 2): void {
     if (seat === 1 && this.player1.id !== '') {
-      throw new GameRuleException('Player 1 seat is already occupied.');
+      throw new GameRuleException('Player 1 seat is already occupied');
     }
     if (seat === 2 && this.player2.id !== '') {
-      throw new GameRuleException('Player 2 seat is already occupied.');
+      throw new GameRuleException('Player 2 seat is already occupied');
     }
 
     if (seat === 1) {
@@ -129,10 +129,10 @@ export class MinRpsGame {
 
   private checkRules(): void {
     if (!this.player1.id || !this.player2.id) {
-      throw new GameRuleException('Both players must be seated to determine the result.');
+      throw new GameRuleException('Both players must be seated to determine the result');
     }
     if (this.player1.move === MinRpsMove.None || this.player2.move === MinRpsMove.None) {
-      throw new GameRuleException('Player must select a move.');
+      throw new GameRuleException('Player must select a move');
     }
   }
 
