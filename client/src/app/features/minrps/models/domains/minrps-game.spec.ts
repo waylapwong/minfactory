@@ -9,8 +9,6 @@ describe('MinRpsGame', () => {
       expect(game).toBeTruthy();
       expect(game.player1.move).toBe(MinRpsMove.None);
       expect(game.player2.move).toBe(MinRpsMove.None);
-      expect(game.player1.selectedMove).toBe(MinRpsMove.None);
-      expect(game.player2.selectedMove).toBe(MinRpsMove.None);
       expect(game.result).toBe(MinRpsResult.None);
       expect(game.id).toBe('');
       expect(game.name).toBe('');
@@ -26,8 +24,8 @@ describe('MinRpsGame', () => {
       const game = new MinRpsGame({
         id: 'game-123',
         name: 'Test Game',
-        player1: new MinRpsPlayer({ move: MinRpsMove.Rock, selectedMove: MinRpsMove.Paper }),
-        player2: new MinRpsPlayer({ move: MinRpsMove.Scissors, selectedMove: MinRpsMove.Rock }),
+        player1: new MinRpsPlayer({ move: MinRpsMove.Rock,  }),
+        player2: new MinRpsPlayer({ move: MinRpsMove.Scissors,  }),
         result: MinRpsResult.Player1,
         observers,
         playerCount: 2,
@@ -37,8 +35,6 @@ describe('MinRpsGame', () => {
       expect(game.name).toBe('Test Game');
       expect(game.player1.move).toBe(MinRpsMove.Rock);
       expect(game.player2.move).toBe(MinRpsMove.Scissors);
-      expect(game.player1.selectedMove).toBe(MinRpsMove.Paper);
-      expect(game.player2.selectedMove).toBe(MinRpsMove.Rock);
       expect(game.result).toBe(MinRpsResult.Player1);
       expect(game.observerCount).toBe(5);
       expect(game.playerCount).toBe(2);
@@ -70,29 +66,13 @@ describe('MinRpsGame', () => {
       expect(game.player2.move).toBe(MinRpsMove.Paper);
     });
 
-    it('should allow setting player 1 selected move directly', () => {
-      const game = new MinRpsGame();
-      game.player1.selectedMove = MinRpsMove.Scissors;
-      expect(game.player1.selectedMove).toBe(MinRpsMove.Scissors);
-    });
-
-    it('should allow setting player 2 selected move directly', () => {
-      const game = new MinRpsGame();
-      game.player2.selectedMove = MinRpsMove.Rock;
-      expect(game.player2.selectedMove).toBe(MinRpsMove.Rock);
-    });
-
     it('should allow setting different moves for each player', () => {
       const game = new MinRpsGame();
       game.player1.move = MinRpsMove.Rock;
       game.player2.move = MinRpsMove.Paper;
-      game.player1.selectedMove = MinRpsMove.Scissors;
-      game.player2.selectedMove = MinRpsMove.Rock;
 
       expect(game.player1.move).toBe(MinRpsMove.Rock);
       expect(game.player2.move).toBe(MinRpsMove.Paper);
-      expect(game.player1.selectedMove).toBe(MinRpsMove.Scissors);
-      expect(game.player2.selectedMove).toBe(MinRpsMove.Rock);
     });
   });
 });

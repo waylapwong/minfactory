@@ -105,24 +105,6 @@ describe('MinRpsMultiplayerService', () => {
     });
   });
 
-  describe('joinGame()', () => {
-    it('should emit Join command with matchId and playerId', () => {
-      service.setGameId('game-1');
-      service.joinGame();
-
-      expect(mockSocketRepository.emit).toHaveBeenCalledWith(
-        MinRpsMatchCommand.Join,
-        jasmine.objectContaining({ matchId: 'game-1' }),
-      );
-    });
-
-    it('should emit Join command', () => {
-      service.joinGame();
-
-      expect(mockSocketRepository.emit).toHaveBeenCalledWith(MinRpsMatchCommand.Join, jasmine.any(Object));
-    });
-  });
-
   describe('leaveGame()', () => {
     it('should emit Leave command', () => {
       service.leaveGame();
@@ -141,13 +123,13 @@ describe('MinRpsMultiplayerService', () => {
 
   describe('playGame()', () => {
     it('should emit Play command', () => {
-      service.playGame();
+      service.playGame(MinRpsMove.Rock);
 
       expect(mockSocketRepository.emit).toHaveBeenCalledWith(MinRpsMatchCommand.Play, jasmine.any(Object));
     });
 
     it('should emit Play command as MinRpsMatchPlayPayload', () => {
-      service.playGame();
+      service.playGame(MinRpsMove.Rock);
 
       const emitArgs = mockSocketRepository.emit.calls.mostRecent().args;
       expect(emitArgs[0]).toBe(MinRpsMatchCommand.Play);
@@ -157,120 +139,17 @@ describe('MinRpsMultiplayerService', () => {
 
   describe('seatGame()', () => {
     it('should emit Seat command', () => {
-      service.seatGame();
+      service.seatGame('player-1', 1);
 
       expect(mockSocketRepository.emit).toHaveBeenCalledWith(MinRpsMatchCommand.Seat, jasmine.any(Object));
     });
 
     it('should emit Seat command as MinRpsMatchSeatPayload', () => {
-      service.seatGame();
+      service.seatGame('player-1', 1);
 
       const emitArgs = mockSocketRepository.emit.calls.mostRecent().args;
       expect(emitArgs[0]).toBe(MinRpsMatchCommand.Seat);
       expect(emitArgs[1]).toBeInstanceOf(MinRpsMatchSeatPayload);
-    });
-  });
-
-  describe('selectMove()', () => {
-    it('should update player1 selected move when current player is player1', () => {
-      const connectedPayload: MinRpsMatchConnectedPayload = { playerId: 'player-1' } as MinRpsMatchConnectedPayload;
-      const updatedPayload: MinRpsMatchUpdatedPayload = {
-        matchId: 'game-1',
-        observers: [],
-        player1Id: 'player-1',
-        player1Move: MinRpsMove.None,
-        player1Name: 'Player 1',
-        player2Id: 'player-2',
-        player2Move: MinRpsMove.None,
-        player2Name: 'Player 2',
-        result: MinRpsResult.None,
-      };
-
-      service.connect();
-
-      const connectedCb = mockSocketRepository.on.calls.all().find((c) => c.args[0] === MinRpsMatchEvent.Connected)!
-        .args[1];
-      const updatedCb = mockSocketRepository.on.calls.all().find((c) => c.args[0] === MinRpsMatchEvent.Updated)!
-        .args[1];
-
-      updatedCb(updatedPayload);
-      connectedCb(connectedPayload);
-
-      service.selectMove(MinRpsMove.Rock);
-
-      expect(service.game().heroSelectedMove).toBe(MinRpsMove.Rock);
-    });
-
-    it('should update player2 selected move when current player is player2', () => {
-      const connectedPayload: MinRpsMatchConnectedPayload = { playerId: 'player-2' } as MinRpsMatchConnectedPayload;
-      const updatedPayload: MinRpsMatchUpdatedPayload = {
-        matchId: 'game-1',
-        observers: [],
-        player1Id: 'player-1',
-        player1Move: MinRpsMove.None,
-        player1Name: 'Player 1',
-        player2Id: 'player-2',
-        player2Move: MinRpsMove.None,
-        player2Name: 'Player 2',
-        result: MinRpsResult.None,
-      };
-
-      service.connect();
-
-      const connectedCb = mockSocketRepository.on.calls.all().find((c) => c.args[0] === MinRpsMatchEvent.Connected)!
-        .args[1];
-      const updatedCb = mockSocketRepository.on.calls.all().find((c) => c.args[0] === MinRpsMatchEvent.Updated)!
-        .args[1];
-
-      updatedCb(updatedPayload);
-      connectedCb(connectedPayload);
-
-      service.selectMove(MinRpsMove.Paper);
-
-      expect(service.game().heroSelectedMove).toBe(MinRpsMove.Paper);
-    });
-
-    it('should not update any move if player is neither player1 nor player2', () => {
-      const connectedPayload: MinRpsMatchConnectedPayload = { playerId: 'spectator-id' } as MinRpsMatchConnectedPayload;
-      const updatedPayload: MinRpsMatchUpdatedPayload = {
-        matchId: 'game-1',
-        observers: ['spectator-id'],
-        player1Id: 'player-1',
-        player1Move: MinRpsMove.None,
-        player1Name: 'Player 1',
-        player2Id: 'player-2',
-        player2Move: MinRpsMove.None,
-        player2Name: 'Player 2',
-        result: MinRpsResult.None,
-      };
-
-      service.connect();
-
-      const connectedCb = mockSocketRepository.on.calls.all().find((c) => c.args[0] === MinRpsMatchEvent.Connected)!
-        .args[1];
-      const updatedCb = mockSocketRepository.on.calls.all().find((c) => c.args[0] === MinRpsMatchEvent.Updated)!
-        .args[1];
-
-      updatedCb(updatedPayload);
-      connectedCb(connectedPayload);
-
-      service.selectMove(MinRpsMove.Rock);
-
-      const game = service.game();
-      expect(game.heroSelectedMove).toBe(MinRpsMove.None);
-    });
-  });
-
-  describe('setGameId()', () => {
-    it('should update the game id', () => {
-      service.setGameId('new-game-id');
-
-      service.joinGame();
-
-      expect(mockSocketRepository.emit).toHaveBeenCalledWith(
-        MinRpsMatchCommand.Join,
-        jasmine.objectContaining({ matchId: 'new-game-id' }),
-      );
     });
   });
 

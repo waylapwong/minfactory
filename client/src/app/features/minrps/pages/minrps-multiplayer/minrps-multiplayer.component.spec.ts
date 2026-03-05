@@ -1,4 +1,4 @@
-import { provideZonelessChangeDetection, signal, WritableSignal } from '@angular/core';
+import { WritableSignal, provideZonelessChangeDetection, signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ActivatedRoute, convertToParamMap } from '@angular/router';
 import { of } from 'rxjs';
@@ -23,14 +23,12 @@ describe('MinRpsMultiplayerComponent', () => {
     vm.gameId = 'test-id';
     vm.heroMove = MinRpsMove.None;
     vm.heroName = '';
-    vm.heroSelectedMove = MinRpsMove.None;
     vm.isObserver = false;
     vm.canTakeHeroSeat = false;
     vm.canTakeVillainSeat = false;
     vm.result = MinRpsResult.None;
     vm.villainMove = MinRpsMove.None;
     vm.villainName = '';
-    vm.villainSelectedMove = MinRpsMove.None;
     Object.assign(vm, overrides);
     return vm;
   };
@@ -129,27 +127,27 @@ describe('MinRpsMultiplayerComponent', () => {
 
   describe('submitText computed signal', () => {
     it('should return "choose move" when no move selected', () => {
-      mockGameSignal.set(createViewModel({ heroSelectedMove: MinRpsMove.None }));
+      component.selectedMove.set(MinRpsMove.None);
       expect(component.submitText()).toBe('choose move');
     });
 
     it('should return "play rock!" when rock is selected', () => {
-      mockGameSignal.set(createViewModel({ heroSelectedMove: MinRpsMove.Rock }));
+      component.selectedMove.set(MinRpsMove.Rock);
       expect(component.submitText()).toBe('play rock!');
     });
 
     it('should return "play paper!" when paper is selected', () => {
-      mockGameSignal.set(createViewModel({ heroSelectedMove: MinRpsMove.Paper }));
+      component.selectedMove.set(MinRpsMove.Paper);
       expect(component.submitText()).toBe('play paper!');
     });
 
     it('should return "play scissors!" when scissors is selected', () => {
-      mockGameSignal.set(createViewModel({ heroSelectedMove: MinRpsMove.Scissors }));
+      component.selectedMove.set(MinRpsMove.Scissors);
       expect(component.submitText()).toBe('play scissors!');
     });
 
     it('should return empty string for unknown move', () => {
-      mockGameSignal.set(createViewModel({ heroSelectedMove: 'unknown' as MinRpsMove }));
+      component.selectedMove.set('unknown' as MinRpsMove);
       expect(component.submitText()).toBe('');
     });
   });
@@ -169,16 +167,19 @@ describe('MinRpsMultiplayerComponent', () => {
   });
 
   describe('selectMove()', () => {
-    it('should call multiplayerService.selectMove when not observer', () => {
-      mockGameSignal.set(createViewModel({ isObserver: false }));
+    it('should set selectedMove to Rock', () => {
       component.selectMove(MinRpsMove.Rock);
-      expect(mockMultiplayerService.selectMove).toHaveBeenCalledWith(MinRpsMove.Rock);
+      expect(component.selectedMove()).toBe(MinRpsMove.Rock);
     });
 
-    it('should not call multiplayerService.selectMove when is observer', () => {
-      mockGameSignal.set(createViewModel({ isObserver: true }));
-      component.selectMove(MinRpsMove.Rock);
-      expect(mockMultiplayerService.selectMove).not.toHaveBeenCalled();
+    it('should set selectedMove to Paper', () => {
+      component.selectMove(MinRpsMove.Paper);
+      expect(component.selectedMove()).toBe(MinRpsMove.Paper);
+    });
+
+    it('should set selectedMove to Scissors', () => {
+      component.selectMove(MinRpsMove.Scissors);
+      expect(component.selectedMove()).toBe(MinRpsMove.Scissors);
     });
   });
 
@@ -280,13 +281,6 @@ describe('MinRpsMultiplayerComponent', () => {
       component.seatGame();
 
       expect(mockMultiplayerService.seatGame).not.toHaveBeenCalled();
-    });
-  });
-
-  describe('private joinGame()', () => {
-    it('should call multiplayerService.joinGame', () => {
-      component['joinGame']();
-      expect(mockMultiplayerService.joinGame).toHaveBeenCalled();
     });
   });
 

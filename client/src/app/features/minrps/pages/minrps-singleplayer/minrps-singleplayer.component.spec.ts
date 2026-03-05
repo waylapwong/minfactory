@@ -50,37 +50,27 @@ describe('MinRpsSingleplayerComponent', () => {
 
   describe('submitText computed signal', () => {
     it('should return "choose move" when no move is selected', () => {
-      const vm = new MinRpsSingleplayerViewModel();
-      vm.player1SelectedMove = MinRpsMove.None;
-      gameSignal.set(vm);
+      component.selectedMove.set(MinRpsMove.None);
       expect(component.submitText()).toBe('choose move');
     });
 
     it('should return "play rock!" when rock is selected', () => {
-      const vm = new MinRpsSingleplayerViewModel();
-      vm.player1SelectedMove = MinRpsMove.Rock;
-      gameSignal.set(vm);
+      component.selectedMove.set(MinRpsMove.Rock);
       expect(component.submitText()).toBe('play rock!');
     });
 
     it('should return "play paper!" when paper is selected', () => {
-      const vm = new MinRpsSingleplayerViewModel();
-      vm.player1SelectedMove = MinRpsMove.Paper;
-      gameSignal.set(vm);
+      component.selectedMove.set(MinRpsMove.Paper);
       expect(component.submitText()).toBe('play paper!');
     });
 
     it('should return "play scissors!" when scissors is selected', () => {
-      const vm = new MinRpsSingleplayerViewModel();
-      vm.player1SelectedMove = MinRpsMove.Scissors;
-      gameSignal.set(vm);
+      component.selectedMove.set(MinRpsMove.Scissors);
       expect(component.submitText()).toBe('play scissors!');
     });
 
     it('should return empty string for unknown move', () => {
-      const vm = new MinRpsSingleplayerViewModel();
-      vm.player1SelectedMove = 'unknown' as MinRpsMove;
-      gameSignal.set(vm);
+      component.selectedMove.set('unknown' as MinRpsMove);
       expect(component.submitText()).toBe('');
     });
   });
@@ -101,19 +91,19 @@ describe('MinRpsSingleplayerComponent', () => {
   });
 
   describe('selectMove()', () => {
-    it('should call service selectMove with Rock', () => {
+    it('should update selectedMove with Rock', () => {
       component.selectMove(MinRpsMove.Rock);
-      expect(mockService.selectMove).toHaveBeenCalledWith(MinRpsMove.Rock);
+      expect(component.selectedMove()).toBe(MinRpsMove.Rock);
     });
 
-    it('should call service selectMove with Paper', () => {
+    it('should update selectedMove with Paper', () => {
       component.selectMove(MinRpsMove.Paper);
-      expect(mockService.selectMove).toHaveBeenCalledWith(MinRpsMove.Paper);
+      expect(component.selectedMove()).toBe(MinRpsMove.Paper);
     });
 
-    it('should call service selectMove with Scissors', () => {
+    it('should update selectedMove with Scissors', () => {
       component.selectMove(MinRpsMove.Scissors);
-      expect(mockService.selectMove).toHaveBeenCalledWith(MinRpsMove.Scissors);
+      expect(component.selectedMove()).toBe(MinRpsMove.Scissors);
     });
   });
 });

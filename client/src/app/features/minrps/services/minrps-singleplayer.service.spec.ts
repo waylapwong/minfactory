@@ -31,69 +31,17 @@ describe('MinRpsSingleplayerService', () => {
       const game = service.game();
 
       expect(game).toBeDefined();
-      expect(game.player1SelectedMove).toBe(MinRpsMove.None);
       expect(game.player1Move).toBe(MinRpsMove.None);
       expect(game.player2Move).toBe(MinRpsMove.None);
       expect(game.result).toBe(MinRpsResult.None);
-    });
-
-    it('should update when cached game changes', () => {
-      service.selectMove(MinRpsMove.Rock);
-
-      const game = service.game();
-      expect(game.player1SelectedMove).toBe(MinRpsMove.Rock);
-    });
-  });
-
-  describe('selectMove()', () => {
-    it('should update player1SelectedMove when move is selected', () => {
-      service.selectMove(MinRpsMove.Rock);
-
-      const game = service.game();
-      expect(game.player1SelectedMove).toBe(MinRpsMove.Rock);
-    });
-
-    it('should update player1SelectedMove to Paper', () => {
-      service.selectMove(MinRpsMove.Paper);
-
-      const game = service.game();
-      expect(game.player1SelectedMove).toBe(MinRpsMove.Paper);
-    });
-
-    it('should update player1SelectedMove to Scissors', () => {
-      service.selectMove(MinRpsMove.Scissors);
-
-      const game = service.game();
-      expect(game.player1SelectedMove).toBe(MinRpsMove.Scissors);
-    });
-
-    it('should update player1SelectedMove to None', () => {
-      service.selectMove(MinRpsMove.Rock);
-      service.selectMove(MinRpsMove.None);
-
-      const game = service.game();
-      expect(game.player1SelectedMove).toBe(MinRpsMove.None);
-    });
-
-    it('should allow changing selection', () => {
-      service.selectMove(MinRpsMove.Rock);
-      expect(service.game().player1SelectedMove).toBe(MinRpsMove.Rock);
-
-      service.selectMove(MinRpsMove.Paper);
-      expect(service.game().player1SelectedMove).toBe(MinRpsMove.Paper);
-
-      service.selectMove(MinRpsMove.Scissors);
-      expect(service.game().player1SelectedMove).toBe(MinRpsMove.Scissors);
     });
   });
 
   describe('setupNewGame()', () => {
     it('should reset game to initial state', () => {
-      service.selectMove(MinRpsMove.Rock);
       service.setupNewGame();
 
       const game = service.game();
-      expect(game.player1SelectedMove).toBe(MinRpsMove.None);
       expect(game.player1Move).toBe(MinRpsMove.None);
       expect(game.player2Move).toBe(MinRpsMove.None);
       expect(game.result).toBe(MinRpsResult.None);
@@ -125,8 +73,7 @@ describe('MinRpsSingleplayerService', () => {
       };
       mockRepository.play.and.returnValue(Promise.resolve(mockResult));
 
-      service.selectMove(MinRpsMove.Rock);
-      await service.playGame();
+      await service.playGame(MinRpsMove.Rock);
 
       const game = service.game();
       expect(game.player1Move).toBe(MinRpsMove.Rock);
@@ -140,8 +87,7 @@ describe('MinRpsSingleplayerService', () => {
       };
       mockRepository.play.and.returnValue(Promise.resolve(mockResult));
 
-      service.selectMove(MinRpsMove.Paper);
-      await service.playGame();
+      await service.playGame(MinRpsMove.Paper);
 
       expect(mockRepository.play).toHaveBeenCalledWith({
         player1Move: MinRpsMove.Paper,
@@ -156,8 +102,7 @@ describe('MinRpsSingleplayerService', () => {
       };
       mockRepository.play.and.returnValue(Promise.resolve(mockResult));
 
-      service.selectMove(MinRpsMove.Scissors);
-      await service.playGame();
+      await service.playGame(MinRpsMove.Scissors);
 
       const game = service.game();
       expect(game.player1Move).toBe(MinRpsMove.Scissors);
@@ -173,8 +118,7 @@ describe('MinRpsSingleplayerService', () => {
       };
       mockRepository.play.and.returnValue(Promise.resolve(mockResult));
 
-      service.selectMove(MinRpsMove.Rock);
-      await service.playGame();
+      await service.playGame(MinRpsMove.Rock);
 
       const game = service.game();
       expect(game.result).toBe(MinRpsResult.Player2);
@@ -188,8 +132,7 @@ describe('MinRpsSingleplayerService', () => {
       };
       mockRepository.play.and.returnValue(Promise.resolve(mockResult));
 
-      service.selectMove(MinRpsMove.Rock);
-      await service.playGame();
+      await service.playGame(MinRpsMove.Rock);
 
       const game = service.game();
       expect(game.result).toBe(MinRpsResult.Draw);
@@ -203,8 +146,7 @@ describe('MinRpsSingleplayerService', () => {
       };
       mockRepository.play.and.returnValue(Promise.resolve(mockResult));
 
-      service.selectMove(MinRpsMove.Rock);
-      await service.playGame();
+      await service.playGame(MinRpsMove.Rock);
 
       expect(service.game().result).toBe(MinRpsResult.Player1);
 
@@ -214,7 +156,6 @@ describe('MinRpsSingleplayerService', () => {
       expect(game.player1Move).toBe(MinRpsMove.None);
       expect(game.player2Move).toBe(MinRpsMove.None);
       expect(game.result).toBe(MinRpsResult.None);
-      expect(game.player1SelectedMove).toBe(MinRpsMove.None);
     });
 
     it('should not reset game before PUFFER_TIME elapses', async () => {
@@ -225,8 +166,7 @@ describe('MinRpsSingleplayerService', () => {
       };
       mockRepository.play.and.returnValue(Promise.resolve(mockResult));
 
-      service.selectMove(MinRpsMove.Rock);
-      await service.playGame();
+      await service.playGame(MinRpsMove.Rock);
 
       jasmine.clock().tick(PUFFER_TIME - 100);
 
@@ -243,8 +183,7 @@ describe('MinRpsSingleplayerService', () => {
       };
       mockRepository.play.and.returnValue(Promise.resolve(mockResult));
 
-      service.selectMove(MinRpsMove.Rock);
-      await service.playGame();
+      await service.playGame(MinRpsMove.Rock);
 
       const game = service.game();
       expect(game.player1Move).toBe(MinRpsMove.Rock);
@@ -260,8 +199,7 @@ describe('MinRpsSingleplayerService', () => {
       };
       mockRepository.play.and.returnValue(Promise.resolve(mockResult));
 
-      service.selectMove(MinRpsMove.Paper);
-      await service.playGame();
+      await service.playGame(MinRpsMove.Paper);
 
       const game = service.game();
       expect(game.player1Move).toBe(MinRpsMove.Paper);
@@ -277,8 +215,7 @@ describe('MinRpsSingleplayerService', () => {
       };
       mockRepository.play.and.returnValue(Promise.resolve(mockResult));
 
-      service.selectMove(MinRpsMove.Scissors);
-      await service.playGame();
+      await service.playGame(MinRpsMove.Scissors);
 
       const game = service.game();
       expect(game.player1Move).toBe(MinRpsMove.Scissors);
