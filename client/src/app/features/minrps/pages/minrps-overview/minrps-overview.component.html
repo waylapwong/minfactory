@@ -8,7 +8,7 @@
 <!-- GAMES LIST -->
 @for (game of games(); track $index) {
   <div class="flex flex-row justify-center">
-    <min-card-button class="basis-xs sm:basis-md" (clicked)="navigateToMulitplayerPage(game.id)">
+    <min-card-button class="basis-xs sm:basis-md" (clicked)="navigateToMultiplayerPage(game.id)">
       <div class="flex flex-row items-start justify-between">
         <min-h2 class="grow text-left break-all">{{ game.name }}</min-h2>
         <min-button [color]="Color.Red" (clicked)="deleteGame(game.id, $event)">
