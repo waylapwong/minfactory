@@ -108,9 +108,9 @@ describe('MinRpsOverviewComponent', () => {
     });
   });
 
-  describe('navigateToMulitplayerPage()', () => {
+  describe('navigateToMultiplayerPage()', () => {
     it('should navigate to multiplayer page with game id', () => {
-      component.navigateToMulitplayerPage('test-game-id');
+      component.navigateToMultiplayerPage('test-game-id');
 
       expect(mockRoutingService.navigateToMinRpsMultiplayer).toHaveBeenCalledWith('test-game-id');
     });

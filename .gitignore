@@ -14,5 +14,5 @@ server/node_modules
 server/.env
 
 # VISUAL STUDIO CODE
-.vscode/*
-.history/*
+.vscode/
+.history/
