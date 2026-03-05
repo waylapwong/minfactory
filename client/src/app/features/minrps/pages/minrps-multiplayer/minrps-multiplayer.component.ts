@@ -32,18 +32,15 @@ import { MinRpsMultiplayerService } from '../../services/minrps-multiplayer.serv
 export class MinRpsMultiplayerComponent implements OnInit, OnDestroy {
   public readonly Color: typeof Color = Color;
   public readonly MinRpsMove: typeof MinRpsMove = MinRpsMove;
-  public readonly SELECTABLE_MOVES: MinRpsMove[] = [
-    MinRpsMove.Rock,
-    MinRpsMove.Paper,
-    MinRpsMove.Scissors,
-  ];
+  public readonly SELECTABLE_MOVES: MinRpsMove[] = [MinRpsMove.Rock, MinRpsMove.Paper, MinRpsMove.Scissors];
 
   public game: Signal<MinRpsMultiplayerViewModel> = inject(MinRpsMultiplayerService).game;
   public isSeatDialogOpen: WritableSignal<boolean> = signal(false);
   public seatFormGroup: FormGroup = new FormGroup({});
+  public selectedMove: WritableSignal<MinRpsMove> = signal(MinRpsMove.None);
   public selectedSeat: WritableSignal<0 | 1 | 2> = signal(0);
   public submitText: Signal<string> = computed(() => {
-    switch (this.game().heroSelectedMove) {
+    switch (this.selectedMove()) {
       case MinRpsMove.None:
         return 'choose move';
       case MinRpsMove.Rock:
@@ -101,18 +98,18 @@ export class MinRpsMultiplayerComponent implements OnInit, OnDestroy {
     if (this.game().isObserver) {
       return;
     }
-    this.multiplayerService.playGame();
+    this.multiplayerService.playGame(this.selectedMove());
   }
 
   public seatGame(): void {
     if (this.seatFormGroup.invalid || this.selectedSeat() === 0) {
       return;
     }
-    const name = this.seatName.value.trim();
-    if (!name) {
+    const playerName: string = this.seatName.value.trim();
+    if (!playerName) {
       return;
     }
-    this.multiplayerService.seatGame();
+    this.multiplayerService.seatGame(playerName, this.selectedSeat() as 1 | 2);
     this.selectedSeat.set(0);
     this.isSeatDialogOpen.set(false);
   }
@@ -121,7 +118,7 @@ export class MinRpsMultiplayerComponent implements OnInit, OnDestroy {
     if (this.game().isObserver) {
       return;
     }
-    this.multiplayerService.selectMove(move);
+    this.selectedMove.set(move);
   }
 
   private async checkGameExists(id: string): Promise<void> {
@@ -135,10 +132,6 @@ export class MinRpsMultiplayerComponent implements OnInit, OnDestroy {
     return this.formBuilder.group({
       name: ['', [Validators.maxLength(16), Validators.required]],
     });
-  }
-
-  private joinGame(): void {
-    this.multiplayerService.joinGame();
   }
 
   private leaveGame(): void {

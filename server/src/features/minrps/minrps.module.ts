@@ -24,7 +24,7 @@ import { MinRpsRoomSystem } from './systems/minrps-room.system';
     MinRpsRoomSystem,
     MinRpsGameRepository,
     MinRpsMatchRepository,
-    MinRpsPlayerIdRepository
+    MinRpsPlayerIdRepository,
   ],
 })
 export class MinRpsModule {}

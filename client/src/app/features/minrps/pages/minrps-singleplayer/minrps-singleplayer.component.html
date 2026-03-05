@@ -12,11 +12,7 @@
     <div class="flex w-full flex-row justify-evenly gap-2">
       @if (game().player2Move !== MinRpsMove.None) {
         <minrps-card [result]="game().result">
-          <img
-            class="h-16 w-16"
-            [alt]="game().player2Move"
-            [src]="`assets/svg/${game().player2Move}.svg`"
-          />
+          <img class="h-16 w-16" [alt]="game().player2Move" [src]="`assets/svg/${game().player2Move}.svg`" />
         </minrps-card>
       } @else {
         <minrps-card>
@@ -37,19 +33,13 @@
     <div class="flex w-full flex-row justify-evenly gap-2">
       @for (selectableMove of selectableMoves; track $index) {
         <minrps-move
-          [isDisabled]="
-            game().player1Move !== MinRpsMove.None && game().player1Move !== selectableMove
-          "
+          [isDisabled]="game().player1Move !== MinRpsMove.None && game().player1Move !== selectableMove"
           [isPlayed]="selectableMove === game().player1Move"
-          [isSelected]="selectableMove === game().player1SelectedMove"
+          [isSelected]="selectableMove === selectedMove()"
           [result]="game().result"
           (selected)="selectMove(selectableMove)"
         >
-          <img
-            [src]="`assets/svg/${selectableMove}.svg`"
-            [alt]="selectableMove"
-            class="h-16 w-16"
-          />
+          <img [src]="`assets/svg/${selectableMove}.svg`" [alt]="selectableMove" class="h-16 w-16" />
         </minrps-move>
       }
     </div>
@@ -59,9 +49,7 @@
       <min-button
         class="basis-3xs"
         [color]="Color.Blue"
-        [isDisabled]="
-          game().player1SelectedMove === MinRpsMove.None || game().player1Move !== MinRpsMove.None
-        "
+        [isDisabled]="selectedMove() === MinRpsMove.None || game().player1Move !== MinRpsMove.None"
         (clicked)="playGame()"
       >
         {{ submitText() }}

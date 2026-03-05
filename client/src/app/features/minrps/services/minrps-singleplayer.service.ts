@@ -19,10 +19,10 @@ export class MinRpsSingleplayerService {
 
   constructor(private readonly playRepository: MinRpsPlayRepository) {}
 
-  public async playGame(): Promise<void> {
+  public async playGame(heroMove: MinRpsMove): Promise<void> {
     // Set player 1 move
     const newGame: MinRpsGame = new MinRpsGame(this.cachedGame());
-    newGame.setPlayer1Move(newGame.player1.selectedMove);
+    newGame.player1.move = heroMove;
     this.cachedGame.set(newGame);
     // Build DTO
     const playDto: MinRpsPlayDto = MinRpsDomainMapper.domainToPlayDto(this.cachedGame());
@@ -35,12 +35,6 @@ export class MinRpsSingleplayerService {
     setTimeout(() => {
       this.setupNewGame();
     }, this.PUFFER_TIME);
-  }
-
-  public selectMove(move: MinRpsMove): void {
-    const newGame: MinRpsGame = new MinRpsGame(this.cachedGame());
-    newGame.setPlayer1SelectedMove(move);
-    this.cachedGame.set(newGame);
   }
 
   public setupNewGame(): void {

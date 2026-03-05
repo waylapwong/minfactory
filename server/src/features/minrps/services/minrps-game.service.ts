@@ -33,12 +33,8 @@ export class MinRpsGameService {
     // Fetch from DB
     const entites: MinRpsGameEntity[] = await this.gameRepository.findAll();
     // Mapping
-    const domains: MinRpsGame[] = entites.map((entity: MinRpsGameEntity) =>
-      MinRpsEntityMapper.entityToDomain(entity),
-    );
-    const dtos: MinRpsGameDto[] = domains.map((domain: MinRpsGame) =>
-      MinRpsDomainMapper.domainToDto(domain),
-    );
+    const domains: MinRpsGame[] = entites.map((entity: MinRpsGameEntity) => MinRpsEntityMapper.entityToDomain(entity));
+    const dtos: MinRpsGameDto[] = domains.map((domain: MinRpsGame) => MinRpsDomainMapper.domainToDto(domain));
 
     return dtos;
   }

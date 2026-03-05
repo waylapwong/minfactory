@@ -22,9 +22,7 @@ export class MinRpsGameService {
     const dto: MinRpsGameDto = await this.gameRepository.create(name);
     const domain: MinRpsGame = MinRpsDtoMapper.gameDtoToDomain(dto);
     this.cachedGames.update((games: MinRpsGame[]) =>
-      [...games, domain].sort(
-        (a: MinRpsGame, b: MinRpsGame) => b.createdAt.getTime() - a.createdAt.getTime(),
-      ),
+      [...games, domain].sort((a: MinRpsGame, b: MinRpsGame) => b.createdAt.getTime() - a.createdAt.getTime()),
     );
   }
 

@@ -1,4 +1,4 @@
-import { Component, OnInit, Signal, computed, inject } from '@angular/core';
+import { Component, OnInit, Signal, WritableSignal, computed, inject, signal } from '@angular/core';
 import { MinRpsMove } from '../../../../core/generated';
 import { ButtonComponent } from '../../../../shared/components/button/button.component';
 import { DividerComponent } from '../../../../shared/components/divider/divider.component';
@@ -21,8 +21,9 @@ export class MinRpsSingleplayerComponent implements OnInit {
 
   public game: Signal<MinRpsSingleplayerViewModel> = inject(MinRpsSingleplayerService).game;
   public selectableMoves: MinRpsMove[] = [MinRpsMove.Rock, MinRpsMove.Paper, MinRpsMove.Scissors];
+  public selectedMove: WritableSignal<MinRpsMove> = signal(MinRpsMove.None);
   public submitText = computed(() => {
-    switch (this.game().player1SelectedMove) {
+    switch (this.selectedMove()) {
       case MinRpsMove.None:
         return 'choose move';
       case MinRpsMove.Rock:
@@ -43,10 +44,10 @@ export class MinRpsSingleplayerComponent implements OnInit {
   }
 
   public async playGame(): Promise<void> {
-    await this.singleplayerService.playGame();
+    await this.singleplayerService.playGame(this.selectedMove());
   }
 
   public selectMove(move: MinRpsMove): void {
-    this.singleplayerService.selectMove(move);
+    this.selectedMove.set(move);
   }
 }

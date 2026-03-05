@@ -36,21 +36,13 @@
 }
 
 <!-- NEW GAME DIALOG -->
-<min-dialog
-  title="New Game"
-  [isOpen]="isNewGameDialogOpen()"
-  (closed)="isNewGameDialogOpen.set(false)"
->
+<min-dialog title="New Game" [isOpen]="isNewGameDialogOpen()" (closed)="isNewGameDialogOpen.set(false)">
   <div class="mb-4 flex flex-col">
     <min-input label="Game name" [formControlInput]="newGameName" id="game-name-input"></min-input>
   </div>
 
   <div class="flex flex-row justify-end">
-    <min-button
-      [color]="Color.Blue"
-      [isDisabled]="newGameFormGroup.invalid"
-      (clicked)="createGame()"
-    >
+    <min-button [color]="Color.Blue" [isDisabled]="newGameFormGroup.invalid" (clicked)="createGame()">
       Create Game
     </min-button>
   </div>

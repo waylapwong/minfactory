@@ -10,28 +10,21 @@ export enum MinRpsPath {
 export const MINRPS_ROUTES: Routes = [
   {
     path: MinRpsPath.Root,
-    loadComponent: () =>
-      import('./pages/minrps-home/minrps-home.component').then((m) => m.MinRpsHomeComponent),
+    loadComponent: () => import('./pages/minrps-home/minrps-home.component').then((m) => m.MinRpsHomeComponent),
   },
   {
     path: `${MinRpsPath.Multiplayer}/:id`,
     loadComponent: () =>
-      import('./pages/minrps-multiplayer/minrps-multiplayer.component').then(
-        (m) => m.MinRpsMultiplayerComponent,
-      ),
+      import('./pages/minrps-multiplayer/minrps-multiplayer.component').then((m) => m.MinRpsMultiplayerComponent),
   },
   {
     path: MinRpsPath.Overview,
     loadComponent: () =>
-      import('./pages/minrps-overview/minrps-overview.component').then(
-        (m) => m.MinRpsOverviewComponent,
-      ),
+      import('./pages/minrps-overview/minrps-overview.component').then((m) => m.MinRpsOverviewComponent),
   },
   {
     path: MinRpsPath.Singleplayer,
     loadComponent: () =>
-      import('./pages/minrps-singleplayer/minrps-singleplayer.component').then(
-        (m) => m.MinRpsSingleplayerComponent,
-      ),
+      import('./pages/minrps-singleplayer/minrps-singleplayer.component').then((m) => m.MinRpsSingleplayerComponent),
   },
 ];

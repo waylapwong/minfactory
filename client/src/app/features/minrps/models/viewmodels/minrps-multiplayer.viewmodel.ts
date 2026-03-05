@@ -6,10 +6,8 @@ export class MinRpsMultiplayerViewModel {
   public gameId!: string;
   public heroMove!: MinRpsMove;
   public heroName!: string;
-  public heroSelectedMove!: MinRpsMove;
   public isObserver!: boolean;
   public result!: MinRpsResult;
   public villainMove!: MinRpsMove;
   public villainName!: string;
-  public villainSelectedMove!: MinRpsMove;
 }

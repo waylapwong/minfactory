@@ -24,9 +24,7 @@ export class MinRpsGame {
     if (player1Move === player2Move) {
       return MinRpsResult.Draw;
     } else {
-      return player1Move === this.mapToWinningMove(player2Move)
-        ? MinRpsResult.Player1
-        : MinRpsResult.Player2;
+      return player1Move === this.mapToWinningMove(player2Move) ? MinRpsResult.Player1 : MinRpsResult.Player2;
     }
   }
 
@@ -91,14 +89,21 @@ export class MinRpsGame {
     this.resetPlayer2Move();
   }
 
-  public seatPlayer(player: MinRpsPlayer): void {
-    if (this.player1.id !== '' && this.player2.id !== '') {
-      throw new GameRuleException('Both player seats are already occupied.');
+  public seatPlayer(player: MinRpsPlayer, seat: 1 | 2): void {
+    if (seat === 1 && this.player1.id !== '') {
+      throw new GameRuleException('Player 1 seat is already occupied');
     }
-    if (this.player1.id === '') {
+    if (seat === 2 && this.player2.id !== '') {
+      throw new GameRuleException('Player 2 seat is already occupied');
+    }
+
+    if (seat === 1) {
       this.setPlayer1(player);
-    } else if (this.player2.id === '') {
+      this.removeObserver(player.id);
+    }
+    if (seat === 2) {
       this.setPlayer2(player);
+      this.removeObserver(player.id);
     }
   }
 
@@ -124,10 +129,10 @@ export class MinRpsGame {
 
   private checkRules(): void {
     if (!this.player1.id || !this.player2.id) {
-      throw new GameRuleException('Both players must be seated to determine the result.');
+      throw new GameRuleException('Both players must be seated to determine the result');
     }
     if (this.player1.move === MinRpsMove.None || this.player2.move === MinRpsMove.None) {
-      throw new GameRuleException('Player must select a move.');
+      throw new GameRuleException('Player must select a move');
     }
   }
 

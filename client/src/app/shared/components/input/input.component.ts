@@ -15,9 +15,6 @@ export class InputComponent {
   public type: InputSignal<string> = input('text');
 
   public isFormControlInvalid(): boolean {
-    return (
-      this.formControlInput().invalid &&
-      (this.formControlInput().touched || this.formControlInput().dirty)
-    );
+    return this.formControlInput().invalid && (this.formControlInput().touched || this.formControlInput().dirty);
   }
 }

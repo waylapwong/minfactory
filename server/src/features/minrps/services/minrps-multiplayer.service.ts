@@ -126,13 +126,13 @@ export class MinRpsMultiplayerService {
   }
 
   public seatPlayer(command: MinRpsMatchSeatPayload): MinRpsMatchUpdatedPayload {
-    // Get match
+    // Get Match
     const match: MinRpsGame = this.matchRepository.findOrCreate(command.matchId);
     // Build player
     const player: MinRpsPlayer = new MinRpsPlayer();
     player.id = command.playerId;
     player.name = command.playerName;
-    match.seatPlayer(player);
+    match.seatPlayer(player, command.seat);
     // Update match
     const updatedMatch: MinRpsGame = this.matchRepository.save(match);
     // Return match state

@@ -12,13 +12,9 @@ describe('MinRpsOverviewComponent', () => {
   let mockRoutingService: jasmine.SpyObj<RoutingService>;
 
   beforeEach(async () => {
-    mockGameService = jasmine.createSpyObj(
-      'MinRpsGameService',
-      ['createGame', 'deleteGame', 'refreshGames'],
-      {
-        games: signal([]),
-      },
-    );
+    mockGameService = jasmine.createSpyObj('MinRpsGameService', ['createGame', 'deleteGame', 'refreshGames'], {
+      games: signal([]),
+    });
     mockRoutingService = jasmine.createSpyObj('RoutingService', ['navigateToMinRpsMultiplayer']);
 
     await TestBed.configureTestingModule({

@@ -71,11 +71,7 @@ export class MinRpsOverviewComponent implements OnInit {
 
   private createFormGroup(): FormGroup {
     return new FormGroup({
-      name: new FormControl('', [
-        Validators.maxLength(16),
-        Validators.minLength(2),
-        Validators.required,
-      ]),
+      name: new FormControl('', [Validators.maxLength(16), Validators.minLength(2), Validators.required]),
     });
   }
 }

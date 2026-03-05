@@ -2,7 +2,7 @@ import { provideZonelessChangeDetection, signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MinRpsMove } from '../../../../core/generated';
 import { Color } from '../../../../shared/enums/color.enum';
-import { MinRpsGame } from '../../models/domains/minrps-game';
+import { MinRpsSingleplayerViewModel } from '../../models/viewmodels/minrps-singleplayer.viewmodel';
 import { MinRpsSingleplayerService } from '../../services/minrps-singleplayer.service';
 import { MinRpsSingleplayerComponent } from './minrps-singleplayer.component';
 
@@ -13,21 +13,14 @@ describe('MinRpsSingleplayerComponent', () => {
   let gameSignal: any;
 
   beforeEach(async () => {
-    gameSignal = signal(new MinRpsGame());
-    mockService = jasmine.createSpyObj(
-      'MinRpsSingleplayerService',
-      ['playGame', 'selectMove', 'setupNewGame'],
-      {
-        game: gameSignal.asReadonly(),
-      },
-    );
+    gameSignal = signal(new MinRpsSingleplayerViewModel());
+    mockService = jasmine.createSpyObj('MinRpsSingleplayerService', ['playGame', 'selectMove', 'setupNewGame'], {
+      game: gameSignal.asReadonly(),
+    });
 
     await TestBed.configureTestingModule({
       imports: [MinRpsSingleplayerComponent],
-      providers: [
-        provideZonelessChangeDetection(),
-        { provide: MinRpsSingleplayerService, useValue: mockService },
-      ],
+      providers: [provideZonelessChangeDetection(), { provide: MinRpsSingleplayerService, useValue: mockService }],
     }).compileComponents();
 
     fixture = TestBed.createComponent(MinRpsSingleplayerComponent);
@@ -52,32 +45,33 @@ describe('MinRpsSingleplayerComponent', () => {
   });
 
   it('should have selectable moves array', () => {
-    expect(component.selectableMoves).toEqual([
-      MinRpsMove.Rock,
-      MinRpsMove.Paper,
-      MinRpsMove.Scissors,
-    ]);
+    expect(component.selectableMoves).toEqual([MinRpsMove.Rock, MinRpsMove.Paper, MinRpsMove.Scissors]);
   });
 
   describe('submitText computed signal', () => {
     it('should return "choose move" when no move is selected', () => {
-      gameSignal.set(new MinRpsGame({ player1SelectedMove: MinRpsMove.None }));
+      component.selectedMove.set(MinRpsMove.None);
       expect(component.submitText()).toBe('choose move');
     });
 
     it('should return "play rock!" when rock is selected', () => {
-      gameSignal.set(new MinRpsGame({ player1SelectedMove: MinRpsMove.Rock }));
+      component.selectedMove.set(MinRpsMove.Rock);
       expect(component.submitText()).toBe('play rock!');
     });
 
     it('should return "play paper!" when paper is selected', () => {
-      gameSignal.set(new MinRpsGame({ player1SelectedMove: MinRpsMove.Paper }));
+      component.selectedMove.set(MinRpsMove.Paper);
       expect(component.submitText()).toBe('play paper!');
     });
 
     it('should return "play scissors!" when scissors is selected', () => {
-      gameSignal.set(new MinRpsGame({ player1SelectedMove: MinRpsMove.Scissors }));
+      component.selectedMove.set(MinRpsMove.Scissors);
       expect(component.submitText()).toBe('play scissors!');
+    });
+
+    it('should return empty string for unknown move', () => {
+      component.selectedMove.set('unknown' as MinRpsMove);
+      expect(component.submitText()).toBe('');
     });
   });
 
@@ -97,19 +91,19 @@ describe('MinRpsSingleplayerComponent', () => {
   });
 
   describe('selectMove()', () => {
-    it('should call service selectMove with Rock', () => {
+    it('should update selectedMove with Rock', () => {
       component.selectMove(MinRpsMove.Rock);
-      expect(mockService.selectMove).toHaveBeenCalledWith(MinRpsMove.Rock);
+      expect(component.selectedMove()).toBe(MinRpsMove.Rock);
     });
 
-    it('should call service selectMove with Paper', () => {
+    it('should update selectedMove with Paper', () => {
       component.selectMove(MinRpsMove.Paper);
-      expect(mockService.selectMove).toHaveBeenCalledWith(MinRpsMove.Paper);
+      expect(component.selectedMove()).toBe(MinRpsMove.Paper);
     });
 
-    it('should call service selectMove with Scissors', () => {
+    it('should update selectedMove with Scissors', () => {
       component.selectMove(MinRpsMove.Scissors);
-      expect(mockService.selectMove).toHaveBeenCalledWith(MinRpsMove.Scissors);
+      expect(component.selectedMove()).toBe(MinRpsMove.Scissors);
     });
   });
 });

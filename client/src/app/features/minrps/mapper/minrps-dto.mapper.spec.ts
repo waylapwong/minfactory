@@ -1,9 +1,4 @@
-import {
-  MinRpsGameDto,
-  MinRpsMove,
-  MinRpsPlayResultDto,
-  MinRpsResult,
-} from '../../../core/generated';
+import { MinRpsGameDto, MinRpsMove, MinRpsPlayResultDto, MinRpsResult } from '../../../core/generated';
 import { MinRpsDtoMapper } from './minrps-dto.mapper';
 
 describe('MinRpsDtoMapper', () => {
@@ -53,8 +48,8 @@ describe('MinRpsDtoMapper', () => {
 
       const domain = MinRpsDtoMapper.playResultDtoToDomain(dto);
 
-      expect(domain.player1Move).toBe(MinRpsMove.Rock);
-      expect(domain.player2Move).toBe(MinRpsMove.Scissors);
+      expect(domain.player1.move).toBe(MinRpsMove.Rock);
+      expect(domain.player2.move).toBe(MinRpsMove.Scissors);
       expect(domain.result).toBe(MinRpsResult.Player1);
     });
 

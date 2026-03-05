@@ -6,7 +6,6 @@ export class MinRpsViewmodelMapper {
     const domain: MinRpsGame = new MinRpsGame();
 
     domain.player1.move = viewModel.player1Move;
-    domain.player1.selectedMove = viewModel.player1SelectedMove;
     domain.player2.move = viewModel.player2Move;
     domain.result = viewModel.result;
 
