@@ -8,15 +8,15 @@ body:
     id: description
     attributes:
       label: User Story
-      placeholder: "As a [role] I want [feature], so that [benefit]."
+      value: "Als **[Rolle]** möchte ich **[Feature]**, damit **[Nutzen]**."
     validations:
       required: true
 
   - type: textarea
     id: acceptance_criteria
     attributes:
-      label: Acceptance Criteria
-      placeholder: |
-        - [ ] Acceptance criterion
+      label: Akzeptanzkriterien
+      value: |
+        - [ ] Akzeptanzkriterium
     validations:
       required: true
