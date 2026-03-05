@@ -1,5 +1,7 @@
 export const RoutingServiceMock = {
   navigateToHomePage: () => {},
-  navigateToMinRPS: () => {},
-  navigateToMinRPSGame: () => {}, 
+  navigateToMinRps: () => {},
+  navigateToMinRpsSingleplayer: () => {},
+  navigateToMinRpsOverview: () => {},
+  navigateToMinRpsMultiplayer: () => {},
 };

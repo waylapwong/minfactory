@@ -1,0 +1,19 @@
+@if (isOpen()) {
+  <!-- BACKDROP -->
+  <div class="fixed inset-0 z-40 flex items-center justify-center bg-black/50 backdrop-blur-xs">
+    <!-- DIALOG -->
+    <div class="w-9/10 max-w-md rounded-lg border-4 border-black bg-gray-100 p-4 text-neutral-900 shadow-xl">
+      <div class="flex flex-row items-start justify-between">
+        <!-- TITLE -->
+        <min-h2>{{ title() }}</min-h2>
+        <!-- CLOSE BUTTON -->
+        <min-button aria-label="close" class="text-xs" [color]="Color.Red" (clicked)="emitClosed()">
+          <img src="assets/svg/close.svg" alt="Rock" class="h-4 w-4" />
+        </min-button>
+      </div>
+
+      <!-- CONTENT -->
+      <ng-content></ng-content>
+    </div>
+  </div>
+}

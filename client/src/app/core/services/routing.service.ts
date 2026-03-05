@@ -1,8 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-
 import { AppPath } from '../../app.routes';
-import { MinRPSPath } from '../../features/minrps/minrps.routes';
+import { MinRpsPath } from '../../features/minrps/minrps.routes';
 
 @Injectable({
   providedIn: 'root',
@@ -14,11 +13,19 @@ export class RoutingService {
     this.router.navigate([AppPath.Root]);
   }
 
-  public navigateToMinRPS(): void {
-    this.router.navigate([AppPath.MinRPS]);
+  public navigateToMinRps(): void {
+    this.router.navigate([AppPath.MinRps]);
   }
 
-  public navigateToMinRPSGame(): void {
-    this.router.navigate([AppPath.MinRPS, MinRPSPath.Game]);
+  public navigateToMinRpsSingleplayer(): void {
+    this.router.navigate([AppPath.MinRps, MinRpsPath.Singleplayer]);
+  }
+
+  public navigateToMinRpsOverview(): void {
+    this.router.navigate([AppPath.MinRps, MinRpsPath.Overview]);
+  }
+
+  public navigateToMinRpsMultiplayer(id: string): void {
+    this.router.navigate([AppPath.MinRps, MinRpsPath.Multiplayer, id]);
   }
 }

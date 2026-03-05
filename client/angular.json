@@ -7,12 +7,18 @@
         "build": {
           "builder": "@angular/build:application",
           "configurations": {
-            "development": {
+            "dev": {
               "extractLicenses": false,
               "optimization": false,
-              "sourceMap": true
+              "sourceMap": true,
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.dev.ts"
+                }
+              ]
             },
-            "production": {
+            "prod": {
               "budgets": [
                 {
                   "maximumError": "1MB",
@@ -59,14 +65,14 @@
         "serve": {
           "builder": "@angular/build:dev-server",
           "configurations": {
-            "development": {
-              "buildTarget": "client:build:development"
+            "dev": {
+              "buildTarget": "client:build:dev"
             },
-            "production": {
-              "buildTarget": "client:build:production"
+            "prod": {
+              "buildTarget": "client:build:prod"
             }
           },
-          "defaultConfiguration": "development"
+          "defaultConfiguration": "dev"
         },
         "test": {
           "builder": "@angular/build:karma",
@@ -78,7 +84,14 @@
               }
             ],
             "browsers": "ChromeHeadless",
-            "codeCoverageExclude": ["**/*.mock.ts", "**/*.routes.ts"],
+            "codeCoverageExclude": [
+              "src/app/core/generated/",
+              "**/*.enum.ts",
+              "**/*.mock.ts",
+              "**/*.payload.ts",
+              "**/*.routes.ts",
+              "**/*.viewmodel.ts"
+            ],
             "inlineStyleLanguage": "scss",
             "karmaConfig": "karma.conf.js",
             "styles": ["src/styles.scss"],

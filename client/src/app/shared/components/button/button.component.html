@@ -1,3 +1,3 @@
-<button [class]="cssClass()" [disabled]="disabled()" [type]="type()" (click)="clicked.emit()">
+<button [class]="cssClass()" [disabled]="isDisabled()" [type]="type()" (click)="clicked.emit($event)">
   <ng-content></ng-content>
 </button>

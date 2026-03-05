@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-
 import { ContextService } from '../../core/services/context.service';
 import { AppName } from '../../shared/enums/app-name.enum';
 
@@ -11,10 +10,10 @@ import { AppName } from '../../shared/enums/app-name.enum';
   host: { class: 'block h-full' },
   imports: [RouterOutlet],
 })
-export class MinRPSComponent implements OnInit {
+export class MinRpsComponent implements OnInit {
   constructor(private readonly contextService: ContextService) {}
 
   public ngOnInit(): void {
-    this.contextService.app.set(AppName.MinRPS);
+    this.contextService.app.set(AppName.MinRps);
   }
 }

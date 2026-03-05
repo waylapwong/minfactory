@@ -1,5 +1,4 @@
 import { Component, WritableSignal, signal } from '@angular/core';
-
 import { RoutingService } from '../../../../core/services/routing.service';
 import { BadgeComponent } from '../../../../shared/components/badge/badge.component';
 import { CardButtonComponent } from '../../../../shared/components/card-button/card-button.component';

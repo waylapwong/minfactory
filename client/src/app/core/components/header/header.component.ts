@@ -1,6 +1,5 @@
 import { Component, computed } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
-
 import { AppPath } from '../../../app.routes';
 import { MinFactoryPath } from '../../../features/minfactory/minfactory.routes';
 import { DividerComponent } from '../../../shared/components/divider/divider.component';
@@ -19,11 +18,11 @@ export class HeaderComponent {
   public readonly Application: typeof AppName = AppName;
   public readonly MinFactoryPath: typeof MinFactoryPath = MinFactoryPath;
 
-  public logo = computed(() => {
+  public logoText = computed(() => {
     switch (this.contextService.app()) {
       case AppName.MinFactory:
         return 'Factory';
-      case AppName.MinRPS:
+      case AppName.MinRps:
         return 'RPS';
       default:
         return 'Factory';
@@ -33,8 +32,8 @@ export class HeaderComponent {
     switch (this.contextService.app()) {
       case AppName.MinFactory:
         return AppPath.Root;
-      case AppName.MinRPS:
-        return AppPath.MinRPS;
+      case AppName.MinRps:
+        return AppPath.MinRps;
       default:
         return AppPath.Root;
     }

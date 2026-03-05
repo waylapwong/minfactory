@@ -1,9 +1,8 @@
 import { provideZonelessChangeDetection } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { Router } from '@angular/router';
-
 import { AppPath } from '../../app.routes';
-import { MinRPSPath } from '../../features/minrps/minrps.routes';
+import { MinRpsPath } from '../../features/minrps/minrps.routes';
 import { RoutingService } from './routing.service';
 
 describe('RoutingService', () => {
@@ -36,19 +35,35 @@ describe('RoutingService', () => {
     });
   });
 
-  describe('navigateToMinRPS()', () => {
+  describe('navigateToMinRps()', () => {
     it('should navigate to minRPS', () => {
       const spy = spyOn((service as any).router, 'navigate');
-      service.navigateToMinRPS();
-      expect(spy).toHaveBeenCalledWith([AppPath.MinRPS]);
+      service.navigateToMinRps();
+      expect(spy).toHaveBeenCalledWith([AppPath.MinRps]);
     });
   });
 
-  describe('navigateToMinRPsGame()', () => {
-    it('should navigate to minRPS game', () => {
+  describe('navigateToMinRpsSingleplayerGame()', () => {
+    it('should navigate to minRPS singleplayer game', () => {
       const spy = spyOn((service as any).router, 'navigate');
-      service.navigateToMinRPSGame();
-      expect(spy).toHaveBeenCalledWith([AppPath.MinRPS, MinRPSPath.Game]);
+      service.navigateToMinRpsSingleplayer();
+      expect(spy).toHaveBeenCalledWith([AppPath.MinRps, MinRpsPath.Singleplayer]);
+    });
+  });
+
+  describe('navigateToMinRpsOverview()', () => {
+    it('should navigate to minRPS overview', () => {
+      const spy = spyOn((service as any).router, 'navigate');
+      service.navigateToMinRpsOverview();
+      expect(spy).toHaveBeenCalledWith([AppPath.MinRps, MinRpsPath.Overview]);
+    });
+  });
+
+  describe('navigateToMinRpsMultiplayer()', () => {
+    it('should navigate to minRPS multiplayer with game id', () => {
+      const spy = spyOn((service as any).router, 'navigate');
+      service.navigateToMinRpsMultiplayer('game-123');
+      expect(spy).toHaveBeenCalledWith([AppPath.MinRps, MinRpsPath.Multiplayer, 'game-123']);
     });
   });
 });

@@ -1,0 +1,22 @@
+name: Task
+description: Task
+title: "[Task]: "
+labels: []
+
+body:
+  - type: textarea
+    id: description
+    attributes:
+      label: User Story
+      placeholder: "As a [role] I want [feature], so that [benefit]."
+    validations:
+      required: true
+
+  - type: textarea
+    id: acceptance_criteria
+    attributes:
+      label: Acceptance Criteria
+      placeholder: |
+        - [ ] Acceptance criterion
+    validations:
+      required: true

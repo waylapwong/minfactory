@@ -1,129 +1,183 @@
 import { provideZonelessChangeDetection } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
+import { MinRpsGameDto } from '../../../core/generated';
+import { MinRpsGameRepository } from '../repositories/minrps-game.repository';
+import { MinRpsGameService } from './minrps-game.service';
 
-import {
-  MINRPS_FOURTH_MESSAGES_LOSE,
-  MINRPS_FOURTH_MESSAGES_TIE,
-  MINRPS_FOURTH_MESSAGES_WIN,
-} from '../models/constants/minrps-fourth.message';
-import { MinRPSMove } from '../models/enums/minrps-move.enum';
-import { MinRPSGameService } from './minrps-game.service';
-
-describe('MinRPSGameService', () => {
-  let service: MinRPSGameService;
+describe('MinRpsGameService', () => {
+  let service: MinRpsGameService;
+  let mockRepository: jasmine.SpyObj<MinRpsGameRepository>;
 
   beforeEach(() => {
-    TestBed.configureTestingModule({
-      providers: [provideZonelessChangeDetection()],
-    });
-    service = TestBed.inject(MinRPSGameService);
-  });
+    mockRepository = jasmine.createSpyObj('MinRpsGameRepository', ['create', 'delete', 'get', 'getAll']);
 
-  beforeEach(() => {});
+    TestBed.configureTestingModule({
+      providers: [
+        provideZonelessChangeDetection(),
+        MinRpsGameService,
+        { provide: MinRpsGameRepository, useValue: mockRepository },
+      ],
+    });
+    service = TestBed.inject(MinRpsGameService);
+  });
 
   it('should be created', () => {
     expect(service).toBeTruthy();
   });
 
-  describe('setPlayer1Move()', () => {
-    it('should set player 1 move', () => {
-      service.setPlayer1Move(MinRPSMove.Rock);
-      expect(service.player1Move()).toBe(MinRPSMove.Rock);
+  describe('createGame()', () => {
+    it('should create a game and update cached games', async () => {
+      const mockDto: MinRpsGameDto = {
+        id: 'test-id',
+        name: 'Test Game',
+        createdAt: new Date().toISOString(),
+        observerCount: 0,
+        playerCount: 0,
+      };
+      mockRepository.create.and.returnValue(Promise.resolve(mockDto));
+
+      await service.createGame('Test Game');
+
+      expect(mockRepository.create).toHaveBeenCalledWith('Test Game');
+      expect(service.games().length).toBe(1);
+    });
+
+    it('should sort games by creation date descending when adding multiple games', async () => {
+      const mockDto1: MinRpsGameDto = {
+        id: 'test-id-1',
+        name: 'Test Game 1',
+        createdAt: new Date('2024-01-01').toISOString(),
+        observerCount: 0,
+        playerCount: 0,
+      };
+      const mockDto2: MinRpsGameDto = {
+        id: 'test-id-2',
+        name: 'Test Game 2',
+        createdAt: new Date('2024-01-02').toISOString(),
+        observerCount: 0,
+        playerCount: 0,
+      };
+      mockRepository.create.and.returnValues(Promise.resolve(mockDto1), Promise.resolve(mockDto2));
+
+      await service.createGame('Test Game 1');
+      await service.createGame('Test Game 2');
+
+      const games = service.games();
+      expect(games.length).toBe(2);
+      expect(games[0].id).toBe('test-id-2');
+      expect(games[1].id).toBe('test-id-1');
     });
   });
 
-  describe('setPlayer2Move()', () => {
-    it('should set player 2 move', () => {
-      service.setPlayer2Move(MinRPSMove.Rock);
-      expect(service.player2Move()).toBe(MinRPSMove.Rock);
-    });
-  });
+  describe('deleteGame()', () => {
+    it('should delete a game and update cached games', async () => {
+      const mockDto: MinRpsGameDto = {
+        id: 'test-id',
+        name: 'Test Game',
+        createdAt: new Date().toISOString(),
+        observerCount: 0,
+        playerCount: 0,
+      };
+      mockRepository.create.and.returnValue(Promise.resolve(mockDto));
+      mockRepository.delete.and.returnValue(Promise.resolve());
 
-  describe('setupNewGame()', () => {
-    it('should setup new game', () => {
-      service.setPlayer1Move(MinRPSMove.Rock);
-      service.setupNewGame();
-      expect(service.player1Move()).toBe(MinRPSMove.None);
-    });
-  });
+      await service.createGame('Test Game');
+      await service.deleteGame('test-id');
 
-  describe('startGame()', () => {
-    beforeEach(() => {
-      spyOn(service as any, 'sleep');
-      spyOn(service as any, 'typeMessage');
+      expect(mockRepository.delete).toHaveBeenCalledWith('test-id');
+      expect(service.games().length).toBe(0);
     });
 
-    it('should not do anything, if game is already running', async () => {
-      (service as any).gameRunning = true;
-      await service.startGame(MinRPSMove.Rock);
-      expect(service.player1Move()).toBe(MinRPSMove.None);
-    });
-
-    it('should set player 1 move', async () => {
-      spyOn(service as any, 'setupNewGame');
-      await service.startGame(MinRPSMove.Rock);
-      expect(service.player1Move()).toBe(MinRPSMove.Rock);
-    });
-
-    it('should set player 2 random move', async () => {
-      spyOn(service as any, 'setupNewGame');
-      await service.startGame(MinRPSMove.Rock);
-      expect(service.player1Move()).not.toBe(MinRPSMove.None);
-    });
-
-    it('should display correct message, if player 1 wins', async () => {
-      spyOn(service as any, 'getRandomMove').and.callFake(() => MinRPSMove.Scissors);
-      spyOn(service as any, 'setupNewGame');
-      const spy = spyOn(service as any, 'getRandomMessage');
-      await service.startGame(MinRPSMove.Rock);
-      expect(spy).toHaveBeenCalledWith(MINRPS_FOURTH_MESSAGES_LOSE);
-    });
-
-    it('should display correct message, if player 2 wins', async () => {
-      spyOn(service as any, 'getRandomMove').and.callFake(() => MinRPSMove.Paper);
-      spyOn(service as any, 'setupNewGame');
-      const spy = spyOn(service as any, 'getRandomMessage');
-      await service.startGame(MinRPSMove.Rock);
-      expect(spy).toHaveBeenCalledWith(MINRPS_FOURTH_MESSAGES_WIN);
-    });
-
-    it('should display correct message, if it is a draw', async () => {
-      spyOn(service as any, 'getRandomMove').and.callFake(() => MinRPSMove.Rock);
-      spyOn(service as any, 'setupNewGame');
-      const spy = spyOn(service as any, 'getRandomMessage');
-      await service.startGame(MinRPSMove.Rock);
-      expect(spy).toHaveBeenCalledWith(MINRPS_FOURTH_MESSAGES_TIE);
-    });
-
-    it('should reset game in the end', async () => {
-      await service.startGame(MinRPSMove.Rock);
-    });
-  });
-
-  describe('DUMMY TESTS', () => {
-    it('abortTyping()', () => {
-      (service as any).abortController = new AbortController();
-      (service as any).abortTyping();
-      expect(1).toBe(1);
-    });
-
-    it('sleep()', () => {
-      spyOn(service as any, 'sleep').and.callThrough();
-      (service as any).sleep(0);
-      expect(1).toBe(1);
-    });
-
-    it('typeMessage()', async () => {
-      await (service as any).typeMessage('1');
-    });
-
-    it('typeMessage()', async () => {
-      const test = new AbortController();
-      test.abort();
-      await expectAsync((service as any).typeMessage('1', test.signal)).toBeRejectedWithError(
-        DOMException,
-        'Aborted',
+    it('should maintain sort order after deleting a game', async () => {
+      const mockDto1: MinRpsGameDto = {
+        id: 'test-id-1',
+        name: 'Test Game 1',
+        createdAt: new Date('2024-01-01').toISOString(),
+        observerCount: 0,
+        playerCount: 0,
+      };
+      const mockDto2: MinRpsGameDto = {
+        id: 'test-id-2',
+        name: 'Test Game 2',
+        createdAt: new Date('2024-01-02').toISOString(),
+        observerCount: 0,
+        playerCount: 0,
+      };
+      const mockDto3: MinRpsGameDto = {
+        id: 'test-id-3',
+        name: 'Test Game 3',
+        createdAt: new Date('2024-01-03').toISOString(),
+        observerCount: 0,
+        playerCount: 0,
+      };
+      mockRepository.create.and.returnValues(
+        Promise.resolve(mockDto1),
+        Promise.resolve(mockDto2),
+        Promise.resolve(mockDto3),
       );
+      mockRepository.delete.and.returnValue(Promise.resolve());
+
+      await service.createGame('Test Game 1');
+      await service.createGame('Test Game 2');
+      await service.createGame('Test Game 3');
+      await service.deleteGame('test-id-2');
+
+      const games = service.games();
+      expect(games.length).toBe(2);
+      expect(games[0].id).toBe('test-id-3');
+      expect(games[1].id).toBe('test-id-1');
+    });
+  });
+
+  describe('gameExistByID()', () => {
+    it('should return true if game exists', async () => {
+      const mockDto: MinRpsGameDto = {
+        id: 'test-id',
+        name: 'Test Game',
+        createdAt: new Date().toISOString(),
+        observerCount: 0,
+        playerCount: 0,
+      };
+      mockRepository.get.and.returnValue(Promise.resolve(mockDto));
+
+      const exists = await service.gameExistByID('test-id');
+
+      expect(exists).toBe(true);
+    });
+
+    it('should return false if game does not exist', async () => {
+      mockRepository.get.and.returnValue(Promise.reject(new Error('Not found')));
+
+      const exists = await service.gameExistByID('test-id');
+
+      expect(exists).toBe(false);
+    });
+  });
+
+  describe('refreshGames()', () => {
+    it('should refresh games from repository', async () => {
+      const mockDtos: MinRpsGameDto[] = [
+        {
+          id: 'test-id-1',
+          name: 'Test Game 1',
+          createdAt: new Date().toISOString(),
+          observerCount: 0,
+          playerCount: 0,
+        },
+        {
+          id: 'test-id-2',
+          name: 'Test Game 2',
+          createdAt: new Date().toISOString(),
+          observerCount: 0,
+          playerCount: 0,
+        },
+      ];
+      mockRepository.getAll.and.returnValue(Promise.resolve(mockDtos));
+
+      await service.refreshGames();
+
+      expect(mockRepository.getAll).toHaveBeenCalled();
+      expect(service.games().length).toBe(2);
     });
   });
 });

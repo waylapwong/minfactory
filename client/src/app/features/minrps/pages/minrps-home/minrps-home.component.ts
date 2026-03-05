@@ -1,5 +1,4 @@
 import { Component } from '@angular/core';
-
 import { RoutingService } from '../../../../core/services/routing.service';
 import { CardButtonComponent } from '../../../../shared/components/card-button/card-button.component';
 import { H2Component } from '../../../../shared/components/h2/h2.component';
@@ -13,8 +12,8 @@ import { Color } from '../../../../shared/enums/color.enum';
   host: { class: 'flex h-full flex-row items-center justify-evenly gap-2 sm:gap-0' },
   imports: [CardButtonComponent, H2Component, LogoComponent],
 })
-export class MinRPSHomeComponent {
-  public readonly Color = Color;
+export class MinRpsHomeComponent {
+  public readonly Color: typeof Color = Color;
 
   constructor(public readonly routingService: RoutingService) {}
 }

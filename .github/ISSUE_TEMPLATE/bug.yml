@@ -7,32 +7,32 @@ body:
   - type: textarea
     id: description
     attributes:
-      label: Beschreibung
-      placeholder: "Beschreibung"
+      label: Description
+      placeholder: "Description"
     validations:
       required: true
 
   - type: textarea
     id: steps
     attributes:
-      label: Schritte zur Reproduktion
+      label: Steps to Reproduce
       placeholder: |
-        - [ ] Schritt
+        - [ ] Step
     validations:
       required: true
 
   - type: textarea
     id: expected
     attributes:
-      label: Erwartetes Verhalten
-      placeholder: "Erwartetes Verhalten"
+      label: Expected Behavior
+      placeholder: "Expected behavior"
     validations:
       required: true
 
   - type: textarea
     id: actual
     attributes:
-      label: Tatsächliches Verhalten
-      placeholder: "Tatsächliches Verhalten"
+      label: Actual Behavior
+      placeholder: "Actual behavior"
     validations:
       required: true

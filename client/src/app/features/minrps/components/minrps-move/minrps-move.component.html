@@ -2,9 +2,9 @@
   class="rounded-lg border-4 border-black px-2 py-1 shadow-2xl transition-all duration-100 hover:bg-blue-300 focus-visible:bg-blue-300 active:-translate-y-2 disabled:cursor-not-allowed disabled:bg-gray-300 disabled:opacity-50"
   (click)="selected.emit()"
   [class.bg-blue-300]="isSelected()"
-  [class.bg-green-300]="isSelected() && result() === MinRPSGameResult.Player1"
-  [class.bg-red-300]="isSelected() && result() === MinRPSGameResult.Player2"
-  [class.bg-yellow-300]="isSelected() && result() === MinRPSGameResult.Draw"
+  [class.bg-green-300]="result() === MinRpsResult.Player1"
+  [class.bg-red-300]="result() === MinRpsResult.Player2"
+  [class.bg-yellow-300]="result() === MinRpsResult.Draw"
   [class.-translate-y-2]="isPlayed()"
   [disabled]="isDisabled()"
 >

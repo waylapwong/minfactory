@@ -7,14 +7,12 @@ client/node_modules
 
 # SERVER IGNORES
 server/coverage
+server/src/coverage
 server/dist
 server/docs
 server/node_modules
+server/.env
 
 # VISUAL STUDIO CODE
-.vscode/*
-!.vscode/settings.json
-!.vscode/tasks.json
-!.vscode/launch.json
-!.vscode/extensions.json
-.history/*
+.vscode/
+.history/

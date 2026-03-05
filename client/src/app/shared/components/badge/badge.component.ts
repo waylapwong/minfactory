@@ -1,6 +1,5 @@
 import { NgTemplateOutlet } from '@angular/common';
 import { Component, InputSignal, input } from '@angular/core';
-
 import { Color } from '../../enums/color.enum';
 
 @Component({

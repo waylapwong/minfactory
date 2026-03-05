@@ -1,5 +1,4 @@
 import { Injectable, WritableSignal, signal } from '@angular/core';
-
 import { AppName } from '../../shared/enums/app-name.enum';
 
 @Injectable({

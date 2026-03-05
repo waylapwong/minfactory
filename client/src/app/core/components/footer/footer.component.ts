@@ -1,5 +1,4 @@
 import { Component } from '@angular/core';
-
 import { DividerComponent } from '../../../shared/components/divider/divider.component';
 import { LogoComponent } from '../../../shared/components/logo/logo.component';
 

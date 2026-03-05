@@ -1,0 +1,32 @@
+import { provideZonelessChangeDetection } from '@angular/core';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { DialogComponent } from './dialog.component';
+
+describe('CardButtonComponent', () => {
+  let component: DialogComponent;
+  let fixture: ComponentFixture<DialogComponent>;
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [DialogComponent],
+      providers: [provideZonelessChangeDetection()],
+    }).compileComponents();
+
+    fixture = TestBed.createComponent(DialogComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+  });
+
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
+
+  describe('emitClosed()', () => {
+    it('should emit closed event', () => {
+      const spy = jasmine.createSpy('closed');
+      component.closed.subscribe(spy);
+      component.emitClosed();
+      expect(spy).toHaveBeenCalled();
+    });
+  });
+});

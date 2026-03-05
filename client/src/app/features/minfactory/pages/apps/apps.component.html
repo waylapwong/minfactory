@@ -1,6 +1,5 @@
-<div
-  class="mb-4 flex w-full flex-row items-end justify-around gap-4 border-b-4 border-black text-center"
->
+<div class="mb-4 flex w-full flex-row items-end justify-around gap-4 border-b-4 border-black text-center">
+  <!-- APPS -->
   <button
     class="relative bottom-[-4px] ml-4 basis-1/2 cursor-pointer rounded-t-lg border-4 px-4 font-bold"
     [class.bg-gray-300]="selectedTab() !== 1"
@@ -14,6 +13,7 @@
   >
     Apps
   </button>
+  <!-- GAMES -->
   <button
     class="relative bottom-[-4px] mr-4 basis-1/2 cursor-pointer rounded-t-lg border-4 px-4 font-bold"
     [class.bg-gray-300]="selectedTab() !== 2"
@@ -42,7 +42,7 @@
   }
   @if (selectedTab() === 2) {
     <!-- MIN_RPS -->
-    <min-card-button class="basis-3xs" (clicked)="routingService.navigateToMinRPS()">
+    <min-card-button class="basis-3xs" (clicked)="routingService.navigateToMinRps()">
       <div class="flex flex-row items-start justify-between">
         <min-h2><min-logo>RPS</min-logo></min-h2>
         <min-badge [color]="Color.Yellow">alpha</min-badge>

@@ -1,0 +1,20 @@
+<div class="flex w-full flex-col">
+  <!-- LABEL -->
+  @if (label()) {
+    <label class="font-bold" [for]="id()"> {{ label() }}: </label>
+  }
+  <!-- INPUT -->
+  <input
+    [class]="
+      `rounded-lg border-4 bg-white px-2 py-1 shadow-2xl` +
+      ` placeholder:text-gray-500` +
+      ` focus:ring-1 focus:outline-none` +
+      ` disabled:cursor-not-allowed disabled:bg-gray-300 disabled:opacity-50 disabled:shadow-none` +
+      ` ${isFormControlInvalid() ? 'border-red-500 focus:ring-red-500' : 'border-black focus:ring-black'}`
+    "
+    [formControl]="formControlInput()"
+    [id]="id()"
+    [placeholder]="placeholder()"
+    [type]="type()"
+  />
+</div>

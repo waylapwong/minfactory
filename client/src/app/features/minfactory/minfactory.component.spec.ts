@@ -1,6 +1,5 @@
 import { provideZonelessChangeDetection } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
 import { MinFactoryComponent } from './minfactory.component';
 
 describe('MinFactoryComponent', () => {
