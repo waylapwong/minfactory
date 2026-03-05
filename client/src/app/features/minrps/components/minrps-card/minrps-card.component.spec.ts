@@ -1,6 +1,5 @@
 import { provideZonelessChangeDetection } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { MinRpsResult } from '../../../../core/generated';
 import { MinRpsCardComponent } from './minrps-card.component';
 
 describe('MinRpsCardComponent', () => {
@@ -22,43 +21,48 @@ describe('MinRpsCardComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should have MinRpsResult enum available', () => {
-    expect(component.MinRpsResult).toBe(MinRpsResult);
-  });
-
-  describe('result input', () => {
-    it('should have default value of None', () => {
-      expect(component.result()).toBe(MinRpsResult.None);
+  describe('inputs', () => {
+    it('should have default hasResult as false', () => {
+      expect(component.hasResult()).toBe(false);
     });
 
-    it('should accept Player1 result', () => {
-      fixture.componentRef.setInput('result', MinRpsResult.Player1);
-      expect(component.result()).toBe(MinRpsResult.Player1);
+    it('should accept hasResult input', () => {
+      fixture.componentRef.setInput('hasResult', true);
+      expect(component.hasResult()).toBe(true);
     });
 
-    it('should accept Player2 result', () => {
-      fixture.componentRef.setInput('result', MinRpsResult.Player2);
-      expect(component.result()).toBe(MinRpsResult.Player2);
+    it('should have default isDraw as false', () => {
+      expect(component.isDraw()).toBe(false);
     });
 
-    it('should accept Draw result', () => {
-      fixture.componentRef.setInput('result', MinRpsResult.Draw);
-      expect(component.result()).toBe(MinRpsResult.Draw);
+    it('should accept isDraw input', () => {
+      fixture.componentRef.setInput('isDraw', true);
+      expect(component.isDraw()).toBe(true);
+    });
+
+    it('should have default isWinning as false', () => {
+      expect(component.isWinning()).toBe(false);
+    });
+
+    it('should accept isWinning input', () => {
+      fixture.componentRef.setInput('isWinning', true);
+      expect(component.isWinning()).toBe(true);
     });
   });
 
   describe('template rendering', () => {
-    it('should apply bg-green-300 class when result is Player2', () => {
-      fixture.componentRef.setInput('result', MinRpsResult.Player2);
+    it('should apply bg-green-300 class when hasResult is true and isWinning is true', () => {
+      fixture.componentRef.setInput('hasResult', true);
+      fixture.componentRef.setInput('isWinning', true);
       fixture.detectChanges();
       const element = fixture.nativeElement.querySelector('div');
       expect(element.classList.contains('bg-green-300')).toBe(true);
-      expect(element.classList.contains('bg-red-300')).toBe(false);
-      expect(element.classList.contains('bg-yellow-300')).toBe(false);
     });
 
-    it('should apply bg-red-300 class when result is Player1', () => {
-      fixture.componentRef.setInput('result', MinRpsResult.Player1);
+    it('should apply bg-red-300 class when hasResult is true, isWinning is false, and isDraw is false', () => {
+      fixture.componentRef.setInput('hasResult', true);
+      fixture.componentRef.setInput('isWinning', false);
+      fixture.componentRef.setInput('isDraw', false);
       fixture.detectChanges();
       const element = fixture.nativeElement.querySelector('div');
       expect(element.classList.contains('bg-red-300')).toBe(true);
@@ -66,8 +70,9 @@ describe('MinRpsCardComponent', () => {
       expect(element.classList.contains('bg-yellow-300')).toBe(false);
     });
 
-    it('should apply bg-yellow-300 class when result is Draw', () => {
-      fixture.componentRef.setInput('result', MinRpsResult.Draw);
+    it('should apply bg-yellow-300 class when hasResult is true and isDraw is true', () => {
+      fixture.componentRef.setInput('hasResult', true);
+      fixture.componentRef.setInput('isDraw', true);
       fixture.detectChanges();
       const element = fixture.nativeElement.querySelector('div');
       expect(element.classList.contains('bg-yellow-300')).toBe(true);
@@ -75,8 +80,10 @@ describe('MinRpsCardComponent', () => {
       expect(element.classList.contains('bg-green-300')).toBe(false);
     });
 
-    it('should not apply color classes when result is None', () => {
-      fixture.componentRef.setInput('result', MinRpsResult.None);
+    it('should not apply color classes when hasResult is false', () => {
+      fixture.componentRef.setInput('hasResult', false);
+      fixture.componentRef.setInput('isWinning', false);
+      fixture.componentRef.setInput('isDraw', false);
       fixture.detectChanges();
       const element = fixture.nativeElement.querySelector('div');
       expect(element.classList.contains('bg-green-300')).toBe(false);

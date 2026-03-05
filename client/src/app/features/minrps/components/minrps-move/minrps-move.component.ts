@@ -1,5 +1,4 @@
 import { Component, InputSignal, OutputEmitterRef, input, output } from '@angular/core';
-import { MinRpsResult } from '../../../../core/generated';
 
 @Component({
   selector: 'minrps-move',
@@ -8,11 +7,11 @@ import { MinRpsResult } from '../../../../core/generated';
   imports: [],
 })
 export class MinRpsMoveComponent {
-  public readonly MinRpsResult: typeof MinRpsResult = MinRpsResult;
-
+  public hasResult: InputSignal<boolean> = input(false);
+  public isDraw: InputSignal<boolean> = input(false);
   public isDisabled: InputSignal<boolean> = input(false);
   public isPlayed: InputSignal<boolean> = input(false);
   public isSelected: InputSignal<boolean> = input(false);
-  public result: InputSignal<MinRpsResult> = input(MinRpsResult.None) as any;
+  public isWinning: InputSignal<boolean> = input(false);
   public selected: OutputEmitterRef<void> = output();
 }

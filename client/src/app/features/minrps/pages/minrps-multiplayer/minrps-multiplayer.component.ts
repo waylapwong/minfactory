@@ -1,7 +1,7 @@
 import { Component, OnDestroy, OnInit, Signal, WritableSignal, computed, inject, signal } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
-import { MinRpsMove } from '../../../../core/generated';
+import { MinRpsMove, MinRpsResult } from '../../../../core/generated';
 import { RoutingService } from '../../../../core/services/routing.service';
 import { ButtonComponent } from '../../../../shared/components/button/button.component';
 import { DialogComponent } from '../../../../shared/components/dialog/dialog.component';
@@ -32,6 +32,7 @@ import { MinRpsMultiplayerService } from '../../services/minrps-multiplayer.serv
 export class MinRpsMultiplayerComponent implements OnInit, OnDestroy {
   public readonly Color: typeof Color = Color;
   public readonly MinRpsMove: typeof MinRpsMove = MinRpsMove;
+  public readonly MinRpsResult: typeof MinRpsResult = MinRpsResult;
   public readonly SELECTABLE_MOVES: MinRpsMove[] = [MinRpsMove.Rock, MinRpsMove.Paper, MinRpsMove.Scissors];
 
   public game: Signal<MinRpsMultiplayerViewModel> = inject(MinRpsMultiplayerService).game;

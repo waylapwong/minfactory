@@ -1,5 +1,5 @@
 import { Component, OnInit, Signal, WritableSignal, computed, inject, signal } from '@angular/core';
-import { MinRpsMove } from '../../../../core/generated';
+import { MinRpsMove, MinRpsResult } from '../../../../core/generated';
 import { ButtonComponent } from '../../../../shared/components/button/button.component';
 import { DividerComponent } from '../../../../shared/components/divider/divider.component';
 import { Color } from '../../../../shared/enums/color.enum';
@@ -18,6 +18,7 @@ import { MinRpsSingleplayerService } from '../../services/minrps-singleplayer.se
 export class MinRpsSingleplayerComponent implements OnInit {
   public readonly Color: typeof Color = Color;
   public readonly MinRpsMove: typeof MinRpsMove = MinRpsMove;
+  public readonly MinRpsResult: typeof MinRpsResult = MinRpsResult;
 
   public game: Signal<MinRpsSingleplayerViewModel> = inject(MinRpsSingleplayerService).game;
   public selectableMoves: MinRpsMove[] = [MinRpsMove.Rock, MinRpsMove.Paper, MinRpsMove.Scissors];
