@@ -1,12 +1,12 @@
-<header class="flex flex-row items-center justify-between py-2">
+<header class="flex flex-row items-center justify-between">
   <!-- BREADCRUMB NAVIGATION -->
   <nav aria-label="Breadcrumb" role="navigation">
-    <ol class="flex flex-row items-center gap-1">
+    <ol class="flex flex-row items-center">
       <!-- FACTORY (HOME) -->
       <li>
         <a
           [routerLink]="AppPath.Root"
-          class="flex items-center gap-1 rounded px-2 py-1 font-bold text-gray-700 transition-colors hover:text-black hover:underline focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-1 focus-visible:outline-none active:text-gray-900"
+          class="flex items-center gap-1 rounded px-2 py-1 font-bold text-gray-700 transition-colors hover:text-black focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-1 focus-visible:outline-none active:text-gray-900"
           [attr.aria-current]="isInFactory() ? 'page' : null"
         >
           <!-- MOBILE: BACK ARROW ONLY WHEN NOT IN FACTORY CONTEXT -->
@@ -33,7 +33,7 @@
         <li>
           <a
             [routerLink]="AppPath.MinRps"
-            class="rounded px-2 py-1 font-bold text-gray-700 transition-colors hover:text-black hover:underline focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-1 focus-visible:outline-none active:text-gray-900"
+            class="rounded px-2 py-1 font-bold text-gray-700 transition-colors hover:text-black focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-1 focus-visible:outline-none active:text-gray-900"
             [attr.aria-current]="isInMinRps() ? 'page' : null"
           >
             <min-logo>RPS</min-logo>
