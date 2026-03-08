@@ -1,27 +1,249 @@
-# Copilot Instructions (minfactory)
+# minFactory Workspace Guidelines
 
-## Architecture overview
-- Monorepo with Angular client in [client/](client/) and NestJS server in [server/](server/).
-- Server uses REST + WebSocket for minRPS: REST controllers in [server/src/features/minrps/controllers/minrps-game.controller.ts](server/src/features/minrps/controllers/minrps-game.controller.ts#L1-L81) and socket gateway in [server/src/features/minrps/gateways/minrps.gateway.ts](server/src/features/minrps/gateways/minrps.gateway.ts#L1-L90).
-- Server layering is DTO -> Domain -> Entity, with mappers in [server/src/features/minrps/mapper/](server/src/features/minrps/mapper/) and repositories wrapping TypeORM in [server/src/features/minrps/repositories/minrps-game.repository.ts](server/src/features/minrps/repositories/minrps-game.repository.ts#L1-L33).
-- Client routing is feature-based with lazy-loaded pages in [client/src/app/app.routes.ts](client/src/app/app.routes.ts#L1-L27) and [client/src/app/features/minrps/minrps.routes.ts](client/src/app/features/minrps/minrps.routes.ts#L1-L27).
+## Kommunikation
 
-## Generated API client
-- Client API layer is generated from OpenAPI: config in [client/openapi.config.json](client/openapi.config.json) and spec in [client/openapi.json](client/openapi.json). Regenerate with `npm run gen:api` in client; output goes to [client/src/app/core/generated/](client/src/app/core/generated/). Do not hand-edit generated files.
-- API base URL is injected via `BASE_PATH` in [client/src/app/app.config.ts](client/src/app/app.config.ts#L1-L18) using `ENVIRONMENT.API_BASE_PATH` from [client/src/environments/environment.dev.ts](client/src/environments/environment.dev.ts#L1-L4).
+**Sprache:** Antworte auf Deutsch für alle Erklärungen, Diskussionen und Dokumentation. Code, Kommentare, Variablennamen und technische Bezeichner bleiben auf Englisch.
 
-## Server conventions
-- Controllers use custom Swagger decorators like `API_200` and `API_Param_ID` from [server/src/shared/decorators/](server/src/shared/decorators/) instead of raw `@ApiOkResponse` etc.
-- Global validation/serialization is configured in [server/src/main.ts](server/src/main.ts#L1-L55): `ValidationPipe` with whitelist + forbidNonWhitelisted and `ClassSerializerInterceptor`.
-- Database is configured via env vars in [server/src/core/core.module.ts](server/src/core/core.module.ts#L1-L19); expect `DB_HOST`, `DB_PORT`, `DB_USERNAME`, `DB_PASSWORD`, `DB_DATABASE`, `DB_TYPE` (mariadb), and `DB_SYNCHRONIZE`.
+## Projektstruktur
 
-## Client conventions
-- Client services prefer repository wrappers that call generated API services with `firstValueFrom`, e.g. [client/src/app/features/minrps/repositories/minrps-game.repository.ts](client/src/app/features/minrps/repositories/minrps-game.repository.ts#L1-L23).
-- State in feature services uses Angular signals (`signal`, `computed`) rather than RxJS subjects; see [client/src/app/features/minrps/services/minrps-game.service.ts](client/src/app/features/minrps/services/minrps-game.service.ts#L1-L43).
-- WebSocket access uses `ngx-socket-io` with the minRPS namespace; see [client/src/app/features/minrps/services/minrps-socket.service.ts](client/src/app/features/minrps/services/minrps-socket.service.ts#L1-L18) and server namespace in [server/src/shared/enums/namespace.enum.ts](server/src/shared/enums/namespace.enum.ts#L1-L3).
+Monorepo mit Client (Angular) und Server (NestJS) in separaten Verzeichnissen. Jedes verwaltet unabhängige Dependencies und Build-Prozesse.
 
-## Common workflows
-- Install: `npm install` in both `client` and `server` folders (see [README.md](README.md#L1-L23)).
-- Dev servers: `npm start` in `client` and `server` (client uses `ng serve --open --watch`).
-- Tests: `npm test` for each; server also has `npm run test:e2e` and `npm run test:ci`.
-- Lint/format/docs: `npm run lint`, `npm run format` or `npm run format:all`, and `npm run gen:docs` in each package.
+```
+client/          # Angular 20.3 Frontend
+server/          # NestJS 11 Backend mit TypeORM
+```
+
+## Tech Stack
+
+**Client:**
+- Angular 20.3 mit Standalone Components (Zoneless Change Detection)
+- Signal-basiertes State Management (keine RxJS Observables)
+- TailwindCSS 4 für Styling
+- Socket.io Client für WebSocket-Kommunikation
+- OpenAPI auto-generierte API Services
+
+**Server:**
+- NestJS 11 mit TypeORM 0.3.27
+- MariaDB Datenbank
+- Socket.io für Echtzeit-Kommunikation (Namespace-basiert)
+- Swagger/OpenAPI Dokumentation
+- Jest für Testing
+
+## Architecture
+
+### Client Patterns ([example](client/src/app/features/minrps/services/minrps-singleplayer.service.ts))
+
+**Feature Organization:**
+```
+features/<feature>/
+  ├── components/        # Feature-specific UI components
+  ├── pages/            # Route components
+  ├── services/         # Business logic with Signal-based state
+  ├── mapper/           # Transformations: domain ↔ DTO ↔ viewmodel
+  ├── models/           # Domain models + ViewModels
+  └── repositories/     # Data fetching
+```
+
+**State Management:**
+- Use Angular Signals (`signal()`, `computed()`) for reactive state
+- Services expose `Signal<T>` publicly; mutate via `WritableSignal` privately
+- Global state in [ContextService](client/src/app/core/services/context.service.ts)
+- **No NgRx/Akita** — services manage state directly
+
+**Data Flow:**
+```
+API DTO → Domain Model → ViewModel → Component
+(via mapper) → (via mapper) → (via signal)
+```
+
+### Server Patterns ([example](server/src/features/minrps/services/minrps-game.service.ts))
+
+**Feature Organization:**
+```
+features/<feature>/
+  ├── controllers/      # REST endpoints with @Controller
+  ├── services/         # Business logic orchestration
+  ├── repositories/     # TypeORM data access
+  ├── gateways/         # WebSocket handlers @SubscribeMessage
+  ├── mapper/           # Transformations: Entity ↔ Domain ↔ DTO
+  ├── models/
+  │   ├── entities/     # TypeORM entities
+  │   ├── dtos/         # API contracts with class-validator
+  │   ├── domains/      # Business objects
+  │   ├── payloads/     # WebSocket event payloads
+  │   └── enums/        # Type-safe constants
+  └── systems/          # Complex business rules
+```
+
+**Data Flow:**
+```
+Entity (DB) → Domain (business) → DTO (API response)
+(via mapper) → (via mapper)
+```
+
+**Layering:**
+- Controllers/Gateways → Services → Repositories → TypeORM
+- Mappers are static utility classes with pure functions
+- Repositories throw `NotFoundException` for missing records
+
+## Naming Conventions
+
+**Client:**
+- Files: `kebab-case` (e.g., `minrps-singleplayer.service.ts`)
+- Services: `@Injectable({ providedIn: 'root' })` with `-service` suffix
+- Auto-generated API: `-api.service` suffix (don't manually edit)
+- Mappers: `*-mapper.ts` with static transformation methods
+
+**Server:**
+- Files: `kebab-case` matching NestJS conventions
+- Decorators: Custom API decorators in [shared/decorators/](server/src/shared/decorators/) (`@API_200()`, `@API_404()`, etc.)
+- WebSocket: Namespace enums + Command enums for message types
+- Entities: `*Entity` suffix (e.g., `MinRpsGameEntity`)
+
+## Build and Test Commands
+
+Run from respective directories (`cd client/` or `cd server/`):
+
+```bash
+# Development
+npm start           # Client: ng serve --open --watch
+                    # Server: nest start --watch
+
+# Build
+npm run build       # Production builds
+
+# Testing
+npm test            # Watch mode with coverage
+npm run test:ci     # Headless CI mode
+
+# Linting
+npm run lint        # ESLint with auto-fix
+
+# Documentation
+npm run gen:docs    # Compodoc → docs/ folder
+```
+
+**Client-specific:**
+```bash
+npm run gen:api     # Regenerate OpenAPI client from openapi.json
+```
+
+**Server-specific:**
+```bash
+npm run test:e2e    # End-to-end tests
+```
+
+## Code Style
+
+### Client
+
+**Use Signals, not Observables for state:**
+```typescript
+// ✅ Preferred
+private readonly gameState = signal<GameState>(initialState);
+readonly game = computed(() => this.gameState());
+
+// ❌ Avoid for state management
+private readonly gameState$ = new BehaviorSubject<GameState>(initialState);
+```
+
+**Always map between layers:**
+```typescript
+// ✅ Explicit transformations via mappers
+const domain = DomainMapper.fromDto(apiResponse);
+const viewModel = ViewmodelMapper.fromDomain(domain);
+
+// ❌ Don't pass DTOs directly to templates
+```
+
+**Standalone components with lazy routes:**
+- See [app.routes.ts](client/src/app/app.routes.ts) for feature routing
+- No NgModules except auto-generated ApiModule
+
+### Server
+
+**Strict layer separation:**
+```typescript
+// ✅ Service uses mapper at boundaries
+async findById(id: string): Promise<MinRpsGameDto> {
+  const entity = await this.repository.findById(id);
+  const domain = MinRpsDomainMapper.fromEntity(entity);
+  return MinRpsDtoMapper.fromDomain(domain);
+}
+
+// ❌ Don't return entities from services
+async findById(id: string): Promise<MinRpsGameEntity> {
+  return this.repository.findById(id);
+}
+```
+
+**WebSocket namespace isolation:**
+```typescript
+// ✅ Feature-scoped namespace
+@WebSocketGateway({ namespace: Namespace.MinRps })
+
+// ❌ Avoid global gateway without namespace
+@WebSocketGateway()
+```
+
+**Custom decorators for Swagger:**
+```typescript
+// ✅ Use project decorators
+@API_200(MinRpsGameDto)
+@API_404()
+
+// ❌ Don't manually configure each response
+@ApiResponse({ status: 200, type: MinRpsGameDto })
+@ApiResponse({ status: 404, description: 'Not found' })
+```
+
+## Common Patterns
+
+### Mapper Pattern (Both Sides)
+
+Central to the codebase — always transform data at boundaries:
+
+**Client:** DTO → Domain → ViewModel  
+**Server:** Entity → Domain → DTO
+
+See [MinRpsDomainMapper](client/src/app/features/minrps/mapper/minrps-domain.mapper.ts) or [MinRpsDtoMapper](server/src/features/minrps/mapper/minrps-dto.mapper.ts) for examples.
+
+### Testing
+
+**Client:**
+- Karma + Jasmine, coverage in `coverage/client/`
+- Mock services colocated with implementations
+- Example: [context.service.spec.ts](client/src/app/core/services/context.service.spec.ts)
+
+**Server:**
+- Jest, coverage excludes DTOs/entities/enums/decorators
+- Mock repositories in `Test.createTestingModule()`
+- Example: [minrps-game.service.spec.ts](server/src/features/minrps/services/minrps-game.service.spec.ts)
+
+## Deployment
+
+**Server to Heroku:**
+```bash
+git subtree push --prefix server heroku main
+```
+
+**CI:** Uses GitHub Actions with `HEROKU_GIT_URL` secret
+
+## Key Files Reference
+
+**Client Architecture:**
+- [app.config.ts](client/src/app/app.config.ts) — Standalone app configuration
+- [app.routes.ts](client/src/app/app.routes.ts) — Lazy-loaded feature routes
+- [context.service.ts](client/src/app/core/services/context.service.ts) — Global state management
+
+**Server Architecture:**
+- [main.ts](server/src/main.ts) — App bootstrap with global pipes/interceptors
+- [core.module.ts](server/src/core/core.module.ts) — Database & infrastructure
+- [features.module.ts](server/src/features/features.module.ts) — Business logic modules
+
+## Important Notes
+
+- **OpenAPI contract:** Client API services auto-generated from `client/openapi.json` — don't manually edit files in `client/src/app/core/generated/`
+- **Signal-first:** Client uses Angular Signals, not traditional RxJS state patterns
+- **Mapper mandatory:** Never skip DTO/domain/entity transformations
+- **Feature isolation:** Each feature is self-contained with its own services/models/mappers
