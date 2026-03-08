@@ -1,7 +1,7 @@
 <div class="flex h-full flex-col items-center justify-center">
   <min-h1 class="text-center"><min-logo>Factory</min-logo></min-h1>
   <p class="mb-12 text-center break-normal text-gray-500">Die Fabrik für minimalistische Apps</p>
-  <min-button [color]="Color.White">
+  <min-button [color]="Color.White" (clicked)="navigateToApps()">
     Zu den <min-logo class="lowercase"><span class="capitalize">Apps</span></min-logo>
   </min-button>
 </div>
