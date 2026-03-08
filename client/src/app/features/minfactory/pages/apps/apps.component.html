@@ -25,7 +25,7 @@
     [class.pb-3]="selectedTab() === 2"
     (click)="selectedTab.set(2)"
   >
-    Games
+    Spiele
   </button>
 </div>
 
@@ -35,9 +35,9 @@
     <min-card-button class="basis-3xs" [disabled]="true">
       <div class="flex flex-row items-start justify-between">
         <min-h2><min-logo>Advent</min-logo></min-h2>
-        <min-badge [color]="Color.Gray">soon</min-badge>
+        <min-badge [color]="Color.Gray">bald</min-badge>
       </div>
-      <p class="text-left text-sm text-gray-500">Mini advent calendar.</p>
+      <p class="text-left text-sm text-gray-500">Mini Adventskalender.</p>
     </min-card-button>
   }
   @if (selectedTab() === 2) {
@@ -47,7 +47,7 @@
         <min-h2><min-logo>RPS</min-logo></min-h2>
         <min-badge [color]="Color.Yellow">alpha</min-badge>
       </div>
-      <p class="text-left text-sm text-gray-500">Mini "rock, paper, scissors" game.</p>
+      <p class="text-left text-sm text-gray-500">Mini "Schere, Stein, Papier" Spiel.</p>
     </min-card-button>
   }
 </div>

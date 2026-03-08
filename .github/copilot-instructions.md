@@ -29,53 +29,53 @@ server/          # NestJS 11 Backend mit TypeORM
 - Swagger/OpenAPI Dokumentation
 - Jest für Testing
 
-## Architecture
+## Architektur
 
-### Client Patterns ([example](client/src/app/features/minrps/services/minrps-singleplayer.service.ts))
+### Client Patterns ([Beispiel](client/src/app/features/minrps/services/minrps-singleplayer.service.ts))
 
-**Feature Organization:**
+**Feature-Organisation:**
 ```
 features/<feature>/
-  ├── components/        # Feature-specific UI components
-  ├── pages/            # Route components
-  ├── services/         # Business logic with Signal-based state
-  ├── mapper/           # Transformations: domain ↔ DTO ↔ viewmodel
-  ├── models/           # Domain models + ViewModels
-  └── repositories/     # Data fetching
+  ├── components/        # Feature-spezifische UI-Komponenten
+  ├── pages/            # Route-Komponenten
+  ├── services/         # Business-Logik mit Signal-basiertem State
+  ├── mapper/           # Transformationen: domain ↔ DTO ↔ viewmodel
+  ├── models/           # Domain-Models + ViewModels
+  └── repositories/     # Datenabruf
 ```
 
 **State Management:**
-- Use Angular Signals (`signal()`, `computed()`) for reactive state
-- Services expose `Signal<T>` publicly; mutate via `WritableSignal` privately
-- Global state in [ContextService](client/src/app/core/services/context.service.ts)
-- **No NgRx/Akita** — services manage state directly
+- Verwende Angular Signals (`signal()`, `computed()`) für reaktiven State
+- Services exponieren `Signal<T>` öffentlich; mutieren via `WritableSignal` privat
+- Globaler State in [ContextService](client/src/app/core/services/context.service.ts)
+- **Kein NgRx/Akita** — Services verwalten State direkt
 
-**Data Flow:**
+**Datenfluss:**
 ```
 API DTO → Domain Model → ViewModel → Component
 (via mapper) → (via mapper) → (via signal)
 ```
 
-### Server Patterns ([example](server/src/features/minrps/services/minrps-game.service.ts))
+### Server Patterns ([Beispiel](server/src/features/minrps/services/minrps-game.service.ts))
 
-**Feature Organization:**
+**Feature-Organisation:**
 ```
 features/<feature>/
-  ├── controllers/      # REST endpoints with @Controller
-  ├── services/         # Business logic orchestration
-  ├── repositories/     # TypeORM data access
-  ├── gateways/         # WebSocket handlers @SubscribeMessage
-  ├── mapper/           # Transformations: Entity ↔ Domain ↔ DTO
+  ├── controllers/      # REST-Endpoints mit @Controller
+  ├── services/         # Business-Logik Orchestrierung
+  ├── repositories/     # TypeORM Datenzugriff
+  ├── gateways/         # WebSocket-Handler @SubscribeMessage
+  ├── mapper/           # Transformationen: Entity ↔ Domain ↔ DTO
   ├── models/
-  │   ├── entities/     # TypeORM entities
-  │   ├── dtos/         # API contracts with class-validator
-  │   ├── domains/      # Business objects
-  │   ├── payloads/     # WebSocket event payloads
-  │   └── enums/        # Type-safe constants
-  └── systems/          # Complex business rules
+  │   ├── entities/     # TypeORM Entities
+  │   ├── dtos/         # API-Contracts mit class-validator
+  │   ├── domains/      # Business-Objekte
+  │   ├── payloads/     # WebSocket Event-Payloads
+  │   └── enums/        # Typsichere Konstanten
+  └── systems/          # Komplexe Business-Rules
 ```
 
-**Data Flow:**
+**Datenfluss:**
 ```
 Entity (DB) → Domain (business) → DTO (API response)
 (via mapper) → (via mapper)
@@ -83,26 +83,26 @@ Entity (DB) → Domain (business) → DTO (API response)
 
 **Layering:**
 - Controllers/Gateways → Services → Repositories → TypeORM
-- Mappers are static utility classes with pure functions
-- Repositories throw `NotFoundException` for missing records
+- Mapper sind statische Utility-Klassen mit Pure Functions
+- Repositories werfen `NotFoundException` bei fehlenden Records
 
-## Naming Conventions
+## Namenskonventionen
 
 **Client:**
-- Files: `kebab-case` (e.g., `minrps-singleplayer.service.ts`)
-- Services: `@Injectable({ providedIn: 'root' })` with `-service` suffix
-- Auto-generated API: `-api.service` suffix (don't manually edit)
-- Mappers: `*-mapper.ts` with static transformation methods
+- Dateien: `kebab-case` (z.B. `minrps-singleplayer.service.ts`)
+- Services: `@Injectable({ providedIn: 'root' })` mit `-service` Suffix
+- Auto-generierte API: `-api.service` Suffix (nicht manuell bearbeiten)
+- Mapper: `*-mapper.ts` mit statischen Transformations-Methoden
 
 **Server:**
-- Files: `kebab-case` matching NestJS conventions
-- Decorators: Custom API decorators in [shared/decorators/](server/src/shared/decorators/) (`@API_200()`, `@API_404()`, etc.)
-- WebSocket: Namespace enums + Command enums for message types
-- Entities: `*Entity` suffix (e.g., `MinRpsGameEntity`)
+- Dateien: `kebab-case` gemäß NestJS Konventionen
+- Decorators: Custom API-Decorators in [shared/decorators/](server/src/shared/decorators/) (`@API_200()`, `@API_404()`, etc.)
+- WebSocket: Namespace Enums + Command Enums für Message-Types
+- Entities: `*Entity` Suffix (z.B. `MinRpsGameEntity`)
 
-## Build and Test Commands
+## Build- und Test-Befehle
 
-Run from respective directories (`cd client/` or `cd server/`):
+Ausführen aus den jeweiligen Verzeichnissen (`cd client/` oder `cd server/`):
 
 ```bash
 # Development
@@ -110,140 +110,140 @@ npm start           # Client: ng serve --open --watch
                     # Server: nest start --watch
 
 # Build
-npm run build       # Production builds
+npm run build       # Production Builds
 
 # Testing
-npm test            # Watch mode with coverage
-npm run test:ci     # Headless CI mode
+npm test            # Watch-Modus mit Coverage
+npm run test:ci     # Headless CI-Modus
 
 # Linting
-npm run lint        # ESLint with auto-fix
+npm run lint        # ESLint mit Auto-Fix
 
-# Documentation
-npm run gen:docs    # Compodoc → docs/ folder
+# Dokumentation
+npm run gen:docs    # Compodoc → docs/ Ordner
 ```
 
-**Client-specific:**
+**Client-spezifisch:**
 ```bash
-npm run gen:api     # Regenerate OpenAPI client from openapi.json
+npm run gen:api     # OpenAPI-Client neu generieren aus openapi.json
 ```
 
-**Server-specific:**
+**Server-spezifisch:**
 ```bash
-npm run test:e2e    # End-to-end tests
+npm run test:e2e    # End-to-End Tests
 ```
 
-## Code Style
+## Code-Stil
 
 ### Client
 
-**Use Signals, not Observables for state:**
+**Verwende Signals, keine Observables für State:**
 ```typescript
-// ✅ Preferred
+// ✅ Bevorzugt
 private readonly gameState = signal<GameState>(initialState);
 readonly game = computed(() => this.gameState());
 
-// ❌ Avoid for state management
+// ❌ Vermeiden für State Management
 private readonly gameState$ = new BehaviorSubject<GameState>(initialState);
 ```
 
-**Always map between layers:**
+**Immer zwischen Layern mappen:**
 ```typescript
-// ✅ Explicit transformations via mappers
+// ✅ Explizite Transformationen via Mapper
 const domain = DomainMapper.fromDto(apiResponse);
 const viewModel = ViewmodelMapper.fromDomain(domain);
 
-// ❌ Don't pass DTOs directly to templates
+// ❌ DTOs nicht direkt an Templates übergeben
 ```
 
-**Standalone components with lazy routes:**
-- See [app.routes.ts](client/src/app/app.routes.ts) for feature routing
-- No NgModules except auto-generated ApiModule
+**Standalone Components mit Lazy Routes:**
+- Siehe [app.routes.ts](client/src/app/app.routes.ts) für Feature-Routing
+- Keine NgModules außer auto-generiertem ApiModule
 
 ### Server
 
-**Strict layer separation:**
+**Strikte Layer-Trennung:**
 ```typescript
-// ✅ Service uses mapper at boundaries
+// ✅ Service nutzt Mapper an Grenzen
 async findById(id: string): Promise<MinRpsGameDto> {
   const entity = await this.repository.findById(id);
   const domain = MinRpsDomainMapper.fromEntity(entity);
   return MinRpsDtoMapper.fromDomain(domain);
 }
 
-// ❌ Don't return entities from services
+// ❌ Entities nicht direkt aus Services zurückgeben
 async findById(id: string): Promise<MinRpsGameEntity> {
   return this.repository.findById(id);
 }
 ```
 
-**WebSocket namespace isolation:**
+**WebSocket Namespace-Isolation:**
 ```typescript
-// ✅ Feature-scoped namespace
+// ✅ Feature-scoped Namespace
 @WebSocketGateway({ namespace: Namespace.MinRps })
 
-// ❌ Avoid global gateway without namespace
+// ❌ Globales Gateway ohne Namespace vermeiden
 @WebSocketGateway()
 ```
 
-**Custom decorators for Swagger:**
+**Custom Decorators für Swagger:**
 ```typescript
-// ✅ Use project decorators
+// ✅ Projekt-Decorators verwenden
 @API_200(MinRpsGameDto)
 @API_404()
 
-// ❌ Don't manually configure each response
+// ❌ Nicht manuell jede Response konfigurieren
 @ApiResponse({ status: 200, type: MinRpsGameDto })
 @ApiResponse({ status: 404, description: 'Not found' })
 ```
 
-## Common Patterns
+## Häufige Patterns
 
-### Mapper Pattern (Both Sides)
+### Mapper-Pattern (Beide Seiten)
 
-Central to the codebase — always transform data at boundaries:
+Zentral in der Codebase — transformiere Daten immer an Grenzen:
 
 **Client:** DTO → Domain → ViewModel  
 **Server:** Entity → Domain → DTO
 
-See [MinRpsDomainMapper](client/src/app/features/minrps/mapper/minrps-domain.mapper.ts) or [MinRpsDtoMapper](server/src/features/minrps/mapper/minrps-dto.mapper.ts) for examples.
+Siehe [MinRpsDomainMapper](client/src/app/features/minrps/mapper/minrps-domain.mapper.ts) oder [MinRpsDtoMapper](server/src/features/minrps/mapper/minrps-dto.mapper.ts) für Beispiele.
 
 ### Testing
 
 **Client:**
-- Karma + Jasmine, coverage in `coverage/client/`
-- Mock services colocated with implementations
-- Example: [context.service.spec.ts](client/src/app/core/services/context.service.spec.ts)
+- Karma + Jasmine, Coverage in `coverage/client/`
+- Mock-Services colocated mit Implementierungen
+- Beispiel: [context.service.spec.ts](client/src/app/core/services/context.service.spec.ts)
 
 **Server:**
-- Jest, coverage excludes DTOs/entities/enums/decorators
-- Mock repositories in `Test.createTestingModule()`
-- Example: [minrps-game.service.spec.ts](server/src/features/minrps/services/minrps-game.service.spec.ts)
+- Jest, Coverage excludes DTOs/Entities/Enums/Decorators
+- Mock-Repositories in `Test.createTestingModule()`
+- Beispiel: [minrps-game.service.spec.ts](server/src/features/minrps/services/minrps-game.service.spec.ts)
 
 ## Deployment
 
-**Server to Heroku:**
+**Server zu Heroku:**
 ```bash
 git subtree push --prefix server heroku main
 ```
 
-**CI:** Uses GitHub Actions with `HEROKU_GIT_URL` secret
+**CI:** Nutzt GitHub Actions mit `HEROKU_GIT_URL` Secret
 
-## Key Files Reference
+## Wichtige Dateien
 
-**Client Architecture:**
-- [app.config.ts](client/src/app/app.config.ts) — Standalone app configuration
-- [app.routes.ts](client/src/app/app.routes.ts) — Lazy-loaded feature routes
-- [context.service.ts](client/src/app/core/services/context.service.ts) — Global state management
+**Client-Architektur:**
+- [app.config.ts](client/src/app/app.config.ts) — Standalone App-Konfiguration
+- [app.routes.ts](client/src/app/app.routes.ts) — Lazy-loaded Feature-Routes
+- [context.service.ts](client/src/app/core/services/context.service.ts) — Globales State Management
 
-**Server Architecture:**
-- [main.ts](server/src/main.ts) — App bootstrap with global pipes/interceptors
-- [core.module.ts](server/src/core/core.module.ts) — Database & infrastructure
-- [features.module.ts](server/src/features/features.module.ts) — Business logic modules
+**Server-Architektur:**
+- [main.ts](server/src/main.ts) — App-Bootstrap mit globalen Pipes/Interceptors
+- [core.module.ts](server/src/core/core.module.ts) — Datenbank & Infrastruktur
+- [features.module.ts](server/src/features/features.module.ts) — Business-Logik Module
 
-## Important Notes
+## Wichtige Hinweise
 
-- **OpenAPI contract:** Client API services auto-generated from `client/openapi.json` — don't manually edit files in `client/src/app/core/generated/`
-- **Signal-first:** Client uses Angular Signals, not traditional RxJS state patterns
-- **Mapper mandatory:** Never skip DTO/domain/entity transformations
-- **Feature isolation:** Each feature is self-contained with its own services/models/mappers
+- **OpenAPI Contract:** Client API-Services auto-generiert aus `client/openapi.json` — keine manuellen Edits in `client/src/app/core/generated/`
+- **Signal-First:** Client nutzt Angular Signals, keine traditionellen RxJS State Patterns
+- **Mapper Pflicht:** Niemals DTO/Domain/Entity Transformationen überspringen
+- **Feature-Isolation:** Jedes Feature ist eigenständig mit eigenen Services/Models/Mappers

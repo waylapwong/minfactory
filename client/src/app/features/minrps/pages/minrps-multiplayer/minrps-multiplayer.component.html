@@ -8,7 +8,7 @@
             <img src="assets/svg/player.svg" alt="Player" class="h-16 w-16" />
             <div class="text-sm font-bold">{{ game().heroName }}</div>
             @if (game().canTakeHeroSeat) {
-              <min-button [color]="Color.Blue" (clicked)="openSeatDialog(1)"> Take seat </min-button>
+              <min-button [color]="Color.Blue" (clicked)="openSeatDialog(1)">Platz nehmen</min-button>
             }
           </div>
         </minrps-card>
@@ -48,7 +48,7 @@
             <img src="assets/svg/player.svg" alt="Player" class="h-16 w-16" />
             <div class="text-sm font-bold">{{ game().villainName }}</div>
             @if (game().canTakeVillainSeat) {
-              <min-button [color]="Color.Blue" (clicked)="openSeatDialog(2)"> Take seat </min-button>
+              <min-button [color]="Color.Blue" (clicked)="openSeatDialog(2)">Platz nehmen</min-button>
             }
           </div>
         </minrps-card>
@@ -147,17 +147,17 @@
 </div>
 
 <!-- SEAT GAME DIALOG -->
-<min-dialog title="Take Seat" [isOpen]="isSeatDialogOpen()" (closed)="closeSeatDialog()">
+<min-dialog title="Platz nehmen" [isOpen]="isSeatDialogOpen()" (closed)="closeSeatDialog()">
   <div class="mb-4 flex flex-col">
     <min-input
-      label="Player name"
+      label="Spielername"
       [formControlInput]="seatName"
       id="seat-name-input"
-      placeholder="Enter name"
+      placeholder="Namen eingeben"
     ></min-input>
   </div>
 
   <div class="flex flex-row justify-end">
-    <min-button [color]="Color.Blue" [isDisabled]="seatFormGroup.invalid" (clicked)="seatGame()"> Join </min-button>
+    <min-button [color]="Color.Blue" [isDisabled]="seatFormGroup.invalid" (clicked)="seatGame()">Beitreten</min-button>
   </div>
 </min-dialog>

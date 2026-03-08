@@ -1,8 +1,8 @@
 <div class="mb-4 flex flex-row justify-between">
   <!-- TITLE -->
-  <min-h1>Online Games</min-h1>
+  <min-h1>Online Spiele</min-h1>
   <!-- NEW GAME BUTTON -->
-  <min-button [color]="Color.Blue" (clicked)="openNewGameDialog()">Create Game</min-button>
+  <min-button [color]="Color.Blue" (clicked)="openNewGameDialog()">Spiel erstellen</min-button>
 </div>
 
 <!-- GAMES LIST -->
@@ -36,14 +36,14 @@
 }
 
 <!-- NEW GAME DIALOG -->
-<min-dialog title="New Game" [isOpen]="isNewGameDialogOpen()" (closed)="isNewGameDialogOpen.set(false)">
+<min-dialog title="Neues Spiel" [isOpen]="isNewGameDialogOpen()" (closed)="isNewGameDialogOpen.set(false)">
   <div class="mb-4 flex flex-col">
-    <min-input label="Game name" [formControlInput]="newGameName" id="game-name-input"></min-input>
+    <min-input label="Spielname" [formControlInput]="newGameName" id="game-name-input"></min-input>
   </div>
 
   <div class="flex flex-row justify-end">
     <min-button [color]="Color.Blue" [isDisabled]="newGameFormGroup.invalid" (clicked)="createGame()">
-      Create Game
+      Spiel erstellen
     </min-button>
   </div>
 </min-dialog>

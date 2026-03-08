@@ -26,13 +26,13 @@ export class MinRpsSingleplayerComponent implements OnInit {
   public submitText = computed(() => {
     switch (this.selectedMove()) {
       case MinRpsMove.None:
-        return 'choose move';
+        return 'Wähle einen Zug';
       case MinRpsMove.Rock:
-        return `play rock!`;
+        return `Spiele Stein!`;
       case MinRpsMove.Paper:
-        return `play paper!`;
+        return `Spiele Papier!`;
       case MinRpsMove.Scissors:
-        return `play scissors!`;
+        return `Spiele Schere!`;
       default:
         return '';
     }
