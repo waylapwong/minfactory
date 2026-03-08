@@ -1,41 +1,24 @@
-import { Component, computed } from '@angular/core';
+import { Component, Signal, computed, inject } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { AppPath } from '../../../app.routes';
-import { DividerComponent } from '../../../shared/components/divider/divider.component';
-import { LogoComponent } from '../../../shared/components/logo/logo.component';
 import { AppName } from '../../../shared/enums/app-name.enum';
 import { ContextService } from '../../services/context.service';
+import { DividerComponent } from '../../../shared/components/divider/divider.component';
+import { LogoComponent } from '../../../shared/components/logo/logo.component';
 
 @Component({
   selector: 'min-header',
-  imports: [RouterLink, DividerComponent, LogoComponent],
+  standalone: true,
+  imports: [CommonModule, RouterLink, DividerComponent, LogoComponent],
   templateUrl: './header.component.html',
   styleUrl: './header.component.scss',
 })
 export class HeaderComponent {
   public readonly AppPath: typeof AppPath = AppPath;
-  public readonly Application: typeof AppName = AppName;
 
-  public logoText = computed(() => {
-    switch (this.contextService.app()) {
-      case AppName.MinFactory:
-        return 'Factory';
-      case AppName.MinRps:
-        return 'RPS';
-      default:
-        return 'Factory';
-    }
-  });
-  public routerLink = computed(() => {
-    switch (this.contextService.app()) {
-      case AppName.MinFactory:
-        return AppPath.Root;
-      case AppName.MinRps:
-        return AppPath.MinRps;
-      default:
-        return AppPath.Root;
-    }
-  });
+  private readonly contextService: ContextService = inject(ContextService);
 
-  constructor(private readonly contextService: ContextService) {}
+  public readonly isInFactory: Signal<boolean> = computed(() => this.contextService.app() === AppName.MinFactory);
+  public readonly isInMinRps: Signal<boolean> = computed(() => this.contextService.app() === AppName.MinRps);
 }

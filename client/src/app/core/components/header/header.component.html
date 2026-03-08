@@ -1,10 +1,49 @@
-<header class="flex flex-row items-end justify-between">
-  <!-- LOGO -->
-  <a class="cursor-pointer font-sans text-3xl font-bold" [routerLink]="routerLink()">
-    <min-logo>{{ logoText() }}</min-logo>
-  </a>
+<header class="flex flex-row items-center justify-between py-2">
+  <!-- BREADCRUMB NAVIGATION -->
+  <nav aria-label="Breadcrumb" role="navigation">
+    <ol class="flex flex-row items-center gap-1">
+      <!-- FACTORY (HOME) -->
+      <li>
+        <a
+          [routerLink]="AppPath.Root"
+          class="flex items-center gap-1 rounded px-2 py-1 font-bold text-gray-700 transition-colors hover:text-black hover:underline focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-1 focus-visible:outline-none active:text-gray-900"
+          [attr.aria-current]="isInFactory() ? 'page' : null"
+        >
+          <!-- MOBILE: BACK ARROW ONLY WHEN NOT IN FACTORY CONTEXT -->
+          @if (!isInFactory()) {
+            <span class="text-lg sm:hidden">&lt;</span>
+          }
+          <!-- DESKTOP: ALWAYS SHOW LOGO TEXT -->
+          <span class="hidden sm:inline">
+            <min-logo>Factory</min-logo>
+          </span>
+          <!-- MOBILE: SHOW LOGO TEXT WHEN IN FACTORY CONTEXT -->
+          @if (isInFactory()) {
+            <span class="sm:hidden">
+              <min-logo>Factory</min-logo>
+            </span>
+          }
+        </a>
+      </li>
 
-  <!-- NAVIGATION -->
+      <!-- RPS CONTEXT -->
+      @if (isInMinRps()) {
+        <!-- SEPARATOR ONLY ON DESKTOP -->
+        <li class="mx-1 hidden text-gray-400 sm:inline">/</li>
+        <li>
+          <a
+            [routerLink]="AppPath.MinRps"
+            class="rounded px-2 py-1 font-bold text-gray-700 transition-colors hover:text-black hover:underline focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-1 focus-visible:outline-none active:text-gray-900"
+            [attr.aria-current]="isInMinRps() ? 'page' : null"
+          >
+            <min-logo>RPS</min-logo>
+          </a>
+        </li>
+      }
+    </ol>
+  </nav>
+
+  <!-- PLACEHOLDER FOR FUTURE ACTIONS -->
   <div class="flex flex-row gap-2"></div>
 </header>
 
