@@ -1,5 +1,5 @@
 <div class="mb-4 flex w-full flex-row items-end justify-around gap-4 border-b-4 border-black text-center">
-  <!-- APPS -->
+  <!-- GAMES -->
   <button
     class="relative bottom-[-4px] ml-4 basis-1/2 cursor-pointer rounded-t-lg border-4 px-4 font-bold"
     [class.bg-gray-300]="selectedTab() !== 1"
@@ -11,9 +11,9 @@
     [class.pb-3]="selectedTab() === 1"
     (click)="selectedTab.set(1)"
   >
-    Apps
+    Spiele
   </button>
-  <!-- GAMES -->
+  <!-- APPS -->
   <button
     class="relative bottom-[-4px] mr-4 basis-1/2 cursor-pointer rounded-t-lg border-4 px-4 font-bold"
     [class.bg-gray-300]="selectedTab() !== 2"
@@ -25,29 +25,29 @@
     [class.pb-3]="selectedTab() === 2"
     (click)="selectedTab.set(2)"
   >
-    Spiele
+    Apps
   </button>
 </div>
 
-<div class="flex w-full grow flex-row items-start justify-center">
+<div class="flex w-full grow flex-row items-start justify-center px-4">
   @if (selectedTab() === 1) {
-    <!-- MIN_ADVENT -->
-    <min-card-button class="basis-3xs" [disabled]="true">
+    <!-- MIN_RPS -->
+    <min-card-button class="w-full" (clicked)="routingService.navigateToMinRps()">
       <div class="flex flex-row items-start justify-between">
-        <min-h2><min-logo>Advent</min-logo></min-h2>
-        <min-badge [color]="Color.Gray">bald</min-badge>
+        <min-h2><min-logo>RPS</min-logo></min-h2>
+        <min-badge [color]="Color.Green">online</min-badge>
       </div>
-      <p class="text-left text-sm text-gray-500">Mini Adventskalender.</p>
+      <p class="text-left text-sm text-gray-500">Mini "Schere, Stein, Papier" Spiel</p>
     </min-card-button>
   }
   @if (selectedTab() === 2) {
-    <!-- MIN_RPS -->
-    <min-card-button class="basis-3xs" (clicked)="routingService.navigateToMinRps()">
+    <!-- MIN_ADVENT -->
+    <min-card-button class="w-full" [disabled]="true">
       <div class="flex flex-row items-start justify-between">
-        <min-h2><min-logo>RPS</min-logo></min-h2>
-        <min-badge [color]="Color.Yellow">alpha</min-badge>
+        <min-h2><min-logo>Advent</min-logo></min-h2>
+        <min-badge [color]="Color.Gray">soon</min-badge>
       </div>
-      <p class="text-left text-sm text-gray-500">Mini "Schere, Stein, Papier" Spiel.</p>
+      <p class="text-left text-sm text-gray-500">Mini Adventskalender</p>
     </min-card-button>
   }
 </div>

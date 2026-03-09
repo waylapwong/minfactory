@@ -1,7 +1,7 @@
 <header class="flex flex-row items-center justify-between">
   <!-- BREADCRUMB NAVIGATION -->
   <nav aria-label="Breadcrumb" role="navigation">
-    <ol class="flex flex-row items-center">
+    <ol class="flex flex-row items-center gap-2">
       <!-- FACTORY (HOME) -->
       <li>
         <a
@@ -11,7 +11,7 @@
         >
           <!-- BACK ARROW WHEN NOT IN FACTORY CONTEXT (MOBILE + DESKTOP) -->
           @if (!isInFactory()) {
-            <span class="text-lg">&lt;</span>
+            <span class="text-xl">&lt;</span>
           }
           <!-- SHOW LOGO TEXT ONLY IN FACTORY CONTEXT -->
           @if (isInFactory()) {
