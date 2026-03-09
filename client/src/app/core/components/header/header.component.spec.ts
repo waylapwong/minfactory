@@ -89,11 +89,11 @@ describe('HeaderComponent', () => {
       expect(rpsLink.getAttribute('aria-current')).toBe('page');
     });
 
-    it('should have semantic link styling with hover:underline', () => {
+    it('should have semantic link styling with hover:text-black', () => {
       const links = fixture.nativeElement.querySelectorAll('a');
       const factoryLink = links[0];
       const classes = factoryLink.getAttribute('class');
-      expect(classes).toContain('hover:underline');
+      expect(classes).toContain('hover:text-black');
     });
   });
 });

@@ -1,8 +1,9 @@
 import { provideZonelessChangeDetection } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
-
 import { AppComponent } from './app.component';
+import { ContextService } from './core/services/context.service';
+import { AppName } from './shared/enums/app-name.enum';
 
 describe('AppComponent', () => {
   beforeEach(async () => {
@@ -16,5 +17,24 @@ describe('AppComponent', () => {
     const fixture = TestBed.createComponent(AppComponent);
     const app = fixture.componentInstance;
     expect(app).toBeTruthy();
+  });
+
+  it('should show footer in minFactory context', () => {
+    const fixture = TestBed.createComponent(AppComponent);
+    fixture.detectChanges();
+
+    const footer = fixture.nativeElement.querySelector('#footer');
+    expect(footer).toBeTruthy();
+  });
+
+  it('should hide footer in non-minFactory context', () => {
+    const fixture = TestBed.createComponent(AppComponent);
+    const contextService: ContextService = TestBed.inject(ContextService);
+    contextService.app.set(AppName.MinRps);
+
+    fixture.detectChanges();
+
+    const footer = fixture.nativeElement.querySelector('#footer');
+    expect(footer).toBeFalsy();
   });
 });

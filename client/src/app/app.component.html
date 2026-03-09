@@ -16,6 +16,8 @@
     </main>
 
     <!-- FOOTER -->
-    <min-footer id="footer"></min-footer>
+    @if (isInMinFactory()) {
+      <min-footer id="footer"></min-footer>
+    }
   </div>
 </div>
