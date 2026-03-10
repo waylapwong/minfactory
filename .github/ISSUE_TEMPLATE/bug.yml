@@ -1,7 +1,6 @@
 name: Bug
 description: Bug Ticket
-title: "[Bug]: "
-labels: ["Bug"]
+title: "[Bug] _____"
 
 body:
   - type: textarea
@@ -17,7 +16,7 @@ body:
     attributes:
       label: Reproduktionsschritte
       value: |
-        - [ ] Schritt
+        - [ ] _____
     validations:
       required: true
 
@@ -25,7 +24,7 @@ body:
     id: expected_behavior
     attributes:
       label: Erwartetes Verhalten
-      value: ""
+      value: "_____"
     validations:
       required: true
 
@@ -33,6 +32,6 @@ body:
     id: actual_behavior
     attributes:
       label: Tatsächliches Verhalten
-      value: ""
+      value: "_____"
     validations:
       required: true
