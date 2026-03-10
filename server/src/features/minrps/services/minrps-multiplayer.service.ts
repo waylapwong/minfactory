@@ -3,6 +3,7 @@ import { randomUUID } from 'node:crypto';
 import { Socket } from 'socket.io';
 import { MinRpsDomainMapper } from '../mapper/minrps-domain.mapper';
 import { MinRpsGame } from '../models/domains/minrps-game';
+import { MinRpsMove } from '../models/enums/minrps-move.enum';
 import { MinRpsPlayer } from '../models/domains/minrps-player';
 import { MinRpsMatchConnectedPayload } from '../models/payloads/minrps-match-connected.payload';
 import { MinRpsMatchJoinPayload } from '../models/payloads/minrps-match-join.payload';
@@ -100,16 +101,14 @@ export class MinRpsMultiplayerService {
     }
     // Update match
     const updatedMatch: MinRpsGame = this.matchRepository.save(match);
-    // Hide opponent's move until both players have played
+    const payload: MinRpsMatchUpdatedPayload = MinRpsDomainMapper.domainToMatchUpdatedPayload(updatedMatch);
+    // Hide all moves until both players have played
     if (!updatedMatch.isGameReady()) {
-      if (updatedMatch.isPlayer1(command.playerId)) {
-        updatedMatch.resetPlayer2Move();
-      } else if (updatedMatch.isPlayer2(command.playerId)) {
-        updatedMatch.resetPlayer1Move();
-      }
+      payload.player1Move = MinRpsMove.None;
+      payload.player2Move = MinRpsMove.None;
     }
     // Return match state
-    return MinRpsDomainMapper.domainToMatchUpdatedPayload(updatedMatch);
+    return payload;
   }
 
   public resetMatch(matchId: string): MinRpsMatchUpdatedPayload {

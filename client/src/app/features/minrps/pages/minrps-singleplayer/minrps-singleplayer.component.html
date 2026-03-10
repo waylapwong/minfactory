@@ -45,7 +45,7 @@
         <minrps-move
           [hasResult]="game().result !== MinRpsResult.None"
           [isDisabled]="game().player1Move !== MinRpsMove.None && game().player1Move !== selectableMove"
-          [isPlayed]="selectableMove === game().player1Move"
+          [isPlayed]="selectableMove === selectedMove() || selectableMove === game().player1Move"
           [isSelected]="selectableMove === selectedMove()"
           [isWinning]="game().player1IsWinning"
           [isDraw]="game().result === MinRpsResult.Draw"

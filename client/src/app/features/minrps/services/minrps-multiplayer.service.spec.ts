@@ -164,9 +164,11 @@ describe('MinRpsMultiplayerService', () => {
       const updatedPayload: MinRpsMatchUpdatedPayload = {
         matchId: 'game-1',
         observers: [],
+        player1HasSelectedMove: true,
         player1Id: 'player-1',
         player1Move: MinRpsMove.Rock,
         player1Name: 'Player 1',
+        player2HasSelectedMove: true,
         player2Id: 'player-2',
         player2Move: MinRpsMove.Scissors,
         player2Name: 'Player 2',
@@ -221,9 +223,11 @@ describe('MinRpsMultiplayerService', () => {
       const updatedPayload: MinRpsMatchUpdatedPayload = {
         matchId: 'game-xyz',
         observers: ['obs-1', 'obs-2'],
+        player1HasSelectedMove: true,
         player1Id: 'p1',
         player1Move: MinRpsMove.Paper,
         player1Name: 'Alice',
+        player2HasSelectedMove: true,
         player2Id: 'p2',
         player2Move: MinRpsMove.Scissors,
         player2Name: 'Bob',

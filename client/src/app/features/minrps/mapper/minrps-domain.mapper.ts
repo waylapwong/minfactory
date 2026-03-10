@@ -15,12 +15,14 @@ export class MinRpsDomainMapper {
     const heroIsPlayer1 = hero.id === domain.player1.id;
 
     viewModel.gameId = domain.id;
+    viewModel.heroHasSelectedMove = hero.hasSelectedMove;
     viewModel.heroMove = hero.move;
     viewModel.heroName = hero.name;
     viewModel.heroIsWinning =
       (domain.result === MinRpsResult.Player1 && heroIsPlayer1) ||
       (domain.result === MinRpsResult.Player2 && !heroIsPlayer1);
     viewModel.result = domain.result;
+    viewModel.villainHasSelectedMove = villain.hasSelectedMove;
     viewModel.villainMove = villain.move;
     viewModel.villainName = villain.name;
     viewModel.villainIsWinning =

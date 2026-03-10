@@ -48,14 +48,23 @@ export class MinRpsGateway implements OnGatewayConnection, OnGatewayDisconnect {
   public handlePlayCommand(@ConnectedSocket() client: Socket, @MessageBody() command: MinRpsMatchPlayPayload): void {
     console.warn(`Receiving Command: ${MinRpsMatchCommand.Play}`, command);
     const event: MinRpsMatchUpdatedPayload = this.multiplayerService.playMatch(command);
-    if (event.player1Move !== MinRpsMove.None && event.player2Move !== MinRpsMove.None) {
+
+    const bothPlayed = event.player1Move !== MinRpsMove.None && event.player2Move !== MinRpsMove.None;
+    if (bothPlayed) {
       this.sendMatchUpdatedEvent(event);
       setTimeout(() => {
         const resetEvent: MinRpsMatchUpdatedPayload = this.multiplayerService.resetMatch(command.matchId);
         this.sendMatchUpdatedEvent(resetEvent);
       }, 3000);
     } else {
-      this.sendClientEvent(client, MinRpsMatchEvent.Updated, event);
+      client.emit(MinRpsMatchEvent.Updated, event);
+      const maskedEvent = { ...event };
+      if (command.playerId === event.player1Id) {
+        maskedEvent.player1Move = MinRpsMove.None;
+      } else {
+        maskedEvent.player2Move = MinRpsMove.None;
+      }
+      this.server.to(event.matchId).except(client.id).emit(MinRpsMatchEvent.Updated, maskedEvent);
     }
   }
 
