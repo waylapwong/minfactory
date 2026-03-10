@@ -2,7 +2,6 @@ name: Feature
 description: Feature Ticket
 title: "[Feature] _____"
 
-
 body:
   - type: textarea
     id: description
