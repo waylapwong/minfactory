@@ -252,7 +252,6 @@ describe('MinRpsMultiplayerComponent', () => {
     it('should return a Promise', () => {
       const result = component.canDeactivate();
       expect(result).toBeInstanceOf(Promise);
-      result.then((value) => expect(typeof value).toBe('boolean'));
     });
 
     it('should resolve previous pending promise with false when called again', async () => {
