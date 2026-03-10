@@ -1,49 +1,47 @@
-<div class="mb-4 flex flex-row justify-between">
+<div class="flex h-full flex-col px-4">
   <!-- TITLE -->
-  <min-h1>Online Spiele</min-h1>
-  <!-- NEW GAME BUTTON -->
-  <min-button [color]="Color.Blue" (clicked)="openNewGameDialog()">Spiel erstellen</min-button>
-</div>
+  <div class="text-center">
+    <min-h1>Multiplayer</min-h1>
+  </div>
 
-<!-- GAMES LIST -->
-@for (game of games(); track $index) {
-  <div class="flex flex-row justify-center">
-    <min-card-button class="basis-xs sm:basis-md" (clicked)="navigateToMultiplayerPage(game.id)">
+  <!-- NEW GAME BUTTON -->
+  <min-button class="mb-4" [color]="Color.Gray" (clicked)="openNewGameDialog()">Neues Spiel</min-button>
+
+  <!-- GAMES -->
+  @for (game of games(); track $index) {
+    <min-card-button class="mb-2" (clicked)="navigateToMultiplayerPage(game.id)">
       <div class="flex flex-row items-start justify-between">
         <min-h2 class="grow text-left break-all">{{ game.name }}</min-h2>
         <min-button [color]="Color.Red" (clicked)="deleteGame(game.id, $event)">
-          <img src="assets/svg/close.svg" alt="Rock" class="h-4 w-4" />
+          <img src="assets/svgs/close.svg" alt="Rock" class="h-4 w-4" />
         </min-button>
       </div>
       <div class="flex flex-row items-end gap-2 text-left text-sm text-gray-500">
-        <img src="assets/svg/player.svg" alt="Rock" class="h-6 w-6" />
+        <img src="assets/svgs/player.svg" alt="Rock" class="h-6 w-6" />
         {{ game.playerCount }}/2
       </div>
       <div class="flex flex-row items-end gap-2 text-left text-sm text-gray-500">
-        <img src="assets/svg/observer.svg" alt="Rock" class="h-6 w-6" />
+        <img src="assets/svgs/observer.svg" alt="Rock" class="h-6 w-6" />
         {{ game.observerCount }}
       </div>
       <div class="flex flex-row items-end gap-2 text-left text-sm text-gray-500">
-        <img src="assets/svg/calendar.svg" alt="Rock" class="h-6 w-6" />
+        <img src="assets/svgs/calendar.svg" alt="Rock" class="h-6 w-6" />
         {{ game.createdAt | date: 'MMMM d, yyyy' }}
       </div>
       <div class="flex flex-row items-end gap-2 text-left text-sm text-gray-500">
-        <img src="assets/svg/clock.svg" alt="Rock" class="h-6 w-6" />
+        <img src="assets/svgs/clock.svg" alt="Rock" class="h-6 w-6" />
         {{ game.createdAt | date: 'hh:mm a' }}
       </div>
     </min-card-button>
-  </div>
-}
+  }
 
-<!-- NEW GAME DIALOG -->
-<min-dialog title="Neues Spiel" [isOpen]="isNewGameDialogOpen()" (closed)="isNewGameDialogOpen.set(false)">
-  <div class="mb-4 flex flex-col">
+  <!-- NEW GAME DIALOG -->
+  <min-dialog title="Neues Spiel" [isOpen]="isNewGameDialogOpen()" (closed)="isNewGameDialogOpen.set(false)">
     <min-input label="Spielname" [formControlInput]="newGameName" id="game-name-input"></min-input>
-  </div>
-
-  <div class="flex flex-row justify-end">
-    <min-button [color]="Color.Blue" [isDisabled]="newGameFormGroup.invalid" (clicked)="createGame()">
-      Spiel erstellen
-    </min-button>
-  </div>
-</min-dialog>
+    <div class="mt-4 flex flex-row justify-end">
+      <min-button [color]="Color.Blue" [isDisabled]="newGameFormGroup.invalid" (clicked)="createGame()">
+        Spiel erstellen
+      </min-button>
+    </div>
+  </min-dialog>
+</div>

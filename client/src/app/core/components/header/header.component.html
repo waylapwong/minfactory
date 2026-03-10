@@ -1,17 +1,17 @@
 <header class="flex flex-row items-center justify-between">
   <!-- BREADCRUMB NAVIGATION -->
   <nav aria-label="Breadcrumb" role="navigation">
-    <ol class="flex flex-row items-center gap-2">
-      <!-- FACTORY (HOME) -->
+    <ol class="flex flex-row items-center">
+      <!-- MINFACTORY (HOME) -->
       <li>
         <a
           [routerLink]="AppPath.Root"
-          class="flex items-center gap-1 rounded px-2 py-1 font-bold text-gray-700 transition-colors hover:text-black focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-1 focus-visible:outline-none active:text-gray-900"
+          class="inline-flex h-8 items-center rounded px-2 py-1 leading-none font-bold text-gray-700 transition-colors hover:text-black focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-1 focus-visible:outline-none active:text-gray-900"
           [attr.aria-current]="isInFactory() ? 'page' : null"
         >
-          <!-- BACK ARROW WHEN NOT IN FACTORY CONTEXT (MOBILE + DESKTOP) -->
+          <!-- BACK ICON WHEN NOT IN FACTORY CONTEXT (MOBILE + DESKTOP) -->
           @if (!isInFactory()) {
-            <span class="text-md">&lt;</span>
+            <img src="assets/svgs/minfactory/home.svg" alt="Zur minFactory" class="h-4 w-4" />
           }
           <!-- SHOW LOGO TEXT ONLY IN FACTORY CONTEXT -->
           @if (isInFactory()) {
@@ -22,12 +22,13 @@
         </a>
       </li>
 
-      <!-- RPS CONTEXT -->
+      <!-- MINRPS CONTEXT -->
       @if (isInMinRps()) {
+        <li aria-hidden="true" class="leading-none text-gray-500">/</li>
         <li>
           <a
             [routerLink]="AppPath.MinRps"
-            class="rounded px-2 py-1 font-bold text-gray-700 transition-colors hover:text-black focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-1 focus-visible:outline-none active:text-gray-900"
+            class="inline-flex h-8 items-center rounded px-2 py-1 leading-none font-bold text-gray-700 transition-colors hover:text-black focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-1 focus-visible:outline-none active:text-gray-900"
             [attr.aria-current]="isInMinRps() ? 'page' : null"
           >
             <min-logo>RPS</min-logo>
