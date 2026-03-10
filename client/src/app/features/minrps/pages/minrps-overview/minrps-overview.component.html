@@ -12,7 +12,7 @@
     <min-card-button class="mb-2" (clicked)="navigateToMultiplayerPage(game.id)">
       <div class="flex flex-row items-start justify-between">
         <min-h2 class="grow text-left break-all">{{ game.name }}</min-h2>
-        <min-button [color]="Color.Red" (clicked)="deleteGame(game.id, $event)">
+        <min-button [color]="Color.Red" (clicked)="openDeleteDialog(game.id, $event)">
           <img src="assets/svgs/close.svg" alt="Schliessen" class="h-4 w-4" />
         </min-button>
       </div>
@@ -42,6 +42,15 @@
       <min-button [color]="Color.Blue" [isDisabled]="newGameFormGroup.invalid" (clicked)="createGame()">
         Spiel erstellen
       </min-button>
+    </div>
+  </min-dialog>
+
+  <!-- DELETE DIALOG -->
+  <min-dialog title="Spiel löschen" [isOpen]="isDeleteDialogOpen()" (closed)="cancelDeleteGame()">
+    <p class="my-4">Möchtest du das Spiel wirklich löschen?</p>
+    <div class="flex flex-row justify-end gap-2">
+      <min-button [color]="Color.Gray" (clicked)="cancelDeleteGame()">Abbrechen</min-button>
+      <min-button [color]="Color.Red" (clicked)="confirmDeleteGame()">Löschen</min-button>
     </div>
   </min-dialog>
 </div>
