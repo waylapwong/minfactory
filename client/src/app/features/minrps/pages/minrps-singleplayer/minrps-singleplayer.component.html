@@ -4,7 +4,7 @@
     <!-- OPPONENT AVATAR -->
     <div class="flex w-full flex-row justify-center">
       <minrps-card>
-        <img src="assets/svg/robot-antennas.svg" alt="Rock" class="h-16 w-16" />
+        <img src="assets/svg/minrps/minrobo.svg" alt="Rock" class="h-16 w-16" />
       </minrps-card>
     </div>
 
@@ -16,11 +16,11 @@
           [isWinning]="game().player2IsWinning"
           [isDraw]="game().result === MinRpsResult.Draw"
         >
-          <img class="h-16 w-16" [alt]="game().player2Move" [src]="`assets/svg/${game().player2Move}.svg`" />
+          <img class="h-16 w-16" [alt]="game().player2Move" [src]="`assets/svg/minrps/${game().player2Move}.svg`" />
         </minrps-card>
       } @else {
         <minrps-card>
-          <img src="assets/svg/uncertainty.svg" alt="?" class="h-16 w-16" />
+          <img src="assets/svg/minrps/uncertainty.svg" alt="?" class="h-16 w-16" />
         </minrps-card>
       }
     </div>
@@ -45,7 +45,7 @@
           [isDraw]="game().result === MinRpsResult.Draw"
           (selected)="selectMove(selectableMove)"
         >
-          <img [src]="`assets/svg/${selectableMove}.svg`" [alt]="selectableMove" class="h-16 w-16" />
+          <img [src]="`assets/svg/minrps/${selectableMove}.svg`" [alt]="selectableMove" class="h-16 w-16" />
         </minrps-move>
       }
     </div>

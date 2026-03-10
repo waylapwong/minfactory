@@ -21,15 +21,15 @@
             [isWinning]="game().heroIsWinning"
             [isDraw]="game().result === MinRpsResult.Draw"
           >
-            <img class="h-16 w-16" [alt]="game().heroMove" [src]="`assets/svg/${game().heroMove}.svg`" />
+            <img class="h-16 w-16" [alt]="game().heroMove" [src]="`assets/svg/minrps/${game().heroMove}.svg`" />
           </minrps-card>
         } @else if (selectedMove() !== MinRpsMove.None) {
           <minrps-card>
-            <img src="assets/svg/lock.svg" alt="Selected" class="h-16 w-16" />
+            <img src="assets/svg/minrps/lock.svg" alt="Selected" class="h-16 w-16" />
           </minrps-card>
         } @else {
           <minrps-card>
-            <img src="assets/svg/uncertainty.svg" alt="?" class="h-16 w-16" />
+            <img src="assets/svg/minrps/uncertainty.svg" alt="?" class="h-16 w-16" />
           </minrps-card>
         }
       </div>
@@ -61,11 +61,11 @@
             [isWinning]="game().villainIsWinning"
             [isDraw]="game().result === MinRpsResult.Draw"
           >
-            <img class="h-16 w-16" [alt]="game().villainMove" [src]="`assets/svg/${game().villainMove}.svg`" />
+            <img class="h-16 w-16" [alt]="game().villainMove" [src]="`assets/svg/minrps/${game().villainMove}.svg`" />
           </minrps-card>
         } @else {
           <minrps-card>
-            <img src="assets/svg/uncertainty.svg" alt="?" class="h-16 w-16" />
+            <img src="assets/svg/minrps/uncertainty.svg" alt="?" class="h-16 w-16" />
           </minrps-card>
         }
       </div>
@@ -89,11 +89,11 @@
             [isWinning]="game().villainIsWinning"
             [isDraw]="game().result === MinRpsResult.Draw"
           >
-            <img class="h-16 w-16" [alt]="game().villainMove" [src]="`assets/svg/${game().villainMove}.svg`" />
+            <img class="h-16 w-16" [alt]="game().villainMove" [src]="`assets/svg/minrps/${game().villainMove}.svg`" />
           </minrps-card>
         } @else {
           <minrps-card>
-            <img src="assets/svg/uncertainty.svg" alt="?" class="h-16 w-16" />
+            <img src="assets/svg/minrps/uncertainty.svg" alt="?" class="h-16 w-16" />
           </minrps-card>
         }
       </div>
@@ -127,7 +127,7 @@
             [isDraw]="game().result === MinRpsResult.Draw"
             (selected)="selectMove(selectableMove)"
           >
-            <img [src]="`assets/svg/${selectableMove}.svg`" [alt]="selectableMove" class="h-16 w-16" />
+            <img [src]="`assets/svg/minrps/${selectableMove}.svg`" [alt]="selectableMove" class="h-16 w-16" />
           </minrps-move>
         }
       </div>
