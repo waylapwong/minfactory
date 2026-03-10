@@ -91,6 +91,7 @@ export class MinRpsMultiplayerComponent implements OnInit, OnDestroy, CanLeaveGa
 
   public canDeactivate(): Promise<boolean> {
     this.leaveConfirmationResolver?.(false);
+    this.closeSeatDialog();
     this.isLeaveDialogOpen.set(true);
     return new Promise<boolean>((resolve) => {
       this.leaveConfirmationResolver = resolve;
