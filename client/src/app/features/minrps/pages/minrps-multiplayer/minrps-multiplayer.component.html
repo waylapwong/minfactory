@@ -1,4 +1,11 @@
-<div class="flex h-full flex-col text-center">
+<div class="relative flex h-full flex-col text-center">
+  <!-- LEAVE BUTTON -->
+  <div class="absolute top-0 right-0">
+    <min-button (clicked)="routingService.navigateToMinRps()" [color]="Color.Red" title="Spiel verlassen">
+      <img src="assets/svgs/close.svg" alt="Rock" class="h-4 w-4" />
+    </min-button>
+  </div>
+
   @if (game().isObserver) {
     <!-- PLAYER 1 SIDE (SPECTATOR) -->
     <div class="flex basis-1/2 flex-col justify-evenly">

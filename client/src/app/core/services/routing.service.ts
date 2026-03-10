@@ -10,27 +10,27 @@ import { MinRpsPath } from '../../features/minrps/minrps.routes';
 export class RoutingService {
   constructor(private readonly router: Router) {}
 
-  public navigateToHomePage(): void {
-    this.router.navigate([AppPath.Root]);
-  }
-
   public navigateToApps(): void {
     this.router.navigate([AppPath.Root, MinFactoryPath.Apps]);
+  }
+
+  public navigateToHomePage(): void {
+    this.router.navigate([AppPath.Root]);
   }
 
   public navigateToMinRps(): void {
     this.router.navigate([AppPath.MinRps]);
   }
 
-  public navigateToMinRpsSingleplayer(): void {
-    this.router.navigate([AppPath.MinRps, MinRpsPath.Singleplayer]);
+  public navigateToMinRpsMultiplayer(id: string): void {
+    this.router.navigate([AppPath.MinRps, MinRpsPath.Multiplayer, id]);
   }
 
   public navigateToMinRpsOverview(): void {
     this.router.navigate([AppPath.MinRps, MinRpsPath.Overview]);
   }
 
-  public navigateToMinRpsMultiplayer(id: string): void {
-    this.router.navigate([AppPath.MinRps, MinRpsPath.Multiplayer, id]);
+  public navigateToMinRpsSingleplayer(): void {
+    this.router.navigate([AppPath.MinRps, MinRpsPath.Singleplayer]);
   }
 }
