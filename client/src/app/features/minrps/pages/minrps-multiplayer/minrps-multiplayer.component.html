@@ -131,7 +131,9 @@
         @for (selectableMove of SELECTABLE_MOVES; track $index) {
           <minrps-move
             [hasResult]="game().result !== MinRpsResult.None"
-            [isDisabled]="game().heroHasSelectedMove && selectableMove !== selectedMove() && selectableMove !== game().heroMove"
+            [isDisabled]="
+              game().heroHasSelectedMove && selectableMove !== selectedMove() && selectableMove !== game().heroMove
+            "
             [isPlayed]="selectableMove === selectedMove() || selectableMove === game().heroMove"
             [isSelected]="selectableMove === selectedMove()"
             [isWinning]="game().heroIsWinning"

@@ -57,6 +57,7 @@ export class MinRpsMultiplayerComponent implements OnInit, OnDestroy, CanLeaveGa
     }
   });
 
+  private isGameNonExistent = false;
   private leaveConfirmationResolver: ((value: boolean) => void) | null = null;
 
   constructor(
@@ -85,11 +86,10 @@ export class MinRpsMultiplayerComponent implements OnInit, OnDestroy, CanLeaveGa
     this.leaveConfirmationResolver = null;
   }
 
-  public closeSeatDialog(): void {
-    this.isSeatDialogOpen.set(false);
-  }
-
   public canDeactivate(): Promise<boolean> {
+    if (this.isGameNonExistent) {
+      return Promise.resolve(true);
+    }
     this.leaveConfirmationResolver?.(false);
     this.closeSeatDialog();
     this.isLeaveDialogOpen.set(true);
@@ -98,15 +98,19 @@ export class MinRpsMultiplayerComponent implements OnInit, OnDestroy, CanLeaveGa
     });
   }
 
-  public confirmLeave(): void {
-    this.isLeaveDialogOpen.set(false);
-    this.leaveConfirmationResolver?.(true);
-    this.leaveConfirmationResolver = null;
-  }
-
   public cancelLeave(): void {
     this.isLeaveDialogOpen.set(false);
     this.leaveConfirmationResolver?.(false);
+    this.leaveConfirmationResolver = null;
+  }
+
+  public closeSeatDialog(): void {
+    this.isSeatDialogOpen.set(false);
+  }
+
+  public confirmLeave(): void {
+    this.isLeaveDialogOpen.set(false);
+    this.leaveConfirmationResolver?.(true);
     this.leaveConfirmationResolver = null;
   }
 
@@ -152,6 +156,7 @@ export class MinRpsMultiplayerComponent implements OnInit, OnDestroy, CanLeaveGa
   private async checkGameExists(id: string): Promise<void> {
     const gameExists: boolean = await this.gameService.gameExistByID(id);
     if (!gameExists) {
+      this.isGameNonExistent = true;
       this.routingService.navigateToMinRpsOverview();
     }
   }

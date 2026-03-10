@@ -259,6 +259,14 @@ describe('MinRpsMultiplayerComponent', () => {
       component.canDeactivate();
       await expectAsync(firstPromise).toBeResolvedTo(false);
     });
+
+    it('should resolve immediately with true when game is non-existent', async () => {
+      mockGameService.gameExistByID.and.returnValue(Promise.resolve(false));
+      await component['checkGameExists']('non-existent-id');
+      const result = component.canDeactivate();
+      await expectAsync(result).toBeResolvedTo(true);
+      expect(component.isLeaveDialogOpen()).toBe(false);
+    });
   });
 
   describe('confirmLeave()', () => {
