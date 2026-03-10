@@ -30,13 +30,6 @@ cd client/ && npm run lint
 cd server/ && npm run lint
 ```
 
-## Docs
-
-```bash
-cd client/ && npm run gen:docs
-cd server/ && npm run gen:docs
-```
-
 ## Deployment Server
 
 ```bash

@@ -60,7 +60,7 @@ export class MinRpsMultiplayerComponent implements OnInit, OnDestroy {
     private readonly formBuilder: FormBuilder,
     private readonly gameService: MinRpsGameService,
     private readonly multiplayerService: MinRpsMultiplayerService,
-    private readonly routingService: RoutingService,
+    public readonly routingService: RoutingService,
   ) {}
 
   public get seatName(): FormControl {

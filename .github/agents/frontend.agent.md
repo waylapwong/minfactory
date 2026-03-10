@@ -179,7 +179,7 @@ describe('MinrpsSingleplayerService', () => {
 
 2. **Prüfe OpenAPI-Integration**
    - Ist das API bereits in `client/openapi.json` definiert?
-   - Müssen API-Services regeneriert werden? (`npm run gen:api`)
+   - Müssen API-Services regeneriert werden? (`npm run api`)
    - Nutze die auto-generierten Services aus `core/generated/`
 
 3. **Implementiere Layer für Layer**

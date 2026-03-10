@@ -118,14 +118,11 @@ npm run test:ci     # Headless CI-Modus
 
 # Linting
 npm run lint        # ESLint mit Auto-Fix
-
-# Dokumentation
-npm run gen:docs    # Compodoc → docs/ Ordner
 ```
 
 **Client-spezifisch:**
 ```bash
-npm run gen:api     # OpenAPI-Client neu generieren aus openapi.json
+npm run api     # OpenAPI-Client neu generieren aus openapi.json
 ```
 
 **Server-spezifisch:**
