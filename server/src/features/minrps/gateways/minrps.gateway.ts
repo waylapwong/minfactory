@@ -58,12 +58,18 @@ export class MinRpsGateway implements OnGatewayConnection, OnGatewayDisconnect {
       // Send full event to the playing player (their move visible)
       this.sendClientEvent(client, MinRpsMatchEvent.Updated, event);
       // Notify the rest of the room that a move was locked in (without revealing it)
-      const opponentNotification: MinRpsMatchUpdatedPayload = { ...event };
-      if (event.player1Id === command.playerId) {
-        opponentNotification.player1Move = MinRpsMove.None;
-      } else {
-        opponentNotification.player2Move = MinRpsMove.None;
-      }
+      const opponentNotification: MinRpsMatchUpdatedPayload = new MinRpsMatchUpdatedPayload();
+      opponentNotification.matchId = event.matchId;
+      opponentNotification.observers = event.observers;
+      opponentNotification.player1HasSelectedMove = event.player1HasSelectedMove;
+      opponentNotification.player1Id = event.player1Id;
+      opponentNotification.player1Move = event.player1Id === command.playerId ? MinRpsMove.None : event.player1Move;
+      opponentNotification.player1Name = event.player1Name;
+      opponentNotification.player2HasSelectedMove = event.player2HasSelectedMove;
+      opponentNotification.player2Id = event.player2Id;
+      opponentNotification.player2Move = event.player2Id === command.playerId ? MinRpsMove.None : event.player2Move;
+      opponentNotification.player2Name = event.player2Name;
+      opponentNotification.result = event.result;
       this.server.to(event.matchId).except(client.id).emit(MinRpsMatchEvent.Updated, opponentNotification);
     }
   }
