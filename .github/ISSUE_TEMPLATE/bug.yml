@@ -22,7 +22,7 @@ body:
       required: true
 
   - type: textarea
-    id: expected
+    id: expected_behavior
     attributes:
       label: Erwartetes Verhalten
       value: ""
@@ -30,7 +30,7 @@ body:
       required: true
 
   - type: textarea
-    id: actual
+    id: actual_behavior
     attributes:
       label: Tatsächliches Verhalten
       value: ""
