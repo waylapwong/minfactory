@@ -37,12 +37,12 @@ describe('MinRpsHomeComponent', () => {
     expect(component.routingService).toBe(mockRoutingService);
   });
 
-  it('should have correct host class', () => {
-    const element = fixture.nativeElement;
-    expect(element.classList.contains('flex')).toBe(true);
-    expect(element.classList.contains('h-full')).toBe(true);
-    expect(element.classList.contains('flex-row')).toBe(true);
-    expect(element.classList.contains('items-center')).toBe(true);
-    expect(element.classList.contains('justify-evenly')).toBe(true);
+  it('should render root layout container in template', () => {
+    const rootContainer = fixture.nativeElement.firstElementChild as HTMLElement;
+
+    expect(rootContainer).toBeTruthy();
+    expect(rootContainer.classList.contains('flex')).toBe(true);
+    expect(rootContainer.classList.contains('h-full')).toBe(true);
+    expect(rootContainer.classList.contains('flex-col')).toBe(true);
   });
 });

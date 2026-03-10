@@ -1,6 +1,5 @@
 import { provideZonelessChangeDetection } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { MinRpsResult } from '../../../../core/generated';
 import { MinRpsMoveComponent } from './minrps-move.component';
 
 describe('MinRpsMoveComponent', () => {
@@ -22,11 +21,25 @@ describe('MinRpsMoveComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should have MinRpsResult enum available', () => {
-    expect(component.MinRpsResult).toBe(MinRpsResult);
-  });
-
   describe('inputs', () => {
+    it('should have default hasResult as false', () => {
+      expect(component.hasResult()).toBe(false);
+    });
+
+    it('should accept hasResult input', () => {
+      fixture.componentRef.setInput('hasResult', true);
+      expect(component.hasResult()).toBe(true);
+    });
+
+    it('should have default isDraw as false', () => {
+      expect(component.isDraw()).toBe(false);
+    });
+
+    it('should accept isDraw input', () => {
+      fixture.componentRef.setInput('isDraw', true);
+      expect(component.isDraw()).toBe(true);
+    });
+
     it('should have default isDisabled as false', () => {
       expect(component.isDisabled()).toBe(false);
     });
@@ -54,13 +67,13 @@ describe('MinRpsMoveComponent', () => {
       expect(component.isSelected()).toBe(true);
     });
 
-    it('should have default result as None', () => {
-      expect(component.result()).toBe(MinRpsResult.None);
+    it('should have default isWinning as false', () => {
+      expect(component.isWinning()).toBe(false);
     });
 
-    it('should accept result input', () => {
-      fixture.componentRef.setInput('result', MinRpsResult.Player1);
-      expect(component.result()).toBe(MinRpsResult.Player1);
+    it('should accept isWinning input', () => {
+      fixture.componentRef.setInput('isWinning', true);
+      expect(component.isWinning()).toBe(true);
     });
   });
 
@@ -86,25 +99,48 @@ describe('MinRpsMoveComponent', () => {
       expect(button.classList.contains('bg-blue-300')).toBe(true);
     });
 
-    it('should apply bg-green-300 class when result is Player1', () => {
-      fixture.componentRef.setInput('result', MinRpsResult.Player1);
+    it('should apply bg-green-300 class when hasResult is true and isWinning is true', () => {
+      fixture.componentRef.setInput('hasResult', true);
+      fixture.componentRef.setInput('isWinning', true);
       fixture.detectChanges();
       const button = fixture.nativeElement.querySelector('button');
       expect(button.classList.contains('bg-green-300')).toBe(true);
     });
 
-    it('should apply bg-red-300 class when result is Player2', () => {
-      fixture.componentRef.setInput('result', MinRpsResult.Player2);
+    it('should not apply bg-green-300 class when hasResult is false even if isWinning is true', () => {
+      fixture.componentRef.setInput('hasResult', false);
+      fixture.componentRef.setInput('isWinning', true);
+      fixture.detectChanges();
+      const button = fixture.nativeElement.querySelector('button');
+      expect(button.classList.contains('bg-green-300')).toBe(false);
+    });
+
+    it('should apply bg-red-300 class when hasResult is true, isWinning is false, and isDraw is false', () => {
+      fixture.componentRef.setInput('hasResult', true);
+      fixture.componentRef.setInput('isWinning', false);
+      fixture.componentRef.setInput('isDraw', false);
       fixture.detectChanges();
       const button = fixture.nativeElement.querySelector('button');
       expect(button.classList.contains('bg-red-300')).toBe(true);
     });
 
-    it('should apply bg-yellow-300 class when result is Draw', () => {
-      fixture.componentRef.setInput('result', MinRpsResult.Draw);
+    it('should apply bg-yellow-300 class when hasResult is true and isDraw is true', () => {
+      fixture.componentRef.setInput('hasResult', true);
+      fixture.componentRef.setInput('isDraw', true);
       fixture.detectChanges();
       const button = fixture.nativeElement.querySelector('button');
       expect(button.classList.contains('bg-yellow-300')).toBe(true);
+    });
+
+    it('should not apply color classes when hasResult is false', () => {
+      fixture.componentRef.setInput('hasResult', false);
+      fixture.componentRef.setInput('isWinning', false);
+      fixture.componentRef.setInput('isDraw', false);
+      fixture.detectChanges();
+      const button = fixture.nativeElement.querySelector('button');
+      expect(button.classList.contains('bg-green-300')).toBe(false);
+      expect(button.classList.contains('bg-red-300')).toBe(false);
+      expect(button.classList.contains('bg-yellow-300')).toBe(false);
     });
 
     it('should apply -translate-y-2 class when isPlayed is true', () => {

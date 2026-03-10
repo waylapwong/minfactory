@@ -16,7 +16,6 @@ import { MinRpsGameService } from '../../services/minrps-game.service';
   selector: 'min-minrps-overview',
   templateUrl: './minrps-overview.component.html',
   styleUrls: ['./minrps-overview.component.scss'],
-  host: { class: 'h-full flex flex-col gap-2' },
   imports: [
     CardButtonComponent,
     H2Component,

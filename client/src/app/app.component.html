@@ -1,6 +1,6 @@
 <div
   id="root"
-  class="flex h-dvh w-screen flex-col justify-center bg-gray-200 bg-[url('assets/svg/tic-tac-toe.svg')] bg-[length:128px] bg-repeat-space font-mono"
+  class="flex h-dvh w-screen flex-col justify-center bg-gray-200 bg-[url('assets/svgs/tic-tac-toe.svg')] bg-[length:128px] bg-repeat-space font-mono"
 >
   <!-- CONTAINER -->
   <div
@@ -16,6 +16,8 @@
     </main>
 
     <!-- FOOTER -->
-    <min-footer id="footer"></min-footer>
+    @if (isInMinFactory()) {
+      <min-footer id="footer"></min-footer>
+    }
   </div>
 </div>

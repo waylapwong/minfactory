@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { AppPath } from '../../app.routes';
+import { MinFactoryPath } from '../../features/minfactory/minfactory.routes';
 import { MinRpsPath } from '../../features/minrps/minrps.routes';
 
 @Injectable({
@@ -11,6 +12,10 @@ export class RoutingService {
 
   public navigateToHomePage(): void {
     this.router.navigate([AppPath.Root]);
+  }
+
+  public navigateToApps(): void {
+    this.router.navigate([AppPath.Root, MinFactoryPath.Apps]);
   }
 
   public navigateToMinRps(): void {

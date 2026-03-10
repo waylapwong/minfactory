@@ -49,24 +49,24 @@ describe('MinRpsSingleplayerComponent', () => {
   });
 
   describe('submitText computed signal', () => {
-    it('should return "choose move" when no move is selected', () => {
+    it('should return "Wähle einen Zug" when no move is selected', () => {
       component.selectedMove.set(MinRpsMove.None);
-      expect(component.submitText()).toBe('choose move');
+      expect(component.submitText()).toBe('Wähle einen Zug');
     });
 
-    it('should return "play rock!" when rock is selected', () => {
+    it('should return "Spiele Stein!" when rock is selected', () => {
       component.selectedMove.set(MinRpsMove.Rock);
-      expect(component.submitText()).toBe('play rock!');
+      expect(component.submitText()).toBe('Spiele Stein!');
     });
 
-    it('should return "play paper!" when paper is selected', () => {
+    it('should return "Spiele Papier!" when paper is selected', () => {
       component.selectedMove.set(MinRpsMove.Paper);
-      expect(component.submitText()).toBe('play paper!');
+      expect(component.submitText()).toBe('Spiele Papier!');
     });
 
-    it('should return "play scissors!" when scissors is selected', () => {
+    it('should return "Spiele Schere!" when scissors is selected', () => {
       component.selectedMove.set(MinRpsMove.Scissors);
-      expect(component.submitText()).toBe('play scissors!');
+      expect(component.submitText()).toBe('Spiele Schere!');
     });
 
     it('should return empty string for unknown move', () => {

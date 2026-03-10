@@ -1,5 +1,4 @@
 import { Component, InputSignal, input } from '@angular/core';
-import { MinRpsResult } from '../../../../core/generated';
 
 @Component({
   selector: 'minrps-card',
@@ -8,7 +7,7 @@ import { MinRpsResult } from '../../../../core/generated';
   imports: [],
 })
 export class MinRpsCardComponent {
-  public readonly MinRpsResult: typeof MinRpsResult = MinRpsResult;
-
-  public result: InputSignal<MinRpsResult> = input(MinRpsResult.None);
+  public hasResult: InputSignal<boolean> = input(false);
+  public isDraw: InputSignal<boolean> = input(false);
+  public isWinning: InputSignal<boolean> = input(false);
 }

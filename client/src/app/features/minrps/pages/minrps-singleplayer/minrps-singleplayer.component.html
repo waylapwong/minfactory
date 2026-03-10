@@ -4,19 +4,23 @@
     <!-- OPPONENT AVATAR -->
     <div class="flex w-full flex-row justify-center">
       <minrps-card>
-        <img src="assets/svg/robot-antennas.svg" alt="Rock" class="h-16 w-16" />
+        <img src="assets/svgs/minrps/minrobo.svg" alt="Rock" class="h-16 w-16" />
       </minrps-card>
     </div>
 
     <!-- OPPONENT MOVE -->
     <div class="flex w-full flex-row justify-evenly gap-2">
       @if (game().player2Move !== MinRpsMove.None) {
-        <minrps-card [result]="game().result">
-          <img class="h-16 w-16" [alt]="game().player2Move" [src]="`assets/svg/${game().player2Move}.svg`" />
+        <minrps-card
+          [hasResult]="game().result !== MinRpsResult.None"
+          [isWinning]="game().player2IsWinning"
+          [isDraw]="game().result === MinRpsResult.Draw"
+        >
+          <img class="h-16 w-16" [alt]="game().player2Move" [src]="`assets/svgs/minrps/${game().player2Move}.svg`" />
         </minrps-card>
       } @else {
         <minrps-card>
-          <img src="assets/svg/uncertainty.svg" alt="?" class="h-16 w-16" />
+          <img src="assets/svgs/minrps/uncertainty.svg" alt="?" class="h-16 w-16" />
         </minrps-card>
       }
     </div>
@@ -33,13 +37,15 @@
     <div class="flex w-full flex-row justify-evenly gap-2">
       @for (selectableMove of selectableMoves; track $index) {
         <minrps-move
+          [hasResult]="game().result !== MinRpsResult.None"
           [isDisabled]="game().player1Move !== MinRpsMove.None && game().player1Move !== selectableMove"
           [isPlayed]="selectableMove === game().player1Move"
           [isSelected]="selectableMove === selectedMove()"
-          [result]="game().result"
+          [isWinning]="game().player1IsWinning"
+          [isDraw]="game().result === MinRpsResult.Draw"
           (selected)="selectMove(selectableMove)"
         >
-          <img [src]="`assets/svg/${selectableMove}.svg`" [alt]="selectableMove" class="h-16 w-16" />
+          <img [src]="`assets/svgs/minrps/${selectableMove}.svg`" [alt]="selectableMove" class="h-16 w-16" />
         </minrps-move>
       }
     </div>
