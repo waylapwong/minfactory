@@ -1,9 +1,10 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { randomUUID } from 'node:crypto';
-import { Socket } from 'socket.io';
+import { Server, Socket } from 'socket.io';
 import { MinRpsDomainMapper } from '../mapper/minrps-domain.mapper';
 import { MinRpsGame } from '../models/domains/minrps-game';
 import { MinRpsPlayer } from '../models/domains/minrps-player';
+import { MinRpsMatchEvent } from '../models/enums/minrps-match-event.enum';
 import { MinRpsMatchConnectedPayload } from '../models/payloads/minrps-match-connected.payload';
 import { MinRpsMatchJoinPayload } from '../models/payloads/minrps-match-join.payload';
 import { MinRpsMatchLeavePayload } from '../models/payloads/minrps-match-leave.payload';
@@ -17,11 +18,17 @@ import { GameRuleException } from 'src/shared/exceptions/game-rule.exception';
 
 @Injectable()
 export class MinRpsMultiplayerService {
+  private server: Server | null = null;
+
   constructor(
     private readonly matchRepository: MinRpsMatchRepository,
     private readonly playerIdRepository: MinRpsPlayerIdRepository,
     private readonly roomSystem: MinRpsRoomSystem,
   ) {}
+
+  public setServer(server: Server): void {
+    this.server = server;
+  }
 
   public handleConnection(client: Socket): MinRpsMatchConnectedPayload {
     // Build event payload
@@ -82,7 +89,7 @@ export class MinRpsMultiplayerService {
     return MinRpsDomainMapper.domainToMatchUpdatedPayload(updatedMatch);
   }
 
-  public playMatch(command: MinRpsMatchPlayPayload): MinRpsMatchUpdatedPayload {
+  public playMatch(client: Socket, command: MinRpsMatchPlayPayload): void {
     // Get match
     const match: MinRpsGame | null = this.matchRepository.findOne(command.matchId);
     // Validations
@@ -100,16 +107,22 @@ export class MinRpsMultiplayerService {
     }
     // Update match
     const updatedMatch: MinRpsGame = this.matchRepository.save(match);
-    // Hide opponent's move until both players have played
-    if (!updatedMatch.isGameReady()) {
+    // If both players have played, broadcast result and schedule reset
+    if (updatedMatch.isGameReady()) {
+      this.sendMatchUpdatedEvent(MinRpsDomainMapper.domainToMatchUpdatedPayload(updatedMatch));
+      setTimeout(() => {
+        const resetEvent: MinRpsMatchUpdatedPayload = this.resetMatch(command.matchId);
+        this.sendMatchUpdatedEvent(resetEvent);
+      }, 3000);
+    } else {
+      // Hide opponent's move until both players have played
       if (updatedMatch.isPlayer1(command.playerId)) {
         updatedMatch.resetPlayer2Move();
       } else if (updatedMatch.isPlayer2(command.playerId)) {
         updatedMatch.resetPlayer1Move();
       }
+      client.emit(MinRpsMatchEvent.Updated, MinRpsDomainMapper.domainToMatchUpdatedPayload(updatedMatch));
     }
-    // Return match state
-    return MinRpsDomainMapper.domainToMatchUpdatedPayload(updatedMatch);
   }
 
   public resetMatch(matchId: string): MinRpsMatchUpdatedPayload {
@@ -138,5 +151,13 @@ export class MinRpsMultiplayerService {
     const updatedMatch: MinRpsGame = this.matchRepository.save(match);
     // Return match state
     return MinRpsDomainMapper.domainToMatchUpdatedPayload(updatedMatch);
+  }
+
+  private sendMatchUpdatedEvent(payload: MinRpsMatchUpdatedPayload): void {
+    if (!this.server) {
+      throw new Error('Server not initialized. Call setServer() before emitting events.');
+    }
+    this.server.to(payload.matchId).emit(MinRpsMatchEvent.Updated, payload);
+    console.warn(`Sending Event: ${MinRpsMatchEvent.Updated}`, payload);
   }
 }

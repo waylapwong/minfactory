@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { Socket } from 'socket.io';
+import { Server, Socket } from 'socket.io';
 import { MinRpsMove } from '../models/enums/minrps-move.enum';
 import { MinRpsMatchJoinPayload } from '../models/payloads/minrps-match-join.payload';
 import { MinRpsMatchLeavePayload } from '../models/payloads/minrps-match-leave.payload';
@@ -13,6 +13,8 @@ import { MinRpsMultiplayerService } from './minrps-multiplayer.service';
 describe('MinRpsMultiplayerService', () => {
   let service: MinRpsMultiplayerService;
   let mockSocket: jest.Mocked<Socket>;
+  let mockServer: jest.Mocked<Server>;
+  let mockServerRoom: { emit: jest.Mock };
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -21,10 +23,17 @@ describe('MinRpsMultiplayerService', () => {
 
     service = module.get<MinRpsMultiplayerService>(MinRpsMultiplayerService);
 
+    mockServerRoom = { emit: jest.fn() };
+    mockServer = {
+      to: jest.fn().mockReturnValue(mockServerRoom),
+    } as any;
+    service.setServer(mockServer);
+
     mockSocket = {
       id: 'test-socket-id',
       join: jest.fn(),
       leave: jest.fn(),
+      emit: jest.fn(),
     } as any;
   });
 
@@ -130,35 +139,77 @@ describe('MinRpsMultiplayerService', () => {
       });
     });
 
-    it('should return match state when player makes a move', () => {
+    it('should emit updated event to client when only one player has played', () => {
       const playPayload: MinRpsMatchPlayPayload = {
         matchId: 'match-1',
         playerId: 'player-1',
         playerMove: MinRpsMove.Rock,
       };
 
-      const result = service.playMatch(playPayload);
+      service.playMatch(mockSocket, playPayload);
 
-      expect(result).toBeDefined();
-      expect(result.player1Move).toBe(MinRpsMove.Rock);
-      expect(result.player2Move).toBe(MinRpsMove.None); // Hidden until both play
+      expect(mockSocket.emit).toHaveBeenCalled();
+      expect(mockServer.to).not.toHaveBeenCalled();
     });
 
-    it('should hide opponent move until both players have played', () => {
-      service.playMatch({
+    it('should hide opponent move in client event until both players have played', () => {
+      service.playMatch(mockSocket, {
         matchId: 'match-1',
         playerId: 'player-1',
         playerMove: MinRpsMove.Rock,
       });
 
-      const result = service.playMatch({
+      const emittedPayload = (mockSocket.emit as jest.Mock).mock.calls[0][1];
+      expect(emittedPayload.player1Move).toBe(MinRpsMove.Rock);
+      expect(emittedPayload.player2Move).toBe(MinRpsMove.None);
+    });
+
+    it('should broadcast to room when both players have played', () => {
+      jest.useFakeTimers();
+
+      service.playMatch(mockSocket, {
+        matchId: 'match-1',
+        playerId: 'player-1',
+        playerMove: MinRpsMove.Rock,
+      });
+      service.playMatch(mockSocket, {
         matchId: 'match-1',
         playerId: 'player-2',
         playerMove: MinRpsMove.Paper,
       });
 
-      expect(result.player1Move).toBe(MinRpsMove.Rock);
-      expect(result.player2Move).toBe(MinRpsMove.Paper);
+      expect(mockServer.to).toHaveBeenCalledWith('match-1');
+      expect(mockServerRoom.emit).toHaveBeenCalledTimes(1);
+
+      const broadcastPayload = mockServerRoom.emit.mock.calls[0][1];
+      expect(broadcastPayload.player1Move).toBe(MinRpsMove.Rock);
+      expect(broadcastPayload.player2Move).toBe(MinRpsMove.Paper);
+
+      jest.useRealTimers();
+    });
+
+    it('should broadcast reset event after 3 seconds when both players have played', () => {
+      jest.useFakeTimers();
+
+      service.playMatch(mockSocket, {
+        matchId: 'match-1',
+        playerId: 'player-1',
+        playerMove: MinRpsMove.Rock,
+      });
+      service.playMatch(mockSocket, {
+        matchId: 'match-1',
+        playerId: 'player-2',
+        playerMove: MinRpsMove.Paper,
+      });
+
+      jest.advanceTimersByTime(3000);
+
+      expect(mockServer.to).toHaveBeenCalledTimes(2);
+      const resetPayload = mockServerRoom.emit.mock.calls[1][1];
+      expect(resetPayload.player1Move).toBe(MinRpsMove.None);
+      expect(resetPayload.player2Move).toBe(MinRpsMove.None);
+
+      jest.useRealTimers();
     });
 
     it('should throw error when player not in match tries to play', () => {
@@ -168,7 +219,7 @@ describe('MinRpsMultiplayerService', () => {
         playerMove: MinRpsMove.Rock,
       };
 
-      expect(() => service.playMatch(playPayload)).toThrow();
+      expect(() => service.playMatch(mockSocket, playPayload)).toThrow();
     });
 
     it('should throw error when match does not exist', () => {
@@ -178,12 +229,14 @@ describe('MinRpsMultiplayerService', () => {
         playerMove: MinRpsMove.Rock,
       };
 
-      expect(() => service.playMatch(playPayload)).toThrow();
+      expect(() => service.playMatch(mockSocket, playPayload)).toThrow();
     });
   });
 
   describe('resetMatch', () => {
     it('should reset player moves', () => {
+      jest.useFakeTimers();
+
       service.seatPlayer({
         matchId: 'match-1',
         playerId: 'player-1',
@@ -197,12 +250,12 @@ describe('MinRpsMultiplayerService', () => {
         seat: 2,
       });
 
-      service.playMatch({
+      service.playMatch(mockSocket, {
         matchId: 'match-1',
         playerId: 'player-1',
         playerMove: MinRpsMove.Rock,
       });
-      service.playMatch({
+      service.playMatch(mockSocket, {
         matchId: 'match-1',
         playerId: 'player-2',
         playerMove: MinRpsMove.Paper,
@@ -213,6 +266,8 @@ describe('MinRpsMultiplayerService', () => {
       expect(resetResult).toBeDefined();
       expect(resetResult.player1Move).toBe(MinRpsMove.None);
       expect(resetResult.player2Move).toBe(MinRpsMove.None);
+
+      jest.useRealTimers();
     });
   });
 

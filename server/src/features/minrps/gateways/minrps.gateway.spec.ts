@@ -105,60 +105,16 @@ describe('MinRpsGateway', () => {
   });
 
   describe('handlePlayCommand', () => {
-    it('should handle play command when only one player has played', () => {
+    it('should delegate play command to multiplayer service', () => {
       const playPayload: MinRpsMatchPlayPayload = {
         matchId: 'match-1',
         playerId: 'player-1',
         playerMove: MinRpsMove.Rock,
       };
-      const mockEvent = {
-        matchId: 'match-1',
-        player1Move: MinRpsMove.Rock,
-        player2Move: MinRpsMove.None,
-      };
-      multiplayerService.playMatch.mockReturnValue(mockEvent as any);
 
       gateway.handlePlayCommand(mockSocket, playPayload);
 
-      expect(multiplayerService.playMatch).toHaveBeenCalledWith(playPayload);
-      expect(mockSocket.emit).toHaveBeenCalled();
-      expect(mockServer.to).not.toHaveBeenCalled();
-    });
-
-    it('should handle play command when both players have played', () => {
-      jest.useFakeTimers();
-
-      const playPayload: MinRpsMatchPlayPayload = {
-        matchId: 'match-1',
-        playerId: 'player-1',
-        playerMove: MinRpsMove.Rock,
-      };
-      const mockEvent = {
-        matchId: 'match-1',
-        player1Move: MinRpsMove.Rock,
-        player2Move: MinRpsMove.Paper,
-      };
-      const resetEvent = {
-        matchId: 'match-1',
-        player1Move: MinRpsMove.None,
-        player2Move: MinRpsMove.None,
-      };
-      multiplayerService.playMatch.mockReturnValue(mockEvent as any);
-      multiplayerService.resetMatch.mockReturnValue(resetEvent as any);
-
-      gateway.handlePlayCommand(mockSocket, playPayload);
-
-      expect(multiplayerService.playMatch).toHaveBeenCalledWith(playPayload);
-      expect(multiplayerService.resetMatch).not.toHaveBeenCalled();
-      expect(mockServer.to).toHaveBeenCalledTimes(1);
-      expect(mockServer.to).toHaveBeenCalledWith('match-1');
-
-      jest.advanceTimersByTime(3000);
-
-      expect(multiplayerService.resetMatch).toHaveBeenCalledWith('match-1');
-      expect(mockServer.to).toHaveBeenCalledTimes(2);
-
-      jest.useRealTimers();
+      expect(multiplayerService.playMatch).toHaveBeenCalledWith(mockSocket, playPayload);
     });
   });
 

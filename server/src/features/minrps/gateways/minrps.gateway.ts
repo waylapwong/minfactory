@@ -3,6 +3,7 @@ import {
   MessageBody,
   OnGatewayConnection,
   OnGatewayDisconnect,
+  OnGatewayInit,
   SubscribeMessage,
   WebSocketGateway,
   WebSocketServer,
@@ -11,7 +12,6 @@ import { Server, Socket } from 'socket.io';
 import { Namespace } from '../../../shared/enums/namespace.enum';
 import { MinRpsMatchCommand } from '../models/enums/minrps-match-command.enum';
 import { MinRpsMatchEvent } from '../models/enums/minrps-match-event.enum';
-import { MinRpsMove } from '../models/enums/minrps-move.enum';
 import { MinRpsMatchConnectedPayload } from '../models/payloads/minrps-match-connected.payload';
 import type { MinRpsMatchJoinPayload } from '../models/payloads/minrps-match-join.payload';
 import type { MinRpsMatchLeavePayload } from '../models/payloads/minrps-match-leave.payload';
@@ -24,11 +24,15 @@ import { MinRpsMultiplayerService } from '../services/minrps-multiplayer.service
   cors: { origin: '*' },
   namespace: Namespace.MinRps,
 })
-export class MinRpsGateway implements OnGatewayConnection, OnGatewayDisconnect {
+export class MinRpsGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer()
   public server: Server;
 
   constructor(private readonly multiplayerService: MinRpsMultiplayerService) {}
+
+  public afterInit(server: Server): void {
+    this.multiplayerService.setServer(server);
+  }
 
   @SubscribeMessage(MinRpsMatchCommand.Join)
   public handleJoinCommand(@ConnectedSocket() client: Socket, @MessageBody() command: MinRpsMatchJoinPayload): void {
@@ -47,16 +51,7 @@ export class MinRpsGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @SubscribeMessage(MinRpsMatchCommand.Play)
   public handlePlayCommand(@ConnectedSocket() client: Socket, @MessageBody() command: MinRpsMatchPlayPayload): void {
     console.warn(`Receiving Command: ${MinRpsMatchCommand.Play}`, command);
-    const event: MinRpsMatchUpdatedPayload = this.multiplayerService.playMatch(command);
-    if (event.player1Move !== MinRpsMove.None && event.player2Move !== MinRpsMove.None) {
-      this.sendMatchUpdatedEvent(event);
-      setTimeout(() => {
-        const resetEvent: MinRpsMatchUpdatedPayload = this.multiplayerService.resetMatch(command.matchId);
-        this.sendMatchUpdatedEvent(resetEvent);
-      }, 3000);
-    } else {
-      this.sendClientEvent(client, MinRpsMatchEvent.Updated, event);
-    }
+    this.multiplayerService.playMatch(client, command);
   }
 
   @SubscribeMessage(MinRpsMatchCommand.Seat)
