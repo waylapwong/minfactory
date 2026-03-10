@@ -9,6 +9,7 @@ import { MinRpsCardComponent } from '../../components/minrps-card/minrps-card.co
 import { MinRpsMoveComponent } from '../../components/minrps-move/minrps-move.component';
 import { MinRpsSingleplayerViewModel } from '../../models/viewmodels/minrps-singleplayer.viewmodel';
 import { MinRpsSingleplayerService } from '../../services/minrps-singleplayer.service';
+
 @Component({
   selector: 'minrps-singleplayer',
   templateUrl: './minrps-singleplayer.component.html',
