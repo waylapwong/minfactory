@@ -131,7 +131,9 @@
         @for (selectableMove of SELECTABLE_MOVES; track $index) {
           <minrps-move
             [hasResult]="game().result !== MinRpsResult.None"
-            [isDisabled]="game().heroHasSelectedMove && selectableMove !== selectedMove() && selectableMove !== game().heroMove"
+            [isDisabled]="
+              game().heroHasSelectedMove && selectableMove !== selectedMove() && selectableMove !== game().heroMove
+            "
             [isPlayed]="selectableMove === selectedMove() || selectableMove === game().heroMove"
             [isSelected]="selectableMove === selectedMove()"
             [isWinning]="game().heroIsWinning"
@@ -170,5 +172,14 @@
 
   <div class="flex flex-row justify-end">
     <min-button [color]="Color.Blue" [isDisabled]="seatFormGroup.invalid" (clicked)="seatGame()">Beitreten</min-button>
+  </div>
+</min-dialog>
+
+<!-- LEAVE DIALOG -->
+<min-dialog title="Spiel verlassen" [isOpen]="isLeaveDialogOpen()" (closed)="cancelLeave()">
+  <p class="my-4">Möchtest du das Spiel wirklich verlassen?</p>
+  <div class="flex flex-row justify-end gap-2">
+    <min-button [color]="Color.Gray" (clicked)="cancelLeave()">Abbrechen</min-button>
+    <min-button [color]="Color.Red" (clicked)="confirmLeave()">Verlassen</min-button>
   </div>
 </min-dialog>
