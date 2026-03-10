@@ -1,4 +1,5 @@
 import { Routes } from '@angular/router';
+import { leaveGameGuard } from './guards/leave-game.guard';
 
 export enum MinRpsPath {
   Root = '',
@@ -14,6 +15,7 @@ export const MINRPS_ROUTES: Routes = [
   },
   {
     path: `${MinRpsPath.Multiplayer}/:id`,
+    canDeactivate: [leaveGameGuard],
     loadComponent: () =>
       import('./pages/minrps-multiplayer/minrps-multiplayer.component').then((m) => m.MinRpsMultiplayerComponent),
   },
@@ -24,6 +26,7 @@ export const MINRPS_ROUTES: Routes = [
   },
   {
     path: MinRpsPath.Singleplayer,
+    canDeactivate: [leaveGameGuard],
     loadComponent: () =>
       import('./pages/minrps-singleplayer/minrps-singleplayer.component').then((m) => m.MinRpsSingleplayerComponent),
   },

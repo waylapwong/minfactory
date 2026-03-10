@@ -10,6 +10,7 @@ import { InputComponent } from '../../../../shared/components/input/input.compon
 import { Color } from '../../../../shared/enums/color.enum';
 import { MinRpsCardComponent } from '../../components/minrps-card/minrps-card.component';
 import { MinRpsMoveComponent } from '../../components/minrps-move/minrps-move.component';
+import { CanLeaveGame } from '../../guards/leave-game.guard';
 import { MinRpsMultiplayerViewModel } from '../../models/viewmodels/minrps-multiplayer.viewmodel';
 import { MinRpsGameService } from '../../services/minrps-game.service';
 import { MinRpsMultiplayerService } from '../../services/minrps-multiplayer.service';
@@ -29,13 +30,14 @@ import { MinRpsMultiplayerService } from '../../services/minrps-multiplayer.serv
     ReactiveFormsModule,
   ],
 })
-export class MinRpsMultiplayerComponent implements OnInit, OnDestroy {
+export class MinRpsMultiplayerComponent implements OnInit, OnDestroy, CanLeaveGame {
   public readonly Color: typeof Color = Color;
   public readonly MinRpsMove: typeof MinRpsMove = MinRpsMove;
   public readonly MinRpsResult: typeof MinRpsResult = MinRpsResult;
   public readonly SELECTABLE_MOVES: MinRpsMove[] = [MinRpsMove.Rock, MinRpsMove.Paper, MinRpsMove.Scissors];
 
   public game: Signal<MinRpsMultiplayerViewModel> = inject(MinRpsMultiplayerService).game;
+  public isLeaveDialogOpen: WritableSignal<boolean> = signal(false);
   public isSeatDialogOpen: WritableSignal<boolean> = signal(false);
   public seatFormGroup: FormGroup = new FormGroup({});
   public selectedMove: WritableSignal<MinRpsMove> = signal(MinRpsMove.None);
@@ -54,6 +56,8 @@ export class MinRpsMultiplayerComponent implements OnInit, OnDestroy {
         return '';
     }
   });
+
+  private leaveConfirmationResolver: ((value: boolean) => void) | null = null;
 
   constructor(
     private readonly activatedRoute: ActivatedRoute,
@@ -77,10 +81,32 @@ export class MinRpsMultiplayerComponent implements OnInit, OnDestroy {
   public ngOnDestroy(): void {
     this.leaveGame();
     this.multiplayerService.disconnect();
+    this.leaveConfirmationResolver?.(false);
+    this.leaveConfirmationResolver = null;
   }
 
   public closeSeatDialog(): void {
     this.isSeatDialogOpen.set(false);
+  }
+
+  public canDeactivate(): Promise<boolean> {
+    this.leaveConfirmationResolver?.(false);
+    this.isLeaveDialogOpen.set(true);
+    return new Promise<boolean>((resolve) => {
+      this.leaveConfirmationResolver = resolve;
+    });
+  }
+
+  public confirmLeave(): void {
+    this.isLeaveDialogOpen.set(false);
+    this.leaveConfirmationResolver?.(true);
+    this.leaveConfirmationResolver = null;
+  }
+
+  public cancelLeave(): void {
+    this.isLeaveDialogOpen.set(false);
+    this.leaveConfirmationResolver?.(false);
+    this.leaveConfirmationResolver = null;
   }
 
   public openSeatDialog(seat: 1 | 2): void {
