@@ -18,10 +18,6 @@ export class RoutingService {
     this.router.navigate([AppPath.Root]);
   }
 
-  public navigateToApps(): void {
-    this.router.navigate([AppPath.Root, MinFactoryPath.Apps]);
-  }
-
   public navigateToMinRps(): void {
     this.router.navigate([AppPath.MinRps]);
   }

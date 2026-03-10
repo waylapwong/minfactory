@@ -2,7 +2,7 @@
   <!-- LEAVE BUTTON -->
   <div class="absolute top-0 right-0">
     <min-button (clicked)="routingService.navigateToMinRps()" [color]="Color.Red" title="Spiel verlassen">
-      <img src="assets/svgs/close.svg" alt="Rock" class="h-4 w-4" />
+      <img src="assets/svgs/close.svg" alt="Schliessen" class="h-4 w-4" />
     </min-button>
   </div>
 
@@ -11,7 +11,7 @@
     <!-- OPPONENT AVATAR -->
     <div class="flex w-full flex-row justify-center">
       <minrps-card>
-        <img src="assets/svgs/minrps/minrobo.svg" alt="Rock" class="h-16 w-16" />
+        <img src="assets/svgs/minrps/minrobo.svg" alt="minRobo" class="h-16 w-16" />
       </minrps-card>
     </div>
     <!-- OPPONENT MOVE -->
@@ -26,7 +26,7 @@
         </minrps-card>
       } @else {
         <minrps-card>
-          <img src="assets/svgs/minrps/uncertainty.svg" alt="?" class="h-16 w-16" />
+          <img src="assets/svgs/minrps/uncertainty.svg" alt="Ungewiss" class="h-16 w-16" />
         </minrps-card>
       }
     </div>
