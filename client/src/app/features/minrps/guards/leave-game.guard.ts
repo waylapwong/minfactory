@@ -1,7 +1,7 @@
-import { CanDeactivateFn } from '@angular/router';
+import { CanDeactivateFn, UrlTree } from '@angular/router';
 
 export interface CanLeaveGame {
-  canDeactivate(): Promise<boolean>;
+  canDeactivate(): boolean | UrlTree | Promise<boolean | UrlTree>;
 }
 
 export const leaveGameGuard: CanDeactivateFn<CanLeaveGame> = (component) => {
