@@ -1,5 +1,7 @@
 import { Component, OnInit, Signal, WritableSignal, computed, inject, signal } from '@angular/core';
+import { AppPath } from '../../../../app.routes';
 import { MinRpsMove, MinRpsResult } from '../../../../core/generated';
+import { RoutingService } from '../../../../core/services/routing.service';
 import { ButtonComponent } from '../../../../shared/components/button/button.component';
 import { DividerComponent } from '../../../../shared/components/divider/divider.component';
 import { Color } from '../../../../shared/enums/color.enum';
@@ -16,6 +18,7 @@ import { MinRpsSingleplayerService } from '../../services/minrps-singleplayer.se
   imports: [ButtonComponent, DividerComponent, MinRpsMoveComponent, MinRpsCardComponent],
 })
 export class MinRpsSingleplayerComponent implements OnInit {
+  public readonly AppPath: typeof AppPath = AppPath;
   public readonly Color: typeof Color = Color;
   public readonly MinRpsMove: typeof MinRpsMove = MinRpsMove;
   public readonly MinRpsResult: typeof MinRpsResult = MinRpsResult;
@@ -38,7 +41,10 @@ export class MinRpsSingleplayerComponent implements OnInit {
     }
   });
 
-  constructor(private readonly singleplayerService: MinRpsSingleplayerService) {}
+  constructor(
+    public readonly routingService: RoutingService,
+    private readonly singleplayerService: MinRpsSingleplayerService,
+  ) {}
 
   public ngOnInit(): void {
     this.singleplayerService.setupNewGame();

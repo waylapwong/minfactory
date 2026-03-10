@@ -1,11 +1,18 @@
-<div class="flex h-full flex-col text-center">
+<div class="relative flex h-full flex-col text-center">
+  <!-- LEAVE BUTTON -->
+  <div class="absolute top-0 right-0">
+    <min-button (clicked)="routingService.navigateToMinRps()" [color]="Color.Red" title="Spiel verlassen">
+      <img src="assets/svgs/close.svg" alt="Schliessen" class="h-4 w-4" />
+    </min-button>
+  </div>
+
   @if (game().isObserver) {
     <!-- PLAYER 1 SIDE (SPECTATOR) -->
     <div class="flex basis-1/2 flex-col justify-evenly">
       <div class="flex w-full flex-row justify-center">
         <minrps-card>
           <div class="flex flex-col items-center gap-2">
-            <img src="assets/svgs/player.svg" alt="Player" class="h-16 w-16" />
+            <img src="assets/svgs/minrps/player.svg" alt="Spieler" class="h-16 w-16" />
             <div class="text-sm font-bold">{{ game().heroName }}</div>
             @if (game().canTakeHeroSeat) {
               <min-button [color]="Color.Blue" (clicked)="openSeatDialog(1)">Platz nehmen</min-button>
@@ -25,11 +32,11 @@
           </minrps-card>
         } @else if (selectedMove() !== MinRpsMove.None) {
           <minrps-card>
-            <img src="assets/svgs/minrps/lock.svg" alt="Selected" class="h-16 w-16" />
+            <img src="assets/svgs/minrps/lock.svg" alt="Schloss" class="h-16 w-16" />
           </minrps-card>
         } @else {
           <minrps-card>
-            <img src="assets/svgs/minrps/uncertainty.svg" alt="?" class="h-16 w-16" />
+            <img src="assets/svgs/minrps/uncertainty.svg" alt="Ungewiss" class="h-16 w-16" />
           </minrps-card>
         }
       </div>
@@ -45,7 +52,7 @@
       <div class="flex w-full flex-row justify-center">
         <minrps-card>
           <div class="flex flex-col items-center gap-2">
-            <img src="assets/svgs/player.svg" alt="Player" class="h-16 w-16" />
+            <img src="assets/svgs/minrps/player.svg" alt="Spieler" class="h-16 w-16" />
             <div class="text-sm font-bold">{{ game().villainName }}</div>
             @if (game().canTakeVillainSeat) {
               <min-button [color]="Color.Blue" (clicked)="openSeatDialog(2)">Platz nehmen</min-button>
@@ -65,7 +72,7 @@
           </minrps-card>
         } @else {
           <minrps-card>
-            <img src="assets/svgs/minrps/uncertainty.svg" alt="?" class="h-16 w-16" />
+            <img src="assets/svgs/minrps/uncertainty.svg" alt="Ungewiss" class="h-16 w-16" />
           </minrps-card>
         }
       </div>
@@ -76,7 +83,7 @@
       <div class="flex w-full flex-row justify-center">
         <minrps-card>
           <div class="flex flex-col items-center gap-2">
-            <img src="assets/svgs/player.svg" alt="Player" class="h-16 w-16" />
+            <img src="assets/svgs/minrps/player.svg" alt="Spieler" class="h-16 w-16" />
             <div class="text-sm font-bold">{{ game().villainName }}</div>
           </div>
         </minrps-card>
@@ -91,9 +98,13 @@
           >
             <img class="h-16 w-16" [alt]="game().villainMove" [src]="`assets/svgs/minrps/${game().villainMove}.svg`" />
           </minrps-card>
+        } @else if (game().villainHasSelectedMove) {
+          <minrps-card>
+            <img src="assets/svgs/minrps/lock.svg" alt="Gegner hat Zug gewählt" class="h-16 w-16" />
+          </minrps-card>
         } @else {
           <minrps-card>
-            <img src="assets/svgs/minrps/uncertainty.svg" alt="?" class="h-16 w-16" />
+            <img src="assets/svgs/minrps/uncertainty.svg" alt="Ungewiss" class="h-16 w-16" />
           </minrps-card>
         }
       </div>
@@ -110,7 +121,7 @@
         <!-- PLAYER AVATAR -->
         <minrps-card>
           <div class="flex flex-col items-center gap-2">
-            <img src="assets/svgs/player.svg" alt="Player" class="h-16 w-16" />
+            <img src="assets/svgs/minrps/player.svg" alt="Spieler" class="h-16 w-16" />
             <div class="text-sm font-bold">{{ game().heroName }}</div>
           </div>
         </minrps-card>
@@ -120,8 +131,8 @@
         @for (selectableMove of SELECTABLE_MOVES; track $index) {
           <minrps-move
             [hasResult]="game().result !== MinRpsResult.None"
-            [isDisabled]="game().heroMove !== MinRpsMove.None && game().heroMove !== selectableMove"
-            [isPlayed]="selectableMove === game().heroMove"
+            [isDisabled]="game().heroHasSelectedMove && selectableMove !== selectedMove() && selectableMove !== game().heroMove"
+            [isPlayed]="selectableMove === selectedMove() || selectableMove === game().heroMove"
             [isSelected]="selectableMove === selectedMove()"
             [isWinning]="game().heroIsWinning"
             [isDraw]="game().result === MinRpsResult.Draw"
@@ -136,7 +147,7 @@
         <min-button
           class="basis-3xs"
           [color]="Color.Blue"
-          [isDisabled]="selectedMove() === MinRpsMove.None"
+          [isDisabled]="selectedMove() === MinRpsMove.None || game().heroHasSelectedMove"
           (clicked)="playGame()"
         >
           {{ submitText() }}

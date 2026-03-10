@@ -1,23 +1,22 @@
 name: Spike
 description: Spike Ticket
-title: "[Spike]: "
-labels: ["Spike"]
+title: "[Spike] _____"
 
 body:
   - type: textarea
     id: description
     attributes:
       label: User Story
-      value: "Als **[Rolle]** möchte ich **[Feature]**, damit **[Nutzen]**."
+      value: "Als **[_____]** möchte ich **[_____]**, damit **[_____]**."
     validations:
       required: true
 
   - type: textarea
-    id: acceptance_criteria
+    id: research_goals
     attributes:
-      label: Akzeptanzkriterien
+      label: Untersuchungsziele
       value: |
-        - [ ] Akzeptanzkriterium
+        - [ ] _____
     validations:
       required: true
 
@@ -26,6 +25,6 @@ body:
     attributes:
       label: Aufgaben
       value: |
-        - [ ] Aufgabe
+        - [ ] _____
     validations:
       required: true

@@ -140,8 +140,8 @@ describe('MinRpsMultiplayerService', () => {
       const result = service.playMatch(playPayload);
 
       expect(result).toBeDefined();
-      expect(result.player1Move).toBe(MinRpsMove.Rock);
-      expect(result.player2Move).toBe(MinRpsMove.None); // Hidden until both play
+      expect(result.player1Move).toBe(MinRpsMove.None); // Hidden until both play
+      expect(result.player2Move).toBe(MinRpsMove.None);
     });
 
     it('should hide opponent move until both players have played', () => {

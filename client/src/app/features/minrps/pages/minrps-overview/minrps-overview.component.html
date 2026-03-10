@@ -13,23 +13,23 @@
       <div class="flex flex-row items-start justify-between">
         <min-h2 class="grow text-left break-all">{{ game.name }}</min-h2>
         <min-button [color]="Color.Red" (clicked)="deleteGame(game.id, $event)">
-          <img src="assets/svgs/close.svg" alt="Rock" class="h-4 w-4" />
+          <img src="assets/svgs/close.svg" alt="Schliessen" class="h-4 w-4" />
         </min-button>
       </div>
       <div class="flex flex-row items-end gap-2 text-left text-sm text-gray-500">
-        <img src="assets/svgs/player.svg" alt="Rock" class="h-6 w-6" />
+        <img src="assets/svgs/pawn.svg" alt="Spieler" class="h-6 w-6" />
         {{ game.playerCount }}/2
       </div>
       <div class="flex flex-row items-end gap-2 text-left text-sm text-gray-500">
-        <img src="assets/svgs/observer.svg" alt="Rock" class="h-6 w-6" />
+        <img src="assets/svgs/observer.svg" alt="Beobachter" class="h-6 w-6" />
         {{ game.observerCount }}
       </div>
       <div class="flex flex-row items-end gap-2 text-left text-sm text-gray-500">
-        <img src="assets/svgs/calendar.svg" alt="Rock" class="h-6 w-6" />
+        <img src="assets/svgs/calendar.svg" alt="Datum" class="h-6 w-6" />
         {{ game.createdAt | date: 'MMMM d, yyyy' }}
       </div>
       <div class="flex flex-row items-end gap-2 text-left text-sm text-gray-500">
-        <img src="assets/svgs/clock.svg" alt="Rock" class="h-6 w-6" />
+        <img src="assets/svgs/clock.svg" alt="Uhrzeit" class="h-6 w-6" />
         {{ game.createdAt | date: 'hh:mm a' }}
       </div>
     </min-card-button>

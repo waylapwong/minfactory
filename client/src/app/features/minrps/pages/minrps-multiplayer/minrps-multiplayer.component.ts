@@ -60,7 +60,7 @@ export class MinRpsMultiplayerComponent implements OnInit, OnDestroy {
     private readonly formBuilder: FormBuilder,
     private readonly gameService: MinRpsGameService,
     private readonly multiplayerService: MinRpsMultiplayerService,
-    private readonly routingService: RoutingService,
+    public readonly routingService: RoutingService,
   ) {}
 
   public get seatName(): FormControl {
@@ -116,7 +116,7 @@ export class MinRpsMultiplayerComponent implements OnInit, OnDestroy {
   }
 
   public selectMove(move: MinRpsMove): void {
-    if (this.game().isObserver) {
+    if (this.game().isObserver || this.game().heroHasSelectedMove) {
       return;
     }
     this.selectedMove.set(move);

@@ -1,14 +1,13 @@
 name: Epic
 description: Epic Ticket
-title: "[Epic]: "
-labels: ["Epic"]
+title: "[Epic] _____"
 
 body:
   - type: textarea
     id: description
     attributes:
       label: User Story
-      value: "Als **[Rolle]** möchte ich **[Feature]**, damit **[Nutzen]**."
+      value: "Als **[_____]** möchte ich **[_____]**, damit **[_____]**."
     validations:
       required: true
 
@@ -17,6 +16,6 @@ body:
     attributes:
       label: Akzeptanzkriterien
       value: |
-        - [ ] Akzeptanzkriterium
+        - [ ] _____
     validations:
       required: true

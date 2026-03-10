@@ -7,7 +7,7 @@ import { Color } from '../../../../shared/enums/color.enum';
 
 @Component({
   selector: 'minfactory-home',
-  imports: [LogoComponent, H1Component, ButtonComponent, LogoComponent],
+  imports: [LogoComponent, H1Component, ButtonComponent],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss',
 })
