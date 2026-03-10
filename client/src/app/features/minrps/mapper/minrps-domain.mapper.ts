@@ -15,6 +15,7 @@ export class MinRpsDomainMapper {
     const heroIsPlayer1 = hero.id === domain.player1.id;
 
     viewModel.gameId = domain.id;
+    viewModel.heroHasSelectedMove = hero.hasSelectedMove;
     viewModel.heroMove = hero.move;
     viewModel.heroName = hero.name;
     viewModel.heroIsWinning =

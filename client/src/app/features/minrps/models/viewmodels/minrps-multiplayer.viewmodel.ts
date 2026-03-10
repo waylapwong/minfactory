@@ -4,6 +4,7 @@ export class MinRpsMultiplayerViewModel {
   public canTakeHeroSeat!: boolean;
   public canTakeVillainSeat!: boolean;
   public gameId!: string;
+  public heroHasSelectedMove!: boolean;
   public heroIsWinning!: boolean;
   public heroMove!: MinRpsMove;
   public heroName!: string;

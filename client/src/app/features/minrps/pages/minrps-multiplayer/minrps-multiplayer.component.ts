@@ -116,7 +116,7 @@ export class MinRpsMultiplayerComponent implements OnInit, OnDestroy {
   }
 
   public selectMove(move: MinRpsMove): void {
-    if (this.game().isObserver) {
+    if (this.game().isObserver || this.game().heroHasSelectedMove) {
       return;
     }
     this.selectedMove.set(move);

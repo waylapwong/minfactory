@@ -33,12 +33,7 @@ export class MinRpsGame {
     try {
       this.checkRules();
       return true;
-    } catch (error: unknown) {
-      if (error instanceof GameRuleException) {
-        console.error('Game not ready:', error.message);
-      } else {
-        console.error('Unexpected error:', error);
-      }
+    } catch {
       return false;
     }
   }
