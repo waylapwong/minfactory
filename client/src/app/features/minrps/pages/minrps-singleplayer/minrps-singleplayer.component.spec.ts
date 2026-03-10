@@ -129,10 +129,11 @@ describe('MinRpsSingleplayerComponent', () => {
       expect(component.isLeaveDialogOpen()).toBe(true);
     });
 
-    it('should return a Promise', () => {
+    it('should return a Promise', async () => {
       const result = component.canDeactivate();
       expect(result).toBeInstanceOf(Promise);
-      result.then((value) => expect(typeof value).toBe('boolean'));
+      component.confirmLeave();
+      await expectAsync(result).toBeResolvedTo(true);
     });
 
     it('should resolve previous pending promise with false when called again', async () => {
