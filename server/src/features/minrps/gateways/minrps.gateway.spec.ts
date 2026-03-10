@@ -114,18 +114,42 @@ describe('MinRpsGateway', () => {
       };
       const mockEvent = {
         matchId: 'match-1',
+        observers: [],
+        player1HasSelectedMove: true,
         player1Id: 'player-1',
         player1Move: MinRpsMove.Rock,
+        player1Name: 'Alice',
+        player2HasSelectedMove: false,
+        player2Id: 'player-2',
         player2Move: MinRpsMove.None,
+        player2Name: 'Bob',
+        result: 'None',
       };
       multiplayerService.playMatch.mockReturnValue(mockEvent as any);
+
+      const mockOpponentEmit = jest.fn();
+      const mockExcept = jest.fn().mockReturnValue({ emit: mockOpponentEmit });
+      mockServer.to = jest.fn().mockReturnValue({ except: mockExcept, emit: jest.fn() });
 
       gateway.handlePlayCommand(mockSocket, playPayload);
 
       expect(multiplayerService.playMatch).toHaveBeenCalledWith(playPayload);
+      // Playing client receives the event with their own move visible
       expect(mockSocket.emit).toHaveBeenCalled();
-      // Opponent notification is sent to the room (excluding playing player)
+      // Opponent notification goes to the room, excluding the playing client
       expect(mockServer.to).toHaveBeenCalledWith('match-1');
+      expect(mockExcept).toHaveBeenCalledWith('test-socket');
+      // Opponent notification: player1's move is hidden (masked to None), hasSelectedMove stays true
+      expect(mockOpponentEmit).toHaveBeenCalledWith(
+        expect.any(String),
+        expect.objectContaining({
+          matchId: 'match-1',
+          player1HasSelectedMove: true,
+          player1Move: MinRpsMove.None,
+          player2HasSelectedMove: false,
+          player2Move: MinRpsMove.None,
+        }),
+      );
     });
 
     it('should handle play command when both players have played', () => {
