@@ -48,6 +48,7 @@ describe('MinRpsGateway', () => {
     mockServer = {
       to: jest.fn().mockReturnValue({
         emit: jest.fn(),
+        except: jest.fn().mockReturnValue({ emit: jest.fn() }),
       }),
     } as any;
 
@@ -113,6 +114,7 @@ describe('MinRpsGateway', () => {
       };
       const mockEvent = {
         matchId: 'match-1',
+        player1Id: 'player-1',
         player1Move: MinRpsMove.Rock,
         player2Move: MinRpsMove.None,
       };
@@ -122,7 +124,8 @@ describe('MinRpsGateway', () => {
 
       expect(multiplayerService.playMatch).toHaveBeenCalledWith(playPayload);
       expect(mockSocket.emit).toHaveBeenCalled();
-      expect(mockServer.to).not.toHaveBeenCalled();
+      // Opponent notification is sent to the room (excluding playing player)
+      expect(mockServer.to).toHaveBeenCalledWith('match-1');
     });
 
     it('should handle play command when both players have played', () => {

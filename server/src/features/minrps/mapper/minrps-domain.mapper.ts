@@ -3,6 +3,7 @@ import { MinRpsGameDto } from '../models/dtos/minrps-game.dto';
 import { MinRpsPlayResultDto } from '../models/dtos/minrps-play-result.dto';
 import { MinRpsGameEntity } from '../models/entities/minrps-game.entity';
 import { MinRpsResult } from '../models/enums/minrps-game-result.enum';
+import { MinRpsMove } from '../models/enums/minrps-move.enum';
 import { MinRpsMatchUpdatedPayload } from '../models/payloads/minrps-match-updated.payload';
 
 export class MinRpsDomainMapper {
@@ -33,9 +34,11 @@ export class MinRpsDomainMapper {
 
     payload.matchId = domain.id;
     payload.observers = Array.from(domain.observers.keys());
+    payload.player1HasSelectedMove = domain.player1.move !== MinRpsMove.None;
     payload.player1Id = domain.player1.id;
     payload.player1Name = domain.player1.name;
     payload.player1Move = domain.player1.move;
+    payload.player2HasSelectedMove = domain.player2.move !== MinRpsMove.None;
     payload.player2Id = domain.player2.id;
     payload.player2Name = domain.player2.name;
     payload.player2Move = domain.player2.move;

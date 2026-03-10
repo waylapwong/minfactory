@@ -21,6 +21,7 @@ export class MinRpsDomainMapper {
       (domain.result === MinRpsResult.Player1 && heroIsPlayer1) ||
       (domain.result === MinRpsResult.Player2 && !heroIsPlayer1);
     viewModel.result = domain.result;
+    viewModel.villainHasSelectedMove = villain.hasSelectedMove;
     viewModel.villainMove = villain.move;
     viewModel.villainName = villain.name;
     viewModel.villainIsWinning =
