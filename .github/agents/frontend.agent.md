@@ -54,7 +54,7 @@ Das Frontend ist in 3 Schichten organisiert.
 - Standalone Components
 - Signals verwenden statt RxJS, falls möglich
 - Keine Änderungen an generierten Dateien
-- Mappings werden nur in Aplication Services angewendet
+- Mappings werden nur in Application Services angewendet
 - Mapping-Methoden in Mapper-Klassen
 - Tailwind statt SCSS
 
