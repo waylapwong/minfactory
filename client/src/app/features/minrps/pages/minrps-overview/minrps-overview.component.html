@@ -26,11 +26,11 @@
       </div>
       <div class="flex flex-row items-end gap-2 text-left text-sm text-gray-500">
         <img src="assets/svgs/calendar.svg" alt="Datum" class="h-6 w-6" />
-        {{ game.createdAt | date: 'MMMM d, yyyy' }}
+        {{ game.createdAt | date: 'd. MMMM yyyy' }}
       </div>
       <div class="flex flex-row items-end gap-2 text-left text-sm text-gray-500">
         <img src="assets/svgs/clock.svg" alt="Uhrzeit" class="h-6 w-6" />
-        {{ game.createdAt | date: 'hh:mm a' }}
+        {{ game.createdAt | date: 'HH:mm' }}
       </div>
     </min-card-button>
   }

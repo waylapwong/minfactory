@@ -334,7 +334,7 @@ describe('MinRpsGameService', () => {
 5. **Teste alles**
    - Unit Tests für Services (Mock Repositories)
    - Unit Tests für Repositories (optional, bei komplexer Logik)
-   - Run: `cd server && npm test`
+   - Run: `cd server && npm run test:ci`
 
 6. **Swagger-Dokumentation**
    - Verwende `@API_200()`, `@API_404()`, etc.
