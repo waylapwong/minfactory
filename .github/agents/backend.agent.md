@@ -58,7 +58,7 @@ Das Backend ist in 3 Schichten organisiert.
 # 4. Regeln und Best Practices
 
 - Bestehende Ordnerstruktur, Naming Conventions und Patterns beibehalten
-- Mappings werden nur in Aplication Services angewendet
+- Mappings werden nur in Application Services angewendet
 - Mapping-Methoden in Mapper-Klassen
 
 # 5. Workflow
