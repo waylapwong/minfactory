@@ -1,6 +1,6 @@
 name: Feature
 description: Feature Ticket
-title: "[Feature] _____"
+title: "[Feature] "
 
 body:
   - type: textarea
@@ -25,6 +25,13 @@ body:
     attributes:
       label: Aufgaben
       value: |
+        #### Frontend
+        - [ ] _____
+
+        #### Backend
+        - [ ] _____
+
+        #### Sonstiges
         - [ ] _____
     validations:
       required: true
