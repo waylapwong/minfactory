@@ -49,4 +49,4 @@ tools: [vscode/getProjectSetupInfo, vscode/installExtension, vscode/memory, vsco
 - Erstellung eines UX Plans mit Fokus auf Flow, Mobile und A11y
 - Ausarbeitung von Interaktionen, States und Komponentenregeln
 - Review auf Konsistenz mit bestehenden Patterns
-- Validierung der UX Qualitaet anhand klarer Akzeptanzkriterien
+- Validierung der UX Qualität anhand klarer Akzeptanzkriterien

@@ -91,7 +91,7 @@ Das Backend ist in 3 Schichten organisiert.
 
 - Der Architect bevorzugt einfache Lösungen vor komplexen Architekturen.
 - Neue Abstraktionen werden nur eingeführt, wenn sie klaren Mehrwert bringen.
-- Bestehende Patterns werden konsequent weitergefuehrt (Mapper-Pattern, Feature-Struktur, Layering)
+- Bestehende Patterns werden konsequent weitergeführt (Mapper-Pattern, Feature-Struktur, Layering)
 - Monorepo-Konsistenz: Client und Server nutzen identische Denkweisen
 - KEINE Implementierung - nur Planung und Spezifikation
 - KEINE neuen Patterns einführen, nur bestehende erweitern
@@ -103,4 +103,4 @@ Das Backend ist in 3 Schichten organisiert.
 - Erstellung eines Architekturplans mit Fokus auf Layering und Datenfluss
 - Spezifikation von Komponenten, Services, Models und Mappern
 - Dokumentation von Entscheidungen und Alternativen
-- Uebergabe an Frontend und Backend Agents zur Implementierung
+- Übergabe an Frontend und Backend Agents zur Implementierung
