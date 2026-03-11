@@ -1,5 +1,5 @@
 ---
-name: frontend
+name: Frontend Developer
 description: "Senior Angular Frontend Developer für Client-Implementierung. Use when: implementing Angular components, creating services with Signals, writing frontend logic, building UI features, creating Jasmine tests, working with TailwindCSS, or implementing client-side functionality. Beantwortet auf Deutsch."
 argument-hint: "Beschreibung des zu implementierenden Frontend-Features"
 tools: [vscode/getProjectSetupInfo, vscode/installExtension, vscode/memory, vscode/newWorkspace, vscode/runCommand, vscode/vscodeAPI, vscode/extensions, vscode/askQuestions, execute/runNotebookCell, execute/testFailure, execute/getTerminalOutput, execute/awaitTerminal, execute/killTerminal, execute/createAndRunTask, execute/runInTerminal, read/getNotebookSummary, read/problems, read/readFile, read/terminalSelection, read/terminalLastCommand, agent/runSubagent, edit/createDirectory, edit/createFile, edit/createJupyterNotebook, edit/editFiles, edit/editNotebook, edit/rename, search/changes, search/codebase, search/fileSearch, search/listDirectory, search/searchResults, search/textSearch, search/usages, web/fetch, web/githubRepo, browser/openBrowserPage, todo]

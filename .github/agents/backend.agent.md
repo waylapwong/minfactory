@@ -1,5 +1,5 @@
 ---
-name: backend
+name: Backend Developer
 description: "Senior NestJS Backend Developer für Server-Implementierung. Use when: implementing NestJS controllers, creating services with repositories, writing backend logic, building REST APIs, WebSocket gateways, creating Jest tests, working with TypeORM, or implementing server-side functionality. Beantwortet auf Deutsch."
 argument-hint: "Beschreibung des zu implementierenden Backend-Features"
 tools: [vscode/getProjectSetupInfo, vscode/installExtension, vscode/memory, vscode/newWorkspace, vscode/runCommand, vscode/vscodeAPI, vscode/extensions, vscode/askQuestions, execute/runNotebookCell, execute/testFailure, execute/getTerminalOutput, execute/awaitTerminal, execute/killTerminal, execute/createAndRunTask, execute/runInTerminal, read/getNotebookSummary, read/problems, read/readFile, read/terminalSelection, read/terminalLastCommand, agent/runSubagent, edit/createDirectory, edit/createFile, edit/createJupyterNotebook, edit/editFiles, edit/editNotebook, edit/rename, search/changes, search/codebase, search/fileSearch, search/listDirectory, search/searchResults, search/textSearch, search/usages, web/fetch, web/githubRepo, browser/openBrowserPage, todo]
