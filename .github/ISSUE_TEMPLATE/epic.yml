@@ -1,6 +1,6 @@
 name: Epic
 description: Epic Ticket
-title: "[Epic] _____"
+title: "[Epic] "
 
 body:
   - type: textarea

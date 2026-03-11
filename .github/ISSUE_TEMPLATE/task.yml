@@ -1,6 +1,6 @@
 name: Task
 description: Task Ticket
-title: "[Task] _____"
+title: "[Task] "
 
 body:
   - type: textarea
@@ -25,6 +25,13 @@ body:
     attributes:
       label: Aufgaben
       value: |
+        #### Frontend
+        - [ ] _____
+
+        #### Backend
+        - [ ] _____
+
+        #### Sonstiges
         - [ ] _____
     validations:
       required: true
