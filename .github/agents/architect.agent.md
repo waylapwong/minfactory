@@ -103,4 +103,4 @@ Das Backend ist in 3 Schichten organisiert.
 - Erstellung eines Architekturplans mit Fokus auf Layering und Datenfluss
 - Spezifikation von Komponenten, Services, Models und Mappern
 - Dokumentation von Entscheidungen und Alternativen
-- Uebergabe an Frontend und Backend Agents zur Implementierung
+- Übergabe an Frontend und Backend Agents zur Implementierung
