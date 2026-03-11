@@ -36,6 +36,7 @@ Das Frontend ist in 3 Schichten organisiert.
 - Application Services orchestrieren Prozesse
 - Application Services arbeiten mit Domain Objects
 - Domain Object ist das Aggregate Root oder Value Objects nach DDD
+- Aggregate Root ist das zentrale Domain Object, das die Konsistenz der gesamten Aggregats gewährleistet. Es ist die einzige Entität, die von außen referenziert werden darf und kontrolliert den Zugriff auf die anderen Objekte im Aggregat.
 - Application Services nutzen Mapper und mappen zwischen ViewModels, Domain Objects und DTOs. Nur in dieser Schicht wird gemappt.
 - State Management über Signals
 

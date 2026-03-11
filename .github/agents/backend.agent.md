@@ -45,6 +45,7 @@ Das Backend ist in 3 Schichten organisiert.
 - Application Services orchestrieren Prozesse
 - Application Services arbeiten mit Domain Objects
 - Domain Object ist das Aggregate Root oder Value Objects nach DDD
+- Aggregate Root ist das zentrale Domain Object, das die Konsistenz der gesamten Aggregats gewährleistet. Es ist die einzige Entität, die von außen referenziert werden darf und kontrolliert den Zugriff auf die anderen Objekte im Aggregat.
 - Application Services nutzen Mapper und mappen zwischen DTOs und Domain Objects und Entities. Nur in dieser Schicht wird gemappt.
 
 ### 3.3 Datenbankschicht
