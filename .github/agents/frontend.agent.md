@@ -244,7 +244,7 @@ Strukturiere deine Implementierung so:
 ## Tests ausführen
 ```bash
 cd client
-npm test
+npm run test:ci
 ```
 
 ## Nächste Schritte
