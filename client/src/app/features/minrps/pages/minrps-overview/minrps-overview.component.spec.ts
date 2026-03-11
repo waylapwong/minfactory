@@ -96,18 +96,6 @@ describe('MinRpsOverviewComponent', () => {
     });
   });
 
-  describe('deleteGame()', () => {
-    it('should call deleteGame service and stop event propagation', async () => {
-      mockGameService.deleteGame.and.returnValue(Promise.resolve());
-      const mockEvent = jasmine.createSpyObj('MouseEvent', ['stopPropagation']);
-
-      await component.deleteGame('test-id', mockEvent);
-
-      expect(mockEvent.stopPropagation).toHaveBeenCalled();
-      expect(mockGameService.deleteGame).toHaveBeenCalledWith('test-id');
-    });
-  });
-
   describe('openDeleteDialog()', () => {
     it('should stop event propagation and open delete dialog', () => {
       const mockEvent = jasmine.createSpyObj('MouseEvent', ['stopPropagation']);
