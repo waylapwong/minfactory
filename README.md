@@ -33,7 +33,7 @@ cd server/ && npm run lint
 ## Deployment Server
 
 ```bash
-git subtree push --prefix server heroku main
+git push heroku `git subtree split --prefix server main`:main --force
 ```
 
 ## CI Deployment (Backend)

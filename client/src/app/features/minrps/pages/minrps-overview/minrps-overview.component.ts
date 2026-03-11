@@ -31,8 +31,11 @@ export class MinRpsOverviewComponent implements OnInit {
   public readonly Color = Color;
 
   public games: Signal<MinRpsOverviewViewModel[]> = inject(MinRpsGameService).games;
+  public isDeleteDialogOpen: WritableSignal<boolean> = signal(false);
   public isNewGameDialogOpen: WritableSignal<boolean> = signal(false);
   public newGameFormGroup: FormGroup = this.createFormGroup();
+
+  private gameIdToDelete: string | null = null;
 
   constructor(
     public readonly routingService: RoutingService,
@@ -47,6 +50,19 @@ export class MinRpsOverviewComponent implements OnInit {
     this.gameService.refreshGames();
   }
 
+  public cancelDeleteGame(): void {
+    this.isDeleteDialogOpen.set(false);
+    this.gameIdToDelete = null;
+  }
+
+  public async confirmDeleteGame(): Promise<void> {
+    if (this.gameIdToDelete) {
+      await this.gameService.deleteGame(this.gameIdToDelete);
+    }
+    this.isDeleteDialogOpen.set(false);
+    this.gameIdToDelete = null;
+  }
+
   public async createGame(): Promise<void> {
     if (this.newGameFormGroup.valid) {
       await this.gameService.createGame(this.newGameName.value);
@@ -54,13 +70,14 @@ export class MinRpsOverviewComponent implements OnInit {
     }
   }
 
-  public async deleteGame(id: string, event: MouseEvent): Promise<void> {
-    event.stopPropagation();
-    await this.gameService.deleteGame(id);
-  }
-
   public navigateToMultiplayerPage(id: string): void {
     this.routingService.navigateToMinRpsMultiplayer(id);
+  }
+
+  public openDeleteDialog(id: string, event: MouseEvent): void {
+    event.stopPropagation();
+    this.gameIdToDelete = id;
+    this.isDeleteDialogOpen.set(true);
   }
 
   public openNewGameDialog(): void {
