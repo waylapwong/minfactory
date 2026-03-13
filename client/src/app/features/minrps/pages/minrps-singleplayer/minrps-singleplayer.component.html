@@ -72,7 +72,7 @@
 <min-dialog title="Spiel verlassen" [isOpen]="isLeaveDialogOpen()" (closed)="cancelLeave()">
   <p class="my-4">Möchtest du das Spiel wirklich verlassen?</p>
   <div class="flex flex-row justify-end gap-2">
-    <min-button [color]="Color.Gray" (clicked)="cancelLeave()">Abbrechen</min-button>
     <min-button [color]="Color.Red" (clicked)="confirmLeave()">Verlassen</min-button>
+    <min-button [color]="Color.Gray" (clicked)="cancelLeave()">Abbrechen</min-button>
   </div>
 </min-dialog>
