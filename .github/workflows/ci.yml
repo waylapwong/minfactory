@@ -64,3 +64,4 @@ jobs:
           name: frontend-dist
           path: client/dist/client/browser
           retention-days: 7
+          include-hidden-files: true
