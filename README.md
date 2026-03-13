@@ -1,4 +1,4 @@
-# minFctory
+# minFactory
 
 [![CI](https://github.com/waylapwong/minfactory/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/waylapwong/minfactory/actions/workflows/ci.yml)
 [![CD](https://github.com/waylapwong/minfactory/actions/workflows/cd.yml/badge.svg?branch=main)](https://github.com/waylapwong/minfactory/actions/workflows/cd.yml)
