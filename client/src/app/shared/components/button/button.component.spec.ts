@@ -22,6 +22,17 @@ describe('ButtonComponent', () => {
     expect(component).toBeTruthy();
   });
 
+  it('should forward accessibility attributes to native button', () => {
+    fixture.componentRef.setInput('ariaLabel', 'Link zum Spiel kopieren');
+    fixture.componentRef.setInput('title', 'Link kopieren');
+    fixture.detectChanges();
+
+    const button: HTMLButtonElement = fixture.nativeElement.querySelector('button');
+
+    expect(button.getAttribute('aria-label')).toBe('Link zum Spiel kopieren');
+    expect(button.getAttribute('title')).toBe('Link kopieren');
+  });
+
   describe('cssClass()', () => {
     it('should return correct css class for color blue', () => {
       fixture.componentRef.setInput('color', Color.Blue);

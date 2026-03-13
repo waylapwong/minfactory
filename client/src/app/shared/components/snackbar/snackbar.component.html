@@ -1,0 +1,20 @@
+@if (isOpen() && message()) {
+  <div class="pointer-events-none absolute inset-x-0 bottom-4 z-50 flex justify-center px-4">
+    <div
+      class="pointer-events-auto relative w-full max-w-md rounded-lg border-4 border-black bg-gray-300 px-2 py-1 shadow-xl"
+    >
+      <output aria-live="polite" class="block w-full px-6 text-center font-bold">
+        {{ message() }}
+      </output>
+      <!-- CLOSE BUTTON -->
+      <button
+        type="button"
+        aria-label="Benachrichtigung schliessen"
+        class="absolute top-1/2 right-1 -translate-y-1/2 cursor-pointer rounded-md p-1"
+        (click)="emitClosed()"
+      >
+        <img src="assets/svgs/close.svg" alt="Schliessen" class="h-4 w-4" />
+      </button>
+    </div>
+  </div>
+}
