@@ -2,8 +2,6 @@ name: CI
 
 on:
   push:
-  pull_request:
-    branches: [main]
   workflow_dispatch:
 
 permissions:
@@ -60,7 +58,7 @@ jobs:
       - name: Build
         run: npm run build
       - name: Upload Frontend Artifact
-        if: matrix.app.name == 'Frontend'
+        if: matrix.app.name == 'Frontend' && github.ref == 'refs/heads/main'
         uses: actions/upload-artifact@v4
         with:
           name: frontend-dist
