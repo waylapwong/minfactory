@@ -196,3 +196,10 @@
     <min-button [color]="Color.Red" (clicked)="confirmLeave()">Verlassen</min-button>
   </div>
 </min-dialog>
+
+<!-- SNACKBAR -->
+<min-snackbar
+  [isOpen]="isShareSnackbarOpen()"
+  [message]="shareNotificationMessage"
+  (closed)="closeShareSnackbar()"
+></min-snackbar>

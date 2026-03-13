@@ -186,6 +186,22 @@ describe('MinRpsMultiplayerComponent', () => {
 
       expect(clipboardWriteTextSpy).toHaveBeenCalledWith(globalThis.location.href);
     });
+
+    it('should open the share snackbar', () => {
+      component.shareGameUrl();
+
+      expect(component.isShareSnackbarOpen()).toBe(true);
+    });
+  });
+
+  describe('closeShareSnackbar()', () => {
+    it('should close the share snackbar', () => {
+      component.isShareSnackbarOpen.set(true);
+
+      component.closeShareSnackbar();
+
+      expect(component.isShareSnackbarOpen()).toBe(false);
+    });
   });
 
   describe('selectMove()', () => {
