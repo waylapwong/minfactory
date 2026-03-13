@@ -25,14 +25,14 @@ jobs:
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
-      - name: Setup Node.js
+      - name: Set up NodeJS
         uses: actions/setup-node@v4
         with:
           node-version: 24
           cache: npm
           cache-dependency-path: |
             ${{ matrix.app.path }}/package-lock.json
-      - name: Setup Chrome
+      - name: Set up Chrome
         if: matrix.app.name == 'Frontend'
         run: |
           sudo apt-get update
@@ -58,3 +58,10 @@ jobs:
         continue-on-error: false
       - name: Build
         run: npm run build
+      - name: Upload Frontend Artifact
+        if: matrix.app.name == 'Frontend'
+        uses: actions/upload-artifact@v4
+        with:
+          name: frontend-dist
+          path: dist/client/browser
+          retention-days: 7

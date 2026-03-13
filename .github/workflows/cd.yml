@@ -4,9 +4,11 @@ on:
   workflow_run:
     workflows: [CI]
     types: [completed]
+    branches: [main]
   workflow_dispatch:
 
 permissions:
+  actions: read
   contents: read
 
 jobs:
@@ -15,8 +17,9 @@ jobs:
     runs-on: ubuntu-latest
     if: |
       (github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main') ||
-      (github.event_name == 'workflow_run' && 
-        github.event.workflow_run.conclusion == 'success' && 
+      (github.event_name == 'workflow_run' &&
+        github.event.workflow_run.conclusion == 'success' &&
+        github.event.workflow_run.event == 'push' &&
         github.event.workflow_run.head_branch == 'main')
     steps:
       - name: Checkout Code
@@ -31,7 +34,7 @@ jobs:
           git remote remove heroku || true
           git remote add heroku "$HEROKU_GIT_URL"
       - name: Deploy Backend
-        run: git push heroku `git subtree split --prefix server main`:main --force
+        run: git push heroku `git subtree split --prefix server HEAD`:main --force
 
   deployment-frontend:
     name: Deployment Frontend
@@ -41,7 +44,55 @@ jobs:
       (github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main') ||
       (github.event_name == 'workflow_run' &&
         github.event.workflow_run.conclusion == 'success' &&
+        github.event.workflow_run.event == 'push' &&
         github.event.workflow_run.head_branch == 'main')
     steps:
+      - name: Download Frontend Artifact
+        if: github.event_name == 'workflow_run'
+        uses: actions/download-artifact@v4
+        with:
+          name: frontend-dist
+          path: frontend-dist
+          run-id: ${{ github.event.workflow_run.id }}
+          github-token: ${{ github.token }}
+      - name: Checkout Code (manual)
+        if: github.event_name == 'workflow_dispatch'
+        uses: actions/checkout@v4
+      - name: Setup NodeJS (manual)
+        if: github.event_name == 'workflow_dispatch'
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: client/package-lock.json
+      - name: Build Frontend (manual)
+        if: github.event_name == 'workflow_dispatch'
+        working-directory: client
+        run: |
+          npm ci
+          npm run build
+      - name: Set up FTP
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y lftp
       - name: Deploy Frontend
-        run: echo "Frontend deploy step is intentionally a no-op for now."
+        if: github.event_name == 'workflow_run'
+        env:
+          FTP_HOST: ${{ secrets.FRONTEND_FTP_HOST }}
+          FTP_PORT: ${{ secrets.FRONTEND_FTP_PORT }}
+          FTP_USERNAME: ${{ secrets.FRONTEND_FTP_USERNAME }}
+          FTP_PASSWORD: ${{ secrets.FRONTEND_FTP_PASSWORD }}
+          FTP_REMOTE_DIR: ${{ secrets.FRONTEND_FTP_REMOTE_DIR }}
+        run: |
+          lftp -e "set ssl:verify-certificate no; open -u $FTP_USERNAME,$FTP_PASSWORD -p $FTP_PORT $FTP_HOST; mirror -R --delete --verbose frontend-dist/ $FTP_REMOTE_DIR; bye"
+
+      - name: Deploy Frontend (manual)
+        if: github.event_name == 'workflow_dispatch'
+        env:
+          FTP_HOST: ${{ secrets.FRONTEND_FTP_HOST }}
+          FTP_PORT: ${{ secrets.FRONTEND_FTP_PORT }}
+          FTP_USERNAME: ${{ secrets.FRONTEND_FTP_USERNAME }}
+          FTP_PASSWORD: ${{ secrets.FRONTEND_FTP_PASSWORD }}
+          FTP_REMOTE_DIR: ${{ secrets.FRONTEND_FTP_REMOTE_DIR }}
+        run: |
+          lftp -e "set ssl:verify-certificate no; open -u $FTP_USERNAME,$FTP_PASSWORD -p $FTP_PORT $FTP_HOST; mirror -R --delete --verbose client/dist/client/browser/ $FTP_REMOTE_DIR; bye"
