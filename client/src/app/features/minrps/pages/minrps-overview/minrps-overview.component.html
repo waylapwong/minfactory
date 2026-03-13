@@ -49,8 +49,8 @@
   <min-dialog title="Spiel löschen" [isOpen]="isDeleteDialogOpen()" (closed)="cancelDeleteGame()">
     <p class="my-4">Möchtest du das Spiel wirklich löschen?</p>
     <div class="flex flex-row justify-end gap-2">
-      <min-button [color]="Color.Gray" (clicked)="cancelDeleteGame()">Abbrechen</min-button>
       <min-button [color]="Color.Red" (clicked)="confirmDeleteGame()">Löschen</min-button>
+      <min-button [color]="Color.Gray" (clicked)="cancelDeleteGame()">Abbrechen</min-button>
     </div>
   </min-dialog>
 </div>
