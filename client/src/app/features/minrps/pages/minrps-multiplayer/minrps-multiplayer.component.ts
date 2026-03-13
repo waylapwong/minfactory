@@ -7,6 +7,7 @@ import { ButtonComponent } from '../../../../shared/components/button/button.com
 import { DialogComponent } from '../../../../shared/components/dialog/dialog.component';
 import { DividerComponent } from '../../../../shared/components/divider/divider.component';
 import { InputComponent } from '../../../../shared/components/input/input.component';
+import { SnackbarComponent } from '../../../../shared/components/snackbar/snackbar.component';
 import { Color } from '../../../../shared/enums/color.enum';
 import { MinRpsCardComponent } from '../../components/minrps-card/minrps-card.component';
 import { MinRpsMoveComponent } from '../../components/minrps-move/minrps-move.component';
@@ -28,6 +29,7 @@ import { MinRpsMultiplayerService } from '../../services/minrps-multiplayer.serv
     DialogComponent,
     InputComponent,
     ReactiveFormsModule,
+    SnackbarComponent,
   ],
 })
 export class MinRpsMultiplayerComponent implements OnInit, OnDestroy, CanLeaveGame {
@@ -35,10 +37,12 @@ export class MinRpsMultiplayerComponent implements OnInit, OnDestroy, CanLeaveGa
   public readonly MinRpsMove: typeof MinRpsMove = MinRpsMove;
   public readonly MinRpsResult: typeof MinRpsResult = MinRpsResult;
   public readonly SELECTABLE_MOVES: MinRpsMove[] = [MinRpsMove.Rock, MinRpsMove.Paper, MinRpsMove.Scissors];
+  public readonly shareNotificationMessage = 'Link kopiert';
 
   public game: Signal<MinRpsMultiplayerViewModel> = inject(MinRpsMultiplayerService).game;
   public isLeaveDialogOpen: WritableSignal<boolean> = signal(false);
   public isSeatDialogOpen: WritableSignal<boolean> = signal(false);
+  public isShareSnackbarOpen: WritableSignal<boolean> = signal(false);
   public seatFormGroup: FormGroup = new FormGroup({});
   public selectedMove: WritableSignal<MinRpsMove> = signal(MinRpsMove.None);
   public selectedSeat: WritableSignal<0 | 1 | 2> = signal(0);
@@ -108,6 +112,10 @@ export class MinRpsMultiplayerComponent implements OnInit, OnDestroy, CanLeaveGa
     this.isSeatDialogOpen.set(false);
   }
 
+  public closeShareSnackbar(): void {
+    this.isShareSnackbarOpen.set(false);
+  }
+
   public confirmLeave(): void {
     this.isLeaveDialogOpen.set(false);
     this.leaveConfirmationResolver?.(true);
@@ -151,6 +159,11 @@ export class MinRpsMultiplayerComponent implements OnInit, OnDestroy, CanLeaveGa
       return;
     }
     this.selectedMove.set(move);
+  }
+
+  public shareGameUrl(): void {
+    void navigator.clipboard.writeText(globalThis.location.href);
+    this.isShareSnackbarOpen.set(true);
   }
 
   private async checkGameExists(id: string): Promise<void> {

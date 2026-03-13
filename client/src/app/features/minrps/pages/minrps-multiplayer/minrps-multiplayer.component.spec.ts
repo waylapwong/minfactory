@@ -13,6 +13,7 @@ import { MinRpsMultiplayerComponent } from './minrps-multiplayer.component';
 describe('MinRpsMultiplayerComponent', () => {
   let component: MinRpsMultiplayerComponent;
   let fixture: ComponentFixture<MinRpsMultiplayerComponent>;
+  let clipboardWriteTextSpy: jasmine.Spy;
   let mockGameService: jasmine.SpyObj<MinRpsGameService>;
   let mockRoutingService: jasmine.SpyObj<RoutingService>;
   let mockMultiplayerService: jasmine.SpyObj<MinRpsMultiplayerService>;
@@ -35,6 +36,13 @@ describe('MinRpsMultiplayerComponent', () => {
 
   beforeEach(async () => {
     mockGameSignal = signal(createViewModel());
+    clipboardWriteTextSpy = jasmine.createSpy('writeText').and.returnValue(Promise.resolve());
+    Object.defineProperty(navigator, 'clipboard', {
+      configurable: true,
+      value: {
+        writeText: clipboardWriteTextSpy,
+      },
+    });
 
     mockGameService = jasmine.createSpyObj('MinRpsGameService', ['gameExistByID'], {
       games: signal([]),
@@ -169,6 +177,30 @@ describe('MinRpsMultiplayerComponent', () => {
       mockGameSignal.set(createViewModel({ isObserver: true }));
       component.playGame();
       expect(mockMultiplayerService.playGame).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('shareGameUrl()', () => {
+    it('should copy the current browser url to the clipboard', () => {
+      component.shareGameUrl();
+
+      expect(clipboardWriteTextSpy).toHaveBeenCalledWith(globalThis.location.href);
+    });
+
+    it('should open the share snackbar', () => {
+      component.shareGameUrl();
+
+      expect(component.isShareSnackbarOpen()).toBe(true);
+    });
+  });
+
+  describe('closeShareSnackbar()', () => {
+    it('should close the share snackbar', () => {
+      component.isShareSnackbarOpen.set(true);
+
+      component.closeShareSnackbar();
+
+      expect(component.isShareSnackbarOpen()).toBe(false);
     });
   });
 

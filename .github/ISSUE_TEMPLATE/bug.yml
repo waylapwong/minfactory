@@ -7,7 +7,7 @@ body:
     id: description
     attributes:
       label: Beschreibung
-      value: ""
+      value: "_____"
     validations:
       required: true
 
