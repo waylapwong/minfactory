@@ -52,7 +52,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: frontend-dist
-          path: frontend-dist
+          path: ${{ runner.temp }}/artifacts/frontend-dist
           run-id: ${{ github.event.workflow_run.id }}
           github-token: ${{ github.token }}
       - name: Checkout Code (manual)
@@ -84,7 +84,7 @@ jobs:
           FTP_PASSWORD: ${{ secrets.FRONTEND_FTP_PASSWORD }}
           FTP_REMOTE_DIR: ${{ secrets.FRONTEND_FTP_REMOTE_DIR }}
         run: |
-          lftp -e "set ssl:verify-certificate no; open -u $FTP_USERNAME,$FTP_PASSWORD -p $FTP_PORT $FTP_HOST; mirror -R --delete --verbose frontend-dist/ $FTP_REMOTE_DIR; bye"
+          lftp -e "set ssl:verify-certificate no; open -u $FTP_USERNAME,$FTP_PASSWORD -p $FTP_PORT $FTP_HOST; mirror -R --delete --verbose ${{ runner.temp }}/artifacts/frontend-dist/ $FTP_REMOTE_DIR; bye"
 
       - name: Deploy Frontend (manual)
         if: github.event_name == 'workflow_dispatch'
