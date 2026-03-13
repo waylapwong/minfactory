@@ -1,4 +1,4 @@
-name: CI
+name: Continuous Integration
 
 on:
   push:
@@ -10,7 +10,7 @@ permissions:
 
 jobs:
   integration:
-    name: Continuous Integration ${{ matrix.app.name }}
+    name: CI ${{ matrix.app.name }}
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
