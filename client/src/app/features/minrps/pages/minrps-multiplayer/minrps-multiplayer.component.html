@@ -1,7 +1,20 @@
 <div class="relative flex h-full flex-col text-center">
   <!-- LEAVE BUTTON -->
-  <div class="absolute top-0 right-0">
-    <min-button (clicked)="routingService.navigateToMinRps()" [color]="Color.Red" title="Spiel verlassen">
+  <div class="absolute top-0 right-0 flex flex-row gap-2">
+    <min-button
+      (clicked)="shareGameUrl()"
+      [color]="Color.Gray"
+      ariaLabel="Link zum Spiel kopieren"
+      title="Link kopieren"
+    >
+      <img src="assets/svgs/minrps/share.svg" alt="" class="h-4 w-4" />
+    </min-button>
+    <min-button
+      (clicked)="routingService.navigateToMinRps()"
+      [color]="Color.Red"
+      ariaLabel="Spiel verlassen"
+      title="Spiel verlassen"
+    >
       <img src="assets/svgs/close.svg" alt="Schliessen" class="h-4 w-4" />
     </min-button>
   </div>

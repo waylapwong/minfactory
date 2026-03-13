@@ -153,6 +153,10 @@ export class MinRpsMultiplayerComponent implements OnInit, OnDestroy, CanLeaveGa
     this.selectedMove.set(move);
   }
 
+  public shareGameUrl(): void {
+    void navigator.clipboard.writeText(globalThis.location.href);
+  }
+
   private async checkGameExists(id: string): Promise<void> {
     const gameExists: boolean = await this.gameService.gameExistByID(id);
     if (!gameExists) {
