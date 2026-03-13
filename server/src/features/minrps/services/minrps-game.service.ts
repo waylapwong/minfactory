@@ -7,10 +7,14 @@ import { MinRpsCreateGameDto } from '../models/dtos/minrps-create-game.dto';
 import { MinRpsGameDto } from '../models/dtos/minrps-game.dto';
 import { MinRpsGameEntity } from '../models/entities/minrps-game.entity';
 import { MinRpsGameRepository } from '../repositories/minrps-game.repository';
+import { MinRpsMatchRepository } from '../repositories/minrps-match.repository';
 
 @Injectable()
 export class MinRpsGameService {
-  constructor(private readonly gameRepository: MinRpsGameRepository) {}
+  constructor(
+    private readonly gameRepository: MinRpsGameRepository,
+    private readonly matchRepository: MinRpsMatchRepository,
+  ) {}
 
   public async createGame(dto: MinRpsCreateGameDto): Promise<MinRpsGameDto> {
     // Mapping
@@ -31,9 +35,11 @@ export class MinRpsGameService {
 
   public async getAllGames(): Promise<MinRpsGameDto[]> {
     // Fetch from DB
-    const entites: MinRpsGameEntity[] = await this.gameRepository.findAll();
+    const entities: MinRpsGameEntity[] = await this.gameRepository.findAll();
     // Mapping
-    const domains: MinRpsGame[] = entites.map((entity: MinRpsGameEntity) => MinRpsEntityMapper.entityToDomain(entity));
+    const domains: MinRpsGame[] = entities
+      .map((entity: MinRpsGameEntity) => MinRpsEntityMapper.entityToDomain(entity))
+      .map((domain: MinRpsGame) => this.applyMatchState(domain));
     const dtos: MinRpsGameDto[] = domains.map((domain: MinRpsGame) => MinRpsDomainMapper.domainToDto(domain));
 
     return dtos;
@@ -43,9 +49,22 @@ export class MinRpsGameService {
     // Fetch from DB
     const entity = await this.gameRepository.findOne(id);
     // Mapping
-    const domain: MinRpsGame = MinRpsEntityMapper.entityToDomain(entity);
+    const domain: MinRpsGame = this.applyMatchState(MinRpsEntityMapper.entityToDomain(entity));
     const dto: MinRpsGameDto = MinRpsDomainMapper.domainToDto(domain);
 
     return dto;
+  }
+
+  private applyMatchState(domain: MinRpsGame): MinRpsGame {
+    const match: MinRpsGame | null = this.matchRepository.findOne(domain.id);
+    if (!match) {
+      return domain;
+    }
+
+    domain.observers = match.observers;
+    domain.player1 = match.player1;
+    domain.player2 = match.player2;
+
+    return domain;
   }
 }

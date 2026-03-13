@@ -1,13 +1,13 @@
 name: Bug
 description: Bug Ticket
-title: "[Bug] _____"
+title: "[Bug] "
 
 body:
   - type: textarea
     id: description
     attributes:
       label: Beschreibung
-      value: ""
+      value: "_____"
     validations:
       required: true
 

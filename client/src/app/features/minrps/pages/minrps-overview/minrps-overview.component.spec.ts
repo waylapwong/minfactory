@@ -96,15 +96,46 @@ describe('MinRpsOverviewComponent', () => {
     });
   });
 
-  describe('deleteGame()', () => {
-    it('should call deleteGame service and stop event propagation', async () => {
-      mockGameService.deleteGame.and.returnValue(Promise.resolve());
+  describe('openDeleteDialog()', () => {
+    it('should stop event propagation and open delete dialog', () => {
       const mockEvent = jasmine.createSpyObj('MouseEvent', ['stopPropagation']);
 
-      await component.deleteGame('test-id', mockEvent);
+      component.openDeleteDialog('test-id', mockEvent);
 
       expect(mockEvent.stopPropagation).toHaveBeenCalled();
+      expect(component.isDeleteDialogOpen()).toBe(true);
+    });
+  });
+
+  describe('confirmDeleteGame()', () => {
+    it('should call deleteGame service and close dialog', async () => {
+      mockGameService.deleteGame.and.returnValue(Promise.resolve());
+      const mockEvent = jasmine.createSpyObj('MouseEvent', ['stopPropagation']);
+      component.openDeleteDialog('test-id', mockEvent);
+
+      await component.confirmDeleteGame();
+
       expect(mockGameService.deleteGame).toHaveBeenCalledWith('test-id');
+      expect(component.isDeleteDialogOpen()).toBe(false);
+    });
+
+    it('should close dialog without calling service when no game id is set', async () => {
+      await component.confirmDeleteGame();
+
+      expect(mockGameService.deleteGame).not.toHaveBeenCalled();
+      expect(component.isDeleteDialogOpen()).toBe(false);
+    });
+  });
+
+  describe('cancelDeleteGame()', () => {
+    it('should close delete dialog without deleting', () => {
+      const mockEvent = jasmine.createSpyObj('MouseEvent', ['stopPropagation']);
+      component.openDeleteDialog('test-id', mockEvent);
+
+      component.cancelDeleteGame();
+
+      expect(mockGameService.deleteGame).not.toHaveBeenCalled();
+      expect(component.isDeleteDialogOpen()).toBe(false);
     });
   });
 

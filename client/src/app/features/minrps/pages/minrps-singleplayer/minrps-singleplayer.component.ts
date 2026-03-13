@@ -1,12 +1,14 @@
-import { Component, OnInit, Signal, WritableSignal, computed, inject, signal } from '@angular/core';
+import { Component, OnDestroy, OnInit, Signal, WritableSignal, computed, inject, signal } from '@angular/core';
 import { AppPath } from '../../../../app.routes';
 import { MinRpsMove, MinRpsResult } from '../../../../core/generated';
 import { RoutingService } from '../../../../core/services/routing.service';
 import { ButtonComponent } from '../../../../shared/components/button/button.component';
+import { DialogComponent } from '../../../../shared/components/dialog/dialog.component';
 import { DividerComponent } from '../../../../shared/components/divider/divider.component';
 import { Color } from '../../../../shared/enums/color.enum';
 import { MinRpsCardComponent } from '../../components/minrps-card/minrps-card.component';
 import { MinRpsMoveComponent } from '../../components/minrps-move/minrps-move.component';
+import { CanLeaveGame } from '../../guards/leave-game.guard';
 import { MinRpsSingleplayerViewModel } from '../../models/viewmodels/minrps-singleplayer.viewmodel';
 import { MinRpsSingleplayerService } from '../../services/minrps-singleplayer.service';
 
@@ -15,15 +17,16 @@ import { MinRpsSingleplayerService } from '../../services/minrps-singleplayer.se
   templateUrl: './minrps-singleplayer.component.html',
   styleUrls: ['./minrps-singleplayer.component.scss'],
   host: { class: 'block h-full' },
-  imports: [ButtonComponent, DividerComponent, MinRpsMoveComponent, MinRpsCardComponent],
+  imports: [ButtonComponent, DialogComponent, DividerComponent, MinRpsMoveComponent, MinRpsCardComponent],
 })
-export class MinRpsSingleplayerComponent implements OnInit {
+export class MinRpsSingleplayerComponent implements OnInit, OnDestroy, CanLeaveGame {
   public readonly AppPath: typeof AppPath = AppPath;
   public readonly Color: typeof Color = Color;
   public readonly MinRpsMove: typeof MinRpsMove = MinRpsMove;
   public readonly MinRpsResult: typeof MinRpsResult = MinRpsResult;
 
   public game: Signal<MinRpsSingleplayerViewModel> = inject(MinRpsSingleplayerService).game;
+  public isLeaveDialogOpen: WritableSignal<boolean> = signal(false);
   public selectableMoves: MinRpsMove[] = [MinRpsMove.Rock, MinRpsMove.Paper, MinRpsMove.Scissors];
   public selectedMove: WritableSignal<MinRpsMove> = signal(MinRpsMove.None);
   public submitText = computed(() => {
@@ -41,6 +44,8 @@ export class MinRpsSingleplayerComponent implements OnInit {
     }
   });
 
+  private leaveConfirmationResolver: ((value: boolean) => void) | null = null;
+
   constructor(
     public readonly routingService: RoutingService,
     private readonly singleplayerService: MinRpsSingleplayerService,
@@ -48,6 +53,31 @@ export class MinRpsSingleplayerComponent implements OnInit {
 
   public ngOnInit(): void {
     this.singleplayerService.setupNewGame();
+  }
+
+  public ngOnDestroy(): void {
+    this.leaveConfirmationResolver?.(false);
+    this.leaveConfirmationResolver = null;
+  }
+
+  public canDeactivate(): Promise<boolean> {
+    this.leaveConfirmationResolver?.(false);
+    this.isLeaveDialogOpen.set(true);
+    return new Promise<boolean>((resolve) => {
+      this.leaveConfirmationResolver = resolve;
+    });
+  }
+
+  public confirmLeave(): void {
+    this.isLeaveDialogOpen.set(false);
+    this.leaveConfirmationResolver?.(true);
+    this.leaveConfirmationResolver = null;
+  }
+
+  public cancelLeave(): void {
+    this.isLeaveDialogOpen.set(false);
+    this.leaveConfirmationResolver?.(false);
+    this.leaveConfirmationResolver = null;
   }
 
   public async playGame(): Promise<void> {

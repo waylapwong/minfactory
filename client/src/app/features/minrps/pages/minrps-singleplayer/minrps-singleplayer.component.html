@@ -1,11 +1,10 @@
-<div class="relative flex h-full flex-col text-center">
+<div class="relative flex h-full flex-col px-4 text-center">
   <!-- LEAVE BUTTON -->
   <div class="absolute top-0 right-0">
     <min-button (clicked)="routingService.navigateToMinRps()" [color]="Color.Red" title="Spiel verlassen">
       <img src="assets/svgs/close.svg" alt="Schliessen" class="h-4 w-4" />
     </min-button>
   </div>
-
   <!-- OPPONENT SIDE -->
   <div class="flex basis-1/2 flex-col justify-evenly">
     <!-- OPPONENT AVATAR -->
@@ -68,3 +67,12 @@
     </div>
   </div>
 </div>
+
+<!-- LEAVE DIALOG -->
+<min-dialog title="Spiel verlassen" [isOpen]="isLeaveDialogOpen()" (closed)="cancelLeave()">
+  <p class="my-4">Möchtest du das Spiel wirklich verlassen?</p>
+  <div class="flex flex-row justify-end gap-2">
+    <min-button [color]="Color.Red" (clicked)="confirmLeave()">Verlassen</min-button>
+    <min-button [color]="Color.Gray" (clicked)="cancelLeave()">Abbrechen</min-button>
+  </div>
+</min-dialog>

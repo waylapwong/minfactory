@@ -12,8 +12,8 @@
     <min-card-button class="mb-2" (clicked)="navigateToMultiplayerPage(game.id)">
       <div class="flex flex-row items-start justify-between">
         <min-h2 class="grow text-left break-all">{{ game.name }}</min-h2>
-        <min-button [color]="Color.Red" (clicked)="deleteGame(game.id, $event)">
-          <img src="assets/svgs/close.svg" alt="Schliessen" class="h-4 w-4" />
+        <min-button [color]="Color.Red" (clicked)="openDeleteDialog(game.id, $event)">
+          <img src="assets/svgs/close.svg" alt="Spiel löschen" class="h-4 w-4" />
         </min-button>
       </div>
       <div class="flex flex-row items-end gap-2 text-left text-sm text-gray-500">
@@ -26,11 +26,11 @@
       </div>
       <div class="flex flex-row items-end gap-2 text-left text-sm text-gray-500">
         <img src="assets/svgs/calendar.svg" alt="Datum" class="h-6 w-6" />
-        {{ game.createdAt | date: 'MMMM d, yyyy' }}
+        {{ game.createdAt | date: 'd. MMMM yyyy' }}
       </div>
       <div class="flex flex-row items-end gap-2 text-left text-sm text-gray-500">
         <img src="assets/svgs/clock.svg" alt="Uhrzeit" class="h-6 w-6" />
-        {{ game.createdAt | date: 'hh:mm a' }}
+        {{ game.createdAt | date: 'HH:mm' }}
       </div>
     </min-card-button>
   }
@@ -42,6 +42,15 @@
       <min-button [color]="Color.Blue" [isDisabled]="newGameFormGroup.invalid" (clicked)="createGame()">
         Spiel erstellen
       </min-button>
+    </div>
+  </min-dialog>
+
+  <!-- DELETE DIALOG -->
+  <min-dialog title="Spiel löschen" [isOpen]="isDeleteDialogOpen()" (closed)="cancelDeleteGame()">
+    <p class="my-4">Möchtest du das Spiel wirklich löschen?</p>
+    <div class="flex flex-row justify-end gap-2">
+      <min-button [color]="Color.Red" (clicked)="confirmDeleteGame()">Löschen</min-button>
+      <min-button [color]="Color.Gray" (clicked)="cancelDeleteGame()">Abbrechen</min-button>
     </div>
   </min-dialog>
 </div>

@@ -1,6 +1,7 @@
-# minfactory
+# minFactory
 
-minFactory
+[![CI](https://github.com/waylapwong/minfactory/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/waylapwong/minfactory/actions/workflows/ci.yml)
+[![CD](https://github.com/waylapwong/minfactory/actions/workflows/cd.yml/badge.svg?branch=main)](https://github.com/waylapwong/minfactory/actions/workflows/cd.yml)
 
 ## Installation
 
@@ -28,24 +29,6 @@ cd server/ && npm test
 ```bash
 cd client/ && npm run lint
 cd server/ && npm run lint
-```
-
-## Deployment Server
-
-```bash
-git subtree push --prefix server heroku main
-```
-
-## CI Deployment (Backend)
-
-Für den automatisierten Deploy in GitHub Actions wird ein Repository Secret benötigt:
-
-- `HEROKU_GIT_URL` (komplette Heroku Git URL inkl. Auth), z. B. `https://heroku:<API_KEY>@git.heroku.com/<APP_NAME>.git`
-
-Die Pipeline führt dann im Repo-Root denselben Befehl aus:
-
-```bash
-git subtree push --prefix server heroku main
 ```
 
 ## Logs

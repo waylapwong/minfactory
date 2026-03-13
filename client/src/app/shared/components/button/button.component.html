@@ -1,3 +1,10 @@
-<button [class]="cssClass()" [disabled]="isDisabled()" [type]="type()" (click)="clicked.emit($event)">
+<button
+  [attr.aria-label]="ariaLabel() || null"
+  [attr.title]="title() || null"
+  [class]="cssClass()"
+  [disabled]="isDisabled()"
+  [type]="type()"
+  (click)="clicked.emit($event)"
+>
   <ng-content></ng-content>
 </button>

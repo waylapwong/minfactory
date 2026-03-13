@@ -13,6 +13,7 @@ import { MinRpsMultiplayerComponent } from './minrps-multiplayer.component';
 describe('MinRpsMultiplayerComponent', () => {
   let component: MinRpsMultiplayerComponent;
   let fixture: ComponentFixture<MinRpsMultiplayerComponent>;
+  let clipboardWriteTextSpy: jasmine.Spy;
   let mockGameService: jasmine.SpyObj<MinRpsGameService>;
   let mockRoutingService: jasmine.SpyObj<RoutingService>;
   let mockMultiplayerService: jasmine.SpyObj<MinRpsMultiplayerService>;
@@ -35,6 +36,13 @@ describe('MinRpsMultiplayerComponent', () => {
 
   beforeEach(async () => {
     mockGameSignal = signal(createViewModel());
+    clipboardWriteTextSpy = jasmine.createSpy('writeText').and.returnValue(Promise.resolve());
+    Object.defineProperty(navigator, 'clipboard', {
+      configurable: true,
+      value: {
+        writeText: clipboardWriteTextSpy,
+      },
+    });
 
     mockGameService = jasmine.createSpyObj('MinRpsGameService', ['gameExistByID'], {
       games: signal([]),
@@ -123,6 +131,12 @@ describe('MinRpsMultiplayerComponent', () => {
       component.ngOnDestroy();
       expect(mockMultiplayerService.disconnect).toHaveBeenCalled();
     });
+
+    it('should resolve any pending canDeactivate promise with false', async () => {
+      const promise = component.canDeactivate();
+      component.ngOnDestroy();
+      await expectAsync(promise).toBeResolvedTo(false);
+    });
   });
 
   describe('submitText computed signal', () => {
@@ -163,6 +177,30 @@ describe('MinRpsMultiplayerComponent', () => {
       mockGameSignal.set(createViewModel({ isObserver: true }));
       component.playGame();
       expect(mockMultiplayerService.playGame).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('shareGameUrl()', () => {
+    it('should copy the current browser url to the clipboard', () => {
+      component.shareGameUrl();
+
+      expect(clipboardWriteTextSpy).toHaveBeenCalledWith(globalThis.location.href);
+    });
+
+    it('should open the share snackbar', () => {
+      component.shareGameUrl();
+
+      expect(component.isShareSnackbarOpen()).toBe(true);
+    });
+  });
+
+  describe('closeShareSnackbar()', () => {
+    it('should close the share snackbar', () => {
+      component.isShareSnackbarOpen.set(true);
+
+      component.closeShareSnackbar();
+
+      expect(component.isShareSnackbarOpen()).toBe(false);
     });
   });
 
@@ -233,6 +271,63 @@ describe('MinRpsMultiplayerComponent', () => {
       component.isSeatDialogOpen.set(true);
       component.closeSeatDialog();
       expect(component.isSeatDialogOpen()).toBe(false);
+    });
+  });
+
+  describe('canDeactivate()', () => {
+    it('should open the leave dialog', () => {
+      component.isLeaveDialogOpen.set(false);
+      component.canDeactivate();
+      expect(component.isLeaveDialogOpen()).toBe(true);
+    });
+
+    it('should return a Promise', () => {
+      const result = component.canDeactivate();
+      expect(result).toBeInstanceOf(Promise);
+    });
+
+    it('should resolve previous pending promise with false when called again', async () => {
+      const firstPromise = component.canDeactivate();
+      component.canDeactivate();
+      await expectAsync(firstPromise).toBeResolvedTo(false);
+    });
+
+    it('should resolve immediately with true when game is non-existent', async () => {
+      mockGameService.gameExistByID.and.returnValue(Promise.resolve(false));
+      await component['checkGameExists']('non-existent-id');
+      const result = component.canDeactivate();
+      await expectAsync(result).toBeResolvedTo(true);
+      expect(component.isLeaveDialogOpen()).toBe(false);
+    });
+  });
+
+  describe('confirmLeave()', () => {
+    it('should close the leave dialog', () => {
+      component.isLeaveDialogOpen.set(true);
+      component.canDeactivate();
+      component.confirmLeave();
+      expect(component.isLeaveDialogOpen()).toBe(false);
+    });
+
+    it('should resolve canDeactivate promise with true', async () => {
+      const promise = component.canDeactivate();
+      component.confirmLeave();
+      await expectAsync(promise).toBeResolvedTo(true);
+    });
+  });
+
+  describe('cancelLeave()', () => {
+    it('should close the leave dialog', () => {
+      component.isLeaveDialogOpen.set(true);
+      component.canDeactivate();
+      component.cancelLeave();
+      expect(component.isLeaveDialogOpen()).toBe(false);
+    });
+
+    it('should resolve canDeactivate promise with false', async () => {
+      const promise = component.canDeactivate();
+      component.cancelLeave();
+      await expectAsync(promise).toBeResolvedTo(false);
     });
   });
 
