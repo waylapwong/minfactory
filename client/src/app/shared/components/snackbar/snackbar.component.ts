@@ -29,6 +29,10 @@ export class SnackbarComponent implements OnDestroy {
     this.autoCloseEffect.destroy();
   }
 
+  public emitClosed(): void {
+    this.closed.emit();
+  }
+
   private clearAutoCloseTimeout(): void {
     if (this.timeoutId === null) {
       return;

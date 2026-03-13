@@ -61,4 +61,21 @@ describe('SnackbarComponent', () => {
     jasmine.clock().tick(1);
     expect(closedSpy).toHaveBeenCalled();
   });
+
+  it('should emit closed when close button is clicked', () => {
+    const closedSpy = jasmine.createSpy('closed');
+    component.closed.subscribe(closedSpy);
+
+    fixture.componentRef.setInput('isOpen', true);
+    fixture.componentRef.setInput('message', 'Spiel-Link kopiert');
+    fixture.detectChanges();
+
+    const closeButton: HTMLButtonElement | null = fixture.nativeElement.querySelector(
+      'button[aria-label="Benachrichtigung schliessen"]',
+    );
+
+    closeButton?.click();
+
+    expect(closedSpy).toHaveBeenCalled();
+  });
 });
