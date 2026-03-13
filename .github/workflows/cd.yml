@@ -31,7 +31,7 @@ jobs:
           git remote remove heroku || true
           git remote add heroku "$HEROKU_GIT_URL"
       - name: Deploy Backend
-        run: git subtree push --prefix server heroku main
+        run: git push heroku `git subtree split --prefix server main`:main --force
 
   deployment-frontend:
     name: Deployment Frontend
