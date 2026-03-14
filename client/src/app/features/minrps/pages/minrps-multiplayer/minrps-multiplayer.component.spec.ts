@@ -27,6 +27,7 @@ describe('MinRpsMultiplayerComponent', () => {
     vm.isObserver = false;
     vm.canTakeHeroSeat = false;
     vm.canTakeVillainSeat = false;
+    vm.resultHistory = [];
     vm.result = MinRpsResult.None;
     vm.villainMove = MinRpsMove.None;
     vm.villainName = '';
@@ -177,6 +178,21 @@ describe('MinRpsMultiplayerComponent', () => {
       mockGameSignal.set(createViewModel({ isObserver: true }));
       component.playGame();
       expect(mockMultiplayerService.playGame).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('result history', () => {
+    it('should render history entries in player view', () => {
+      mockGameSignal.set(
+        createViewModel({ isObserver: false, resultHistory: [MinRpsResult.Player1, MinRpsResult.Draw] }),
+      );
+      fixture.detectChanges();
+
+      const historyItems: NodeListOf<HTMLElement> = fixture.nativeElement.querySelectorAll(
+        '[data-testid="result-history-item"]',
+      );
+
+      expect(historyItems.length).toBe(2);
     });
   });
 

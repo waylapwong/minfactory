@@ -172,6 +172,7 @@ describe('MinRpsMultiplayerService', () => {
         player2Id: 'player-2',
         player2Move: MinRpsMove.Scissors,
         player2Name: 'Player 2',
+        resultHistory: [MinRpsResult.Player1],
         result: MinRpsResult.Player1,
       };
 
@@ -182,6 +183,7 @@ describe('MinRpsMultiplayerService', () => {
       updatedCb(updatedPayload);
 
       expect(service.game().result).toBe(MinRpsResult.Player1);
+      expect(service.game().resultHistory).toEqual([MinRpsResult.Player1]);
     });
   });
 
@@ -231,6 +233,7 @@ describe('MinRpsMultiplayerService', () => {
         player2Id: 'p2',
         player2Move: MinRpsMove.Scissors,
         player2Name: 'Bob',
+        resultHistory: [MinRpsResult.Player2, MinRpsResult.Draw],
         result: MinRpsResult.Player2,
       };
 
@@ -241,6 +244,7 @@ describe('MinRpsMultiplayerService', () => {
       updatedCb(updatedPayload);
 
       expect(service.game().result).toBe(MinRpsResult.Player2);
+      expect(service.game().resultHistory).toEqual([MinRpsResult.Player2, MinRpsResult.Draw]);
     });
   });
 });

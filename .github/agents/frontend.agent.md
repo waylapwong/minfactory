@@ -21,7 +21,7 @@ tools: [vscode/getProjectSetupInfo, vscode/installExtension, vscode/memory, vsco
 
 Das Frontend ist in 3 Schichten organisiert.
 
-### 3.1 Oberflächenschicht
+### 3.1 Presentation Schicht
 
 - Schicht kümmert sich um die optische Anzeige
 - Pages sind Angular Components
@@ -29,7 +29,7 @@ Das Frontend ist in 3 Schichten organisiert.
 - Pages arbeiten mit ViewModels
 - ViewModels sind die Datenmodelle für eine spezielle Page
 
-### 3.2 Geschäftslogikschicht
+### 3.2 Application Schicht
 
 - Schicht kümmert sich um die fachliche Logik
 - Application Services sind Angular Services
@@ -40,7 +40,7 @@ Das Frontend ist in 3 Schichten organisiert.
 - Application Services nutzen Mapper und mappen zwischen ViewModels, Domain Objects und DTOs. Nur in dieser Schicht wird gemappt.
 - State Management über Signals
 
-### 3.3 Schnittstellenschicht
+### 3.3 Infrastructure Schicht
 
 - Schicht kümmert sich um die Kommunikation mit dem Backend
 - Schnittstelle wird generiert auf Basis der OpenAPI Spezifikation
@@ -57,6 +57,15 @@ Das Frontend ist in 3 Schichten organisiert.
 - Mappings werden nur in Application Services angewendet
 - Mapping-Methoden in Mapper-Klassen
 - Tailwind statt SCSS
+- Implementierungen müssen so gestaltet sein, dass Junior-Developer sie problemlos umsetzen können
+- Einfacher, verständlicher Code hat Vorrang vor cleveren oder komplexen Lösungen
+- Komplexe Design Patterns sollen vermieden werden, sofern sie nicht zwingend erforderlich sind
+- Es sollen keine unnötigen Abstraktionen oder Over-Engineering eingeführt werden
+- Lösungen müssen leicht lesbar, leicht wartbar und leicht testbar sein
+- Die Implementierung bevorzugt klare, explizite Strukturen statt magischer oder impliziter Mechanismen
+- Unit Tests sollen Abhängigkeiten direkt im Test mocken, z. B. mit `provide: Service, useValue: { methode: () => {} }`
+- Mock-Objekte werden direkt in der .spec.ts Datei definiert
+- Es werden keine separaten Mock-Klassen oder Mock-Dateien erstellt, um unnötige Komplexität und Fragmentierung zu vermeiden
 
 # 5. Workflow
 

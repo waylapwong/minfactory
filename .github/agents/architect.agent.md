@@ -25,7 +25,7 @@ tools: [vscode/getProjectSetupInfo, vscode/installExtension, vscode/memory, vsco
 
 Das Frontend ist in 3 Schichten organisiert.
 
-### 3.1 Oberflächenschicht
+### 3.1 Presentation Schicht
 
 - Schicht kümmert sich um die optische Anzeige
 - Pages sind Angular Components
@@ -33,7 +33,7 @@ Das Frontend ist in 3 Schichten organisiert.
 - Pages arbeiten mit ViewModels
 - ViewModels sind die Datenmodelle für eine spezielle Page
 
-### 3.2 Geschäftslogikschicht
+### 3.2 Application Schicht
 
 - Schicht kümmert sich um die fachliche Logik
 - Application Services sind Angular Services
@@ -44,7 +44,7 @@ Das Frontend ist in 3 Schichten organisiert.
 - Application Services nutzen Mapper und mappen zwischen ViewModels, Domain Objects und DTOs. Nur in dieser Schicht wird gemappt.
 - State Management über Signals
 
-### 3.3 Schnittstellenschicht
+### 3.3 Infrastructure Schicht
 
 - Schicht kümmert sich um die Kommunikation mit dem Backend
 - Schnittstelle wird generiert auf Basis der OpenAPI Spezifikation
@@ -56,7 +56,7 @@ Das Frontend ist in 3 Schichten organisiert.
 
 Das Backend ist in 3 Schichten organisiert.
 
-### 4.1 Schnittstellenschicht
+### 4.1 Presentation Schicht
 
 - Schicht kümmert sich um die API-Endpunkte
 - Controller sind NestJS Controllers
@@ -70,7 +70,7 @@ Das Backend ist in 3 Schichten organisiert.
 - Commands sind WebSocket Nachrichten, die das Backend empfängt
 - Events sind WebSocket Nachrichten, die das Backend versendet
 
-### 4.2 Geschäftslogikschicht
+### 4.2 Application Schicht
 
 - Schicht kümmert sich um die fachliche Logik
 - Application Services sind NestJS Services
@@ -80,7 +80,7 @@ Das Backend ist in 3 Schichten organisiert.
 - Aggregate Root ist das zentrale Domain Object, das die Konsistenz der gesamten Aggregats gewährleistet. Es ist die einzige Entität, die von außen referenziert werden darf und kontrolliert den Zugriff auf die anderen Objekte im Aggregat.
 - Application Services nutzen Mapper und mappen zwischen DTOs und Domain Objects und Entities. Nur in dieser Schicht wird gemappt.
 
-### 4.3 Datenbankschicht
+### 4.3 Infrastructure Schicht
 
 - Schicht kümmert sich um die Persistenz und Datenzugriff
 - Repositories sind NestJS Services
@@ -96,6 +96,12 @@ Das Backend ist in 3 Schichten organisiert.
 - KEINE Implementierung - nur Planung und Spezifikation
 - KEINE neuen Patterns einführen, nur bestehende erweitern
 - Feature-Isolation: Jedes Feature folgt der gleichen Ordnerstruktur
+- Architektur und Spezifikationen müssen so gestaltet sein, dass Junior-Developer sie problemlos umsetzen können
+- Einfacher, verständlicher Code hat Vorrang vor cleveren oder komplexen Lösungen
+- Komplexe Design Patterns sollen vermieden werden, sofern sie nicht zwingend erforderlich sind
+- Es sollen keine unnötigen Abstraktionen oder Over-Engineering eingeführt werden
+- Lösungen müssen leicht lesbar, leicht wartbar und leicht testbar sein
+- Die Architektur bevorzugt klare, explizite Strukturen statt magischer oder impliziter Mechanismen
 
 # 6. Workflow
 

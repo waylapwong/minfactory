@@ -1,5 +1,5 @@
 import { Injectable, Signal, WritableSignal, computed, signal } from '@angular/core';
-import { MinRpsMove, MinRpsPlayDto, MinRpsPlayResultDto } from '../../../core/generated';
+import { MinRpsMove, MinRpsPlayDto, MinRpsPlayResultDto, MinRpsResult } from '../../../core/generated';
 import { MinRpsDomainMapper } from '../mapper/minrps-domain.mapper';
 import { MinRpsDtoMapper } from '../mapper/minrps-dto.mapper';
 import { MinRpsGame } from '../models/domains/minrps-game';
@@ -11,11 +11,17 @@ import { MinRpsPlayRepository } from '../repositories/minrps-play.repository';
 })
 export class MinRpsSingleplayerService {
   private readonly PUFFER_TIME = 2000;
+  private readonly RESULT_HISTORY_LIMIT = 10;
   private readonly cachedGame: WritableSignal<MinRpsGame> = signal(new MinRpsGame());
+  private readonly cachedResultHistory: WritableSignal<MinRpsResult[]> = signal([]);
 
-  public game: Signal<MinRpsSingleplayerViewModel> = computed(() =>
-    MinRpsDomainMapper.domainToSingleplayerViewModel(this.cachedGame()),
-  );
+  public game: Signal<MinRpsSingleplayerViewModel> = computed(() => {
+    const viewModel: MinRpsSingleplayerViewModel = MinRpsDomainMapper.domainToSingleplayerViewModel(this.cachedGame());
+
+    viewModel.resultHistory = [...this.cachedResultHistory()];
+
+    return viewModel;
+  });
 
   constructor(private readonly playRepository: MinRpsPlayRepository) {}
 
@@ -31,13 +37,30 @@ export class MinRpsSingleplayerService {
     const playResultDomain: MinRpsGame = MinRpsDtoMapper.playResultDtoToDomain(playResultDto);
     // Update game state
     this.cachedGame.set(playResultDomain);
+    this.appendResultToHistory(playResultDomain.result);
     // Reset game after PUFFER_TIME
     setTimeout(() => {
       this.setupNewGame();
     }, this.PUFFER_TIME);
   }
 
-  public setupNewGame(): void {
+  public setupNewGame(resetHistory: boolean = false): void {
     this.cachedGame.set(new MinRpsGame());
+
+    if (resetHistory) {
+      this.cachedResultHistory.set([]);
+    }
+  }
+
+  private appendResultToHistory(result: MinRpsResult): void {
+    if (result === MinRpsResult.None) {
+      return;
+    }
+
+    this.cachedResultHistory.update((history: MinRpsResult[]) => {
+      const nextHistory: MinRpsResult[] = [...history, result];
+
+      return nextHistory.slice(-this.RESULT_HISTORY_LIMIT);
+    });
   }
 }

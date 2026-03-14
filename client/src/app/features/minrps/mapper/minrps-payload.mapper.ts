@@ -22,6 +22,7 @@ export class MinRpsPayloadMapper {
       move: payload.player2Move,
       name: payload.player2Name,
     });
+    domain.resultHistory = [...(payload.resultHistory ?? [])];
     domain.result = payload.result;
 
     return domain;

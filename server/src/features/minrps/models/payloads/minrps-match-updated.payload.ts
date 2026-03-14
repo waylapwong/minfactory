@@ -13,4 +13,5 @@ export class MinRpsMatchUpdatedPayload {
   public player2Move: MinRpsMove;
   public player2Name: string;
   public result: MinRpsResult;
+  public resultHistory: MinRpsResult[];
 }

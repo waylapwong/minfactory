@@ -85,7 +85,7 @@ describe('MinRpsSingleplayerComponent', () => {
   describe('ngOnInit()', () => {
     it('should trigger new game setup process', () => {
       component.ngOnInit();
-      expect(mockService.setupNewGame).toHaveBeenCalled();
+      expect(mockService.setupNewGame).toHaveBeenCalledWith(true);
     });
   });
 

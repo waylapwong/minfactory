@@ -4,6 +4,30 @@ import { MinRpsPlayer } from '../models/domains/minrps-player';
 import { MinRpsDomainMapper } from './minrps-domain.mapper';
 
 describe('MinRpsDomainMapper', () => {
+  describe('domainToMultiplayerViewModel()', () => {
+    it('should map result history unchanged for player1 hero', () => {
+      const domain = new MinRpsGame();
+      domain.player1.id = 'hero';
+      domain.player2.id = 'villain';
+      domain.resultHistory = [MinRpsResult.Player1, MinRpsResult.Draw, MinRpsResult.Player2];
+
+      const viewModel = MinRpsDomainMapper.domainToMultiplayerViewModel(domain, 'hero');
+
+      expect(viewModel.resultHistory).toEqual([MinRpsResult.Player1, MinRpsResult.Draw, MinRpsResult.Player2]);
+    });
+
+    it('should map result history to player2 hero perspective', () => {
+      const domain = new MinRpsGame();
+      domain.player1.id = 'villain';
+      domain.player2.id = 'hero';
+      domain.resultHistory = [MinRpsResult.Player1, MinRpsResult.Draw, MinRpsResult.Player2];
+
+      const viewModel = MinRpsDomainMapper.domainToMultiplayerViewModel(domain, 'hero');
+
+      expect(viewModel.resultHistory).toEqual([MinRpsResult.Player2, MinRpsResult.Draw, MinRpsResult.Player1]);
+    });
+  });
+
   describe('domainToOverviewViewModel()', () => {
     it('should map domain to overview view model', () => {
       const domain = new MinRpsGame();

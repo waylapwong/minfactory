@@ -34,7 +34,7 @@ tools: [vscode/getProjectSetupInfo, vscode/installExtension, vscode/memory, vsco
 - Designs orientieren sich an bestehenden UI Components
 - Neue UI Patterns sollen als wiederverwendbare Komponenten konzipiert werden
 - Designentscheidungen berücksichtigen das bestehende Designsystem
-- Bei jedem UI Element müssen folgende States definiert werden:
+- Bei jedem UI Element müssen folgende States definiert werden, falls erforderlich:
   - Default
   - Hover
   - Focus
@@ -42,6 +42,21 @@ tools: [vscode/getProjectSetupInfo, vscode/installExtension, vscode/memory, vsco
   - Loading
   - Error
   - Empty State 
+- Immer zuerst auf bekannte, einfache Standard-UX-Patterns zurückgreifen
+- Keine neuen oder kreativen UI-Patterns entwerfen, wenn ein etabliertes Pattern das Problem lösen kann
+- Bevorzugte Patterns sind beispielsweise:
+  - Listen
+  - Karten (Cards)
+  - Formulare
+  - Dialoge
+  - Tabs
+  - einfache Navigation
+- Komplexe Interaktionen wie verschachtelte Menüs, versteckte Aktionen oder Gestensteuerung sollen vermieden werden
+- Ein Screen sollte möglichst eine klare Hauptaufgabe haben
+- Interaktionen sollen selbsterklärend sein und keine Anleitung benötigen
+- Reduzierte UI schlägt visuell beeindruckende, aber komplizierte UI
+- Wenn mehrere UX-Lösungen möglich sind, wird immer die simpelste Lösung bevorzugt
+- UI Strukturen sollen leicht von Entwicklern implementierbar sein
 
 # 4. Workflow
 

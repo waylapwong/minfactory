@@ -1,0 +1,17 @@
+<div class="flex w-full flex-col justify-center gap-2" aria-label="Verlauf der letzten Spielergebnisse">
+  <p class="text-center text-xs font-bold tracking-[0.2em] text-gray-500 uppercase">Letzte Ergebnisse</p>
+
+  @if (resultHistory().length > 0) {
+    <div class="flex flex-row flex-wrap justify-center gap-1">
+      @for (result of resultHistory(); track $index) {
+        <div
+          [attr.aria-label]="getAriaLabel(result, $index)"
+          [ngClass]="['h-4 w-6 rounded-sm border-2 border-black', getStateCssClass(result)]"
+          data-testid="result-history-item"
+        ></div>
+      }
+    </div>
+  } @else {
+    <p class="text-xs text-gray-500">Noch keine Ergebnisse</p>
+  }
+</div>

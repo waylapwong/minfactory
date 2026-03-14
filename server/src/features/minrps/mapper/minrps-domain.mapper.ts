@@ -42,6 +42,7 @@ export class MinRpsDomainMapper {
     payload.player2Id = domain.player2.id;
     payload.player2Name = domain.player2.name;
     payload.player2Move = domain.player2.move;
+    payload.resultHistory = [...domain.resultHistory];
     // Only get result if game is ready, otherwise return None
     payload.result = domain.isGameReady() ? domain.getResult() : MinRpsResult.None;
 

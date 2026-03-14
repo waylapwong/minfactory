@@ -5,5 +5,6 @@ export class MinRpsSingleplayerViewModel {
   public player1Move!: MinRpsMove;
   public player2IsWinning!: boolean;
   public player2Move!: MinRpsMove;
+  public resultHistory: MinRpsResult[] = [];
   public result!: MinRpsResult;
 }

@@ -5,17 +5,28 @@ import { MinRpsPlayer } from './minrps-player';
 import { GameRuleException } from 'src/shared/exceptions/game-rule.exception';
 
 export class MinRpsGame {
+  private readonly RESULT_HISTORY_LIMIT = 10;
+
   public createdAt: Date = new Date();
   public id: string = randomUUID();
   public name: string = '';
   public observers: Map<string, MinRpsPlayer> = new Map<string, MinRpsPlayer>();
   public player1: MinRpsPlayer = new MinRpsPlayer();
   public player2: MinRpsPlayer = new MinRpsPlayer();
+  public resultHistory: MinRpsResult[] = [];
 
   public addObserver(observerId: string): void {
     const observer: MinRpsPlayer = new MinRpsPlayer();
     observer.id = observerId;
     this.observers.set(observerId, observer);
+  }
+
+  public appendResultToHistory(result: MinRpsResult): void {
+    if (result === MinRpsResult.None) {
+      return;
+    }
+
+    this.resultHistory = [...this.resultHistory, result].slice(-this.RESULT_HISTORY_LIMIT);
   }
 
   public getResult(): MinRpsResult {

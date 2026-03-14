@@ -129,7 +129,7 @@
     </div>
 
     <!-- PLAYER SIDE -->
-    <div class="flex basis-1/2 flex-col justify-evenly">
+    <div class="flex basis-1/2 flex-col justify-evenly gap-4">
       <div class="flex w-full flex-row justify-center">
         <!-- PLAYER AVATAR -->
         <minrps-card>
@@ -138,6 +138,11 @@
             <div class="text-sm font-bold">{{ game().heroName }}</div>
           </div>
         </minrps-card>
+      </div>
+      <div class="flex w-full flex-row justify-center">
+        <div class="w-full max-w-sm">
+          <minrps-result-history [resultHistory]="game().resultHistory"></minrps-result-history>
+        </div>
       </div>
       <!-- PLAYER MOVES -->
       <div class="flex w-full flex-row justify-evenly gap-2">
