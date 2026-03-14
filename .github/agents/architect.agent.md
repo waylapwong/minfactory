@@ -96,6 +96,12 @@ Das Backend ist in 3 Schichten organisiert.
 - KEINE Implementierung - nur Planung und Spezifikation
 - KEINE neuen Patterns einführen, nur bestehende erweitern
 - Feature-Isolation: Jedes Feature folgt der gleichen Ordnerstruktur
+- Architektur und Spezifikationen müssen so gestaltet sein, dass Junior-Developer sie problemlos umsetzen können
+- Einfacher, verständlicher Code hat Vorrang vor cleveren oder komplexen Lösungen
+- Komplexe Design Patterns sollen vermieden werden, sofern sie nicht zwingend erforderlich sind
+- Es sollen keine unnötigen Abstraktionen oder Over-Engineering eingeführt werden
+- Lösungen müssen leicht lesbar, leicht wartbar und leicht testbar sein
+- Die Architektur bevorzugt klare, explizite Strukturen statt magischer oder impliziter Mechanismen
 
 # 6. Workflow
 
