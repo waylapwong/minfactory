@@ -93,6 +93,7 @@ export class MinRpsMultiplayerService {
     if (command.playerId !== match.player1.id && command.playerId !== match.player2.id) {
       throw new GameRuleException(`Player with ID ${command.playerId} is not part of the match`);
     }
+    const wasReady: boolean = match.isGameReady();
     // Set player move
     if (match.player1.id === command.playerId) {
       match.setPlayer1Move(command.playerMove);
@@ -100,7 +101,7 @@ export class MinRpsMultiplayerService {
       match.setPlayer2Move(command.playerMove);
     }
 
-    if (match.isGameReady()) {
+    if (!wasReady && match.isGameReady()) {
       match.appendResultToHistory(match.getResult());
     }
 
