@@ -5,9 +5,8 @@
     <div class="flex flex-row flex-wrap justify-center gap-1">
       @for (result of resultHistory(); track $index) {
         <div
-          class="h-4 w-6 rounded-sm border-2 border-black"
           [attr.aria-label]="getAriaLabel(result, $index)"
-          [class]="getStateCssClass(result)"
+          [ngClass]="['h-4 w-6 rounded-sm border-2 border-black', getStateCssClass(result)]"
           data-testid="result-history-item"
         ></div>
       }
