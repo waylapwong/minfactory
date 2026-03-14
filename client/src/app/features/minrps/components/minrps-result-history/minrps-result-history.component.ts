@@ -1,10 +1,11 @@
+import { NgClass } from '@angular/common';
 import { Component, InputSignal, input } from '@angular/core';
 import { MinRpsResult } from '../../../../core/generated';
 
 @Component({
   selector: 'minrps-result-history',
   templateUrl: './minrps-result-history.component.html',
-  imports: [],
+  imports: [NgClass],
 })
 export class MinRpsResultHistoryComponent {
   public resultHistory: InputSignal<MinRpsResult[]> = input<MinRpsResult[]>([]);
