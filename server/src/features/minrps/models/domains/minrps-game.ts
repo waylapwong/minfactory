@@ -77,11 +77,13 @@ export class MinRpsGame {
 
   public removePlayer1(): void {
     this.player1 = new MinRpsPlayer();
+    this.resetPlayerMoves();
     this.resultHistory = [];
   }
 
   public removePlayer2(): void {
     this.player2 = new MinRpsPlayer();
+    this.resetPlayerMoves();
     this.resultHistory = [];
   }
 
