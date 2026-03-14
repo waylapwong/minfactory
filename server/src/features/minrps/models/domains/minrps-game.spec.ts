@@ -180,6 +180,18 @@ describe('MinRpsGame', () => {
       expect(game.player1).toBeInstanceOf(MinRpsPlayer);
       expect(game.player1.id).toBe('');
     });
+
+    it('should clear result history when player1 is removed', () => {
+      const player1 = new MinRpsPlayer();
+      player1.id = 'player-1-id';
+      game.setPlayer1(player1);
+      game.appendResultToHistory(MinRpsResult.Player1);
+      game.appendResultToHistory(MinRpsResult.Draw);
+
+      game.removePlayer1();
+
+      expect(game.resultHistory).toEqual([]);
+    });
   });
 
   describe('removePlayer2', () => {
@@ -192,6 +204,18 @@ describe('MinRpsGame', () => {
 
       expect(game.player2).toBeInstanceOf(MinRpsPlayer);
       expect(game.player2.id).toBe('');
+    });
+
+    it('should clear result history when player2 is removed', () => {
+      const player2 = new MinRpsPlayer();
+      player2.id = 'player-2-id';
+      game.setPlayer2(player2);
+      game.appendResultToHistory(MinRpsResult.Player2);
+      game.appendResultToHistory(MinRpsResult.Draw);
+
+      game.removePlayer2();
+
+      expect(game.resultHistory).toEqual([]);
     });
   });
 
