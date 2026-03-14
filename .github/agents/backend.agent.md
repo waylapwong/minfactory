@@ -24,7 +24,7 @@ tools: [vscode/getProjectSetupInfo, vscode/installExtension, vscode/memory, vsco
 
 Das Backend ist in 3 Schichten organisiert.
 
-### 3.1 Schnittstellenschicht
+### 3.1 Presentation Schicht
 
 - Schicht kümmert sich um die API-Endpunkte
 - Controller sind NestJS Controllers
@@ -38,7 +38,7 @@ Das Backend ist in 3 Schichten organisiert.
 - Commands sind WebSocket Nachrichten, die das Backend empfängt
 - Events sind WebSocket Nachrichten, die das Backend versendet
 
-### 3.2 Geschäftslogikschicht
+### 3.2 GeschäftsApplication Schichtlogikschicht
 
 - Schicht kümmert sich um die fachliche Logik
 - Application Services sind NestJS Services
@@ -48,7 +48,7 @@ Das Backend ist in 3 Schichten organisiert.
 - Aggregate Root ist das zentrale Domain Object, das die Konsistenz der gesamten Aggregats gewährleistet. Es ist die einzige Entität, die von außen referenziert werden darf und kontrolliert den Zugriff auf die anderen Objekte im Aggregat.
 - Application Services nutzen Mapper und mappen zwischen DTOs und Domain Objects und Entities. Nur in dieser Schicht wird gemappt.
 
-### 3.3 Datenbankschicht
+### 3.3 Infrastructure Schicht
 
 - Schicht kümmert sich um die Persistenz und Datenzugriff
 - Repositories sind NestJS Services

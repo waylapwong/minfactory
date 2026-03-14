@@ -21,7 +21,7 @@ tools: [vscode/getProjectSetupInfo, vscode/installExtension, vscode/memory, vsco
 
 Das Frontend ist in 3 Schichten organisiert.
 
-### 3.1 Oberflächenschicht
+### 3.1 Presentation Schicht
 
 - Schicht kümmert sich um die optische Anzeige
 - Pages sind Angular Components
@@ -29,7 +29,7 @@ Das Frontend ist in 3 Schichten organisiert.
 - Pages arbeiten mit ViewModels
 - ViewModels sind die Datenmodelle für eine spezielle Page
 
-### 3.2 Geschäftslogikschicht
+### 3.2 Application Schicht
 
 - Schicht kümmert sich um die fachliche Logik
 - Application Services sind Angular Services
@@ -40,7 +40,7 @@ Das Frontend ist in 3 Schichten organisiert.
 - Application Services nutzen Mapper und mappen zwischen ViewModels, Domain Objects und DTOs. Nur in dieser Schicht wird gemappt.
 - State Management über Signals
 
-### 3.3 Schnittstellenschicht
+### 3.3 Infrastructure Schicht
 
 - Schicht kümmert sich um die Kommunikation mit dem Backend
 - Schnittstelle wird generiert auf Basis der OpenAPI Spezifikation
