@@ -8,6 +8,7 @@ import { DividerComponent } from '../../../../shared/components/divider/divider.
 import { Color } from '../../../../shared/enums/color.enum';
 import { MinRpsCardComponent } from '../../components/minrps-card/minrps-card.component';
 import { MinRpsMoveComponent } from '../../components/minrps-move/minrps-move.component';
+import { MinRpsResultHistoryComponent } from '../../components/minrps-result-history/minrps-result-history.component';
 import { CanLeaveGame } from '../../guards/leave-game.guard';
 import { MinRpsSingleplayerViewModel } from '../../models/viewmodels/minrps-singleplayer.viewmodel';
 import { MinRpsSingleplayerService } from '../../services/minrps-singleplayer.service';
@@ -17,7 +18,14 @@ import { MinRpsSingleplayerService } from '../../services/minrps-singleplayer.se
   templateUrl: './minrps-singleplayer.component.html',
   styleUrls: ['./minrps-singleplayer.component.scss'],
   host: { class: 'block h-full' },
-  imports: [ButtonComponent, DialogComponent, DividerComponent, MinRpsMoveComponent, MinRpsCardComponent],
+  imports: [
+    ButtonComponent,
+    DialogComponent,
+    DividerComponent,
+    MinRpsMoveComponent,
+    MinRpsCardComponent,
+    MinRpsResultHistoryComponent,
+  ],
 })
 export class MinRpsSingleplayerComponent implements OnInit, OnDestroy, CanLeaveGame {
   public readonly AppPath: typeof AppPath = AppPath;
@@ -52,7 +60,7 @@ export class MinRpsSingleplayerComponent implements OnInit, OnDestroy, CanLeaveG
   ) {}
 
   public ngOnInit(): void {
-    this.singleplayerService.setupNewGame();
+    this.singleplayerService.setupNewGame(true);
   }
 
   public ngOnDestroy(): void {
