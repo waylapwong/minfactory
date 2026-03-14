@@ -1,5 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { Socket } from 'socket.io';
+import { MinRpsResult } from '../models/enums/minrps-game-result.enum';
 import { MinRpsMove } from '../models/enums/minrps-move.enum';
 import { MinRpsMatchJoinPayload } from '../models/payloads/minrps-match-join.payload';
 import { MinRpsMatchLeavePayload } from '../models/payloads/minrps-match-leave.payload';
@@ -159,6 +160,17 @@ describe('MinRpsMultiplayerService', () => {
 
       expect(result.player1Move).toBe(MinRpsMove.Rock);
       expect(result.player2Move).toBe(MinRpsMove.Paper);
+      expect(result.resultHistory).toEqual([MinRpsResult.Player2]);
+    });
+
+    it('should not add history entry when only one player has played', () => {
+      const result = service.playMatch({
+        matchId: 'match-1',
+        playerId: 'player-1',
+        playerMove: MinRpsMove.Rock,
+      });
+
+      expect(result.resultHistory).toEqual([]);
     });
 
     it('should throw error when player not in match tries to play', () => {
@@ -213,6 +225,44 @@ describe('MinRpsMultiplayerService', () => {
       expect(resetResult).toBeDefined();
       expect(resetResult.player1Move).toBe(MinRpsMove.None);
       expect(resetResult.player2Move).toBe(MinRpsMove.None);
+      expect(resetResult.resultHistory).toEqual([MinRpsResult.Player2]);
+    });
+
+    it('should keep only last 10 results in history', () => {
+      service.seatPlayer({
+        matchId: 'match-2',
+        playerId: 'player-1',
+        playerName: 'Alice',
+        seat: 1,
+      });
+      service.seatPlayer({
+        matchId: 'match-2',
+        playerId: 'player-2',
+        playerName: 'Bob',
+        seat: 2,
+      });
+
+      for (let i = 0; i < 11; i++) {
+        service.playMatch({
+          matchId: 'match-2',
+          playerId: 'player-1',
+          playerMove: MinRpsMove.Rock,
+        });
+        service.playMatch({
+          matchId: 'match-2',
+          playerId: 'player-2',
+          playerMove: i % 2 === 0 ? MinRpsMove.Paper : MinRpsMove.Scissors,
+        });
+        service.resetMatch('match-2');
+      }
+
+      const finalResult = service.playMatch({
+        matchId: 'match-2',
+        playerId: 'player-1',
+        playerMove: MinRpsMove.Rock,
+      });
+
+      expect(finalResult.resultHistory.length).toBe(10);
     });
   });
 

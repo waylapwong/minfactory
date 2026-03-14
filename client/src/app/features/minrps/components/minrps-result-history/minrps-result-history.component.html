@@ -1,4 +1,4 @@
-<div class="flex w-full flex-col gap-2 justify-center" aria-label="Verlauf der letzten Spielergebnisse">
+<div class="flex w-full flex-col justify-center gap-2" aria-label="Verlauf der letzten Spielergebnisse">
   <p class="text-center text-xs font-bold tracking-[0.2em] text-gray-500 uppercase">Letzte Ergebnisse</p>
 
   @if (resultHistory().length > 0) {
@@ -13,6 +13,6 @@
       }
     </div>
   } @else {
-      <p class="text-xs text-gray-500">Noch keine Ergebnisse</p>
+    <p class="text-xs text-gray-500">Noch keine Ergebnisse</p>
   }
 </div>

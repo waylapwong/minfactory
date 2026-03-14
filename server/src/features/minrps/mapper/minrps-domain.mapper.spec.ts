@@ -103,6 +103,7 @@ describe('MinRpsDomainMapper', () => {
       expect(payload.player2Id).toBe('player-2');
       expect(payload.player2Name).toBe('Bob');
       expect(payload.player2Move).toBe(MinRpsMove.Paper);
+      expect(payload.resultHistory).toEqual([]);
     });
 
     it('should set result to None when game is not ready', () => {
@@ -111,7 +112,17 @@ describe('MinRpsDomainMapper', () => {
 
       const payload = MinRpsDomainMapper.domainToMatchUpdatedPayload(domain);
 
+      expect(payload.resultHistory).toEqual([]);
       expect(payload.result).toBe(MinRpsResult.None);
+    });
+
+    it('should map result history to payload', () => {
+      const domain = new MinRpsGame();
+      domain.resultHistory = [MinRpsResult.Player1, MinRpsResult.Draw, MinRpsResult.Player2];
+
+      const payload = MinRpsDomainMapper.domainToMatchUpdatedPayload(domain);
+
+      expect(payload.resultHistory).toEqual([MinRpsResult.Player1, MinRpsResult.Draw, MinRpsResult.Player2]);
     });
   });
 });

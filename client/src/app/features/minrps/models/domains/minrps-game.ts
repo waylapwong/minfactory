@@ -10,6 +10,7 @@ export class MinRpsGame {
   public player2: MinRpsPlayer = new MinRpsPlayer();
   public playerCount: number = 0;
   public result: MinRpsResult = MinRpsResult.None;
+  public resultHistory: MinRpsResult[] = [];
 
   constructor(init?: Partial<MinRpsGame>) {
     if (init) {

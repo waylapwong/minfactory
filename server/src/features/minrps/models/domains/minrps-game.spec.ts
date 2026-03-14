@@ -519,5 +519,27 @@ describe('MinRpsGame', () => {
       expect(game2.observers.has('observer-1')).toBe(false);
       expect(game2.observers.has('observer-2')).toBe(true);
     });
+
+    it('should append result to history', () => {
+      game.appendResultToHistory(MinRpsResult.Player1);
+      game.appendResultToHistory(MinRpsResult.Draw);
+
+      expect(game.resultHistory).toEqual([MinRpsResult.Player1, MinRpsResult.Draw]);
+    });
+
+    it('should ignore None result in history', () => {
+      game.appendResultToHistory(MinRpsResult.None);
+
+      expect(game.resultHistory).toEqual([]);
+    });
+
+    it('should keep only the last 10 history entries', () => {
+      for (let i = 0; i < 11; i++) {
+        game.appendResultToHistory(i % 2 === 0 ? MinRpsResult.Player1 : MinRpsResult.Player2);
+      }
+
+      expect(game.resultHistory.length).toBe(10);
+      expect(game.resultHistory[0]).toBe(MinRpsResult.Player2);
+    });
   });
 });

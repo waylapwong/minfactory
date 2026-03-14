@@ -99,6 +99,11 @@ export class MinRpsMultiplayerService {
     } else if (match.player2.id === command.playerId) {
       match.setPlayer2Move(command.playerMove);
     }
+
+    if (match.isGameReady()) {
+      match.appendResultToHistory(match.getResult());
+    }
+
     // Update match
     const updatedMatch: MinRpsGame = this.matchRepository.save(match);
     const payload: MinRpsMatchUpdatedPayload = MinRpsDomainMapper.domainToMatchUpdatedPayload(updatedMatch);

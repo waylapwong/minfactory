@@ -11,6 +11,7 @@ import { SnackbarComponent } from '../../../../shared/components/snackbar/snackb
 import { Color } from '../../../../shared/enums/color.enum';
 import { MinRpsCardComponent } from '../../components/minrps-card/minrps-card.component';
 import { MinRpsMoveComponent } from '../../components/minrps-move/minrps-move.component';
+import { MinRpsResultHistoryComponent } from '../../components/minrps-result-history/minrps-result-history.component';
 import { CanLeaveGame } from '../../guards/leave-game.guard';
 import { MinRpsMultiplayerViewModel } from '../../models/viewmodels/minrps-multiplayer.viewmodel';
 import { MinRpsGameService } from '../../services/minrps-game.service';
@@ -25,6 +26,7 @@ import { MinRpsMultiplayerService } from '../../services/minrps-multiplayer.serv
     ButtonComponent,
     DividerComponent,
     MinRpsMoveComponent,
+    MinRpsResultHistoryComponent,
     MinRpsCardComponent,
     DialogComponent,
     InputComponent,

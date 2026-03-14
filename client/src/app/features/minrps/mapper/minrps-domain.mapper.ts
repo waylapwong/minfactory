@@ -21,6 +21,9 @@ export class MinRpsDomainMapper {
     viewModel.heroIsWinning =
       (domain.result === MinRpsResult.Player1 && heroIsPlayer1) ||
       (domain.result === MinRpsResult.Player2 && !heroIsPlayer1);
+    viewModel.resultHistory = domain.resultHistory.map((result: MinRpsResult) =>
+      this.mapResultToHeroPerspective(result, heroIsPlayer1),
+    );
     viewModel.result = domain.result;
     viewModel.villainHasSelectedMove = villain.hasSelectedMove;
     viewModel.villainMove = villain.move;
@@ -66,5 +69,13 @@ export class MinRpsDomainMapper {
     viewModel.result = domain.result;
 
     return viewModel;
+  }
+
+  private static mapResultToHeroPerspective(result: MinRpsResult, heroIsPlayer1: boolean): MinRpsResult {
+    if (heroIsPlayer1 || result === MinRpsResult.Draw || result === MinRpsResult.None) {
+      return result;
+    }
+
+    return result === MinRpsResult.Player1 ? MinRpsResult.Player2 : MinRpsResult.Player1;
   }
 }
