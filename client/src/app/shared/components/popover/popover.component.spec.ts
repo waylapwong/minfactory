@@ -30,6 +30,7 @@ describe('PopoverComponent', () => {
     const popover: HTMLElement | null = fixture.nativeElement.querySelector('[role="tooltip"]');
 
     expect(popover).not.toBeNull();
+    expect(popover?.classList.contains('opacity-0')).toBeFalse();
     expect(popover?.textContent?.trim()).toBe('Hilfetext');
   });
 
@@ -40,7 +41,8 @@ describe('PopoverComponent', () => {
 
     const popover: HTMLElement | null = fixture.nativeElement.querySelector('[role="tooltip"]');
 
-    expect(popover).toBeNull();
+    expect(popover).not.toBeNull();
+    expect(popover?.classList.contains('opacity-0')).toBeTrue();
   });
 
   it('should toggle pinned state and visibility on click', () => {
