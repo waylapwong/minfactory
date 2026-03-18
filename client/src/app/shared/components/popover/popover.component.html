@@ -1,7 +1,10 @@
 <span
   class="relative inline-flex"
+  role="button"
   [attr.aria-describedby]="isVisible() ? popoverId : null"
   [attr.aria-disabled]="disabled()"
+  [attr.aria-expanded]="isVisible()"
+  aria-haspopup="dialog"
   [attr.tabindex]="disabled() ? -1 : 0"
   (click)="onHostClick($event)"
   (focusin)="onFocusIn()"
