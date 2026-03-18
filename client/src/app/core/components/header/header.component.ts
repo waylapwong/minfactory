@@ -2,20 +2,23 @@ import { CommonModule } from '@angular/common';
 import { Component, Signal, computed, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { AppPath } from '../../../app.routes';
+import { ButtonComponent } from '../../../shared/components/button/button.component';
 import { DividerComponent } from '../../../shared/components/divider/divider.component';
 import { LogoComponent } from '../../../shared/components/logo/logo.component';
 import { AppName } from '../../../shared/enums/app-name.enum';
+import { Color } from '../../../shared/enums/color.enum';
 import { ContextService } from '../../services/context.service';
 
 @Component({
   selector: 'min-header',
   standalone: true,
-  imports: [CommonModule, RouterLink, DividerComponent, LogoComponent],
+  imports: [CommonModule, RouterLink, ButtonComponent, DividerComponent, LogoComponent],
   templateUrl: './header.component.html',
   styleUrl: './header.component.scss',
 })
 export class HeaderComponent {
   public readonly AppPath: typeof AppPath = AppPath;
+  public readonly Color: typeof Color = Color;
   public readonly isInFactory: Signal<boolean> = computed(() => this.contextService.app() === AppName.MinFactory);
   public readonly isInMinRps: Signal<boolean> = computed(() => this.contextService.app() === AppName.MinRps);
 
