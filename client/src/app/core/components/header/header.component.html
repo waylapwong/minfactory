@@ -40,10 +40,12 @@
 
   <!-- ACTIONS -->
   <div class="flex flex-row gap-2">
-    <min-popover [content]="'Infos zu minFactory'">
-      <min-button [color]="Color.White" ariaLabel="Info" title="Info">
+    <min-popover [content]="appVersion()">
+      <span
+        class="inline-flex h-8 items-center rounded px-2 py-1 leading-none text-gray-700 transition-colors hover:text-black focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-1 focus-visible:outline-none active:text-gray-900"
+      >
         <img src="assets/svgs/minfactory/info.svg" alt="Info" class="h-4 w-4" />
-      </min-button>
+      </span>
     </min-popover>
   </div>
 </header>

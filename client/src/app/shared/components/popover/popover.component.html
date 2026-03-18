@@ -14,9 +14,9 @@
 
   @if (isVisible() && content()) {
     <span
-      [id]="popoverId"
+      class="absolute top-[calc(100%+8px)] right-0 z-50 w-max rounded-lg border-2 border-black bg-white p-1 text-xs text-gray-500 shadow-2xl"
       role="tooltip"
-      class="absolute top-[calc(100%+8px)] left-0 z-50 w-max rounded-lg border-2 border-black bg-white p-1 text-xs text-gray-500 shadow-2xl"
+      [id]="popoverId"
     >
       {{ content() }}
     </span>
