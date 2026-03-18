@@ -119,8 +119,7 @@ describe('PopoverComponent', () => {
     });
 
     it('should close popover on Enter when already pinned', () => {
-      component.isPinnedByClick.set(true);
-      component.isVisible.set(true);
+      component.onHostClick(new MouseEvent('click'));
 
       const event: KeyboardEvent = new KeyboardEvent('keydown', { key: 'Enter' });
       spyOn(event, 'preventDefault');
