@@ -1,0 +1,24 @@
+<span
+  class="relative inline-flex"
+  [attr.aria-describedby]="isVisible() ? popoverId : null"
+  [attr.aria-disabled]="disabled()"
+  [attr.tabindex]="disabled() ? -1 : 0"
+  (click)="onHostClick($event)"
+  (focusin)="onFocusIn()"
+  (focusout)="onFocusOut($event)"
+  (keydown)="onHostKeydown($event)"
+  (mouseenter)="onMouseEnter()"
+  (mouseleave)="onMouseLeave()"
+>
+  <ng-content></ng-content>
+
+  @if (isVisible() && content()) {
+    <span
+      [id]="popoverId"
+      role="tooltip"
+      class="absolute top-[calc(100%+8px)] left-0 z-50 w-max rounded-lg border-2 border-black bg-white p-1 text-xs text-gray-500 shadow-2xl"
+    >
+      {{ content() }}
+    </span>
+  }
+</span>

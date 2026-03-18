@@ -40,9 +40,11 @@
 
   <!-- ACTIONS -->
   <div class="flex flex-row gap-2">
-    <min-button [color]="Color.White" ariaLabel="Info">
-      <img src="assets/svgs/minfactory/info.svg" alt="Info" class="h-4 w-4" />
-    </min-button>
+    <min-popover [content]="'Infos zu minFactory'">
+      <min-button [color]="Color.White" ariaLabel="Info" title="Info">
+        <img src="assets/svgs/minfactory/info.svg" alt="Info" class="h-4 w-4" />
+      </min-button>
+    </min-popover>
   </div>
 </header>
 

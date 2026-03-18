@@ -5,6 +5,7 @@ import { AppPath } from '../../../app.routes';
 import { ButtonComponent } from '../../../shared/components/button/button.component';
 import { DividerComponent } from '../../../shared/components/divider/divider.component';
 import { LogoComponent } from '../../../shared/components/logo/logo.component';
+import { PopoverComponent } from '../../../shared/components/popover/popover.component';
 import { AppName } from '../../../shared/enums/app-name.enum';
 import { Color } from '../../../shared/enums/color.enum';
 import { ContextService } from '../../services/context.service';
@@ -12,7 +13,7 @@ import { ContextService } from '../../services/context.service';
 @Component({
   selector: 'min-header',
   standalone: true,
-  imports: [CommonModule, RouterLink, ButtonComponent, DividerComponent, LogoComponent],
+  imports: [CommonModule, RouterLink, ButtonComponent, DividerComponent, LogoComponent, PopoverComponent],
   templateUrl: './header.component.html',
   styleUrl: './header.component.scss',
 })
