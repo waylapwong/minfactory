@@ -92,4 +92,55 @@ describe('PopoverComponent', () => {
 
     expect(component.isVisible()).toBeFalse();
   });
+
+  describe('onHostKeydown', () => {
+    it('should open popover and call preventDefault on Enter key', () => {
+      const event: KeyboardEvent = new KeyboardEvent('keydown', { key: 'Enter' });
+      spyOn(event, 'preventDefault');
+
+      component.onHostKeydown(event);
+      fixture.detectChanges();
+
+      expect(event.preventDefault).toHaveBeenCalled();
+      expect(component.isPinnedByClick()).toBeTrue();
+      expect(component.isVisible()).toBeTrue();
+    });
+
+    it('should open popover and call preventDefault on Space key', () => {
+      const event: KeyboardEvent = new KeyboardEvent('keydown', { key: ' ' });
+      spyOn(event, 'preventDefault');
+
+      component.onHostKeydown(event);
+      fixture.detectChanges();
+
+      expect(event.preventDefault).toHaveBeenCalled();
+      expect(component.isPinnedByClick()).toBeTrue();
+      expect(component.isVisible()).toBeTrue();
+    });
+
+    it('should close popover on Enter when already pinned', () => {
+      component.onHostClick(new MouseEvent('click'));
+
+      const event: KeyboardEvent = new KeyboardEvent('keydown', { key: 'Enter' });
+      spyOn(event, 'preventDefault');
+
+      component.onHostKeydown(event);
+      fixture.detectChanges();
+
+      expect(event.preventDefault).toHaveBeenCalled();
+      expect(component.isPinnedByClick()).toBeFalse();
+      expect(component.isVisible()).toBeFalse();
+    });
+
+    it('should do nothing for non-activation keys', () => {
+      const event: KeyboardEvent = new KeyboardEvent('keydown', { key: 'Tab' });
+      spyOn(event, 'preventDefault');
+
+      component.onHostKeydown(event);
+      fixture.detectChanges();
+
+      expect(event.preventDefault).not.toHaveBeenCalled();
+      expect(component.isVisible()).toBeFalse();
+    });
+  });
 });
