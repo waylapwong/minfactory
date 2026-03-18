@@ -1,0 +1,28 @@
+<span
+  class="relative inline-flex"
+  role="button"
+  [attr.aria-describedby]="content() ? popoverId : null"
+  [attr.aria-disabled]="disabled()"
+  [attr.aria-expanded]="isVisible()"
+  [attr.tabindex]="disabled() ? -1 : 0"
+  (click)="onHostClick($event)"
+  (focusin)="onFocusIn()"
+  (focusout)="onFocusOut($event)"
+  (keydown)="onHostKeydown($event)"
+  (mouseenter)="onMouseEnter()"
+  (mouseleave)="onMouseLeave()"
+>
+  <ng-content></ng-content>
+
+  @if (content()) {
+    <span
+      class="absolute top-[calc(100%+8px)] right-0 z-50 w-max rounded-lg border-2 border-black bg-white p-1 text-xs text-gray-500 shadow-2xl transition-opacity"
+      role="tooltip"
+      [id]="popoverId"
+      [class.opacity-0]="!isVisible()"
+      [class.pointer-events-none]="!isVisible()"
+    >
+      {{ content() }}
+    </span>
+  }
+</span>

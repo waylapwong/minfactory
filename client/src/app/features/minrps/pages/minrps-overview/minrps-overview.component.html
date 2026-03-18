@@ -1,11 +1,21 @@
 <div class="flex h-full flex-col px-4">
   <!-- TITLE -->
-  <div class="text-center">
+  <div class="relative flex items-center justify-center">
+    <!-- BACK BUTTON -->
+    <div class="absolute top-0 left-0">
+      <min-button ariaLabel="Zurück" title="Zurück" [color]="Color.White" (clicked)="routingService.navigateToMinRps()">
+        <img src="assets/svgs/minrps/back.svg" alt="Zurück" class="h-4 w-4" />
+      </min-button>
+    </div>
+    <!-- TITLE -->
     <min-h1>Multiplayer</min-h1>
+    <!-- NEW GAME BUTTON -->
+    <div class="absolute top-0 right-0">
+      <min-button ariaLabel="Neues Spiel" title="Neues Spiel" [color]="Color.Blue" (clicked)="openNewGameDialog()">
+        <img src="assets/svgs/minrps/add.svg" alt="Neues Spiel" class="h-4 w-4" />
+      </min-button>
+    </div>
   </div>
-
-  <!-- NEW GAME BUTTON -->
-  <min-button class="mb-4" [color]="Color.Gray" (clicked)="openNewGameDialog()">Neues Spiel</min-button>
 
   <!-- GAMES -->
   @for (game of games(); track $index) {
@@ -13,23 +23,23 @@
       <div class="flex flex-row items-start justify-between">
         <min-h2 class="grow text-left break-all">{{ game.name }}</min-h2>
         <min-button [color]="Color.Red" (clicked)="openDeleteDialog(game.id, $event)">
-          <img src="assets/svgs/close.svg" alt="Spiel löschen" class="h-4 w-4" />
+          <img src="assets/svgs/minrps/delete.svg" alt="Spiel löschen" class="h-4 w-4" />
         </min-button>
       </div>
       <div class="flex flex-row items-end gap-2 text-left text-sm text-gray-500">
-        <img src="assets/svgs/pawn.svg" alt="Spieler" class="h-6 w-6" />
+        <img src="assets/svgs/minrps/pawn.svg" alt="Spieler" class="h-5 w-5" />
         {{ game.playerCount }}/2
       </div>
       <div class="flex flex-row items-end gap-2 text-left text-sm text-gray-500">
-        <img src="assets/svgs/observer.svg" alt="Beobachter" class="h-6 w-6" />
+        <img src="assets/svgs/minrps/observer.svg" alt="Beobachter" class="h-5 w-5" />
         {{ game.observerCount }}
       </div>
       <div class="flex flex-row items-end gap-2 text-left text-sm text-gray-500">
-        <img src="assets/svgs/calendar.svg" alt="Datum" class="h-6 w-6" />
+        <img src="assets/svgs/minrps/calendar.svg" alt="Datum" class="h-5 w-5" />
         {{ game.createdAt | date: 'd. MMMM yyyy' }}
       </div>
       <div class="flex flex-row items-end gap-2 text-left text-sm text-gray-500">
-        <img src="assets/svgs/clock.svg" alt="Uhrzeit" class="h-6 w-6" />
+        <img src="assets/svgs/minrps/clock.svg" alt="Uhrzeit" class="h-5 w-5" />
         {{ game.createdAt | date: 'HH:mm' }}
       </div>
     </min-card-button>

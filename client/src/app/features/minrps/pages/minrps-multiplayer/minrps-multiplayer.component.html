@@ -1,21 +1,22 @@
 <div class="relative flex h-full flex-col px-4 text-center">
-  <!-- LEAVE BUTTON -->
   <div class="absolute top-0 right-0 left-0 flex flex-row justify-between">
+    <!-- SHARE BUTTON -->
     <min-button
       (clicked)="shareGameUrl()"
       [color]="Color.White"
       ariaLabel="Link zum Spiel kopieren"
       title="Link kopieren"
     >
-      <img src="assets/svgs/minrps/share.svg" alt="" class="h-4 w-4" />
+      <img src="assets/svgs/minrps/share.svg" alt="Link kopieren" class="h-4 w-4" />
     </min-button>
+    <!-- LEAVE BUTTON -->
     <min-button
-      (clicked)="routingService.navigateToMinRps()"
+      (clicked)="routingService.navigateToMinRpsOverview()"
       [color]="Color.Red"
       ariaLabel="Spiel verlassen"
       title="Spiel verlassen"
     >
-      <img src="assets/svgs/close.svg" alt="Schliessen" class="h-4 w-4" />
+      <img src="assets/svgs/minrps/leave.svg" alt="Spiel verlassen" class="h-4 w-4" />
     </min-button>
   </div>
 
