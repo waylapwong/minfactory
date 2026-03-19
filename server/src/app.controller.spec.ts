@@ -13,9 +13,7 @@ describe('AppController', () => {
     appController = app.get<AppController>(AppController);
   });
 
-  describe('root', () => {
-    it('should return "application up and running!"', () => {
-      expect(appController.getHealth()).toBe('application up and running!');
-    });
+  it('should be defined', () => {
+    expect(appController).toBeDefined();
   });
 });

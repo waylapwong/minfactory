@@ -7,6 +7,18 @@ import { MinFactoryUserEntity } from '../models/entities/minfactory-user.entity'
 export class MinFactoryUserRepository {
   constructor(@InjectRepository(MinFactoryUserEntity) private readonly repository: Repository<MinFactoryUserEntity>) {}
 
+  public async findByEmail(email: string): Promise<MinFactoryUserEntity | null> {
+    return await this.repository.findOne({
+      where: { email },
+    });
+  }
+
+  public async findByFirebaseUid(firebaseUid: string): Promise<MinFactoryUserEntity | null> {
+    return await this.repository.findOne({
+      where: { firebaseUid },
+    });
+  }
+
   public async existsByFirebaseUidOrEmail(firebaseUid: string, email: string): Promise<boolean> {
     const count: number = await this.repository.count({
       where: [{ firebaseUid }, { email }],

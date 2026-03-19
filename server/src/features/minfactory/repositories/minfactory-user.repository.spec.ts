@@ -7,6 +7,7 @@ describe('MinFactoryUserRepository', () => {
   let userRepository: MinFactoryUserRepository;
 
   const mockTypeOrmRepository = {
+    findOne: jest.fn(),
     count: jest.fn(),
     save: jest.fn(),
   };
@@ -24,6 +25,44 @@ describe('MinFactoryUserRepository', () => {
 
   afterEach(() => {
     jest.clearAllMocks();
+  });
+
+  describe('findByEmail', () => {
+    it('should return a user by email', async () => {
+      const entity: MinFactoryUserEntity = {
+        id: 'user-id',
+        firebaseUid: 'firebase-uid-123',
+        email: 'user@example.com',
+        createdAt: new Date('2025-01-01T00:00:00.000Z'),
+      };
+      mockTypeOrmRepository.findOne.mockResolvedValue(entity);
+
+      const result = await userRepository.findByEmail('user@example.com');
+
+      expect(result).toBe(entity);
+      expect(mockTypeOrmRepository.findOne).toHaveBeenCalledWith({
+        where: { email: 'user@example.com' },
+      });
+    });
+  });
+
+  describe('findByFirebaseUid', () => {
+    it('should return a user by firebase uid', async () => {
+      const entity: MinFactoryUserEntity = {
+        id: 'user-id',
+        firebaseUid: 'firebase-uid-123',
+        email: 'user@example.com',
+        createdAt: new Date('2025-01-01T00:00:00.000Z'),
+      };
+      mockTypeOrmRepository.findOne.mockResolvedValue(entity);
+
+      const result = await userRepository.findByFirebaseUid('firebase-uid-123');
+
+      expect(result).toBe(entity);
+      expect(mockTypeOrmRepository.findOne).toHaveBeenCalledWith({
+        where: { firebaseUid: 'firebase-uid-123' },
+      });
+    });
   });
 
   describe('existsByFirebaseUidOrEmail', () => {

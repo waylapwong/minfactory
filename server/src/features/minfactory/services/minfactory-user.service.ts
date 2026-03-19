@@ -11,22 +11,68 @@ export class MinFactoryUserService {
   constructor(private readonly userRepository: MinFactoryUserRepository) {}
 
   public async createUser(firebaseUid: string, email: string): Promise<MinFactoryUserDto> {
-    // Doppelte Registrierung prüfen
-    const alreadyExists: boolean = await this.userRepository.existsByFirebaseUidOrEmail(firebaseUid, email);
-    if (alreadyExists) {
+    const existingUserByFirebaseUid: MinFactoryUserEntity | null =
+      await this.userRepository.findByFirebaseUid(firebaseUid);
+
+    if (existingUserByFirebaseUid) {
+      return this.entityToDto(existingUserByFirebaseUid);
+    }
+
+    const existingUserByEmail: MinFactoryUserEntity | null = await this.userRepository.findByEmail(email);
+
+    if (existingUserByEmail) {
       throw new ConflictException('User already registered');
     }
-    // Domain-Objekt erzeugen
+
     const domain: MinFactoryUser = new MinFactoryUser();
     domain.firebaseUid = firebaseUid;
     domain.email = email;
-    // Mapping und Persistenz
     const entity: MinFactoryUserEntity = MinFactoryUserDomainMapper.domainToEntity(domain);
-    const savedEntity: MinFactoryUserEntity = await this.userRepository.save(entity);
-    // Mapping für Response
-    const savedDomain: MinFactoryUser = MinFactoryUserEntityMapper.entityToDomain(savedEntity);
-    const dto: MinFactoryUserDto = MinFactoryUserDomainMapper.domainToDto(savedDomain);
 
-    return dto;
+    try {
+      const savedEntity: MinFactoryUserEntity = await this.userRepository.save(entity);
+
+      return this.entityToDto(savedEntity);
+    } catch (error) {
+      if (!this.isDuplicateUserError(error)) {
+        throw error;
+      }
+
+      const duplicatedUserByFirebaseUid: MinFactoryUserEntity | null =
+        await this.userRepository.findByFirebaseUid(firebaseUid);
+
+      if (duplicatedUserByFirebaseUid) {
+        return this.entityToDto(duplicatedUserByFirebaseUid);
+      }
+
+      const duplicatedUserByEmail: MinFactoryUserEntity | null = await this.userRepository.findByEmail(email);
+
+      if (duplicatedUserByEmail) {
+        throw new ConflictException('User already registered');
+      }
+
+      throw error;
+    }
+  }
+
+  private entityToDto(entity: MinFactoryUserEntity): MinFactoryUserDto {
+    const savedDomain: MinFactoryUser = MinFactoryUserEntityMapper.entityToDomain(entity);
+
+    return MinFactoryUserDomainMapper.domainToDto(savedDomain);
+  }
+
+  private isDuplicateUserError(error: unknown): boolean {
+    if (!error || typeof error !== 'object') {
+      return false;
+    }
+
+    const driverError = error as {
+      driverError?: {
+        code?: string;
+        errno?: number;
+      };
+    };
+
+    return driverError.driverError?.code === 'ER_DUP_ENTRY' || driverError.driverError?.errno === 1062;
   }
 }

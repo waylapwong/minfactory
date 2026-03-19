@@ -8,7 +8,8 @@ describe('MinFactoryUserService', () => {
   let userService: MinFactoryUserService;
 
   const mockMinFactoryUserRepository = {
-    existsByFirebaseUidOrEmail: jest.fn(),
+    findByEmail: jest.fn(),
+    findByFirebaseUid: jest.fn(),
     save: jest.fn(),
   };
 
@@ -36,7 +37,8 @@ describe('MinFactoryUserService', () => {
     };
 
     it('should create and return user dto on happy path', async () => {
-      mockMinFactoryUserRepository.existsByFirebaseUidOrEmail.mockResolvedValue(false);
+      mockMinFactoryUserRepository.findByFirebaseUid.mockResolvedValue(null);
+      mockMinFactoryUserRepository.findByEmail.mockResolvedValue(null);
       mockMinFactoryUserRepository.save.mockResolvedValue(savedEntity);
 
       const result = await userService.createUser(firebaseUid, email);
@@ -46,19 +48,63 @@ describe('MinFactoryUserService', () => {
       expect(result.createdAt).toBe(savedEntity.createdAt);
     });
 
-    it('should throw ConflictException when user already exists', async () => {
-      mockMinFactoryUserRepository.existsByFirebaseUidOrEmail.mockResolvedValue(true);
+    it('should return existing user when firebase uid already exists', async () => {
+      mockMinFactoryUserRepository.findByFirebaseUid.mockResolvedValue(savedEntity);
+
+      const result = await userService.createUser(firebaseUid, email);
+
+      expect(result.id).toBe(savedEntity.id);
+      expect(mockMinFactoryUserRepository.findByEmail).not.toHaveBeenCalled();
+      expect(mockMinFactoryUserRepository.save).not.toHaveBeenCalled();
+    });
+
+    it('should throw ConflictException when email already exists for another user', async () => {
+      mockMinFactoryUserRepository.findByFirebaseUid.mockResolvedValue(null);
+      mockMinFactoryUserRepository.findByEmail.mockResolvedValue(savedEntity);
 
       await expect(userService.createUser(firebaseUid, email)).rejects.toThrow(ConflictException);
     });
 
-    it('should check for existing user with uid and email from token', async () => {
-      mockMinFactoryUserRepository.existsByFirebaseUidOrEmail.mockResolvedValue(false);
+    it('should look up existing users with firebase uid and email before saving', async () => {
+      mockMinFactoryUserRepository.findByFirebaseUid.mockResolvedValue(null);
+      mockMinFactoryUserRepository.findByEmail.mockResolvedValue(null);
       mockMinFactoryUserRepository.save.mockResolvedValue(savedEntity);
 
       await userService.createUser(firebaseUid, email);
 
-      expect(mockMinFactoryUserRepository.existsByFirebaseUidOrEmail).toHaveBeenCalledWith(firebaseUid, email);
+      expect(mockMinFactoryUserRepository.findByFirebaseUid).toHaveBeenCalledWith(firebaseUid);
+      expect(mockMinFactoryUserRepository.findByEmail).toHaveBeenCalledWith(email);
+    });
+
+    it('should return existing user when save hits duplicate firebase uid race', async () => {
+      mockMinFactoryUserRepository.findByFirebaseUid.mockResolvedValueOnce(null).mockResolvedValueOnce(savedEntity);
+      mockMinFactoryUserRepository.findByEmail.mockResolvedValue(null);
+      mockMinFactoryUserRepository.save.mockRejectedValue({
+        driverError: {
+          code: 'ER_DUP_ENTRY',
+        },
+      });
+
+      const result = await userService.createUser(firebaseUid, email);
+
+      expect(result.id).toBe(savedEntity.id);
+      expect(mockMinFactoryUserRepository.findByFirebaseUid).toHaveBeenCalledTimes(2);
+    });
+
+    it('should throw ConflictException when save hits duplicate email race', async () => {
+      const conflictingEntity: MinFactoryUserEntity = {
+        ...savedEntity,
+        firebaseUid: 'other-firebase-uid',
+      };
+      mockMinFactoryUserRepository.findByFirebaseUid.mockResolvedValueOnce(null).mockResolvedValueOnce(null);
+      mockMinFactoryUserRepository.findByEmail.mockResolvedValueOnce(null).mockResolvedValueOnce(conflictingEntity);
+      mockMinFactoryUserRepository.save.mockRejectedValue({
+        driverError: {
+          errno: 1062,
+        },
+      });
+
+      await expect(userService.createUser(firebaseUid, email)).rejects.toThrow(ConflictException);
     });
   });
 });
