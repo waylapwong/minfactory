@@ -74,4 +74,4 @@ Das Frontend ist in 3 Schichten organisiert.
 - Erstellung eines Implementierungsplans
 - Implementierung der Features
 - Implementierung von Unit Tests (`npm run test:ci`)
-- Linter Prüfung (`npm run lint`)
+- Linter Prüfung (`npm run lint:ci`)

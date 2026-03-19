@@ -1,7 +1,7 @@
 import { provideZonelessChangeDetection } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { AuthService } from '../../../../core/services/auth.service';
 import { RoutingService } from '../../../../core/services/routing.service';
+import { MinFactoryRegisterService } from '../../services/minfactory-register.service';
 import { RegisterComponent } from './register.component';
 
 describe('RegisterComponent', () => {
@@ -17,8 +17,8 @@ describe('RegisterComponent', () => {
     navigateToHomePage: jasmine.createSpy('navigateToHomePage'),
   };
 
-  const authServiceMock = {
-    registerWithEmailAndPassword: jasmine.createSpy('registerWithEmailAndPassword').and.returnValue(Promise.resolve()),
+  const registerServiceMock = {
+    registerUser: jasmine.createSpy('registerUser').and.returnValue(Promise.resolve()),
   };
   beforeEach(async () => {
     jasmine.clock().install();
@@ -32,8 +32,8 @@ describe('RegisterComponent', () => {
           useValue: routingServiceMock,
         },
         {
-          provide: AuthService,
-          useValue: authServiceMock,
+          provide: MinFactoryRegisterService,
+          useValue: registerServiceMock,
         },
       ],
     }).compileComponents();
@@ -46,7 +46,7 @@ describe('RegisterComponent', () => {
   afterEach(() => {
     jasmine.clock().uninstall();
     routingServiceMock.navigateToHomePage.calls.reset();
-    authServiceMock.registerWithEmailAndPassword.calls.reset();
+    registerServiceMock.registerUser.calls.reset();
   });
 
   it('should create', () => {
@@ -57,7 +57,7 @@ describe('RegisterComponent', () => {
     component.submitRegistration();
 
     expect(component.registerForm.invalid).toBeTrue();
-    expect(authServiceMock.registerWithEmailAndPassword).not.toHaveBeenCalled();
+    expect(registerServiceMock.registerUser).not.toHaveBeenCalled();
     expect(routingServiceMock.navigateToHomePage).not.toHaveBeenCalled();
   });
 
@@ -70,11 +70,11 @@ describe('RegisterComponent', () => {
     component.submitRegistration();
 
     expect(component.registerForm.invalid).toBeTrue();
-    expect(authServiceMock.registerWithEmailAndPassword).not.toHaveBeenCalled();
+    expect(registerServiceMock.registerUser).not.toHaveBeenCalled();
     expect(routingServiceMock.navigateToHomePage).not.toHaveBeenCalled();
   });
 
-  it('should submit valid form and call Firebase registration', async () => {
+  it('should submit valid form and call register service', async () => {
     component.emailControl.setValue('user@example.com');
     component.passwordControl.setValue('password123');
     component.confirmPasswordControl.setValue('password123');
@@ -83,15 +83,15 @@ describe('RegisterComponent', () => {
     await flushMicrotasks();
     jasmine.clock().tick(800);
 
-    expect(authServiceMock.registerWithEmailAndPassword).toHaveBeenCalledWith('user@example.com', 'password123');
+    expect(registerServiceMock.registerUser).toHaveBeenCalledWith('user@example.com', 'password123');
     expect(component.isSubmitting()).toBeFalse();
     expect(component.isSnackbarOpen()).toBeTrue();
     expect(routingServiceMock.navigateToHomePage).toHaveBeenCalled();
   });
 
-  it('should display error message when Firebase registration fails', async () => {
+  it('should display error message when register service fails', async () => {
     const errorMessage = 'Diese E-Mail-Adresse wird bereits verwendet.';
-    authServiceMock.registerWithEmailAndPassword.and.returnValue(Promise.reject(new Error(errorMessage)));
+    registerServiceMock.registerUser.and.returnValue(Promise.reject(new Error(errorMessage)));
 
     component.emailControl.setValue('user@example.com');
     component.passwordControl.setValue('password123');

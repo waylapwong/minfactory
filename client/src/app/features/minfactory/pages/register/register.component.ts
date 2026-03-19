@@ -1,7 +1,7 @@
-import { Component, OnDestroy, WritableSignal, inject, signal } from '@angular/core';
+import { Component, OnDestroy, WritableSignal, signal } from '@angular/core';
 import { AbstractControl, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { AuthService } from '../../../../core/services/auth.service';
 import { RoutingService } from '../../../../core/services/routing.service';
+import { MinFactoryRegisterService } from '../../services/minfactory-register.service';
 import { ButtonComponent } from '../../../../shared/components/button/button.component';
 import { CardComponent } from '../../../../shared/components/card/card.component';
 import { H1Component } from '../../../../shared/components/h1/h1.component';
@@ -39,11 +39,12 @@ export class RegisterComponent implements OnDestroy {
   );
   public readonly snackbarMessage: WritableSignal<string> = signal('');
 
-  private readonly authService: AuthService = inject(AuthService);
-
   private redirectTimeoutId: ReturnType<typeof setTimeout> | null = null;
 
-  constructor(private readonly routingService: RoutingService) {}
+  constructor(
+    private readonly routingService: RoutingService,
+    private readonly registerService: MinFactoryRegisterService,
+  ) {}
 
   public get confirmPasswordControl(): FormControl<string> {
     return this.registerForm.controls.confirmPassword;
@@ -107,7 +108,7 @@ export class RegisterComponent implements OnDestroy {
     this.isSubmitting.set(true);
     this.closeSnackbar();
 
-    this.registerUserWithFirebase();
+    this.registerUser();
   }
 
   private clearRedirectTimeout(): void {
@@ -123,12 +124,12 @@ export class RegisterComponent implements OnDestroy {
     return control.touched || control.dirty;
   }
 
-  private async registerUserWithFirebase(): Promise<void> {
+  private async registerUser(): Promise<void> {
     try {
       const email = this.emailControl.value;
       const password = this.passwordControl.value;
 
-      await this.authService.registerWithEmailAndPassword(email, password);
+      await this.registerService.registerUser(email, password);
 
       this.redirectTimeoutId = setTimeout(() => {
         this.isSubmitting.set(false);
