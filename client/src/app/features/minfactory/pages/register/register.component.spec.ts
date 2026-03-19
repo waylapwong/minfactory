@@ -43,9 +43,22 @@ describe('RegisterComponent', () => {
     expect(routingServiceMock.navigateToHomePage).not.toHaveBeenCalled();
   });
 
+  it('should not submit when passwords do not match', () => {
+    component.emailControl.setValue('user@example.com');
+    component.passwordControl.setValue('password123');
+    component.confirmPasswordControl.setValue('different');
+    component.registerForm.markAllAsTouched();
+
+    component.submitRegistration();
+
+    expect(component.registerForm.invalid).toBeTrue();
+    expect(routingServiceMock.navigateToHomePage).not.toHaveBeenCalled();
+  });
+
   it('should submit valid form and navigate to home', () => {
     component.emailControl.setValue('user@example.com');
     component.passwordControl.setValue('password123');
+    component.confirmPasswordControl.setValue('password123');
 
     spyOn(window, 'setTimeout').and.callFake((handler: TimerHandler) => {
       if (typeof handler === 'function') {

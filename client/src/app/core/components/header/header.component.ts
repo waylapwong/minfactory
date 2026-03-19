@@ -21,12 +21,11 @@ import { ContextService } from '../../services/context.service';
 export class HeaderComponent {
   public readonly AppPath: typeof AppPath = AppPath;
   public readonly MinFactoryPath: typeof MinFactoryPath = MinFactoryPath;
-  public readonly appVersion: Signal<string> = this.contextService.appVersion;
+  public readonly appVersion: Signal<string> = inject(ContextService).appVersion;
   public readonly isInFactory: Signal<boolean> = computed(() => this.contextService.app() === AppName.MinFactory);
   public readonly isInMinRps: Signal<boolean> = computed(() => this.contextService.app() === AppName.MinRps);
   public readonly isInRegister: Signal<boolean> = computed(() => this.currentUrl() === `/${MinFactoryPath.Register}`);
 
-  private readonly contextService = inject(ContextService);
   private readonly router = inject(Router);
   private readonly currentUrl = toSignal(
     this.router.events.pipe(
@@ -36,4 +35,6 @@ export class HeaderComponent {
     ),
     { initialValue: this.router.url },
   );
+
+  constructor(private readonly contextService: ContextService) {}
 }

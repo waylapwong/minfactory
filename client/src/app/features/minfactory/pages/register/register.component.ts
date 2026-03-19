@@ -1,5 +1,5 @@
 import { Component, OnDestroy, WritableSignal, signal } from '@angular/core';
-import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { AbstractControl, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RoutingService } from '../../../../core/services/routing.service';
 import { ButtonComponent } from '../../../../shared/components/button/button.component';
 import { CardComponent } from '../../../../shared/components/card/card.component';
@@ -7,6 +7,17 @@ import { H1Component } from '../../../../shared/components/h1/h1.component';
 import { InputComponent } from '../../../../shared/components/input/input.component';
 import { SnackbarComponent } from '../../../../shared/components/snackbar/snackbar.component';
 import { Color } from '../../../../shared/enums/color.enum';
+
+function passwordsMatchValidator(group: AbstractControl): { passwordsMismatch: true } | null {
+  const form = group as RegisterForm;
+  return form.controls.password.value === form.controls.confirmPassword.value ? null : { passwordsMismatch: true };
+}
+
+type RegisterForm = FormGroup<{
+  confirmPassword: FormControl<string>;
+  email: FormControl<string>;
+  password: FormControl<string>;
+}>;
 
 @Component({
   selector: 'minfactory-register',
@@ -19,16 +30,23 @@ export class RegisterComponent implements OnDestroy {
   public readonly Color: typeof Color = Color;
   public readonly isSnackbarOpen: WritableSignal<boolean> = signal(false);
   public readonly isSubmitting: WritableSignal<boolean> = signal(false);
-  public readonly registerForm: RegisterForm = new FormGroup({
-    email: new FormControl('', {
-      nonNullable: true,
-      validators: [Validators.required, Validators.email],
-    }),
-    password: new FormControl('', {
-      nonNullable: true,
-      validators: [Validators.required, Validators.minLength(8)],
-    }),
-  });
+  public readonly registerForm: RegisterForm = new FormGroup(
+    {
+      email: new FormControl('', {
+        nonNullable: true,
+        validators: [Validators.required, Validators.email],
+      }),
+      password: new FormControl('', {
+        nonNullable: true,
+        validators: [Validators.required, Validators.minLength(8)],
+      }),
+      confirmPassword: new FormControl('', {
+        nonNullable: true,
+        validators: [Validators.required],
+      }),
+    },
+    { validators: passwordsMatchValidator },
+  );
   public readonly snackbarMessage: WritableSignal<string> = signal('');
 
   private redirectTimeoutId: ReturnType<typeof setTimeout> | null = null;
@@ -37,6 +55,10 @@ export class RegisterComponent implements OnDestroy {
 
   public get emailControl(): FormControl<string> {
     return this.registerForm.controls.email;
+  }
+
+  public get confirmPasswordControl(): FormControl<string> {
+    return this.registerForm.controls.confirmPassword;
   }
 
   public get passwordControl(): FormControl<string> {
@@ -66,6 +88,14 @@ export class RegisterComponent implements OnDestroy {
 
   public hasPasswordMinLengthError(): boolean {
     return this.passwordControl.hasError('minlength') && this.isTouchedOrDirty(this.passwordControl);
+  }
+
+  public hasConfirmPasswordRequiredError(): boolean {
+    return this.confirmPasswordControl.hasError('required') && this.isTouchedOrDirty(this.confirmPasswordControl);
+  }
+
+  public hasPasswordMismatchError(): boolean {
+    return this.registerForm.hasError('passwordsMismatch') && this.isTouchedOrDirty(this.confirmPasswordControl);
   }
 
   public hasPasswordRequiredError(): boolean {
@@ -108,8 +138,3 @@ export class RegisterComponent implements OnDestroy {
     return control.touched || control.dirty;
   }
 }
-
-type RegisterForm = FormGroup<{
-  email: FormControl<string>;
-  password: FormControl<string>;
-}>;
