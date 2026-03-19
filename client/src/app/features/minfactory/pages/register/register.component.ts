@@ -1,13 +1,13 @@
 import { Component, OnDestroy, WritableSignal, signal } from '@angular/core';
 import { AbstractControl, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RoutingService } from '../../../../core/services/routing.service';
-import { MinFactoryRegisterService } from '../../services/minfactory-register.service';
 import { ButtonComponent } from '../../../../shared/components/button/button.component';
 import { CardComponent } from '../../../../shared/components/card/card.component';
 import { H1Component } from '../../../../shared/components/h1/h1.component';
 import { InputComponent } from '../../../../shared/components/input/input.component';
 import { SnackbarComponent } from '../../../../shared/components/snackbar/snackbar.component';
 import { Color } from '../../../../shared/enums/color.enum';
+import { MinFactoryRegisterService } from '../../services/minfactory-register.service';
 
 @Component({
   selector: 'minfactory-register',

@@ -13,6 +13,17 @@ describe('RegisterComponent', () => {
     await Promise.resolve();
   };
 
+  const settleRegistration = async (): Promise<void> => {
+    const registerPromise: Promise<unknown> | undefined = registerServiceMock.registerUser.calls.mostRecent()
+      ?.returnValue as Promise<unknown> | undefined;
+
+    try {
+      await registerPromise;
+    } catch {}
+
+    await flushMicrotasks();
+  };
+
   const routingServiceMock = {
     navigateToHomePage: jasmine.createSpy('navigateToHomePage'),
   };
@@ -20,9 +31,8 @@ describe('RegisterComponent', () => {
   const registerServiceMock = {
     registerUser: jasmine.createSpy('registerUser').and.returnValue(Promise.resolve()),
   };
-  beforeEach(async () => {
-    jasmine.clock().install();
 
+  beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [RegisterComponent],
       providers: [
@@ -44,7 +54,6 @@ describe('RegisterComponent', () => {
   });
 
   afterEach(() => {
-    jasmine.clock().uninstall();
     routingServiceMock.navigateToHomePage.calls.reset();
     registerServiceMock.registerUser.calls.reset();
   });
@@ -75,13 +84,24 @@ describe('RegisterComponent', () => {
   });
 
   it('should submit valid form and call register service', async () => {
+    let redirectCallback: (() => void) | undefined;
+
+    spyOn(globalThis, 'setTimeout').and.callFake((callback: TimerHandler) => {
+      if (typeof callback === 'function') {
+        redirectCallback = () => callback();
+      }
+
+      return 0 as ReturnType<typeof setTimeout>;
+    });
+
     component.emailControl.setValue('user@example.com');
     component.passwordControl.setValue('password123');
     component.confirmPasswordControl.setValue('password123');
 
     component.submitRegistration();
+    await settleRegistration();
+    redirectCallback?.();
     await flushMicrotasks();
-    jasmine.clock().tick(800);
 
     expect(registerServiceMock.registerUser).toHaveBeenCalledWith('user@example.com', 'password123');
     expect(component.isSubmitting()).toBeFalse();
@@ -98,7 +118,7 @@ describe('RegisterComponent', () => {
     component.confirmPasswordControl.setValue('password123');
 
     component.submitRegistration();
-    await flushMicrotasks();
+    await settleRegistration();
 
     expect(component.isSubmitting()).toBeFalse();
     expect(component.isSnackbarOpen()).toBeTrue();
