@@ -9,6 +9,7 @@ configuration.ts
 encoder.ts
 git_push.sh
 index.ts
+model/min-factory-user-dto.ts
 model/min-rps-create-game-dto.ts
 model/min-rps-game-dto.ts
 model/min-rps-move.ts

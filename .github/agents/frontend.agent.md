@@ -66,7 +66,7 @@ Das Frontend ist in 3 Schichten organisiert.
 - Unit Tests sollen Abhängigkeiten direkt im Test mocken, z. B. mit `provide: Service, useValue: { methode: () => {} }`
 - Mock-Objekte werden direkt in der .spec.ts Datei definiert
 - Es werden keine separaten Mock-Klassen oder Mock-Dateien erstellt, um unnötige Komplexität und Fragmentierung zu vermeiden
-- Es wird Constructor Injection verwendet, um Abhängigkeiten in Angular Services und Components zu injizieren
+- Dependency Injection: Es wird bevorzugt Constructor Injection verwendet, um Angular Services zu injecten; `inject()` wird nur in Fällen ohne Constructor (z. B. bei Funktionen, Standalone-Signals oder Initializern) eingesetzt.
 
 # 5. Workflow
 
@@ -74,4 +74,4 @@ Das Frontend ist in 3 Schichten organisiert.
 - Erstellung eines Implementierungsplans
 - Implementierung der Features
 - Implementierung von Unit Tests (`npm run test:ci`)
-- Linter Prüfung (`npm run lint`)
+- Linter Prüfung (`npm run lint:ci`)

@@ -13,9 +13,9 @@
 
 export interface MinRpsGameDto { 
     createdAt: string;
-    observerCount: number;
     id: string;
     name: string;
+    observerCount: number;
     playerCount: number;
 }
 
