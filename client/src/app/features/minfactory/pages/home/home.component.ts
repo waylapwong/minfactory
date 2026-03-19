@@ -19,8 +19,4 @@ export class HomeComponent {
   public navigateToApps(): void {
     this.routingService.navigateToApps();
   }
-
-  public navigateToRegister(): void {
-    this.routingService.navigateToRegister();
-  }
 }

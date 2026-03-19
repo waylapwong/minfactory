@@ -50,9 +50,15 @@
     <!-- ACCOUNT -->
     <a
       class="inline-flex h-8 items-center rounded px-2 py-1 leading-none font-bold text-gray-700 transition-colors hover:text-black focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-1 focus-visible:outline-none active:text-gray-900"
-      [routerLink]="AppPath.Root"
+      [attr.aria-current]="isInRegister() ? 'page' : null"
+      [routerLink]="[AppPath.Root, MinFactoryPath.Register]"
     >
-      <img src="assets/svgs/minfactory/login.svg" alt="Info" class="h-4 w-4" />
+      @if (!isInRegister()) {
+        <img src="assets/svgs/minfactory/login.svg" alt="Registrieren" class="h-4 w-4" />
+      }
+      @if (isInRegister()) {
+        <span>Register</span>
+      }
     </a>
   </div>
 </header>

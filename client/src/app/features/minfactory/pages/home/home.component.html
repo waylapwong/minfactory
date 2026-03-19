@@ -1,8 +1,5 @@
 <div class="flex h-full flex-col items-center justify-center">
   <min-h1 class="text-center"><min-logo>Factory</min-logo></min-h1>
   <p class="mb-12 text-center break-normal text-gray-500">Die Fabrik für minimalistische Apps</p>
-  <div class="flex w-full max-w-sm flex-col gap-2">
-    <min-button [color]="Color.White" (clicked)="navigateToApps()">Entdecke <min-logo>Apps</min-logo> &gt;</min-button>
-    <min-button [color]="Color.Green" (clicked)="navigateToRegister()">Account erstellen</min-button>
-  </div>
+  <min-button [color]="Color.White" (clicked)="navigateToApps()">Entdecke <min-logo>Apps</min-logo> &gt;</min-button>
 </div>
