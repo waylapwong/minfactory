@@ -31,7 +31,7 @@ export class AuthenticationGuard implements CanActivate {
   }
 
   private extractToken(authorizationHeader?: string): string {
-    if (!authorizationHeader || !authorizationHeader.startsWith('Bearer ')) {
+    if (!authorizationHeader?.startsWith('Bearer ')) {
       throw new UnauthorizedException('Missing or invalid Authorization header');
     }
     return authorizationHeader.slice('Bearer '.length);
