@@ -11,11 +11,9 @@
  */
 
 
-export interface MinRpsGameDto { 
+export interface MinFactoryUserDto { 
     createdAt: string;
+    email: string;
     id: string;
-    name: string;
-    observerCount: number;
-    playerCount: number;
 }
 

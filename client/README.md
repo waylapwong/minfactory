@@ -1,4 +1,4 @@
-## Firebase
+# Firebase
 
 Firebase wird im Frontend nur fuer Authentication verwendet.
 
