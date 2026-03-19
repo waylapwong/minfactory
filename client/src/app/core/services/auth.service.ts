@@ -1,29 +1,27 @@
-import { DestroyRef, Injectable, Signal, WritableSignal, computed, inject, signal } from '@angular/core';
-import { Auth, User } from '@angular/fire/auth';
-import { createUserWithEmailAndPassword } from '@angular/fire/auth';
+import { DestroyRef, Injectable, Signal, WritableSignal, computed, signal } from '@angular/core';
+import { Auth as FirebaseAuth, User as FirebaseUser, createUserWithEmailAndPassword } from '@angular/fire/auth';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
-  private readonly auth: Auth = inject(Auth);
-  private readonly destroyRef: DestroyRef = inject(DestroyRef);
+  private readonly cachedCurrentUser: WritableSignal<FirebaseUser | null> = signal(null);
 
-  private readonly cachedCurrentUser: WritableSignal<User | null> = signal(null);
-
-  public currentUser: Signal<User | null> = computed(() => this.cachedCurrentUser());
+  public currentUser: Signal<FirebaseUser | null> = computed(() => this.cachedCurrentUser());
   public isAuthenticated: Signal<boolean> = computed(() => this.currentUser() !== null);
 
-  constructor() {
-    const unsubscribe = this.auth.onAuthStateChanged((user: User | null) => {
+  constructor(
+    private readonly firebaseAuth: FirebaseAuth,
+    private readonly destroyRef: DestroyRef,
+  ) {
+    const unsubscribe = this.firebaseAuth.onAuthStateChanged((user: FirebaseUser | null) => {
       this.cachedCurrentUser.set(user);
     });
-
     this.destroyRef.onDestroy(unsubscribe);
   }
 
   public async getIdToken(forceRefresh: boolean = false): Promise<string | null> {
-    const currentUser: User | null = this.auth.currentUser ?? this.currentUser();
+    const currentUser: FirebaseUser | null = this.firebaseAuth.currentUser ?? this.currentUser();
 
     if (!currentUser) {
       return null;
@@ -32,16 +30,16 @@ export class AuthService {
     return currentUser.getIdToken(forceRefresh);
   }
 
-  public async signOut(): Promise<void> {
-    await this.auth.signOut();
-  }
-
   public async registerWithEmailAndPassword(email: string, password: string): Promise<void> {
     try {
-      await createUserWithEmailAndPassword(this.auth, email, password);
+      await createUserWithEmailAndPassword(this.firebaseAuth, email, password);
     } catch (error) {
       throw this.handleAuthError(error);
     }
+  }
+
+  public async signOut(): Promise<void> {
+    await this.firebaseAuth.signOut();
   }
 
   private handleAuthError(error: unknown): Error {

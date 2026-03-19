@@ -1,14 +1,9 @@
-import {
-  HttpEvent,
-  HttpHandler,
-  HttpInterceptor,
-  HttpRequest,
-} from '@angular/common/http';
+import { HttpEvent, HttpHandler, HttpInterceptor, HttpRequest } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, defer, from, of } from 'rxjs';
-import { catchError, switchMap } from 'rxjs/operators';
 import { ENVIRONMENT } from '../../../environments/environment';
 import { AuthService } from '../services/auth.service';
+import { catchError, switchMap } from 'rxjs/operators';
 
 @Injectable()
 export class FirebaseAuthInterceptor implements HttpInterceptor {

@@ -3,6 +3,7 @@
 Firebase wird im Frontend nur fuer Authentication verwendet.
 
 Die Konfiguration liegt in den Environment-Dateien:
+
 - `src/environments/environment.ts`
 - `src/environments/environment.dev.ts`
 

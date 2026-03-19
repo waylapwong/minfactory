@@ -1,12 +1,17 @@
 import { provideZonelessChangeDetection } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { RoutingService } from '../../../../core/services/routing.service';
 import { AuthService } from '../../../../core/services/auth.service';
+import { RoutingService } from '../../../../core/services/routing.service';
 import { RegisterComponent } from './register.component';
 
 describe('RegisterComponent', () => {
   let component: RegisterComponent;
   let fixture: ComponentFixture<RegisterComponent>;
+
+  const flushMicrotasks = async (): Promise<void> => {
+    await Promise.resolve();
+    await Promise.resolve();
+  };
 
   const routingServiceMock = {
     navigateToHomePage: jasmine.createSpy('navigateToHomePage'),
@@ -16,6 +21,8 @@ describe('RegisterComponent', () => {
     registerWithEmailAndPassword: jasmine.createSpy('registerWithEmailAndPassword').and.returnValue(Promise.resolve()),
   };
   beforeEach(async () => {
+    jasmine.clock().install();
+
     await TestBed.configureTestingModule({
       imports: [RegisterComponent],
       providers: [
@@ -37,6 +44,7 @@ describe('RegisterComponent', () => {
   });
 
   afterEach(() => {
+    jasmine.clock().uninstall();
     routingServiceMock.navigateToHomePage.calls.reset();
     authServiceMock.registerWithEmailAndPassword.calls.reset();
   });
@@ -71,16 +79,9 @@ describe('RegisterComponent', () => {
     component.passwordControl.setValue('password123');
     component.confirmPasswordControl.setValue('password123');
 
-    spyOn(window, 'setTimeout').and.callFake((handler: TimerHandler) => {
-      if (typeof handler === 'function') {
-        handler();
-      }
-      return 1 as unknown as ReturnType<typeof setTimeout>;
-    });
-
     component.submitRegistration();
-      // Give time for async registration to complete
-      await new Promise((resolve) => setTimeout(resolve, 50));
+    await flushMicrotasks();
+    jasmine.clock().tick(800);
 
     expect(authServiceMock.registerWithEmailAndPassword).toHaveBeenCalledWith('user@example.com', 'password123');
     expect(component.isSubmitting()).toBeFalse();
@@ -97,8 +98,7 @@ describe('RegisterComponent', () => {
     component.confirmPasswordControl.setValue('password123');
 
     component.submitRegistration();
-      // Give time for async registration to complete
-      await new Promise((resolve) => setTimeout(resolve, 50));
+    await flushMicrotasks();
 
     expect(component.isSubmitting()).toBeFalse();
     expect(component.isSnackbarOpen()).toBeTrue();

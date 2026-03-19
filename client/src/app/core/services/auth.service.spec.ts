@@ -16,16 +16,14 @@ describe('AuthService', () => {
   beforeEach(() => {
     authMock = {
       currentUser: null,
-      onAuthStateChanged: jasmine.createSpy('onAuthStateChanged').and.callFake(
-        (nextOrObserver: unknown) => {
-          authStateChangedCallback =
-            typeof nextOrObserver === 'function'
-              ? (nextOrObserver as (user: firebaseAuth.User | null) => void)
-              : (nextOrObserver as { next?: (user: firebaseAuth.User | null) => void }).next;
+      onAuthStateChanged: jasmine.createSpy('onAuthStateChanged').and.callFake((nextOrObserver: unknown) => {
+        authStateChangedCallback =
+          typeof nextOrObserver === 'function'
+            ? (nextOrObserver as (user: firebaseAuth.User | null) => void)
+            : (nextOrObserver as { next?: (user: firebaseAuth.User | null) => void }).next;
 
-          return () => undefined;
-        },
-      ),
+        return () => undefined;
+      }),
       signOut: jasmine.createSpy('signOut').and.resolveTo(),
     };
 
