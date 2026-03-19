@@ -11,4 +11,8 @@ export class MinFactoryUserRepository {
   public async createUser(): Promise<MinFactoryUserDto> {
     return await firstValueFrom(this.apiService.createMinFactoryUser());
   }
+
+  public async getMe(): Promise<MinFactoryUserDto> {
+    return await firstValueFrom(this.apiService.getMinFactoryUserMe());
+  }
 }

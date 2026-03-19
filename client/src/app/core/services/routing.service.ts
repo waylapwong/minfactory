@@ -14,6 +14,10 @@ export class RoutingService {
     this.router.navigate([AppPath.Root, MinFactoryPath.Apps]);
   }
 
+  public navigateToLogin(): void {
+    this.router.navigate([AppPath.Root, MinFactoryPath.Login]);
+  }
+
   public navigateToRegister(): void {
     this.router.navigate([AppPath.Root, MinFactoryPath.Register]);
   }

@@ -28,6 +28,7 @@ describe('RegisterComponent', () => {
 
   const routingServiceMock = {
     navigateToHomePage: jasmine.createSpy('navigateToHomePage'),
+    navigateToLogin: jasmine.createSpy('navigateToLogin'),
   };
 
   const registerServiceMock = {

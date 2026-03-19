@@ -2,6 +2,7 @@ import { provideZonelessChangeDetection } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { Router } from '@angular/router';
 import { AppPath } from '../../app.routes';
+import { MinFactoryPath } from '../../features/minfactory/minfactory.routes';
 import { MinRpsPath } from '../../features/minrps/minrps.routes';
 import { RoutingService } from './routing.service';
 
@@ -32,6 +33,14 @@ describe('RoutingService', () => {
       const spy = spyOn((service as any).router, 'navigate');
       service.navigateToHomePage();
       expect(spy).toHaveBeenCalledWith([AppPath.Root]);
+    });
+  });
+
+  describe('navigateToLogin()', () => {
+    it('should navigate to login page', () => {
+      const spy = spyOn((service as any).router, 'navigate');
+      service.navigateToLogin();
+      expect(spy).toHaveBeenCalledWith([AppPath.Root, MinFactoryPath.Login]);
     });
   });
 

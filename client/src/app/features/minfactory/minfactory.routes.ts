@@ -2,6 +2,7 @@ import { Routes } from '@angular/router';
 
 export enum MinFactoryPath {
   Apps = 'apps',
+  Login = 'login',
   Register = 'register',
   Root = '',
 }
@@ -18,5 +19,9 @@ export const MINFACTORY_ROUTES: Routes = [
   {
     path: MinFactoryPath.Register,
     loadComponent: () => import('./pages/register/register.component').then((m) => m.RegisterComponent),
+  },
+  {
+    path: MinFactoryPath.Login,
+    loadComponent: () => import('./pages/login/login.component').then((m) => m.LoginComponent),
   },
 ];
