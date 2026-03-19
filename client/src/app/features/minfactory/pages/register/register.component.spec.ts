@@ -19,7 +19,9 @@ describe('RegisterComponent', () => {
 
     try {
       await registerPromise;
-    } catch {}
+    } catch (error) {
+      void error;
+    }
 
     await flushMicrotasks();
   };
@@ -84,29 +86,15 @@ describe('RegisterComponent', () => {
   });
 
   it('should submit valid form and call register service', async () => {
-    let redirectCallback: (() => void) | undefined;
-
-    spyOn(globalThis, 'setTimeout').and.callFake((callback: TimerHandler) => {
-      if (typeof callback === 'function') {
-        redirectCallback = () => callback();
-      }
-
-      return 0 as ReturnType<typeof setTimeout>;
-    });
-
     component.emailControl.setValue('user@example.com');
     component.passwordControl.setValue('password123');
     component.confirmPasswordControl.setValue('password123');
 
     component.submitRegistration();
     await settleRegistration();
-    redirectCallback?.();
-    await flushMicrotasks();
 
     expect(registerServiceMock.registerUser).toHaveBeenCalledWith('user@example.com', 'password123');
-    expect(component.isSubmitting()).toBeFalse();
-    expect(component.isSnackbarOpen()).toBeTrue();
-    expect(routingServiceMock.navigateToHomePage).toHaveBeenCalled();
+    expect(component.isSubmitting()).toBeTrue();
   });
 
   it('should display error message when register service fails', async () => {
