@@ -1,5 +1,10 @@
 import { DestroyRef, Injectable, Signal, WritableSignal, computed, signal } from '@angular/core';
-import { Auth as FirebaseAuth, User as FirebaseUser, createUserWithEmailAndPassword } from '@angular/fire/auth';
+import {
+  Auth as FirebaseAuth,
+  User as FirebaseUser,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+} from '@angular/fire/auth';
 
 @Injectable({
   providedIn: 'root',
@@ -30,6 +35,14 @@ export class AuthService {
     return currentUser.getIdToken(forceRefresh);
   }
 
+  public async loginWithEmailAndPassword(email: string, password: string): Promise<void> {
+    try {
+      await signInWithEmailAndPassword(this.firebaseAuth, email, password);
+    } catch (error) {
+      throw this.handleAuthError(error);
+    }
+  }
+
   public async registerWithEmailAndPassword(email: string, password: string): Promise<void> {
     try {
       await createUserWithEmailAndPassword(this.firebaseAuth, email, password);
@@ -44,6 +57,18 @@ export class AuthService {
 
   private handleAuthError(error: unknown): Error {
     if (error instanceof Error) {
+      if (error.message.includes('user-not-found')) {
+        return new Error('Kein Konto mit dieser E-Mail-Adresse gefunden.');
+      }
+      if (error.message.includes('wrong-password')) {
+        return new Error('Falsches Passwort. Bitte versuche es erneut.');
+      }
+      if (error.message.includes('invalid-credential')) {
+        return new Error('Ungültige Anmeldedaten.');
+      }
+      if (error.message.includes('too-many-requests')) {
+        return new Error('Zu viele Anfragen. Bitte warte kurz und versuche es erneut.');
+      }
       if (error.message.includes('email-already-in-use')) {
         return new Error('Diese E-Mail-Adresse wird bereits verwendet.');
       }

@@ -1,4 +1,4 @@
-import { ConflictException, Injectable } from '@nestjs/common';
+import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { MinFactoryUserDomainMapper } from '../mapper/minfactory-user-domain.mapper';
 import { MinFactoryUserEntityMapper } from '../mapper/minfactory-user-entity.mapper';
 import { MinFactoryUser } from '../models/domains/minfactory-user';
@@ -53,6 +53,16 @@ export class MinFactoryUserService {
 
       throw error;
     }
+  }
+
+  public async getMe(firebaseUid: string): Promise<MinFactoryUserDto> {
+    const entity: MinFactoryUserEntity | null = await this.userRepository.findByFirebaseUid(firebaseUid);
+
+    if (!entity) {
+      throw new NotFoundException('User not found');
+    }
+
+    return this.entityToDto(entity);
   }
 
   private entityToDto(entity: MinFactoryUserEntity): MinFactoryUserDto {

@@ -1,4 +1,4 @@
-import { ConflictException } from '@nestjs/common';
+import { ConflictException, NotFoundException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { MinFactoryUserEntity } from '../models/entities/minfactory-user.entity';
 import { MinFactoryUserRepository } from '../repositories/minfactory-user.repository';
@@ -105,6 +105,41 @@ describe('MinFactoryUserService', () => {
       });
 
       await expect(userService.createUser(firebaseUid, email)).rejects.toThrow(ConflictException);
+    });
+  });
+
+  describe('getMe', () => {
+    const firebaseUid = 'firebase-uid-123';
+
+    const existingEntity: MinFactoryUserEntity = {
+      id: '550e8400-e29b-41d4-a716-446655440000',
+      firebaseUid: 'firebase-uid-123',
+      email: 'user@example.com',
+      createdAt: new Date('2025-01-01T00:00:00.000Z'),
+    };
+
+    it('should return user dto when user is found', async () => {
+      mockMinFactoryUserRepository.findByFirebaseUid.mockResolvedValue(existingEntity);
+
+      const result = await userService.getMe(firebaseUid);
+
+      expect(result.id).toBe(existingEntity.id);
+      expect(result.email).toBe(existingEntity.email);
+      expect(result.createdAt).toBe(existingEntity.createdAt);
+    });
+
+    it('should call repository with the given firebaseUid', async () => {
+      mockMinFactoryUserRepository.findByFirebaseUid.mockResolvedValue(existingEntity);
+
+      await userService.getMe(firebaseUid);
+
+      expect(mockMinFactoryUserRepository.findByFirebaseUid).toHaveBeenCalledWith(firebaseUid);
+    });
+
+    it('should throw NotFoundException when user is not found', async () => {
+      mockMinFactoryUserRepository.findByFirebaseUid.mockResolvedValue(null);
+
+      await expect(userService.getMe(firebaseUid)).rejects.toThrow(NotFoundException);
     });
   });
 });
