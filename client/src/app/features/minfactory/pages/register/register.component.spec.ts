@@ -19,8 +19,8 @@ describe('RegisterComponent', () => {
 
     try {
       await registerPromise;
-    } catch (error) {
-      void error;
+    } catch {
+      // Intentionally ignored for tests that assert failure behavior.
     }
 
     await flushMicrotasks();
@@ -58,6 +58,7 @@ describe('RegisterComponent', () => {
   afterEach(() => {
     routingServiceMock.navigateToHomePage.calls.reset();
     registerServiceMock.registerUser.calls.reset();
+    registerServiceMock.registerUser.and.returnValue(Promise.resolve());
   });
 
   it('should create', () => {
@@ -86,6 +87,8 @@ describe('RegisterComponent', () => {
   });
 
   it('should submit valid form and call register service', async () => {
+    registerServiceMock.registerUser.and.returnValue(Promise.resolve());
+
     component.emailControl.setValue('user@example.com');
     component.passwordControl.setValue('password123');
     component.confirmPasswordControl.setValue('password123');

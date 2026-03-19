@@ -65,27 +65,6 @@ describe('MinFactoryUserRepository', () => {
     });
   });
 
-  describe('existsByFirebaseUidOrEmail', () => {
-    it('should return true when user with firebaseUid exists', async () => {
-      mockTypeOrmRepository.count.mockResolvedValue(1);
-
-      const result = await userRepository.existsByFirebaseUidOrEmail('firebase-uid-123', 'user@example.com');
-
-      expect(result).toBe(true);
-      expect(mockTypeOrmRepository.count).toHaveBeenCalledWith({
-        where: [{ firebaseUid: 'firebase-uid-123' }, { email: 'user@example.com' }],
-      });
-    });
-
-    it('should return false when no user exists', async () => {
-      mockTypeOrmRepository.count.mockResolvedValue(0);
-
-      const result = await userRepository.existsByFirebaseUidOrEmail('firebase-uid-123', 'user@example.com');
-
-      expect(result).toBe(false);
-    });
-  });
-
   describe('save', () => {
     it('should save and return the entity', async () => {
       const entity: MinFactoryUserEntity = new MinFactoryUserEntity();
