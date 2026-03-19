@@ -1,11 +1,11 @@
 import { ConflictException, UnauthorizedException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
-import { UserDto } from '../models/dtos/user.dto';
-import { UserService } from '../services/user.service';
-import { UserController } from './user.controller';
+import { MinFactoryUserDto } from '../models/dtos/minfactory-user.dto';
+import { MinFactoryUserService } from '../services/minfactory-user.service';
+import { MinFactoryUserController } from './minfactory-user.controller';
 
-describe('UserController', () => {
-  let userController: UserController;
+describe('MinFactoryUserController', () => {
+  let userController: MinFactoryUserController;
 
   const mockUserService = {
     createUser: jest.fn(),
@@ -13,11 +13,11 @@ describe('UserController', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      controllers: [UserController],
-      providers: [{ provide: UserService, useValue: mockUserService }],
+      controllers: [MinFactoryUserController],
+      providers: [{ provide: MinFactoryUserService, useValue: mockUserService }],
     }).compile();
 
-    userController = module.get<UserController>(UserController);
+    userController = module.get<MinFactoryUserController>(MinFactoryUserController);
   });
 
   afterEach(() => {
@@ -28,7 +28,7 @@ describe('UserController', () => {
     const authorizationHeader = 'Bearer valid-token';
 
     it('should return user dto on success', async () => {
-      const dto: UserDto = new UserDto();
+      const dto: MinFactoryUserDto = new MinFactoryUserDto();
       dto.id = '550e8400-e29b-41d4-a716-446655440000';
       dto.email = 'user@example.com';
       dto.createdAt = new Date();

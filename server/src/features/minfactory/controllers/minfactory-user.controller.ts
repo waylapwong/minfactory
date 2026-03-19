@@ -1,0 +1,26 @@
+import { Controller, Headers, HttpCode, Post } from '@nestjs/common';
+import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { MinFactoryUserDto } from '../models/dtos/minfactory-user.dto';
+import { MinFactoryUserService } from '../services/minfactory-user.service';
+import { API_201 } from 'src/shared/decorators/api-201.decorator';
+import { API_401 } from 'src/shared/decorators/api-401.decorator';
+import { API_409 } from 'src/shared/decorators/api-409.decorator';
+import { API_500 } from 'src/shared/decorators/api-500.decorator';
+import { AppName } from 'src/shared/enums/app-name.enum';
+
+@Controller('minfactory/users')
+@ApiTags(AppName.MinFactory)
+export class MinFactoryUserController {
+  constructor(private readonly userService: MinFactoryUserService) {}
+
+  @Post()
+  @HttpCode(201)
+  @ApiOperation({ operationId: 'createMinFactoryUser' })
+  @API_201({ type: MinFactoryUserDto })
+  @API_401()
+  @API_409()
+  @API_500()
+  public async create(@Headers('authorization') authorizationHeader: string): Promise<MinFactoryUserDto> {
+    return await this.userService.createUser(authorizationHeader);
+  }
+}

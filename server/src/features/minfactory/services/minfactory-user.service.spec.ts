@@ -1,18 +1,18 @@
 import { ConflictException, UnauthorizedException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
+import { MinFactoryUserEntity } from '../models/entities/minfactory-user.entity';
+import { MinFactoryUserRepository } from '../repositories/minfactory-user.repository';
+import { MinFactoryUserService } from './minfactory-user.service';
 import { AuthenticationService } from 'src/core/authentication/authentication.service';
-import { UserEntity } from '../models/entities/user.entity';
-import { UserRepository } from '../repositories/user.repository';
-import { UserService } from './user.service';
 
-describe('UserService', () => {
-  let userService: UserService;
+describe('MinFactoryUserService', () => {
+  let userService: MinFactoryUserService;
 
   const mockAuthenticationService = {
     verifyIdToken: jest.fn(),
   };
 
-  const mockUserRepository = {
+  const mockMinFactoryUserRepository = {
     existsByFirebaseUidOrEmail: jest.fn(),
     save: jest.fn(),
   };
@@ -20,13 +20,13 @@ describe('UserService', () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
-        UserService,
+        MinFactoryUserService,
         { provide: AuthenticationService, useValue: mockAuthenticationService },
-        { provide: UserRepository, useValue: mockUserRepository },
+        { provide: MinFactoryUserRepository, useValue: mockMinFactoryUserRepository },
       ],
     }).compile();
 
-    userService = module.get<UserService>(UserService);
+    userService = module.get<MinFactoryUserService>(MinFactoryUserService);
   });
 
   afterEach(() => {
@@ -42,7 +42,7 @@ describe('UserService', () => {
       email: 'user@example.com',
     };
 
-    const savedEntity: UserEntity = {
+    const savedEntity: MinFactoryUserEntity = {
       id: '550e8400-e29b-41d4-a716-446655440000',
       firebaseUid: 'firebase-uid-123',
       email: 'user@example.com',
@@ -51,8 +51,8 @@ describe('UserService', () => {
 
     it('should create and return user dto on happy path', async () => {
       mockAuthenticationService.verifyIdToken.mockResolvedValue(decodedToken);
-      mockUserRepository.existsByFirebaseUidOrEmail.mockResolvedValue(false);
-      mockUserRepository.save.mockResolvedValue(savedEntity);
+      mockMinFactoryUserRepository.existsByFirebaseUidOrEmail.mockResolvedValue(false);
+      mockMinFactoryUserRepository.save.mockResolvedValue(savedEntity);
 
       const result = await userService.createUser(validAuthHeader);
 
@@ -84,19 +84,22 @@ describe('UserService', () => {
 
     it('should throw ConflictException when user already exists', async () => {
       mockAuthenticationService.verifyIdToken.mockResolvedValue(decodedToken);
-      mockUserRepository.existsByFirebaseUidOrEmail.mockResolvedValue(true);
+      mockMinFactoryUserRepository.existsByFirebaseUidOrEmail.mockResolvedValue(true);
 
       await expect(userService.createUser(validAuthHeader)).rejects.toThrow(ConflictException);
     });
 
     it('should check for existing user with uid and email from token', async () => {
       mockAuthenticationService.verifyIdToken.mockResolvedValue(decodedToken);
-      mockUserRepository.existsByFirebaseUidOrEmail.mockResolvedValue(false);
-      mockUserRepository.save.mockResolvedValue(savedEntity);
+      mockMinFactoryUserRepository.existsByFirebaseUidOrEmail.mockResolvedValue(false);
+      mockMinFactoryUserRepository.save.mockResolvedValue(savedEntity);
 
       await userService.createUser(validAuthHeader);
 
-      expect(mockUserRepository.existsByFirebaseUidOrEmail).toHaveBeenCalledWith(decodedToken.uid, decodedToken.email);
+      expect(mockMinFactoryUserRepository.existsByFirebaseUidOrEmail).toHaveBeenCalledWith(
+        decodedToken.uid,
+        decodedToken.email,
+      );
     });
   });
 });

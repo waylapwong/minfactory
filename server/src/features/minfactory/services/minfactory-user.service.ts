@@ -1,20 +1,20 @@
 import { ConflictException, Injectable, UnauthorizedException } from '@nestjs/common';
+import { MinFactoryUserDomainMapper } from '../mapper/minfactory-user-domain.mapper';
+import { MinFactoryUserEntityMapper } from '../mapper/minfactory-user-entity.mapper';
+import { MinFactoryUser } from '../models/domains/minfactory-user';
+import { MinFactoryUserDto } from '../models/dtos/minfactory-user.dto';
+import { MinFactoryUserEntity } from '../models/entities/minfactory-user.entity';
+import { MinFactoryUserRepository } from '../repositories/minfactory-user.repository';
 import { AuthenticationService } from 'src/core/authentication/authentication.service';
-import { UserDomainMapper } from '../mapper/user-domain.mapper';
-import { UserEntityMapper } from '../mapper/user-entity.mapper';
-import { User } from '../models/domains/user';
-import { UserDto } from '../models/dtos/user.dto';
-import { UserEntity } from '../models/entities/user.entity';
-import { UserRepository } from '../repositories/user.repository';
 
 @Injectable()
-export class UserService {
+export class MinFactoryUserService {
   constructor(
-    private readonly userRepository: UserRepository,
+    private readonly userRepository: MinFactoryUserRepository,
     private readonly authenticationService: AuthenticationService,
   ) {}
 
-  public async createUser(authorizationHeader: string): Promise<UserDto> {
+  public async createUser(authorizationHeader: string): Promise<MinFactoryUserDto> {
     // Token aus Header extrahieren
     const token: string = this.extractToken(authorizationHeader);
 
@@ -41,17 +41,17 @@ export class UserService {
     }
 
     // Domain-Objekt erzeugen
-    const domain: User = new User();
+    const domain: MinFactoryUser = new MinFactoryUser();
     domain.firebaseUid = firebaseUid;
     domain.email = email;
 
     // Mapping und Persistenz
-    const entity: UserEntity = UserDomainMapper.domainToEntity(domain);
-    const savedEntity: UserEntity = await this.userRepository.save(entity);
+    const entity: MinFactoryUserEntity = MinFactoryUserDomainMapper.domainToEntity(domain);
+    const savedEntity: MinFactoryUserEntity = await this.userRepository.save(entity);
 
     // Mapping für Response
-    const savedDomain: User = UserEntityMapper.entityToDomain(savedEntity);
-    const dto: UserDto = UserDomainMapper.domainToDto(savedDomain);
+    const savedDomain: MinFactoryUser = MinFactoryUserEntityMapper.entityToDomain(savedEntity);
+    const dto: MinFactoryUserDto = MinFactoryUserDomainMapper.domainToDto(savedDomain);
 
     return dto;
   }

@@ -1,10 +1,10 @@
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Test, TestingModule } from '@nestjs/testing';
-import { UserEntity } from '../models/entities/user.entity';
-import { UserRepository } from './user.repository';
+import { MinFactoryUserEntity } from '../models/entities/minfactory-user.entity';
+import { MinFactoryUserRepository } from './minfactory-user.repository';
 
-describe('UserRepository', () => {
-  let userRepository: UserRepository;
+describe('MinFactoryUserRepository', () => {
+  let userRepository: MinFactoryUserRepository;
 
   const mockTypeOrmRepository = {
     count: jest.fn(),
@@ -13,10 +13,13 @@ describe('UserRepository', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [UserRepository, { provide: getRepositoryToken(UserEntity), useValue: mockTypeOrmRepository }],
+      providers: [
+        MinFactoryUserRepository,
+        { provide: getRepositoryToken(MinFactoryUserEntity), useValue: mockTypeOrmRepository },
+      ],
     }).compile();
 
-    userRepository = module.get<UserRepository>(UserRepository);
+    userRepository = module.get<MinFactoryUserRepository>(MinFactoryUserRepository);
   });
 
   afterEach(() => {
@@ -46,11 +49,15 @@ describe('UserRepository', () => {
 
   describe('save', () => {
     it('should save and return the entity', async () => {
-      const entity: UserEntity = new UserEntity();
+      const entity: MinFactoryUserEntity = new MinFactoryUserEntity();
       entity.firebaseUid = 'firebase-uid-123';
       entity.email = 'user@example.com';
 
-      const savedEntity: UserEntity = { ...entity, id: '550e8400-e29b-41d4-a716-446655440000', createdAt: new Date() };
+      const savedEntity: MinFactoryUserEntity = {
+        ...entity,
+        id: '550e8400-e29b-41d4-a716-446655440000',
+        createdAt: new Date(),
+      };
       mockTypeOrmRepository.save.mockResolvedValue(savedEntity);
 
       const result = await userRepository.save(entity);
