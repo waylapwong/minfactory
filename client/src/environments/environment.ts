@@ -1,4 +1,12 @@
 export const ENVIRONMENT = {
   API_BASE_PATH: 'https://minfactory-65293f731f4e.herokuapp.com',
+  FIREBASE_CONFIG: {
+    apiKey: 'REPLACE_WITH_FIREBASE_API_KEY',
+    authDomain: 'REPLACE_WITH_FIREBASE_AUTH_DOMAIN',
+    projectId: 'REPLACE_WITH_FIREBASE_PROJECT_ID',
+    appId: 'REPLACE_WITH_FIREBASE_APP_ID',
+    messagingSenderId: 'REPLACE_WITH_FIREBASE_MESSAGING_SENDER_ID',
+    storageBucket: 'REPLACE_WITH_FIREBASE_STORAGE_BUCKET',
+  },
   PRODUCTION: true,
 };
