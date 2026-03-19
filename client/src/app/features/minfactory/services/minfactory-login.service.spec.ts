@@ -13,9 +13,7 @@ describe('MinFactoryLoginService', () => {
 
   beforeEach(() => {
     authServiceMock = {
-      loginWithEmailAndPassword: jasmine
-        .createSpy('loginWithEmailAndPassword')
-        .and.returnValue(Promise.resolve()),
+      loginWithEmailAndPassword: jasmine.createSpy('loginWithEmailAndPassword').and.returnValue(Promise.resolve()),
     };
     userRepositoryMock = jasmine.createSpyObj('MinFactoryUserRepository', ['getMe']);
 
@@ -55,9 +53,7 @@ describe('MinFactoryLoginService', () => {
     });
 
     it('should not fetch minfactory user when firebase login fails', async () => {
-      authServiceMock.loginWithEmailAndPassword.and.returnValue(
-        Promise.reject(new Error('Ungültige Anmeldedaten.')),
-      );
+      authServiceMock.loginWithEmailAndPassword.and.returnValue(Promise.reject(new Error('Ungültige Anmeldedaten.')));
 
       await expectAsync(service.loginUser('user@example.com', 'wrongpassword')).toBeRejectedWithError(
         'Ungültige Anmeldedaten.',

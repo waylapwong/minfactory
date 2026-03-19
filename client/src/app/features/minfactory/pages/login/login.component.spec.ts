@@ -14,8 +14,9 @@ describe('LoginComponent', () => {
   };
 
   const settleLogin = async (): Promise<void> => {
-    const loginPromise: Promise<unknown> | undefined = loginServiceMock.loginUser.calls.mostRecent()
-      ?.returnValue as Promise<unknown> | undefined;
+    const loginPromise: Promise<unknown> | undefined = loginServiceMock.loginUser.calls.mostRecent()?.returnValue as
+      | Promise<unknown>
+      | undefined;
 
     try {
       await loginPromise;
