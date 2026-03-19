@@ -1,6 +1,6 @@
 import { ConflictException, UnauthorizedException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
-import { FirebaseService } from 'src/core/firebase/firebase.service';
+import { AuthenticationService } from 'src/core/authentication/authentication.service';
 import { UserEntity } from '../models/entities/user.entity';
 import { UserRepository } from '../repositories/user.repository';
 import { UserService } from './user.service';
@@ -8,7 +8,7 @@ import { UserService } from './user.service';
 describe('UserService', () => {
   let userService: UserService;
 
-  const mockFirebaseService = {
+  const mockAuthenticationService = {
     verifyIdToken: jest.fn(),
   };
 
@@ -21,7 +21,7 @@ describe('UserService', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         UserService,
-        { provide: FirebaseService, useValue: mockFirebaseService },
+        { provide: AuthenticationService, useValue: mockAuthenticationService },
         { provide: UserRepository, useValue: mockUserRepository },
       ],
     }).compile();
@@ -50,7 +50,7 @@ describe('UserService', () => {
     };
 
     it('should create and return user dto on happy path', async () => {
-      mockFirebaseService.verifyIdToken.mockResolvedValue(decodedToken);
+      mockAuthenticationService.verifyIdToken.mockResolvedValue(decodedToken);
       mockUserRepository.existsByFirebaseUidOrEmail.mockResolvedValue(false);
       mockUserRepository.save.mockResolvedValue(savedEntity);
 
@@ -59,7 +59,7 @@ describe('UserService', () => {
       expect(result.id).toBe(savedEntity.id);
       expect(result.email).toBe(savedEntity.email);
       expect(result.createdAt).toBe(savedEntity.createdAt);
-      expect(mockFirebaseService.verifyIdToken).toHaveBeenCalledWith(validToken);
+      expect(mockAuthenticationService.verifyIdToken).toHaveBeenCalledWith(validToken);
     });
 
     it('should throw UnauthorizedException when authorization header is missing', async () => {
@@ -71,26 +71,26 @@ describe('UserService', () => {
     });
 
     it('should throw UnauthorizedException when firebase token is invalid', async () => {
-      mockFirebaseService.verifyIdToken.mockRejectedValue(new Error('Invalid token'));
+      mockAuthenticationService.verifyIdToken.mockRejectedValue(new Error('Invalid token'));
 
       await expect(userService.createUser(validAuthHeader)).rejects.toThrow(UnauthorizedException);
     });
 
     it('should throw UnauthorizedException when firebase token has no email claim', async () => {
-      mockFirebaseService.verifyIdToken.mockResolvedValue({ uid: 'firebase-uid-123', email: null });
+      mockAuthenticationService.verifyIdToken.mockResolvedValue({ uid: 'firebase-uid-123', email: null });
 
       await expect(userService.createUser(validAuthHeader)).rejects.toThrow(UnauthorizedException);
     });
 
     it('should throw ConflictException when user already exists', async () => {
-      mockFirebaseService.verifyIdToken.mockResolvedValue(decodedToken);
+      mockAuthenticationService.verifyIdToken.mockResolvedValue(decodedToken);
       mockUserRepository.existsByFirebaseUidOrEmail.mockResolvedValue(true);
 
       await expect(userService.createUser(validAuthHeader)).rejects.toThrow(ConflictException);
     });
 
     it('should check for existing user with uid and email from token', async () => {
-      mockFirebaseService.verifyIdToken.mockResolvedValue(decodedToken);
+      mockAuthenticationService.verifyIdToken.mockResolvedValue(decodedToken);
       mockUserRepository.existsByFirebaseUidOrEmail.mockResolvedValue(false);
       mockUserRepository.save.mockResolvedValue(savedEntity);
 

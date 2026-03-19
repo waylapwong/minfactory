@@ -1,5 +1,5 @@
 import { ConflictException, Injectable, UnauthorizedException } from '@nestjs/common';
-import { FirebaseService } from 'src/core/firebase/firebase.service';
+import { AuthenticationService } from 'src/core/authentication/authentication.service';
 import { UserDomainMapper } from '../mapper/user-domain.mapper';
 import { UserEntityMapper } from '../mapper/user-entity.mapper';
 import { User } from '../models/domains/user';
@@ -11,7 +11,7 @@ import { UserRepository } from '../repositories/user.repository';
 export class UserService {
   constructor(
     private readonly userRepository: UserRepository,
-    private readonly firebaseService: FirebaseService,
+    private readonly authenticationService: AuthenticationService,
   ) {}
 
   public async createUser(authorizationHeader: string): Promise<UserDto> {
@@ -23,7 +23,7 @@ export class UserService {
     let email: string;
 
     try {
-      const decodedToken = await this.firebaseService.verifyIdToken(token);
+      const decodedToken = await this.authenticationService.verifyIdToken(token);
       firebaseUid = decodedToken.uid;
       email = decodedToken.email ?? '';
     } catch {

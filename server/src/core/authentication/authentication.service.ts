@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import * as admin from 'firebase-admin';
 
 @Injectable()
-export class FirebaseService {
+export class AuthenticationService {
   private readonly app: admin.app.App;
 
   constructor() {

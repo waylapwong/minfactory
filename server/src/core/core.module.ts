@@ -1,12 +1,12 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { FirebaseModule } from './firebase/firebase.module';
+import { AuthenticationModule } from './authentication/authentication.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot(),
-    FirebaseModule,
+    AuthenticationModule,
     TypeOrmModule.forRoot({
       database: process.env.DB_DATABASE,
       entities: ['dist/**/*.entity{.ts,.js}'],
