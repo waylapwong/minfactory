@@ -1,5 +1,6 @@
-import { Component, OnDestroy, WritableSignal, signal } from '@angular/core';
+import { Component, OnDestroy, WritableSignal, inject, signal } from '@angular/core';
 import { AbstractControl, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { AuthService } from '../../../../core/services/auth.service';
 import { RoutingService } from '../../../../core/services/routing.service';
 import { ButtonComponent } from '../../../../shared/components/button/button.component';
 import { CardComponent } from '../../../../shared/components/card/card.component';
@@ -7,17 +8,6 @@ import { H1Component } from '../../../../shared/components/h1/h1.component';
 import { InputComponent } from '../../../../shared/components/input/input.component';
 import { SnackbarComponent } from '../../../../shared/components/snackbar/snackbar.component';
 import { Color } from '../../../../shared/enums/color.enum';
-
-function passwordsMatchValidator(group: AbstractControl): { passwordsMismatch: true } | null {
-  const form = group as RegisterForm;
-  return form.controls.password.value === form.controls.confirmPassword.value ? null : { passwordsMismatch: true };
-}
-
-type RegisterForm = FormGroup<{
-  confirmPassword: FormControl<string>;
-  email: FormControl<string>;
-  password: FormControl<string>;
-}>;
 
 @Component({
   selector: 'minfactory-register',
@@ -49,16 +39,18 @@ export class RegisterComponent implements OnDestroy {
   );
   public readonly snackbarMessage: WritableSignal<string> = signal('');
 
+  private readonly authService: AuthService = inject(AuthService);
+
   private redirectTimeoutId: ReturnType<typeof setTimeout> | null = null;
 
   constructor(private readonly routingService: RoutingService) {}
 
-  public get emailControl(): FormControl<string> {
-    return this.registerForm.controls.email;
-  }
-
   public get confirmPasswordControl(): FormControl<string> {
     return this.registerForm.controls.confirmPassword;
+  }
+
+  public get emailControl(): FormControl<string> {
+    return this.registerForm.controls.email;
   }
 
   public get passwordControl(): FormControl<string> {
@@ -78,6 +70,10 @@ export class RegisterComponent implements OnDestroy {
     this.snackbarMessage.set('');
   }
 
+  public hasConfirmPasswordRequiredError(): boolean {
+    return this.confirmPasswordControl.hasError('required') && this.isTouchedOrDirty(this.confirmPasswordControl);
+  }
+
   public hasEmailFormatError(): boolean {
     return this.emailControl.hasError('email') && this.isTouchedOrDirty(this.emailControl);
   }
@@ -88,10 +84,6 @@ export class RegisterComponent implements OnDestroy {
 
   public hasPasswordMinLengthError(): boolean {
     return this.passwordControl.hasError('minlength') && this.isTouchedOrDirty(this.passwordControl);
-  }
-
-  public hasConfirmPasswordRequiredError(): boolean {
-    return this.confirmPasswordControl.hasError('required') && this.isTouchedOrDirty(this.confirmPasswordControl);
   }
 
   public hasPasswordMismatchError(): boolean {
@@ -115,14 +107,7 @@ export class RegisterComponent implements OnDestroy {
     this.isSubmitting.set(true);
     this.closeSnackbar();
 
-    this.redirectTimeoutId = setTimeout(() => {
-      this.isSubmitting.set(false);
-      this.snackbarMessage.set('Account erfolgreich erstellt. Du wirst zur Startseite weitergeleitet.');
-      this.isSnackbarOpen.set(true);
-      this.registerForm.reset({ email: '', password: '' });
-      this.routingService.navigateToHomePage();
-      this.redirectTimeoutId = null;
-    }, 800);
+    this.registerUserWithFirebase();
   }
 
   private clearRedirectTimeout(): void {
@@ -137,4 +122,39 @@ export class RegisterComponent implements OnDestroy {
   private isTouchedOrDirty(control: FormControl<string>): boolean {
     return control.touched || control.dirty;
   }
+
+  private async registerUserWithFirebase(): Promise<void> {
+    try {
+      const email = this.emailControl.value;
+      const password = this.passwordControl.value;
+
+      await this.authService.registerWithEmailAndPassword(email, password);
+
+      this.redirectTimeoutId = setTimeout(() => {
+        this.isSubmitting.set(false);
+        this.snackbarMessage.set('Account erfolgreich erstellt. Du wirst zur Startseite weitergeleitet.');
+        this.isSnackbarOpen.set(true);
+        this.registerForm.reset({ email: '', password: '', confirmPassword: '' });
+        this.routingService.navigateToHomePage();
+        this.redirectTimeoutId = null;
+      }, 800);
+    } catch (error) {
+      this.isSubmitting.set(false);
+      const errorMessage =
+        error instanceof Error ? error.message : 'Ein Fehler ist aufgetreten. Bitte versuche es erneut.';
+      this.snackbarMessage.set(errorMessage);
+      this.isSnackbarOpen.set(true);
+    }
+  }
+}
+
+type RegisterForm = FormGroup<{
+  confirmPassword: FormControl<string>;
+  email: FormControl<string>;
+  password: FormControl<string>;
+}>;
+
+function passwordsMatchValidator(group: AbstractControl): { passwordsMismatch: true } | null {
+  const form = group as RegisterForm;
+  return form.controls.password.value === form.controls.confirmPassword.value ? null : { passwordsMismatch: true };
 }
