@@ -5,9 +5,9 @@
       <!-- MINFACTORY (HOME) -->
       <li>
         <a
+          [attr.aria-current]="isInFactory() ? 'page' : null"
           [routerLink]="AppPath.Root"
           class="inline-flex h-8 items-center rounded px-2 py-1 leading-none font-bold text-gray-700 transition-colors hover:text-black focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-1 focus-visible:outline-none active:text-gray-900"
-          [attr.aria-current]="isInFactory() ? 'page' : null"
         >
           <!-- HOME ICON WHEN NOT IN FACTORY CONTEXT (MOBILE + DESKTOP) -->
           @if (!isInFactory()) {
@@ -39,7 +39,7 @@
   </nav>
 
   <!-- ACTIONS -->
-  <div class="flex flex-row gap-2">
+  <div class="flex flex-row gap-0">
     <min-popover [content]="appVersion()">
       <span
         class="inline-flex h-8 items-center rounded px-2 py-1 leading-none text-gray-700 transition-colors hover:text-black focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-1 focus-visible:outline-none active:text-gray-900"
@@ -47,6 +47,13 @@
         <img src="assets/svgs/minfactory/info.svg" alt="Info" class="h-4 w-4" />
       </span>
     </min-popover>
+    <!-- ACCOUNT -->
+    <a
+      class="inline-flex h-8 items-center rounded px-2 py-1 leading-none font-bold text-gray-700 transition-colors hover:text-black focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-1 focus-visible:outline-none active:text-gray-900"
+      [routerLink]="AppPath.Root"
+    >
+      <img src="assets/svgs/minfactory/login.svg" alt="Info" class="h-4 w-4" />
+    </a>
   </div>
 </header>
 
