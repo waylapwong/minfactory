@@ -1,5 +1,7 @@
-import { ConflictException, UnauthorizedException } from '@nestjs/common';
+import { ConflictException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
+import { AuthenticationService } from 'src/core/authentication/authentication.service';
+import { AuthenticatedUser, AuthenticationGuard } from 'src/core/authentication/authentication.guard';
 import { MinFactoryUserDto } from '../models/dtos/minfactory-user.dto';
 import { MinFactoryUserService } from '../services/minfactory-user.service';
 import { MinFactoryUserController } from './minfactory-user.controller';
@@ -14,7 +16,11 @@ describe('MinFactoryUserController', () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [MinFactoryUserController],
-      providers: [{ provide: MinFactoryUserService, useValue: mockUserService }],
+      providers: [
+        { provide: MinFactoryUserService, useValue: mockUserService },
+        { provide: AuthenticationGuard, useValue: { canActivate: jest.fn().mockReturnValue(true) } },
+        { provide: AuthenticationService, useValue: { verifyIdToken: jest.fn() } },
+      ],
     }).compile();
 
     userController = module.get<MinFactoryUserController>(MinFactoryUserController);
@@ -25,7 +31,10 @@ describe('MinFactoryUserController', () => {
   });
 
   describe('create', () => {
-    const authorizationHeader = 'Bearer valid-token';
+    const user: AuthenticatedUser = {
+      firebaseUid: 'firebase-uid-123',
+      email: 'user@example.com',
+    };
 
     it('should return user dto on success', async () => {
       const dto: MinFactoryUserDto = new MinFactoryUserDto();
@@ -35,22 +44,16 @@ describe('MinFactoryUserController', () => {
 
       mockUserService.createUser.mockResolvedValue(dto);
 
-      const result = await userController.create(authorizationHeader);
+      const result = await userController.create(user);
 
       expect(result).toBe(dto);
-      expect(mockUserService.createUser).toHaveBeenCalledWith(authorizationHeader);
-    });
-
-    it('should propagate UnauthorizedException from service', async () => {
-      mockUserService.createUser.mockRejectedValue(new UnauthorizedException());
-
-      await expect(userController.create(authorizationHeader)).rejects.toThrow(UnauthorizedException);
+      expect(mockUserService.createUser).toHaveBeenCalledWith(user.firebaseUid, user.email);
     });
 
     it('should propagate ConflictException from service', async () => {
       mockUserService.createUser.mockRejectedValue(new ConflictException());
 
-      await expect(userController.create(authorizationHeader)).rejects.toThrow(ConflictException);
+      await expect(userController.create(user)).rejects.toThrow(ConflictException);
     });
   });
 });
