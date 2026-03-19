@@ -50,12 +50,12 @@
     <!-- ACCOUNT -->
     <a
       class="inline-flex h-8 items-center rounded px-2 py-1 leading-none font-bold text-gray-700 transition-colors hover:text-black focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-1 focus-visible:outline-none active:text-gray-900"
-      [attr.aria-current]="isInRegister() ? 'page' : null"
-      [routerLink]="[AppPath.Root, MinFactoryPath.Register]"
+      [attr.aria-current]="isInRegister() || isInProfile() ? 'page' : null"
+      [routerLink]="accountRouterLink()"
     >
-      @if (!isInRegister() && isAuthenticated()) {
+      @if (isAuthenticated()) {
         <img src="assets/svgs/minfactory/account.svg" alt="Account" class="h-4 w-4" />
-      } @else if (!isInRegister()) {
+      } @else {
         <img src="assets/svgs/minfactory/login.svg" alt="Registrieren" class="h-4 w-4" />
       }
     </a>

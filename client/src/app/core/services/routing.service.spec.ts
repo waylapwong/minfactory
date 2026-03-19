@@ -44,6 +44,14 @@ describe('RoutingService', () => {
     });
   });
 
+  describe('navigateToProfile()', () => {
+    it('should navigate to profile page', () => {
+      const spy = spyOn((service as any).router, 'navigate');
+      service.navigateToProfile();
+      expect(spy).toHaveBeenCalledWith([AppPath.Root, MinFactoryPath.Profile]);
+    });
+  });
+
   describe('navigateToMinRps()', () => {
     it('should navigate to minRPS', () => {
       const spy = spyOn((service as any).router, 'navigate');

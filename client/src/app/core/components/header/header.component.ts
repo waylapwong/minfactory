@@ -22,10 +22,12 @@ import { ContextService } from '../../services/context.service';
 export class HeaderComponent {
   public readonly AppPath: typeof AppPath = AppPath;
   public readonly MinFactoryPath: typeof MinFactoryPath = MinFactoryPath;
+  public readonly accountRouterLink: Signal<string[]>;
   public readonly appVersion: Signal<string>;
   public readonly isAuthenticated: Signal<boolean>;
   public readonly isInFactory: Signal<boolean>;
   public readonly isInMinRps: Signal<boolean>;
+  public readonly isInProfile: Signal<boolean>;
   public readonly isInRegister: Signal<boolean>;
 
   private readonly currentUrl: Signal<string>;
@@ -37,6 +39,9 @@ export class HeaderComponent {
   ) {
     this.appVersion = this.contextService.appVersion;
     this.isAuthenticated = this.authService.isAuthenticated;
+    this.accountRouterLink = computed(() =>
+      this.isAuthenticated() ? [AppPath.Root, MinFactoryPath.Profile] : [AppPath.Root, MinFactoryPath.Login],
+    );
     this.currentUrl = toSignal(
       this.router.events.pipe(
         filter((event): event is NavigationEnd => event instanceof NavigationEnd),
@@ -47,6 +52,7 @@ export class HeaderComponent {
     );
     this.isInFactory = computed(() => this.contextService.app() === AppName.MinFactory);
     this.isInMinRps = computed(() => this.contextService.app() === AppName.MinRps);
+    this.isInProfile = computed(() => this.currentUrl() === `/${MinFactoryPath.Profile}`);
     this.isInRegister = computed(() => this.currentUrl() === `/${MinFactoryPath.Register}`);
   }
 }

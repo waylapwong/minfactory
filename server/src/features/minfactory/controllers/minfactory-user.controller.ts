@@ -17,6 +17,17 @@ import { AppName } from 'src/shared/enums/app-name.enum';
 export class MinFactoryUserController {
   constructor(private readonly userService: MinFactoryUserService) {}
 
+  @Get('me')
+  @UseGuards(AuthenticationGuard)
+  @ApiOperation({ operationId: 'getMinFactoryUserMe' })
+  @API_200({ type: MinFactoryUserDto })
+  @API_401()
+  @API_404()
+  @API_500()
+  public async getMe(@User() user: AuthenticatedUser): Promise<MinFactoryUserDto> {
+    return await this.userService.getMe(user.firebaseUid);
+  }
+
   @Post()
   @HttpCode(201)
   @UseGuards(AuthenticationGuard)
@@ -27,16 +38,5 @@ export class MinFactoryUserController {
   @API_500()
   public async create(@User() user: AuthenticatedUser): Promise<MinFactoryUserDto> {
     return await this.userService.createUser(user.firebaseUid, user.email);
-  }
-
-  @Get('me')
-  @UseGuards(AuthenticationGuard)
-  @ApiOperation({ operationId: 'getMinFactoryUserMe' })
-  @API_200({ type: MinFactoryUserDto })
-  @API_401()
-  @API_404()
-  @API_500()
-  public async getMe(@User() user: AuthenticatedUser): Promise<MinFactoryUserDto> {
-    return await this.userService.getMe(user.firebaseUid);
   }
 }
