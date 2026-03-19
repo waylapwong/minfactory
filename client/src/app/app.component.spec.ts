@@ -1,5 +1,6 @@
 import { provideZonelessChangeDetection } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
+import { Auth } from '@angular/fire/auth';
 import { provideRouter } from '@angular/router';
 import { AppComponent } from './app.component';
 import { ContextService } from './core/services/context.service';
@@ -9,7 +10,18 @@ describe('AppComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [AppComponent],
-      providers: [provideZonelessChangeDetection(), provideRouter([])],
+      providers: [
+        provideZonelessChangeDetection(),
+        provideRouter([]),
+        {
+          provide: Auth,
+          useValue: {
+            currentUser: null,
+            onAuthStateChanged: () => () => undefined,
+            signOut: () => Promise.resolve(),
+          },
+        },
+      ],
     }).compileComponents();
   });
 
