@@ -16,16 +16,13 @@ export class MinFactoryUserService {
     if (alreadyExists) {
       throw new ConflictException('User already registered');
     }
-
     // Domain-Objekt erzeugen
     const domain: MinFactoryUser = new MinFactoryUser();
     domain.firebaseUid = firebaseUid;
     domain.email = email;
-
     // Mapping und Persistenz
     const entity: MinFactoryUserEntity = MinFactoryUserDomainMapper.domainToEntity(domain);
     const savedEntity: MinFactoryUserEntity = await this.userRepository.save(entity);
-
     // Mapping für Response
     const savedDomain: MinFactoryUser = MinFactoryUserEntityMapper.entityToDomain(savedEntity);
     const dto: MinFactoryUserDto = MinFactoryUserDomainMapper.domainToDto(savedDomain);
