@@ -1,0 +1,56 @@
+<div class="relative flex h-full w-full items-center justify-center px-4 py-6">
+  <min-card class="w-full max-w-md">
+    <div class="flex flex-col gap-4">
+      <div class="text-center">
+        <min-h1>Registrieren</min-h1>
+        <p class="text-gray-500">Lege deinen Account mit E-Mail und Passwort an.</p>
+      </div>
+
+      <form class="flex flex-col" [formGroup]="registerForm" (ngSubmit)="submitRegistration()">
+        <!-- EMAIL -->
+        <div class="flex flex-col gap-1">
+          <min-input
+            [formControlInput]="emailControl"
+            [id]="'register-email'"
+            [label]="'E-Mail'"
+            [placeholder]="'name@beispiel.de'"
+            [type]="'email'"
+          >
+          </min-input>
+          @if (hasEmailRequiredError()) {
+            <p class="text-sm text-red-600">Bitte gib deine E-Mail-Adresse ein.</p>
+          }
+          @if (hasEmailFormatError()) {
+            <p class="text-sm text-red-600">Bitte gib eine gueltige E-Mail-Adresse ein.</p>
+          }
+        </div>
+
+        <!-- PASSWORD -->
+        <div class="flex flex-col gap-1">
+          <min-input
+            [formControlInput]="passwordControl"
+            [id]="'register-password'"
+            [label]="'Passwort'"
+            [placeholder]="'Mindestens 8 Zeichen'"
+            [type]="'password'"
+          >
+          </min-input>
+          @if (hasPasswordRequiredError()) {
+            <p class="text-sm text-red-600">Bitte gib ein Passwort ein.</p>
+          }
+          @if (hasPasswordMinLengthError()) {
+            <p class="text-sm text-red-600">Passwort muss mindestens 8 Zeichen haben.</p>
+          }
+        </div>
+
+        <min-button class="mt-8" [color]="Color.Green" [isDisabled]="!canSubmit()" [type]="'submit'">
+          {{ isSubmitting() ? 'Konto wird erstellt...' : 'Konto erstellen' }}
+        </min-button>
+      </form>
+
+      <div class="text-center text-sm text-gray-500">Schon ein Konto? Anmeldung folgt in Kürze.</div>
+    </div>
+  </min-card>
+
+  <min-snackbar [isOpen]="isSnackbarOpen()" [message]="snackbarMessage()" (closed)="closeSnackbar()"></min-snackbar>
+</div>
