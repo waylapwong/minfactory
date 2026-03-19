@@ -53,7 +53,9 @@
       [attr.aria-current]="isInRegister() ? 'page' : null"
       [routerLink]="[AppPath.Root, MinFactoryPath.Register]"
     >
-      @if (!isInRegister()) {
+      @if (!isInRegister() && isAuthenticated()) {
+        <img src="assets/svgs/minfactory/account.svg" alt="Account" class="h-4 w-4" />
+      } @else if (!isInRegister()) {
         <img src="assets/svgs/minfactory/login.svg" alt="Registrieren" class="h-4 w-4" />
       }
     </a>

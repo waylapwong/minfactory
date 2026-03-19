@@ -1,19 +1,33 @@
-import { provideZonelessChangeDetection } from '@angular/core';
+import { provideZonelessChangeDetection, signal, WritableSignal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { HeaderComponent } from './header.component';
 import { provideRouter } from '@angular/router';
 import { AppName } from '../../../shared/enums/app-name.enum';
+import { AuthService } from '../../services/auth.service';
 import { ContextService } from '../../services/context.service';
 
 describe('HeaderComponent', () => {
   let component: HeaderComponent;
   let fixture: ComponentFixture<HeaderComponent>;
   let contextService: ContextService;
+  let isAuthenticated: WritableSignal<boolean>;
 
   beforeEach(async () => {
+    isAuthenticated = signal(false);
+
     await TestBed.configureTestingModule({
       imports: [HeaderComponent],
-      providers: [provideZonelessChangeDetection(), provideRouter([]), ContextService],
+      providers: [
+        provideZonelessChangeDetection(),
+        provideRouter([]),
+        ContextService,
+        {
+          provide: AuthService,
+          useValue: {
+            isAuthenticated,
+          },
+        },
+      ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(HeaderComponent);
@@ -94,6 +108,29 @@ describe('HeaderComponent', () => {
       const factoryLink = links[0];
       const classes = factoryLink.getAttribute('class');
       expect(classes).toContain('hover:text-black');
+    });
+
+    it('should render login icon when user is not authenticated', () => {
+      fixture.detectChanges();
+
+      const links = fixture.nativeElement.querySelectorAll('a');
+      const accountLink: HTMLAnchorElement = links[links.length - 1];
+      const icon: HTMLImageElement | null = accountLink.querySelector('img');
+
+      expect(icon).not.toBeNull();
+      expect(icon?.getAttribute('src')).toContain('assets/svgs/minfactory/login.svg');
+    });
+
+    it('should render account icon when user is authenticated', () => {
+      isAuthenticated.set(true);
+      fixture.detectChanges();
+
+      const links = fixture.nativeElement.querySelectorAll('a');
+      const accountLink: HTMLAnchorElement = links[links.length - 1];
+      const icon: HTMLImageElement | null = accountLink.querySelector('img');
+
+      expect(icon).not.toBeNull();
+      expect(icon?.getAttribute('src')).toContain('assets/svgs/minfactory/account.svg');
     });
   });
 });

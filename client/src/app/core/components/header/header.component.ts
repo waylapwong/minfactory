@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, Signal, computed, inject } from '@angular/core';
+import { Component, Signal, computed } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { NavigationEnd, Router, RouterLink } from '@angular/router';
 import { filter, map, startWith } from 'rxjs';
@@ -9,6 +9,7 @@ import { DividerComponent } from '../../../shared/components/divider/divider.com
 import { LogoComponent } from '../../../shared/components/logo/logo.component';
 import { PopoverComponent } from '../../../shared/components/popover/popover.component';
 import { AppName } from '../../../shared/enums/app-name.enum';
+import { AuthService } from '../../services/auth.service';
 import { ContextService } from '../../services/context.service';
 
 @Component({
@@ -21,20 +22,31 @@ import { ContextService } from '../../services/context.service';
 export class HeaderComponent {
   public readonly AppPath: typeof AppPath = AppPath;
   public readonly MinFactoryPath: typeof MinFactoryPath = MinFactoryPath;
-  public readonly appVersion: Signal<string> = inject(ContextService).appVersion;
-  public readonly isInFactory: Signal<boolean> = computed(() => this.contextService.app() === AppName.MinFactory);
-  public readonly isInMinRps: Signal<boolean> = computed(() => this.contextService.app() === AppName.MinRps);
-  public readonly isInRegister: Signal<boolean> = computed(() => this.currentUrl() === `/${MinFactoryPath.Register}`);
+  public readonly appVersion: Signal<string>;
+  public readonly isAuthenticated: Signal<boolean>;
+  public readonly isInFactory: Signal<boolean>;
+  public readonly isInMinRps: Signal<boolean>;
+  public readonly isInRegister: Signal<boolean>;
 
-  private readonly router = inject(Router);
-  private readonly currentUrl = toSignal(
-    this.router.events.pipe(
-      filter((event): event is NavigationEnd => event instanceof NavigationEnd),
-      map(() => this.router.url),
-      startWith(this.router.url),
-    ),
-    { initialValue: this.router.url },
-  );
+  private readonly currentUrl: Signal<string>;
 
-  constructor(private readonly contextService: ContextService) {}
+  constructor(
+    private readonly router: Router,
+    private readonly contextService: ContextService,
+    private readonly authService: AuthService,
+  ) {
+    this.appVersion = this.contextService.appVersion;
+    this.isAuthenticated = this.authService.isAuthenticated;
+    this.currentUrl = toSignal(
+      this.router.events.pipe(
+        filter((event): event is NavigationEnd => event instanceof NavigationEnd),
+        map(() => this.router.url),
+        startWith(this.router.url),
+      ),
+      { initialValue: this.router.url },
+    );
+    this.isInFactory = computed(() => this.contextService.app() === AppName.MinFactory);
+    this.isInMinRps = computed(() => this.contextService.app() === AppName.MinRps);
+    this.isInRegister = computed(() => this.currentUrl() === `/${MinFactoryPath.Register}`);
+  }
 }
