@@ -29,6 +29,7 @@ export class HeaderComponent {
   public readonly isInMinRps: Signal<boolean>;
   public readonly isInProfile: Signal<boolean>;
   public readonly isInRegister: Signal<boolean>;
+  public readonly isInLogin: Signal<boolean>;
 
   private readonly currentUrl: Signal<string>;
 
@@ -54,5 +55,6 @@ export class HeaderComponent {
     this.isInMinRps = computed(() => this.contextService.app() === AppName.MinRps);
     this.isInProfile = computed(() => this.currentUrl() === `/${MinFactoryPath.Profile}`);
     this.isInRegister = computed(() => this.currentUrl() === `/${MinFactoryPath.Register}`);
+    this.isInLogin = computed(() => this.currentUrl() === `/${MinFactoryPath.Login}`);
   }
 }

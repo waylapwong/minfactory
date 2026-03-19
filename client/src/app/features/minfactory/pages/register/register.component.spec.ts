@@ -58,6 +58,7 @@ describe('RegisterComponent', () => {
 
   afterEach(() => {
     routingServiceMock.navigateToHomePage.calls.reset();
+    routingServiceMock.navigateToLogin.calls.reset();
     registerServiceMock.registerUser.calls.reset();
     registerServiceMock.registerUser.and.returnValue(Promise.resolve());
   });
@@ -116,5 +117,11 @@ describe('RegisterComponent', () => {
     expect(component.isSnackbarOpen()).toBeTrue();
     expect(component.snackbarMessage()).toBe(errorMessage);
     expect(routingServiceMock.navigateToHomePage).not.toHaveBeenCalled();
+  });
+
+  it('should navigate to login when navigateToLogin is called', () => {
+    component.navigateToLogin();
+
+    expect(routingServiceMock.navigateToLogin).toHaveBeenCalled();
   });
 });

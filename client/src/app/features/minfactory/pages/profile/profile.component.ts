@@ -1,3 +1,4 @@
+import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit, WritableSignal, signal } from '@angular/core';
 import { RoutingService } from '../../../../core/services/routing.service';
 import { ButtonComponent } from '../../../../shared/components/button/button.component';
@@ -63,11 +64,15 @@ export class ProfileComponent implements OnInit {
   }
 
   private isUnauthorizedError(error: unknown): boolean {
-    if (!(error instanceof Error)) {
-      return false;
+    if (error instanceof HttpErrorResponse) {
+      return error.status === 401;
     }
 
-    const message = error.message.toLowerCase();
-    return message.includes('401') || message.includes('unauthorized') || message.includes('unauthenticated');
+    if (error instanceof Error) {
+      const message = error.message.toLowerCase();
+      return message.includes('401') || message.includes('unauthorized') || message.includes('unauthenticated');
+    }
+
+    return false;
   }
 }
