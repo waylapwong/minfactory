@@ -27,7 +27,6 @@ describe('MinFactoryRegisterService', () => {
       Promise.resolve({
         createdAt: '2026-03-19T10:00:00.000Z',
         email: 'user@example.com',
-        id: 'minfactory-user-id',
       }),
     );
 
@@ -54,7 +53,6 @@ describe('MinFactoryRegisterService', () => {
       expect(authServiceMock.registerWithEmailAndPassword).toHaveBeenCalledWith('user@example.com', 'password123');
       expect(authServiceMock.getIdToken).toHaveBeenCalledWith(true);
       expect(userRepositoryMock.createUser).toHaveBeenCalled();
-      expect(result.id).toBe('minfactory-user-id');
       expect(result.email).toBe('user@example.com');
       expect(result.createdAt).toEqual(new Date('2026-03-19T10:00:00.000Z'));
     });
@@ -69,7 +67,7 @@ describe('MinFactoryRegisterService', () => {
       expect(authServiceMock.currentUser).toHaveBeenCalled();
       expect(authServiceMock.getIdToken).toHaveBeenCalledWith(true);
       expect(userRepositoryMock.createUser).toHaveBeenCalled();
-      expect(result.id).toBe('minfactory-user-id');
+      expect(result.email).toBe('user@example.com');
     });
 
     it('should not create minfactory user when firebase registration fails', async () => {

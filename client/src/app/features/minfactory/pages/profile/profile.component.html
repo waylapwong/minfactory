@@ -10,7 +10,6 @@
         <output aria-busy="true" class="flex flex-col gap-3" aria-live="polite">
           <div class="h-14 animate-pulse rounded-lg bg-gray-200"></div>
           <div class="h-14 animate-pulse rounded-lg bg-gray-200"></div>
-          <div class="h-14 animate-pulse rounded-lg bg-gray-200"></div>
         </output>
       } @else if (isError()) {
         <div class="rounded-lg border-2 border-red-300 bg-red-50 p-4 text-sm text-red-800" aria-live="polite">
@@ -30,11 +29,6 @@
           <div class="rounded-lg bg-gray-100 p-3">
             <dt class="text-xs font-bold tracking-wide text-gray-500 uppercase">E-Mail</dt>
             <dd class="text-sm break-all text-black">{{ data.email }}</dd>
-          </div>
-
-          <div class="rounded-lg bg-gray-100 p-3">
-            <dt class="text-xs font-bold tracking-wide text-gray-500 uppercase">Nutzer-ID</dt>
-            <dd class="text-sm break-all text-black">{{ data.id }}</dd>
           </div>
 
           <div class="rounded-lg bg-gray-100 p-3">

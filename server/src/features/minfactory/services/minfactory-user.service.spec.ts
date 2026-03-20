@@ -43,7 +43,6 @@ describe('MinFactoryUserService', () => {
 
       const result = await userService.createUser(firebaseUid, email);
 
-      expect(result.id).toBe(savedEntity.id);
       expect(result.email).toBe(savedEntity.email);
       expect(result.createdAt).toBe(savedEntity.createdAt);
     });
@@ -53,7 +52,7 @@ describe('MinFactoryUserService', () => {
 
       const result = await userService.createUser(firebaseUid, email);
 
-      expect(result.id).toBe(savedEntity.id);
+      expect(result.email).toBe(savedEntity.email);
       expect(mockMinFactoryUserRepository.findByEmail).not.toHaveBeenCalled();
       expect(mockMinFactoryUserRepository.save).not.toHaveBeenCalled();
     });
@@ -87,7 +86,7 @@ describe('MinFactoryUserService', () => {
 
       const result = await userService.createUser(firebaseUid, email);
 
-      expect(result.id).toBe(savedEntity.id);
+      expect(result.email).toBe(savedEntity.email);
       expect(mockMinFactoryUserRepository.findByFirebaseUid).toHaveBeenCalledTimes(2);
     });
 
@@ -123,7 +122,6 @@ describe('MinFactoryUserService', () => {
 
       const result = await userService.getMe(firebaseUid);
 
-      expect(result.id).toBe(existingEntity.id);
       expect(result.email).toBe(existingEntity.email);
       expect(result.createdAt).toBe(existingEntity.createdAt);
     });

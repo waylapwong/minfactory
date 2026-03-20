@@ -14,6 +14,5 @@
 export interface MinFactoryUserDto { 
     createdAt: string;
     email: string;
-    id: string;
 }
 
