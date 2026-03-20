@@ -4,6 +4,7 @@ import { RoutingService } from '../../../../core/services/routing.service';
 import { ButtonComponent } from '../../../../shared/components/button/button.component';
 import { CardComponent } from '../../../../shared/components/card/card.component';
 import { H1Component } from '../../../../shared/components/h1/h1.component';
+import { SnackbarComponent } from '../../../../shared/components/snackbar/snackbar.component';
 import { Color } from '../../../../shared/enums/color.enum';
 import { MinFactoryProfileViewModel } from '../../models/viewmodels/minfactory-profile.viewmodel';
 import { MinFactoryLogoutService } from '../../services/minfactory-logout.service';
@@ -14,7 +15,7 @@ import { MinFactoryProfileService } from '../../services/minfactory-profile.serv
   templateUrl: './profile.component.html',
   styleUrl: './profile.component.scss',
   host: { class: 'block h-full w-full' },
-  imports: [CardComponent, H1Component, ButtonComponent],
+  imports: [CardComponent, H1Component, ButtonComponent, SnackbarComponent],
 })
 export class ProfileComponent implements OnInit {
   public readonly Color: typeof Color = Color;
@@ -60,6 +61,18 @@ export class ProfileComponent implements OnInit {
     this.loadProfile();
   }
 
+  private isUnauthorizedError(error: unknown): boolean {
+    if (error instanceof HttpErrorResponse) {
+      return error.status === 401;
+    }
+
+    if (error instanceof Error) {
+      const message = error.message.toLowerCase();
+      return message.includes('401') || message.includes('unauthorized') || message.includes('unauthenticated');
+    }
+
+    return false;
+  }
 
   private async loadProfile(): Promise<void> {
     this.isLoading.set(true);
@@ -96,18 +109,5 @@ export class ProfileComponent implements OnInit {
       this.snackbarMessage.set(errorMessage);
       this.isSnackbarOpen.set(true);
     }
-  }
-
-  private isUnauthorizedError(error: unknown): boolean {
-    if (error instanceof HttpErrorResponse) {
-      return error.status === 401;
-    }
-
-    if (error instanceof Error) {
-      const message = error.message.toLowerCase();
-      return message.includes('401') || message.includes('unauthorized') || message.includes('unauthenticated');
-    }
-
-    return false;
   }
 }
