@@ -21,7 +21,6 @@ describe('MinFactoryLoginService', () => {
       Promise.resolve({
         createdAt: '2026-03-19T10:00:00.000Z',
         email: 'user@example.com',
-        id: 'minfactory-user-id',
       }),
     );
 
@@ -47,7 +46,6 @@ describe('MinFactoryLoginService', () => {
 
       expect(authServiceMock.loginWithEmailAndPassword).toHaveBeenCalledWith('user@example.com', 'password123');
       expect(userRepositoryMock.getMe).toHaveBeenCalled();
-      expect(result.id).toBe('minfactory-user-id');
       expect(result.email).toBe('user@example.com');
       expect(result.createdAt).toEqual(new Date('2026-03-19T10:00:00.000Z'));
     });

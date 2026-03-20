@@ -36,7 +36,6 @@ describe('ProfileComponent', () => {
         Promise.resolve({
           createdAt: '19.03.2026, 11:00',
           email: 'user@example.com',
-          id: 'minfactory-user-id',
         }),
       ),
     };

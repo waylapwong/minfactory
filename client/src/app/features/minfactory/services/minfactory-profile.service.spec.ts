@@ -31,7 +31,6 @@ describe('MinFactoryProfileService', () => {
         Promise.resolve({
           createdAt: '2026-03-19T10:00:00.000Z',
           email: 'user@example.com',
-          id: 'minfactory-user-id',
         }),
       );
 
@@ -39,7 +38,6 @@ describe('MinFactoryProfileService', () => {
 
       expect(userRepositoryMock.getMe).toHaveBeenCalled();
       expect(result.email).toBe('user@example.com');
-      expect(result.id).toBe('minfactory-user-id');
       expect(result.createdAt.length).toBeGreaterThan(0);
     });
 

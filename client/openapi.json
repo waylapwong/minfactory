@@ -1,410 +1,450 @@
 {
-  "openapi": "3.0.0",
-  "paths": {
-    "/minrps/health": {
-      "get": {
-        "operationId": "getMinRpsHealth",
-        "parameters": [],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "string"
-                }
-              }
+    "openapi": "3.0.0",
+    "paths": {
+        "/minrps/health": {
+            "get": {
+                "operationId": "getMinRpsHealth",
+                "parameters": [],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                },
+                "summary": "",
+                "tags": [
+                    "minRPS"
+                ]
             }
-          },
-          "500": {
-            "description": "Internal Server Error"
-          }
         },
-        "summary": "",
-        "tags": ["minRPS"]
-      }
+        "/minrps/version": {
+            "get": {
+                "operationId": "getMinRpsVersion",
+                "parameters": [],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                },
+                "summary": "",
+                "tags": [
+                    "minRPS"
+                ]
+            }
+        },
+        "/minrps/games/{id}": {
+            "delete": {
+                "operationId": "deleteMinRpsGame",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "required": true,
+                        "in": "path",
+                        "description": "UUID of resource",
+                        "schema": {
+                            "example": "550e8400-e29b-41d4-a716-446655440000",
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Deleted"
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "404": {
+                        "description": "Not Found"
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                },
+                "summary": "",
+                "tags": [
+                    "minRPS"
+                ]
+            },
+            "get": {
+                "operationId": "getMinRpsGame",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "required": true,
+                        "in": "path",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/MinRpsGameDto"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "404": {
+                        "description": "Not Found"
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                },
+                "summary": "",
+                "tags": [
+                    "minRPS"
+                ]
+            }
+        },
+        "/minrps/games": {
+            "get": {
+                "operationId": "getAllMinRpsGames",
+                "parameters": [],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/MinRpsGameDto"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                },
+                "summary": "",
+                "tags": [
+                    "minRPS"
+                ]
+            },
+            "post": {
+                "operationId": "createMinRpsGame",
+                "parameters": [],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/MinRpsCreateGameDto"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/MinRpsGameDto"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                },
+                "summary": "",
+                "tags": [
+                    "minRPS"
+                ]
+            }
+        },
+        "/minrps/play": {
+            "post": {
+                "operationId": "playMinRpsGame",
+                "parameters": [],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/MinRpsPlayDto"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/MinRpsPlayResultDto"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "409": {
+                        "description": "Conflict"
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                },
+                "summary": "",
+                "tags": [
+                    "minRPS"
+                ]
+            }
+        },
+        "/minfactory/users": {
+            "post": {
+                "operationId": "createMinFactoryUser",
+                "parameters": [],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/MinFactoryUserDto"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "409": {
+                        "description": "Conflict"
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                },
+                "summary": "",
+                "tags": [
+                    "minFactory"
+                ]
+            }
+        },
+        "/minfactory/users/me": {
+            "get": {
+                "operationId": "getMinFactoryUserMe",
+                "parameters": [],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/MinFactoryUserDto"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "404": {
+                        "description": "Not Found"
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                },
+                "summary": "",
+                "tags": [
+                    "minFactory"
+                ]
+            }
+        }
     },
-    "/minrps/version": {
-      "get": {
-        "operationId": "getMinRpsVersion",
-        "parameters": [],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "string"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Internal Server Error"
-          }
-        },
-        "summary": "",
-        "tags": ["minRPS"]
-      }
+    "info": {
+        "title": "minFactory",
+        "description": "minFactory OpenAPI specification. <br/> <a href=\"http://localhost:3000/openapi-json/\" target=\"_blank\">JSON specification</a>",
+        "version": "v0.0.0",
+        "contact": {
+            "name": "minFactory",
+            "url": "https://minFactory.com",
+            "email": ""
+        }
     },
-    "/minrps/games/{id}": {
-      "delete": {
-        "operationId": "deleteMinRpsGame",
-        "parameters": [
-          {
-            "name": "id",
-            "required": true,
-            "in": "path",
-            "description": "UUID of resource",
-            "schema": {
-              "example": "550e8400-e29b-41d4-a716-446655440000",
-              "type": "string"
+    "tags": [],
+    "servers": [],
+    "components": {
+        "schemas": {
+            "MinRpsGameDto": {
+                "type": "object",
+                "properties": {
+                    "createdAt": {
+                        "format": "date-time",
+                        "type": "string",
+                        "example": "2025-10-21T18:45:30.000Z"
+                    },
+                    "id": {
+                        "type": "string",
+                        "example": "550e8400-e29b-41d4-a716-446655440000",
+                        "format": "uuid"
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "Test Game",
+                        "maxLength": 16,
+                        "minLength": 2
+                    },
+                    "observerCount": {
+                        "type": "number",
+                        "example": 1,
+                        "minimum": 0
+                    },
+                    "playerCount": {
+                        "type": "number",
+                        "example": 1,
+                        "minimum": 0
+                    }
+                },
+                "required": [
+                    "createdAt",
+                    "id",
+                    "name",
+                    "observerCount",
+                    "playerCount"
+                ]
+            },
+            "MinRpsCreateGameDto": {
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "description": "Game name",
+                        "example": "Test Game"
+                    }
+                },
+                "required": [
+                    "name"
+                ]
+            },
+            "MinRpsMove": {
+                "type": "string",
+                "enum": [
+                    "none",
+                    "rock",
+                    "paper",
+                    "scissors"
+                ],
+                "description": "Player move"
+            },
+            "MinRpsPlayDto": {
+                "type": "object",
+                "properties": {
+                    "player1Move": {
+                        "description": "Player move",
+                        "example": "rock",
+                        "allOf": [
+                            {
+                                "$ref": "#/components/schemas/MinRpsMove"
+                            }
+                        ]
+                    }
+                },
+                "required": [
+                    "player1Move"
+                ]
+            },
+            "MinRpsResult": {
+                "type": "string",
+                "enum": [
+                    "None",
+                    "Player1",
+                    "Player2",
+                    "Draw"
+                ]
+            },
+            "MinRpsPlayResultDto": {
+                "type": "object",
+                "properties": {
+                    "player1Move": {
+                        "example": "rock",
+                        "allOf": [
+                            {
+                                "$ref": "#/components/schemas/MinRpsMove"
+                            }
+                        ]
+                    },
+                    "player2Move": {
+                        "example": "rock",
+                        "allOf": [
+                            {
+                                "$ref": "#/components/schemas/MinRpsMove"
+                            }
+                        ]
+                    },
+                    "result": {
+                        "example": "Draw",
+                        "allOf": [
+                            {
+                                "$ref": "#/components/schemas/MinRpsResult"
+                            }
+                        ]
+                    }
+                },
+                "required": [
+                    "player1Move",
+                    "player2Move",
+                    "result"
+                ]
+            },
+            "MinFactoryUserDto": {
+                "type": "object",
+                "properties": {
+                    "createdAt": {
+                        "format": "date-time",
+                        "type": "string",
+                        "example": "2025-10-21T18:45:30.000Z"
+                    },
+                    "email": {
+                        "type": "string",
+                        "example": "user@example.com"
+                    }
+                },
+                "required": [
+                    "createdAt",
+                    "email"
+                ]
             }
-          }
-        ],
-        "responses": {
-          "204": {
-            "description": "Deleted"
-          },
-          "400": {
-            "description": "Bad Request"
-          },
-          "404": {
-            "description": "Not Found"
-          },
-          "500": {
-            "description": "Internal Server Error"
-          }
-        },
-        "summary": "",
-        "tags": ["minRPS"]
-      },
-      "get": {
-        "operationId": "getMinRpsGame",
-        "parameters": [
-          {
-            "name": "id",
-            "required": true,
-            "in": "path",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/MinRpsGameDto"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad Request"
-          },
-          "404": {
-            "description": "Not Found"
-          },
-          "500": {
-            "description": "Internal Server Error"
-          }
-        },
-        "summary": "",
-        "tags": ["minRPS"]
-      }
-    },
-    "/minrps/games": {
-      "get": {
-        "operationId": "getAllMinRpsGames",
-        "parameters": [],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/MinRpsGameDto"
-                  }
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Internal Server Error"
-          }
-        },
-        "summary": "",
-        "tags": ["minRPS"]
-      },
-      "post": {
-        "operationId": "createMinRpsGame",
-        "parameters": [],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/MinRpsCreateGameDto"
-              }
-            }
-          }
-        },
-        "responses": {
-          "201": {
-            "description": "Created",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/MinRpsGameDto"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad Request"
-          },
-          "500": {
-            "description": "Internal Server Error"
-          }
-        },
-        "summary": "",
-        "tags": ["minRPS"]
-      }
-    },
-    "/minrps/play": {
-      "post": {
-        "operationId": "playMinRpsGame",
-        "parameters": [],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/MinRpsPlayDto"
-              }
-            }
-          }
-        },
-        "responses": {
-          "201": {
-            "description": "Created",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/MinRpsPlayResultDto"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad Request"
-          },
-          "409": {
-            "description": "Conflict"
-          },
-          "500": {
-            "description": "Internal Server Error"
-          }
-        },
-        "summary": "",
-        "tags": ["minRPS"]
-      }
-    },
-    "/minfactory/users": {
-      "post": {
-        "operationId": "createMinFactoryUser",
-        "parameters": [],
-        "responses": {
-          "201": {
-            "description": "Created",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/MinFactoryUserDto"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized"
-          },
-          "409": {
-            "description": "Conflict"
-          },
-          "500": {
-            "description": "Internal Server Error"
-          }
-        },
-        "summary": "",
-        "tags": ["minFactory"]
-      }
-    },
-    "/minfactory/users/me": {
-      "get": {
-        "operationId": "getMinFactoryUserMe",
-        "parameters": [],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/MinFactoryUserDto"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized"
-          },
-          "404": {
-            "description": "Not Found"
-          },
-          "500": {
-            "description": "Internal Server Error"
-          }
-        },
-        "summary": "",
-        "tags": ["minFactory"]
-      }
+        }
     }
-  },
-  "info": {
-    "title": "minFactory",
-    "description": "minFactory OpenAPI specification. \u003Cbr/\u003E \u003Ca href=\"http://localhost:3000/openapi-json/\" target=\"_blank\"\u003EJSON specification\u003C/a\u003E",
-    "version": "v0.0.0",
-    "contact": {
-      "name": "minFactory",
-      "url": "https://minFactory.com",
-      "email": ""
-    }
-  },
-  "tags": [],
-  "servers": [],
-  "components": {
-    "schemas": {
-      "MinRpsGameDto": {
-        "type": "object",
-        "properties": {
-          "createdAt": {
-            "format": "date-time",
-            "type": "string",
-            "example": "2025-10-21T18:45:30.000Z"
-          },
-          "id": {
-            "type": "string",
-            "example": "550e8400-e29b-41d4-a716-446655440000",
-            "format": "uuid"
-          },
-          "name": {
-            "type": "string",
-            "example": "Test Game",
-            "maxLength": 16,
-            "minLength": 2
-          },
-          "observerCount": {
-            "type": "number",
-            "example": 1,
-            "minimum": 0
-          },
-          "playerCount": {
-            "type": "number",
-            "example": 1,
-            "minimum": 0
-          }
-        },
-        "required": ["createdAt", "id", "name", "observerCount", "playerCount"]
-      },
-      "MinRpsCreateGameDto": {
-        "type": "object",
-        "properties": {
-          "name": {
-            "type": "string",
-            "description": "Game name",
-            "example": "Test Game"
-          }
-        },
-        "required": ["name"]
-      },
-      "MinRpsMove": {
-        "type": "string",
-        "enum": ["none", "rock", "paper", "scissors"],
-        "description": "Player move"
-      },
-      "MinRpsPlayDto": {
-        "type": "object",
-        "properties": {
-          "player1Move": {
-            "description": "Player move",
-            "example": "rock",
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/MinRpsMove"
-              }
-            ]
-          }
-        },
-        "required": ["player1Move"]
-      },
-      "MinRpsResult": {
-        "type": "string",
-        "enum": ["None", "Player1", "Player2", "Draw"]
-      },
-      "MinRpsPlayResultDto": {
-        "type": "object",
-        "properties": {
-          "player1Move": {
-            "example": "rock",
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/MinRpsMove"
-              }
-            ]
-          },
-          "player2Move": {
-            "example": "rock",
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/MinRpsMove"
-              }
-            ]
-          },
-          "result": {
-            "example": "Draw",
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/MinRpsResult"
-              }
-            ]
-          }
-        },
-        "required": ["player1Move", "player2Move", "result"]
-      },
-      "MinFactoryUserDto": {
-        "type": "object",
-        "properties": {
-          "createdAt": {
-            "format": "date-time",
-            "type": "string",
-            "example": "2025-10-21T18:45:30.000Z"
-          },
-          "email": {
-            "type": "string",
-            "example": "user@example.com"
-          },
-          "id": {
-            "type": "string",
-            "example": "550e8400-e29b-41d4-a716-446655440000",
-            "format": "uuid"
-          }
-        },
-        "required": ["createdAt", "email", "id"]
-      }
-    }
-  }
 }
