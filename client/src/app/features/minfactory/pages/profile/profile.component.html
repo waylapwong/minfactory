@@ -1,57 +1,70 @@
-<min-card class="w-full max-w-xl">
-  <div class="flex flex-col gap-6">
-    <div class="text-center">
-      <min-h1>Profil</min-h1>
-      <p class="text-gray-500">Deine Kontodaten auf einen Blick.</p>
+<div class="relative flex h-full w-full items-center justify-center px-4 py-6">
+  <min-card class="w-full max-w-xl">
+    <div class="flex flex-col gap-6">
+      <div class="text-center">
+        <min-h1>Profil</min-h1>
+        <p class="text-gray-500">Deine Kontodaten auf einen Blick.</p>
+      </div>
+
+      @if (isLoading()) {
+        <output aria-busy="true" class="flex flex-col gap-3" aria-live="polite">
+          <div class="h-14 animate-pulse rounded-lg bg-gray-200"></div>
+          <div class="h-14 animate-pulse rounded-lg bg-gray-200"></div>
+          <div class="h-14 animate-pulse rounded-lg bg-gray-200"></div>
+        </output>
+      } @else if (isError()) {
+        <div class="rounded-lg border-2 border-red-300 bg-red-50 p-4 text-sm text-red-800" aria-live="polite">
+          <p class="font-bold">Profil konnte nicht geladen werden.</p>
+          <p>{{ errorMessage() }}</p>
+        </div>
+
+        <div class="flex flex-col gap-2 sm:flex-row">
+          <min-button [color]="Color.White" (clicked)="navigateToApps()">Zu Apps</min-button>
+          <min-button [color]="Color.Gray" (clicked)="reloadProfile()">Erneut versuchen</min-button>
+          <min-button [color]="Color.Red" [isDisabled]="isLogoutSubmitting()" (clicked)="logout()">
+            {{ isLogoutSubmitting() ? 'Abmelden...' : 'Abmelden' }}
+          </min-button>
+        </div>
+      } @else if (profile(); as data) {
+        <dl class="flex flex-col gap-3 rounded-lg border-2 border-gray-200 p-4">
+          <div class="rounded-lg bg-gray-100 p-3">
+            <dt class="text-xs font-bold tracking-wide text-gray-500 uppercase">E-Mail</dt>
+            <dd class="text-sm break-all text-black">{{ data.email }}</dd>
+          </div>
+
+          <div class="rounded-lg bg-gray-100 p-3">
+            <dt class="text-xs font-bold tracking-wide text-gray-500 uppercase">Nutzer-ID</dt>
+            <dd class="text-sm break-all text-black">{{ data.id }}</dd>
+          </div>
+
+          <div class="rounded-lg bg-gray-100 p-3">
+            <dt class="text-xs font-bold tracking-wide text-gray-500 uppercase">Mitglied seit</dt>
+            <dd class="text-sm text-black">{{ data.createdAt }}</dd>
+          </div>
+        </dl>
+
+        <div class="flex flex-col gap-2 sm:flex-row">
+          <min-button [color]="Color.White" (clicked)="navigateToApps()">Zu Apps</min-button>
+          <min-button [color]="Color.Gray" (clicked)="reloadProfile()">Aktualisieren</min-button>
+          <min-button [color]="Color.Red" [isDisabled]="isLogoutSubmitting()" (clicked)="logout()">
+            {{ isLogoutSubmitting() ? 'Abmelden...' : 'Abmelden' }}
+          </min-button>
+        </div>
+      } @else {
+        <div class="rounded-lg border-2 border-gray-300 bg-gray-50 p-4 text-sm text-gray-700">
+          Keine Profildaten verfügbar.
+        </div>
+
+        <div class="flex flex-col gap-2 sm:flex-row">
+          <min-button [color]="Color.White" (clicked)="navigateToApps()">Zu Apps</min-button>
+          <min-button [color]="Color.Gray" (clicked)="reloadProfile()">Aktualisieren</min-button>
+          <min-button [color]="Color.Red" [isDisabled]="isLogoutSubmitting()" (clicked)="logout()">
+            {{ isLogoutSubmitting() ? 'Abmelden...' : 'Abmelden' }}
+          </min-button>
+        </div>
+      }
     </div>
+  </min-card>
 
-    @if (isLoading()) {
-      <output aria-busy="true" class="flex flex-col gap-3" aria-live="polite">
-        <div class="h-14 animate-pulse rounded-lg bg-gray-200"></div>
-        <div class="h-14 animate-pulse rounded-lg bg-gray-200"></div>
-        <div class="h-14 animate-pulse rounded-lg bg-gray-200"></div>
-      </output>
-    } @else if (isError()) {
-      <div class="rounded-lg border-2 border-red-300 bg-red-50 p-4 text-sm text-red-800" aria-live="polite">
-        <p class="font-bold">Profil konnte nicht geladen werden.</p>
-        <p>{{ errorMessage() }}</p>
-      </div>
-
-      <div class="flex flex-col gap-2 sm:flex-row">
-        <min-button [color]="Color.White" (clicked)="navigateToApps()">Zu Apps</min-button>
-        <min-button [color]="Color.Red" (clicked)="reloadProfile()">Erneut versuchen</min-button>
-      </div>
-    } @else if (profile(); as data) {
-      <dl class="flex flex-col gap-3 rounded-lg border-2 border-gray-200 p-4">
-        <div class="rounded-lg bg-gray-100 p-3">
-          <dt class="text-xs font-bold tracking-wide text-gray-500 uppercase">E-Mail</dt>
-          <dd class="text-sm break-all text-black">{{ data.email }}</dd>
-        </div>
-
-        <div class="rounded-lg bg-gray-100 p-3">
-          <dt class="text-xs font-bold tracking-wide text-gray-500 uppercase">Nutzer-ID</dt>
-          <dd class="text-sm break-all text-black">{{ data.id }}</dd>
-        </div>
-
-        <div class="rounded-lg bg-gray-100 p-3">
-          <dt class="text-xs font-bold tracking-wide text-gray-500 uppercase">Mitglied seit</dt>
-          <dd class="text-sm text-black">{{ data.createdAt }}</dd>
-        </div>
-      </dl>
-
-      <div class="flex flex-col gap-2 sm:flex-row">
-        <min-button [color]="Color.White" (clicked)="navigateToApps()">Zu Apps</min-button>
-        <min-button [color]="Color.Gray" (clicked)="reloadProfile()">Aktualisieren</min-button>
-      </div>
-    } @else {
-      <div class="rounded-lg border-2 border-gray-300 bg-gray-50 p-4 text-sm text-gray-700">
-        Keine Profildaten verfügbar.
-      </div>
-
-      <div class="flex flex-col gap-2 sm:flex-row">
-        <min-button [color]="Color.White" (clicked)="navigateToApps()">Zu Apps</min-button>
-        <min-button [color]="Color.Gray" (clicked)="reloadProfile()">Aktualisieren</min-button>
-      </div>
-    }
-  </div>
-</min-card>
+  <min-snackbar [isOpen]="isSnackbarOpen()" [message]="snackbarMessage()" (closed)="closeSnackbar()"></min-snackbar>
+</div>
