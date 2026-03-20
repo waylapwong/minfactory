@@ -6,6 +6,7 @@ import { CardComponent } from '../../../../shared/components/card/card.component
 import { H1Component } from '../../../../shared/components/h1/h1.component';
 import { Color } from '../../../../shared/enums/color.enum';
 import { MinFactoryProfileViewModel } from '../../models/viewmodels/minfactory-profile.viewmodel';
+import { MinFactoryLogoutService } from '../../services/minfactory-logout.service';
 import { MinFactoryProfileService } from '../../services/minfactory-profile.service';
 
 @Component({
@@ -24,6 +25,7 @@ export class ProfileComponent implements OnInit {
 
   constructor(
     private readonly profileService: MinFactoryProfileService,
+    private readonly logoutService: MinFactoryLogoutService,
     private readonly routingService: RoutingService,
   ) {}
 
@@ -33,6 +35,11 @@ export class ProfileComponent implements OnInit {
 
   public navigateToApps(): void {
     this.routingService.navigateToApps();
+  }
+
+  public async logout(): Promise<void> {
+    await this.logoutService.logoutUser();
+    this.routingService.navigateToHomePage();
   }
 
   public reloadProfile(): void {

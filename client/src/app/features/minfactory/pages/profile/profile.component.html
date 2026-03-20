@@ -19,7 +19,8 @@
 
       <div class="flex flex-col gap-2 sm:flex-row">
         <min-button [color]="Color.White" (clicked)="navigateToApps()">Zu Apps</min-button>
-        <min-button [color]="Color.Red" (clicked)="reloadProfile()">Erneut versuchen</min-button>
+        <min-button [color]="Color.Gray" (clicked)="reloadProfile()">Erneut versuchen</min-button>
+        <min-button [color]="Color.Red" (clicked)="logout()">Abmelden</min-button>
       </div>
     } @else if (profile(); as data) {
       <dl class="flex flex-col gap-3 rounded-lg border-2 border-gray-200 p-4">
@@ -42,6 +43,7 @@
       <div class="flex flex-col gap-2 sm:flex-row">
         <min-button [color]="Color.White" (clicked)="navigateToApps()">Zu Apps</min-button>
         <min-button [color]="Color.Gray" (clicked)="reloadProfile()">Aktualisieren</min-button>
+        <min-button [color]="Color.Red" (clicked)="logout()">Abmelden</min-button>
       </div>
     } @else {
       <div class="rounded-lg border-2 border-gray-300 bg-gray-50 p-4 text-sm text-gray-700">
@@ -51,6 +53,7 @@
       <div class="flex flex-col gap-2 sm:flex-row">
         <min-button [color]="Color.White" (clicked)="navigateToApps()">Zu Apps</min-button>
         <min-button [color]="Color.Gray" (clicked)="reloadProfile()">Aktualisieren</min-button>
+        <min-button [color]="Color.Red" (clicked)="logout()">Abmelden</min-button>
       </div>
     }
   </div>

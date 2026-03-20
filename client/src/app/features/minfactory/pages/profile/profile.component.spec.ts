@@ -1,6 +1,7 @@
 import { provideZonelessChangeDetection } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { RoutingService } from '../../../../core/services/routing.service';
+import { MinFactoryLogoutService } from '../../services/minfactory-logout.service';
 import { MinFactoryProfileService } from '../../services/minfactory-profile.service';
 import { ProfileComponent } from './profile.component';
 
@@ -8,7 +9,8 @@ describe('ProfileComponent', () => {
   let component: ProfileComponent;
   let fixture: ComponentFixture<ProfileComponent>;
   let profileServiceMock: { loadProfile: jasmine.Spy };
-  let routingServiceMock: { navigateToApps: jasmine.Spy; navigateToLogin: jasmine.Spy };
+  let logoutServiceMock: { logoutUser: jasmine.Spy };
+  let routingServiceMock: { navigateToApps: jasmine.Spy; navigateToLogin: jasmine.Spy; navigateToHomePage: jasmine.Spy };
 
   beforeEach(async () => {
     profileServiceMock = {
@@ -21,9 +23,14 @@ describe('ProfileComponent', () => {
       ),
     };
 
+    logoutServiceMock = {
+      logoutUser: jasmine.createSpy('logoutUser').and.returnValue(Promise.resolve()),
+    };
+
     routingServiceMock = {
       navigateToApps: jasmine.createSpy('navigateToApps'),
       navigateToLogin: jasmine.createSpy('navigateToLogin'),
+      navigateToHomePage: jasmine.createSpy('navigateToHomePage'),
     };
 
     await TestBed.configureTestingModule({
@@ -31,6 +38,7 @@ describe('ProfileComponent', () => {
       providers: [
         provideZonelessChangeDetection(),
         { provide: MinFactoryProfileService, useValue: profileServiceMock },
+        { provide: MinFactoryLogoutService, useValue: logoutServiceMock },
         { provide: RoutingService, useValue: routingServiceMock },
       ],
     }).compileComponents();
@@ -88,5 +96,12 @@ describe('ProfileComponent', () => {
     await fixture.whenStable();
 
     expect(profileServiceMock.loadProfile).toHaveBeenCalled();
+  });
+
+  it('should logout and navigate to home page', async () => {
+    await component.logout();
+
+    expect(logoutServiceMock.logoutUser).toHaveBeenCalled();
+    expect(routingServiceMock.navigateToHomePage).toHaveBeenCalled();
   });
 });
