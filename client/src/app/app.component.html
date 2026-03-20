@@ -1,3 +1,4 @@
+<!-- ROOT -->
 <div
   id="root"
   class="flex h-dvh w-screen flex-col justify-center bg-gray-200 bg-[url('assets/svgs/minfactory/tic-tac-toe.svg')] bg-[length:128px] bg-repeat-space"
@@ -5,18 +6,20 @@
   <!-- CONTAINER -->
   <div
     id="container"
-    class="mx-auto flex h-full w-full max-w-screen-sm flex-col rounded-xl border-0 border-black bg-gray-100 p-2 shadow-2xl sm:max-h-[calc(100dvh-2rem)] sm:border-4"
+    class="mx-auto flex h-full w-full max-w-screen-sm flex-col rounded-xl border-black bg-gray-100 p-2 shadow-2xl sm:max-h-[calc(100dvh-2rem)] sm:border-4"
   >
     <!-- HEADER -->
     <min-header id="header"></min-header>
-
+    <!-- DIVIDER -->
+    <min-divider></min-divider>
     <!-- MAIN -->
     <main id="main" class="scrollbar grow overflow-y-auto px-2">
       <router-outlet></router-outlet>
     </main>
-
-    <!-- FOOTER -->
     @if (isInMinFactory()) {
+      <!-- DIVIDER -->
+      <min-divider></min-divider>
+      <!-- FOOTER -->
       <min-footer id="footer"></min-footer>
     }
   </div>
