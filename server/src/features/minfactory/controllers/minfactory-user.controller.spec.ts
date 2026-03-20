@@ -39,7 +39,6 @@ describe('MinFactoryUserController', () => {
 
     it('should return user dto on success', async () => {
       const dto: MinFactoryUserDto = new MinFactoryUserDto();
-      dto.id = '550e8400-e29b-41d4-a716-446655440000';
       dto.email = 'user@example.com';
       dto.createdAt = new Date();
 
@@ -66,7 +65,6 @@ describe('MinFactoryUserController', () => {
 
     it('should return user dto on success', async () => {
       const dto: MinFactoryUserDto = new MinFactoryUserDto();
-      dto.id = '550e8400-e29b-41d4-a716-446655440000';
       dto.email = 'user@example.com';
       dto.createdAt = new Date();
 
