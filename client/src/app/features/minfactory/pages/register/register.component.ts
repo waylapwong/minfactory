@@ -13,7 +13,7 @@ import { MinFactoryRegisterService } from '../../services/minfactory-register.se
   selector: 'minfactory-register',
   templateUrl: './register.component.html',
   styleUrl: './register.component.scss',
-  host: { class: 'flex h-full w-full items-center justify-center' },
+  host: { class: 'block h-full w-full' },
   imports: [ReactiveFormsModule, CardComponent, H1Component, InputComponent, ButtonComponent, SnackbarComponent],
 })
 export class RegisterComponent implements OnDestroy {

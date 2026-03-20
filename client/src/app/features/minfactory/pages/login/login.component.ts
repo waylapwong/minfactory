@@ -13,7 +13,7 @@ import { MinFactoryLoginService } from '../../services/minfactory-login.service'
   selector: 'minfactory-login',
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss',
-  host: { class: 'flex h-full w-full items-center justify-center' },
+  host: { class: 'block h-full w-full' },
   imports: [ReactiveFormsModule, CardComponent, H1Component, InputComponent, ButtonComponent, SnackbarComponent],
 })
 export class LoginComponent implements OnDestroy {

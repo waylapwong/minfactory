@@ -10,7 +10,7 @@ import { Color } from '../../../../shared/enums/color.enum';
   selector: 'minfactory-apps',
   templateUrl: './apps.component.html',
   styleUrls: ['./apps.component.scss'],
-  host: { class: 'flex h-full flex-col w-full items-center  gap-2 sm:gap-0' },
+  host: { class: 'block h-full w-full' },
   imports: [BadgeComponent, CardButtonComponent, H2Component, LogoComponent],
 })
 export class AppsComponent {

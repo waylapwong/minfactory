@@ -7,7 +7,7 @@ import { AppName } from '../../shared/enums/app-name.enum';
   selector: 'min-factory',
   templateUrl: './minfactory.component.html',
   styleUrls: ['./minfactory.component.scss'],
-  host: { class: 'block h-full' },
+  host: { class: 'block h-full w-full' },
   imports: [RouterOutlet],
 })
 export class MinFactoryComponent implements OnInit {

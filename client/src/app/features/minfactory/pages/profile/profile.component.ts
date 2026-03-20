@@ -14,7 +14,7 @@ import { MinFactoryProfileService } from '../../services/minfactory-profile.serv
   selector: 'minfactory-profile',
   templateUrl: './profile.component.html',
   styleUrl: './profile.component.scss',
-  host: { class: 'flex h-full w-full items-center justify-center' },
+  host: { class: 'block h-full w-full' },
   imports: [CardComponent, H1Component, ButtonComponent, SnackbarComponent],
 })
 export class ProfileComponent implements OnInit {
@@ -61,6 +61,19 @@ export class ProfileComponent implements OnInit {
     this.loadProfile();
   }
 
+  private isUnauthorizedError(error: unknown): boolean {
+    if (error instanceof HttpErrorResponse) {
+      return error.status === 401;
+    }
+
+    if (error instanceof Error) {
+      const message = error.message.toLowerCase();
+      return message.includes('401') || message.includes('unauthorized') || message.includes('unauthenticated');
+    }
+
+    return false;
+  }
+
   private async loadProfile(): Promise<void> {
     this.isLoading.set(true);
     this.isError.set(false);
@@ -96,18 +109,5 @@ export class ProfileComponent implements OnInit {
       this.snackbarMessage.set(errorMessage);
       this.isSnackbarOpen.set(true);
     }
-  }
-
-  private isUnauthorizedError(error: unknown): boolean {
-    if (error instanceof HttpErrorResponse) {
-      return error.status === 401;
-    }
-
-    if (error instanceof Error) {
-      const message = error.message.toLowerCase();
-      return message.includes('401') || message.includes('unauthorized') || message.includes('unauthenticated');
-    }
-
-    return false;
   }
 }

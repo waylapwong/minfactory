@@ -1,57 +1,55 @@
-<div class="relative flex h-full w-full items-center justify-center px-4 py-6">
-  <min-card class="w-full max-w-md">
-    <div class="flex flex-col gap-4">
-      <div class="text-center">
-        <min-h1>Anmelden</min-h1>
-        <p class="text-gray-500">Melde dich mit deiner E-Mail und deinem Passwort an.</p>
-      </div>
-      <!-- LOGIN FORM -->
-      <form class="flex flex-col gap-2" [formGroup]="loginForm" (ngSubmit)="submitLogin()">
-        <!-- EMAIL -->
-        <div class="flex flex-col gap-1">
-          <min-input
-            [autocomplete]="'email'"
-            [formControlInput]="emailControl"
-            [id]="'login-email'"
-            [label]="'E-Mail'"
-            [placeholder]="'name@beispiel.de'"
-            [type]="'email'"
-          >
-          </min-input>
-          @if (hasEmailRequiredError()) {
-            <p class="text-sm text-red-600">Bitte gib deine E-Mail-Adresse ein.</p>
-          }
-          @if (hasEmailFormatError()) {
-            <p class="text-sm text-red-600">Bitte gib eine gültige E-Mail-Adresse ein.</p>
-          }
-        </div>
-        <!-- PASSWORD -->
-        <div class="flex flex-col gap-1">
-          <min-input
-            [autocomplete]="'current-password'"
-            [formControlInput]="passwordControl"
-            [id]="'login-password'"
-            [label]="'Passwort'"
-            [placeholder]="'Passwort eingeben'"
-            [type]="'password'"
-          >
-          </min-input>
-          @if (hasPasswordRequiredError()) {
-            <p class="text-sm text-red-600">Bitte gib ein Passwort ein.</p>
-          }
-        </div>
-
-        <min-button class="mt-8" [color]="Color.Green" [isDisabled]="!canSubmit()" [type]="'submit'">
-          {{ isSubmitting() ? 'Anmeldung läuft...' : 'Anmelden' }}
-        </min-button>
-      </form>
-
-      <div class="text-center text-sm text-gray-500">
-        Noch kein Konto?
-        <button class="cursor-pointer underline" type="button" (click)="navigateToRegister()">Registrieren</button>
-      </div>
+<min-card class="w-full max-w-md">
+  <div class="flex flex-col gap-4">
+    <div class="text-center">
+      <min-h1>Anmelden</min-h1>
+      <p class="text-gray-500">Melde dich mit deiner E-Mail und deinem Passwort an.</p>
     </div>
-  </min-card>
+    <!-- LOGIN FORM -->
+    <form class="flex flex-col gap-2" [formGroup]="loginForm" (ngSubmit)="submitLogin()">
+      <!-- EMAIL -->
+      <div class="flex flex-col gap-1">
+        <min-input
+          [autocomplete]="'email'"
+          [formControlInput]="emailControl"
+          [id]="'login-email'"
+          [label]="'E-Mail'"
+          [placeholder]="'name@beispiel.de'"
+          [type]="'email'"
+        >
+        </min-input>
+        @if (hasEmailRequiredError()) {
+          <p class="text-sm text-red-600">Bitte gib deine E-Mail-Adresse ein.</p>
+        }
+        @if (hasEmailFormatError()) {
+          <p class="text-sm text-red-600">Bitte gib eine gültige E-Mail-Adresse ein.</p>
+        }
+      </div>
+      <!-- PASSWORD -->
+      <div class="flex flex-col gap-1">
+        <min-input
+          [autocomplete]="'current-password'"
+          [formControlInput]="passwordControl"
+          [id]="'login-password'"
+          [label]="'Passwort'"
+          [placeholder]="'Passwort eingeben'"
+          [type]="'password'"
+        >
+        </min-input>
+        @if (hasPasswordRequiredError()) {
+          <p class="text-sm text-red-600">Bitte gib ein Passwort ein.</p>
+        }
+      </div>
 
-  <min-snackbar [isOpen]="isSnackbarOpen()" [message]="snackbarMessage()" (closed)="closeSnackbar()"></min-snackbar>
-</div>
+      <min-button class="mt-8" [color]="Color.Green" [isDisabled]="!canSubmit()" [type]="'submit'">
+        {{ isSubmitting() ? 'Anmeldung läuft...' : 'Anmelden' }}
+      </min-button>
+    </form>
+
+    <div class="text-center text-sm text-gray-500">
+      Noch kein Konto?
+      <button class="cursor-pointer underline" type="button" (click)="navigateToRegister()">Registrieren</button>
+    </div>
+  </div>
+</min-card>
+
+<min-snackbar [isOpen]="isSnackbarOpen()" [message]="snackbarMessage()" (closed)="closeSnackbar()"></min-snackbar>

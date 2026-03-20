@@ -5,7 +5,6 @@ import { NavigationEnd, Router, RouterLink } from '@angular/router';
 import { filter, map, startWith } from 'rxjs';
 import { AppPath } from '../../../app.routes';
 import { MinFactoryPath } from '../../../features/minfactory/minfactory.routes';
-import { DividerComponent } from '../../../shared/components/divider/divider.component';
 import { LogoComponent } from '../../../shared/components/logo/logo.component';
 import { PopoverComponent } from '../../../shared/components/popover/popover.component';
 import { AppName } from '../../../shared/enums/app-name.enum';
@@ -14,10 +13,9 @@ import { ContextService } from '../../services/context.service';
 
 @Component({
   selector: 'min-header',
-  standalone: true,
-  imports: [CommonModule, RouterLink, DividerComponent, LogoComponent, PopoverComponent],
   templateUrl: './header.component.html',
   styleUrl: './header.component.scss',
+  imports: [CommonModule, RouterLink, LogoComponent, PopoverComponent],
 })
 export class HeaderComponent {
   public readonly AppPath: typeof AppPath = AppPath;
@@ -26,10 +24,10 @@ export class HeaderComponent {
   public readonly appVersion: Signal<string>;
   public readonly isAuthenticated: Signal<boolean>;
   public readonly isInFactory: Signal<boolean>;
+  public readonly isInLogin: Signal<boolean>;
   public readonly isInMinRps: Signal<boolean>;
   public readonly isInProfile: Signal<boolean>;
   public readonly isInRegister: Signal<boolean>;
-  public readonly isInLogin: Signal<boolean>;
 
   private readonly currentUrl: Signal<string>;
 
