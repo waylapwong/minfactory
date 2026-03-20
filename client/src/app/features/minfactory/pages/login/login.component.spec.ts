@@ -28,7 +28,7 @@ describe('LoginComponent', () => {
   };
 
   const routingServiceMock = {
-    navigateToApps: jasmine.createSpy('navigateToApps'),
+    navigateToProfile: jasmine.createSpy('navigateToProfile'),
     navigateToRegister: jasmine.createSpy('navigateToRegister'),
   };
 
@@ -58,7 +58,7 @@ describe('LoginComponent', () => {
   });
 
   afterEach(() => {
-    routingServiceMock.navigateToApps.calls.reset();
+    routingServiceMock.navigateToProfile.calls.reset();
     routingServiceMock.navigateToRegister.calls.reset();
     loginServiceMock.loginUser.calls.reset();
     loginServiceMock.loginUser.and.returnValue(Promise.resolve());
@@ -73,7 +73,7 @@ describe('LoginComponent', () => {
 
     expect(component.loginForm.invalid).toBeTrue();
     expect(loginServiceMock.loginUser).not.toHaveBeenCalled();
-    expect(routingServiceMock.navigateToApps).not.toHaveBeenCalled();
+    expect(routingServiceMock.navigateToProfile).not.toHaveBeenCalled();
   });
 
   it('should submit valid form and call login service', async () => {
@@ -102,7 +102,7 @@ describe('LoginComponent', () => {
     expect(component.isSubmitting()).toBeFalse();
     expect(component.isSnackbarOpen()).toBeTrue();
     expect(component.snackbarMessage()).toBe(errorMessage);
-    expect(routingServiceMock.navigateToApps).not.toHaveBeenCalled();
+    expect(routingServiceMock.navigateToProfile).not.toHaveBeenCalled();
   });
 
   it('should navigate to register when navigateToRegister is called', () => {
