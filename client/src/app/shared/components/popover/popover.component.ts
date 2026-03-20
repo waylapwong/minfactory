@@ -51,16 +51,6 @@ export class PopoverComponent {
     this.openPopover();
   }
 
-  public onHostKeydown(event: KeyboardEvent): void {
-    if (event.key !== 'Enter' && event.key !== ' ') {
-      return;
-    }
-
-    event.preventDefault();
-
-    this.onHostClick(new MouseEvent('click'));
-  }
-
   public onFocusOut(event: FocusEvent): void {
     const nextTarget: EventTarget | null = event.relatedTarget;
     const hostElement: HTMLElement = this.elementRef.nativeElement;
