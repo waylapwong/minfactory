@@ -46,7 +46,7 @@ describe('PopoverComponent', () => {
   });
 
   it('should toggle pinned state and visibility on click', () => {
-    const host: HTMLElement = fixture.debugElement.query(By.css('span.relative')).nativeElement;
+    const host: HTMLElement = fixture.debugElement.query(By.css('button.relative')).nativeElement;
 
     host.dispatchEvent(new MouseEvent('click', { bubbles: true }));
     fixture.detectChanges();
