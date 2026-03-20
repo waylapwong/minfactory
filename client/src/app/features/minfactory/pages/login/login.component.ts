@@ -117,7 +117,7 @@ export class LoginComponent implements OnDestroy {
         this.snackbarMessage.set('Erfolgreich eingeloggt.');
         this.isSnackbarOpen.set(true);
         this.loginForm.reset({ email: '', password: '' });
-        this.routingService.navigateToApps();
+        this.routingService.navigateToProfile();
         this.redirectTimeoutId = null;
       }, 800);
     } catch (error) {
