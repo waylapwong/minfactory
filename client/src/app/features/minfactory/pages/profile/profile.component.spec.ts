@@ -12,6 +12,24 @@ describe('ProfileComponent', () => {
   let logoutServiceMock: { logoutUser: jasmine.Spy };
   let routingServiceMock: { navigateToApps: jasmine.Spy; navigateToLogin: jasmine.Spy; navigateToHomePage: jasmine.Spy };
 
+  const flushMicrotasks = async (): Promise<void> => {
+    await Promise.resolve();
+    await Promise.resolve();
+  };
+
+  const settleLogout = async (): Promise<void> => {
+    const logoutPromise: Promise<unknown> | undefined = logoutServiceMock.logoutUser.calls.mostRecent()
+      ?.returnValue as Promise<unknown> | undefined;
+
+    try {
+      await logoutPromise;
+    } catch {
+      // Intentionally ignored for tests that assert failure behavior.
+    }
+
+    await flushMicrotasks();
+  };
+
   beforeEach(async () => {
     profileServiceMock = {
       loadProfile: jasmine.createSpy('loadProfile').and.returnValue(
@@ -98,10 +116,50 @@ describe('ProfileComponent', () => {
     expect(profileServiceMock.loadProfile).toHaveBeenCalled();
   });
 
-  it('should logout and navigate to home page', async () => {
-    await component.logout();
+  describe('logout()', () => {
+    it('should logout and navigate to home page on success', async () => {
+      component.logout();
+      await settleLogout();
 
-    expect(logoutServiceMock.logoutUser).toHaveBeenCalled();
-    expect(routingServiceMock.navigateToHomePage).toHaveBeenCalled();
+      expect(logoutServiceMock.logoutUser).toHaveBeenCalled();
+      expect(routingServiceMock.navigateToHomePage).toHaveBeenCalled();
+    });
+
+    it('should set isLogoutSubmitting while logout is in progress', () => {
+      component.logout();
+
+      expect(component.isLogoutSubmitting()).toBeTrue();
+    });
+
+    it('should not call logoutUser when already submitting', () => {
+      component.logout();
+      component.logout();
+
+      expect(logoutServiceMock.logoutUser).toHaveBeenCalledTimes(1);
+    });
+
+    it('should show snackbar and reset submitting state when logout fails', async () => {
+      const errorMessage = 'Logout fehlgeschlagen.';
+      logoutServiceMock.logoutUser.and.returnValue(Promise.reject(new Error(errorMessage)));
+
+      component.logout();
+      await settleLogout();
+
+      expect(component.isLogoutSubmitting()).toBeFalse();
+      expect(component.isSnackbarOpen()).toBeTrue();
+      expect(component.snackbarMessage()).toBe(errorMessage);
+      expect(routingServiceMock.navigateToHomePage).not.toHaveBeenCalled();
+    });
+
+    it('should close snackbar when closeSnackbar is called', async () => {
+      logoutServiceMock.logoutUser.and.returnValue(Promise.reject(new Error('error')));
+      component.logout();
+      await settleLogout();
+
+      component.closeSnackbar();
+
+      expect(component.isSnackbarOpen()).toBeFalse();
+      expect(component.snackbarMessage()).toBe('');
+    });
   });
 });
