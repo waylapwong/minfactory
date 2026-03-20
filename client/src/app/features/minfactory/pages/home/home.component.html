@@ -1,5 +1,10 @@
 <div class="flex h-full flex-col items-center justify-center">
   <min-h1><min-logo>Factory</min-logo></min-h1>
-  <p class="mb-12 text-center break-normal text-gray-500">Minimalistische Apps.</p>
-  <min-button [color]="Color.White" (clicked)="navigateToApps()">Entdecke <min-logo>Apps</min-logo> &gt;</min-button>
+  <p class="mb-12 text-center break-normal text-gray-500 italic">Minimal gedacht. Maximal gemacht.</p>
+  <min-button [color]="Color.White" (clicked)="navigateToApps()">
+    <span class="inline-flex items-center gap-1 whitespace-nowrap">
+      Entdecke <min-logo>Apps</min-logo>
+      <img src="assets/svgs/shared/forward.svg" alt="Entdecken" class="h-4 w-4" />
+    </span>
+  </min-button>
 </div>

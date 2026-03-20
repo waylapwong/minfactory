@@ -1,10 +1,9 @@
-<span
+<button
   class="relative inline-flex"
-  role="button"
+  type="button"
   [attr.aria-describedby]="content() ? popoverId : null"
-  [attr.aria-disabled]="disabled()"
   [attr.aria-expanded]="isVisible()"
-  [attr.tabindex]="disabled() ? -1 : 0"
+  [disabled]="disabled()"
   (click)="onHostClick($event)"
   (focusin)="onFocusIn()"
   (focusout)="onFocusOut($event)"
@@ -25,4 +24,4 @@
       {{ content() }}
     </span>
   }
-</span>
+</button>
