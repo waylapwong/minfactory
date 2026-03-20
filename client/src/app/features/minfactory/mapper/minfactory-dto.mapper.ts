@@ -7,7 +7,6 @@ export class MinFactoryDtoMapper {
 
     domain.createdAt = new Date(dto.createdAt);
     domain.email = dto.email;
-    domain.id = dto.id;
 
     return domain;
   }

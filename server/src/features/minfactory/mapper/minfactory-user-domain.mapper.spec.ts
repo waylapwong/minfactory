@@ -7,13 +7,11 @@ describe('MinFactoryUserDomainMapper', () => {
   describe('domainToDto', () => {
     it('should map domain to dto correctly', () => {
       const domain: MinFactoryUser = new MinFactoryUser();
-      domain.id = '550e8400-e29b-41d4-a716-446655440000';
       domain.email = 'user@example.com';
       domain.createdAt = new Date('2025-01-01T00:00:00.000Z');
 
       const dto: MinFactoryUserDto = MinFactoryUserDomainMapper.domainToDto(domain);
 
-      expect(dto.id).toBe(domain.id);
       expect(dto.email).toBe(domain.email);
       expect(dto.createdAt).toBe(domain.createdAt);
     });
@@ -25,6 +23,15 @@ describe('MinFactoryUserDomainMapper', () => {
       const dto: MinFactoryUserDto = MinFactoryUserDomainMapper.domainToDto(domain);
 
       expect((dto as any).firebaseUid).toBeUndefined();
+    });
+
+    it('should not expose id in dto', () => {
+      const domain: MinFactoryUser = new MinFactoryUser();
+      domain.id = '550e8400-e29b-41d4-a716-446655440000';
+
+      const dto: MinFactoryUserDto = MinFactoryUserDomainMapper.domainToDto(domain);
+
+      expect((dto as any).id).toBeUndefined();
     });
   });
 

@@ -31,7 +31,6 @@ describe('MinFactoryUserRepository', () => {
       const userDto: MinFactoryUserDto = {
         createdAt: '2026-03-19T10:00:00.000Z',
         email: 'user@example.com',
-        id: 'minfactory-user-id',
       };
       mockApiService.createMinFactoryUser.and.returnValue(of(userDto) as any);
 
