@@ -1,7 +1,7 @@
 import { HttpEvent, HttpHandler, HttpInterceptor, HttpRequest } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
-export const FIREBASE_AUTH_INTERCEPTOR_MOCK: HttpInterceptor = {
+export const AUTHENTICATION_INTERCEPTOR_MOCK: HttpInterceptor = {
   intercept: jasmine
     .createSpy('intercept')
     .and.callFake(

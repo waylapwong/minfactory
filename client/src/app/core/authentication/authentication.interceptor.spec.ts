@@ -10,11 +10,11 @@ import { provideZonelessChangeDetection } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { firstValueFrom } from 'rxjs';
 import { ENVIRONMENT } from '../../../environments/environment';
-import { AuthenticationService } from '../authentication/authentication.service';
-import { AUTHENTICATION_SERVICE_MOCK } from '../authentication/authentication.service.mock';
-import { FirebaseAuthInterceptor } from './firebase-auth.interceptor';
+import { AuthenticationService } from './authentication.service';
+import { AUTHENTICATION_SERVICE_MOCK } from './authentication.service.mock';
+import { AuthenticationInterceptor } from './authentication.interceptor';
 
-describe('FirebaseAuthInterceptor', () => {
+describe('AuthenticationInterceptor', () => {
   let httpClient: HttpClient;
   let httpTestingController: HttpTestingController;
 
@@ -29,7 +29,7 @@ describe('FirebaseAuthInterceptor', () => {
         provideHttpClient(withInterceptorsFromDi()),
         provideHttpClientTesting(),
         { provide: AuthenticationService, useValue: AUTHENTICATION_SERVICE_MOCK },
-        { provide: HTTP_INTERCEPTORS, useClass: FirebaseAuthInterceptor, multi: true },
+        { provide: HTTP_INTERCEPTORS, useClass: AuthenticationInterceptor, multi: true },
       ],
     });
 
