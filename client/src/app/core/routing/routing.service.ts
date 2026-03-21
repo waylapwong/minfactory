@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { AppPath } from '../../app.routes';
 import { MinFactoryPath } from '../../features/minfactory/minfactory.routes';
+import { MinPokerPath } from '../../features/minpoker/minpoker.routes';
 import { MinRpsPath } from '../../features/minrps/minrps.routes';
 
 @Injectable({
@@ -28,6 +29,10 @@ export class RoutingService {
 
   public navigateToMinPoker(): void {
     this.router.navigate([AppPath.MinPoker]);
+  }
+
+  public navigateToMinPokerGame(): void {
+    this.router.navigate([AppPath.MinPoker, MinPokerPath.Game]);
   }
 
   public navigateToMinRpsMultiplayer(id: string): void {

@@ -1,0 +1,86 @@
+<div class="flex h-full flex-col overflow-y-auto px-4">
+  <!-- TITLE + EXIT -->
+  <div class="relative py-2 text-center">
+    <min-h1><min-logo>Poker</min-logo></min-h1>
+    <div class="absolute right-0 top-0">
+      <min-button [color]="Color.Red" (clicked)="routingService.navigateToMinPoker()">X</min-button>
+    </div>
+  </div>
+
+  <!-- OPPONENTS -->
+  <div class="mb-2 flex flex-col gap-1">
+    @for (opponent of opponents; track opponent.name) {
+      <div
+        class="flex items-center rounded-lg border-2 border-black bg-white px-3 py-2"
+        [class.bg-gray-100]="opponent.isActive"
+      >
+        @if (opponent.isActive) {
+          <span class="mr-2">▶</span>
+        }
+        <span class="font-bold">
+          @if (opponent.role) {
+            [{{ opponent.role }}]
+          }
+          {{ opponent.name }}
+        </span>
+        <span class="ml-2 text-gray-600">{{ opponent.chips | number }}</span>
+        @if (opponent.lastAction) {
+          <span class="ml-auto italic text-gray-500">{{ opponent.lastAction }}</span>
+        }
+      </div>
+    }
+  </div>
+
+  <!-- POT + COMMUNITY CARDS -->
+  <div class="mb-2 text-center">
+    <p class="font-bold">Pot: {{ potAmount() | number }}</p>
+    <div class="mt-2 flex justify-center gap-2">
+      @for (card of communityCards; track $index) {
+        <div class="flex h-16 w-12 items-center justify-center rounded-lg border-4 border-black bg-white text-xl font-bold shadow-md">
+          {{ card }}
+        </div>
+      }
+    </div>
+  </div>
+
+  <min-divider />
+
+  <!-- PLAYER HAND -->
+  <div class="my-2 text-center">
+    <p class="font-bold">You</p>
+    <div class="mt-2 flex justify-center gap-4">
+      @for (card of handCards; track $index) {
+        <div class="flex h-24 w-16 items-center justify-center rounded-lg border-4 border-black bg-white text-2xl font-bold shadow-md">
+          {{ card }}
+        </div>
+      }
+    </div>
+  </div>
+
+  <min-divider />
+
+  <!-- BET SECTION -->
+  <div class="my-2">
+    <p class="text-center font-bold">Bet: {{ betAmount() | number }}</p>
+    <div class="my-2 flex items-center gap-2">
+      <span class="text-sm">Min</span>
+      <input type="range" class="flex-1" min="40" max="1000" [value]="betAmount()" (input)="onBetChange($event)" />
+      <span class="text-sm">All-In</span>
+    </div>
+
+    <!-- QUICK BET BUTTONS -->
+    <div class="mb-2 grid grid-cols-4 gap-2">
+      <min-button (clicked)="onSetBet('min')">Min</min-button>
+      <min-button (clicked)="onSetBet('half-pot')">1/2 Pot</min-button>
+      <min-button (clicked)="onSetBet('pot')">Pot</min-button>
+      <min-button (clicked)="onSetBet('all-in')">All-In</min-button>
+    </div>
+
+    <!-- ACTION BUTTONS -->
+    <div class="grid grid-cols-3 gap-2">
+      <min-button [color]="Color.Red" (clicked)="onFold()">Fold</min-button>
+      <min-button [color]="Color.Blue" (clicked)="onCall()">Call {{ callAmount() | number }}</min-button>
+      <min-button [color]="Color.Green" (clicked)="onRaise()">Raise</min-button>
+    </div>
+  </div>
+</div>
