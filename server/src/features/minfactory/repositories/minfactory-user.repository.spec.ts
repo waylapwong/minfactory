@@ -2,7 +2,7 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 import { NotFoundException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { MinFactoryUserEntity } from '../models/entities/minfactory-user.entity';
-import { MINFACTORY_USER_TYPEORM_REPOSITORY_MOCK } from './minfactory-user.typeorm-repository.mock';
+import { MINFACTORY_USER_TYPEORM_REPOSITORY_MOCK } from '../mocks/minfactory-user.typeorm-repository.mock';
 import { MinFactoryUserRepository } from './minfactory-user.repository';
 
 describe('MinFactoryUserRepository', () => {

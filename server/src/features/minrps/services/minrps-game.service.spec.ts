@@ -4,9 +4,9 @@ import { MinRpsPlayer } from '../models/domains/minrps-player';
 import { MinRpsCreateGameDto } from '../models/dtos/minrps-create-game.dto';
 import { MinRpsGameEntity } from '../models/entities/minrps-game.entity';
 import { MinRpsGameRepository } from '../repositories/minrps-game.repository';
-import { MINRPS_GAME_REPOSITORY_MOCK } from '../repositories/minrps-game.repository.mock';
+import { MINRPS_GAME_REPOSITORY_MOCK } from '../mocks/minrps-game.repository.mock';
 import { MinRpsMatchRepository } from '../repositories/minrps-match.repository';
-import { MINRPS_MATCH_REPOSITORY_MOCK } from '../repositories/minrps-match.repository.mock';
+import { MINRPS_MATCH_REPOSITORY_MOCK } from '../mocks/minrps-match.repository.mock';
 import { MinRpsGameService } from './minrps-game.service';
 
 describe('MinRpsGameService', () => {

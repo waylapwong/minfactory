@@ -3,7 +3,7 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 import { NotFoundException } from '@nestjs/common';
 import { MinRpsGameRepository } from './minrps-game.repository';
 import { MinRpsGameEntity } from '../models/entities/minrps-game.entity';
-import { MINRPS_GAME_TYPEORM_REPOSITORY_MOCK } from './minrps-game.typeorm-repository.mock';
+import { MINRPS_GAME_TYPEORM_REPOSITORY_MOCK } from '../mocks/minrps-game.typeorm-repository.mock';
 
 describe('MinRpsGameRepository', () => {
   let repository: MinRpsGameRepository;

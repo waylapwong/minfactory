@@ -6,7 +6,7 @@ import { MinRpsMatchLeavePayload } from '../models/payloads/minrps-match-leave.p
 import { MinRpsMatchPlayPayload } from '../models/payloads/minrps-match-play.payload';
 import { MinRpsMatchSeatPayload } from '../models/payloads/minrps-match-seat.payload';
 import { MinRpsMultiplayerService } from '../services/minrps-multiplayer.service';
-import { MINRPS_MULTIPLAYER_SERVICE_MOCK } from '../services/minrps-multiplayer.service.mock';
+import { MINRPS_MULTIPLAYER_SERVICE_MOCK } from '../mocks/minrps-multiplayer.service.mock';
 import { MinRpsGateway } from './minrps.gateway';
 
 describe('MinRpsGateway', () => {

@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { MinRpsSingleplayerController } from './minrps-singleplayer.controller';
 import { MinRpsSingleplayerService } from '../services/minrps-singleplayer.service';
-import { MINRPS_SINGLEPLAYER_SERVICE_MOCK } from '../services/minrps-singleplayer.service.mock';
+import { MINRPS_SINGLEPLAYER_SERVICE_MOCK } from '../mocks/minrps-singleplayer.service.mock';
 import { MinRpsPlayDto } from '../models/dtos/minrps-play.dto';
 import { MinRpsPlayResultDto } from '../models/dtos/minrps-play-result.dto';
 import { MinRpsMove } from '../models/enums/minrps-move.enum';

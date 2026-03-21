@@ -1,7 +1,7 @@
 import { MinRpsGameController } from './minrps-game.controller';
 import { Test, TestingModule } from '@nestjs/testing';
 import { MinRpsGameService } from '../services/minrps-game.service';
-import { MINRPS_GAME_SERVICE_MOCK } from '../services/minrps-game.service.mock';
+import { MINRPS_GAME_SERVICE_MOCK } from '../mocks/minrps-game.service.mock';
 import { MinRpsCreateGameDto } from '../models/dtos/minrps-create-game.dto';
 import { MinRpsGameDto } from '../models/dtos/minrps-game.dto';
 
