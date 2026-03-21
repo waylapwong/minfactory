@@ -42,7 +42,11 @@
             [isWinning]="game().heroIsWinning"
             [isDraw]="game().result === MinRpsResult.Draw"
           >
-            <img class="h-16 w-16" [alt]="game().heroMove" [src]="`assets/svgs/minrps/${game().heroMove}.svg`" />
+            <img
+              class="h-16 w-16"
+              [alt]="game().heroMove"
+              [src]="`assets/svgs/minrps/${game().heroMove ?? 'uncertainty'}.svg`"
+            />
           </minrps-card>
         } @else if (selectedMove() !== MinRpsMove.None) {
           <minrps-card>
@@ -82,7 +86,11 @@
             [isWinning]="game().villainIsWinning"
             [isDraw]="game().result === MinRpsResult.Draw"
           >
-            <img class="h-16 w-16" [alt]="game().villainMove" [src]="`assets/svgs/minrps/${game().villainMove}.svg`" />
+            <img
+              class="h-16 w-16"
+              [alt]="game().villainMove"
+              [src]="`assets/svgs/minrps/${game().villainMove ?? 'uncertainty'}.svg`"
+            />
           </minrps-card>
         } @else {
           <minrps-card>
@@ -110,7 +118,11 @@
             [isWinning]="game().villainIsWinning"
             [isDraw]="game().result === MinRpsResult.Draw"
           >
-            <img class="h-16 w-16" [alt]="game().villainMove" [src]="`assets/svgs/minrps/${game().villainMove}.svg`" />
+            <img
+              class="h-16 w-16"
+              [alt]="game().villainMove"
+              [src]="`assets/svgs/minrps/${game().villainMove ?? 'uncertainty'}.svg`"
+            />
           </minrps-card>
         } @else if (game().villainHasSelectedMove) {
           <minrps-card>

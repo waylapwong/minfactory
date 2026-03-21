@@ -21,7 +21,11 @@
           [isWinning]="game().player2IsWinning"
           [isDraw]="game().result === MinRpsResult.Draw"
         >
-          <img class="h-16 w-16" [alt]="game().player2Move" [src]="`assets/svgs/minrps/${game().player2Move}.svg`" />
+          <img
+            class="h-16 w-16"
+            [alt]="game().player2Move"
+            [src]="`assets/svgs/minrps/${game().player2Move ?? 'uncertainty'}.svg`"
+          />
         </minrps-card>
       } @else {
         <minrps-card>

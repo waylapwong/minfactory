@@ -9,12 +9,6 @@ describe('MinFactoryAppsComponent', () => {
   let fixture: ComponentFixture<MinFactoryAppsComponent>;
 
   beforeEach(async () => {
-    MINFACTORY_ROUTING_SERVICE_MOCK.navigateToApps.calls.reset();
-    MINFACTORY_ROUTING_SERVICE_MOCK.navigateToHomePage.calls.reset();
-    MINFACTORY_ROUTING_SERVICE_MOCK.navigateToLogin.calls.reset();
-    MINFACTORY_ROUTING_SERVICE_MOCK.navigateToProfile.calls.reset();
-    MINFACTORY_ROUTING_SERVICE_MOCK.navigateToRegister.calls.reset();
-
     await TestBed.configureTestingModule({
       imports: [MinFactoryAppsComponent],
       providers: [
