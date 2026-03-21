@@ -1,9 +1,9 @@
 import { provideZonelessChangeDetection } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { RoutingService } from '../../../../core/routing/routing.service';
-import { MinFactoryLogoutService } from '../../services/minfactory-logout.service';
+import { MinFactoryAuthenticationService } from '../../services/minfactory-authentication.service';
 import { MinFactoryProfileService } from '../../services/minfactory-profile.service';
-import { MINFACTORY_LOGOUT_SERVICE_MOCK } from '../../services/minfactory-logout.service.mock';
+import { MINFACTORY_AUTHENTICATION_SERVICE_MOCK } from '../../services/minfactory-authentication.service.mock';
 import { MINFACTORY_PROFILE_SERVICE_MOCK } from '../../services/minfactory-profile.service.mock';
 import { MINFACTORY_ROUTING_SERVICE_MOCK } from '../../services/minfactory-routing.service.mock';
 import { MinFactoryProfileComponent } from './minfactory-profile.component';
@@ -18,8 +18,10 @@ describe('MinFactoryProfileComponent', () => {
   };
 
   const settleLogout = async (): Promise<void> => {
-    const logoutPromise: Promise<unknown> | undefined = MINFACTORY_LOGOUT_SERVICE_MOCK.logoutUser.calls.mostRecent()
-      ?.returnValue as Promise<unknown> | undefined;
+    const logoutPromise: Promise<unknown> | undefined =
+      MINFACTORY_AUTHENTICATION_SERVICE_MOCK.logoutUser.calls.mostRecent()?.returnValue as
+        | Promise<unknown>
+        | undefined;
 
     try {
       await logoutPromise;
@@ -36,8 +38,8 @@ describe('MinFactoryProfileComponent', () => {
       createdAt: '19.03.2026, 11:00',
       email: 'user@example.com',
     }));
-    MINFACTORY_LOGOUT_SERVICE_MOCK.logoutUser.calls.reset();
-    MINFACTORY_LOGOUT_SERVICE_MOCK.logoutUser.and.resolveTo();
+    MINFACTORY_AUTHENTICATION_SERVICE_MOCK.logoutUser.calls.reset();
+    MINFACTORY_AUTHENTICATION_SERVICE_MOCK.logoutUser.and.resolveTo();
     MINFACTORY_ROUTING_SERVICE_MOCK.navigateToLogin.calls.reset();
     MINFACTORY_ROUTING_SERVICE_MOCK.navigateToHomePage.calls.reset();
     MINFACTORY_ROUTING_SERVICE_MOCK.navigateToApps.calls.reset();
@@ -47,7 +49,7 @@ describe('MinFactoryProfileComponent', () => {
       providers: [
         provideZonelessChangeDetection(),
         { provide: MinFactoryProfileService, useValue: MINFACTORY_PROFILE_SERVICE_MOCK },
-        { provide: MinFactoryLogoutService, useValue: MINFACTORY_LOGOUT_SERVICE_MOCK },
+        { provide: MinFactoryAuthenticationService, useValue: MINFACTORY_AUTHENTICATION_SERVICE_MOCK },
         { provide: RoutingService, useValue: MINFACTORY_ROUTING_SERVICE_MOCK },
       ],
     }).compileComponents();
@@ -112,7 +114,7 @@ describe('MinFactoryProfileComponent', () => {
       component.logout();
       await settleLogout();
 
-      expect(MINFACTORY_LOGOUT_SERVICE_MOCK.logoutUser).toHaveBeenCalled();
+      expect(MINFACTORY_AUTHENTICATION_SERVICE_MOCK.logoutUser).toHaveBeenCalled();
       expect(MINFACTORY_ROUTING_SERVICE_MOCK.navigateToHomePage).toHaveBeenCalled();
     });
 
@@ -126,12 +128,12 @@ describe('MinFactoryProfileComponent', () => {
       component.logout();
       component.logout();
 
-      expect(MINFACTORY_LOGOUT_SERVICE_MOCK.logoutUser).toHaveBeenCalledTimes(1);
+      expect(MINFACTORY_AUTHENTICATION_SERVICE_MOCK.logoutUser).toHaveBeenCalledTimes(1);
     });
 
     it('should show snackbar and reset submitting state when logout fails', async () => {
       const errorMessage = 'Logout fehlgeschlagen.';
-      MINFACTORY_LOGOUT_SERVICE_MOCK.logoutUser.and.returnValue(Promise.reject(new Error(errorMessage)));
+      MINFACTORY_AUTHENTICATION_SERVICE_MOCK.logoutUser.and.returnValue(Promise.reject(new Error(errorMessage)));
 
       component.logout();
       await settleLogout();
@@ -143,7 +145,7 @@ describe('MinFactoryProfileComponent', () => {
     });
 
     it('should close snackbar when closeSnackbar is called', async () => {
-      MINFACTORY_LOGOUT_SERVICE_MOCK.logoutUser.and.returnValue(Promise.reject(new Error('error')));
+      MINFACTORY_AUTHENTICATION_SERVICE_MOCK.logoutUser.and.returnValue(Promise.reject(new Error('error')));
       component.logout();
       await settleLogout();
 

@@ -7,7 +7,7 @@ import { H1Component } from '../../../../shared/components/h1/h1.component';
 import { InputComponent } from '../../../../shared/components/input/input.component';
 import { SnackbarComponent } from '../../../../shared/components/snackbar/snackbar.component';
 import { Color } from '../../../../shared/enums/color.enum';
-import { MinFactoryRegisterService } from '../../services/minfactory-register.service';
+import { MinFactoryAuthenticationService } from '../../services/minfactory-authentication.service';
 
 @Component({
   selector: 'minfactory-register',
@@ -43,7 +43,7 @@ export class MinFactoryRegisterComponent implements OnDestroy {
 
   constructor(
     private readonly routingService: RoutingService,
-    private readonly registerService: MinFactoryRegisterService,
+    private readonly authenticationService: MinFactoryAuthenticationService,
   ) {}
 
   public get confirmPasswordControl(): FormControl<string> {
@@ -133,7 +133,7 @@ export class MinFactoryRegisterComponent implements OnDestroy {
       const email = this.emailControl.value;
       const password = this.passwordControl.value;
 
-      await this.registerService.registerUser(email, password);
+      await this.authenticationService.registerUser(email, password);
 
       this.redirectTimeoutId = setTimeout(() => {
         this.isSubmitting.set(false);

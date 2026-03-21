@@ -1,8 +1,8 @@
 import { provideZonelessChangeDetection } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { RoutingService } from '../../../../core/routing/routing.service';
-import { MinFactoryLoginService } from '../../services/minfactory-login.service';
-import { MINFACTORY_LOGIN_SERVICE_MOCK } from '../../services/minfactory-login.service.mock';
+import { MinFactoryAuthenticationService } from '../../services/minfactory-authentication.service';
+import { MINFACTORY_AUTHENTICATION_SERVICE_MOCK } from '../../services/minfactory-authentication.service.mock';
 import { MINFACTORY_ROUTING_SERVICE_MOCK } from '../../services/minfactory-routing.service.mock';
 import { MinFactoryLoginComponent } from './minfactory-login.component';
 
@@ -16,8 +16,10 @@ describe('MinFactoryLoginComponent', () => {
   };
 
   const settleLogin = async (): Promise<void> => {
-    const loginPromise: Promise<unknown> | undefined = MINFACTORY_LOGIN_SERVICE_MOCK.loginUser.calls.mostRecent()
-      ?.returnValue as Promise<unknown> | undefined;
+    const loginPromise: Promise<unknown> | undefined =
+      MINFACTORY_AUTHENTICATION_SERVICE_MOCK.loginUser.calls.mostRecent()?.returnValue as
+        | Promise<unknown>
+        | undefined;
 
     try {
       await loginPromise;
@@ -29,8 +31,8 @@ describe('MinFactoryLoginComponent', () => {
   };
 
   beforeEach(async () => {
-    MINFACTORY_LOGIN_SERVICE_MOCK.loginUser.calls.reset();
-    MINFACTORY_LOGIN_SERVICE_MOCK.loginUser.and.callFake(
+    MINFACTORY_AUTHENTICATION_SERVICE_MOCK.loginUser.calls.reset();
+    MINFACTORY_AUTHENTICATION_SERVICE_MOCK.loginUser.and.callFake(
       async () => ({ email: 'user@example.com', createdAt: new Date() }) as any,
     );
     MINFACTORY_ROUTING_SERVICE_MOCK.navigateToProfile.calls.reset();
@@ -41,7 +43,7 @@ describe('MinFactoryLoginComponent', () => {
       providers: [
         provideZonelessChangeDetection(),
         { provide: RoutingService, useValue: MINFACTORY_ROUTING_SERVICE_MOCK },
-        { provide: MinFactoryLoginService, useValue: MINFACTORY_LOGIN_SERVICE_MOCK },
+        { provide: MinFactoryAuthenticationService, useValue: MINFACTORY_AUTHENTICATION_SERVICE_MOCK },
       ],
     }).compileComponents();
 
@@ -58,12 +60,12 @@ describe('MinFactoryLoginComponent', () => {
     component.submitLogin();
 
     expect(component.loginForm.invalid).toBeTrue();
-    expect(MINFACTORY_LOGIN_SERVICE_MOCK.loginUser).not.toHaveBeenCalled();
+    expect(MINFACTORY_AUTHENTICATION_SERVICE_MOCK.loginUser).not.toHaveBeenCalled();
     expect(MINFACTORY_ROUTING_SERVICE_MOCK.navigateToProfile).not.toHaveBeenCalled();
   });
 
   it('should submit valid form and call login service', async () => {
-    MINFACTORY_LOGIN_SERVICE_MOCK.loginUser.and.returnValue(Promise.resolve());
+    MINFACTORY_AUTHENTICATION_SERVICE_MOCK.loginUser.and.returnValue(Promise.resolve());
 
     component.emailControl.setValue('user@example.com');
     component.passwordControl.setValue('password123');
@@ -71,13 +73,13 @@ describe('MinFactoryLoginComponent', () => {
     component.submitLogin();
     await settleLogin();
 
-    expect(MINFACTORY_LOGIN_SERVICE_MOCK.loginUser).toHaveBeenCalledWith('user@example.com', 'password123');
+    expect(MINFACTORY_AUTHENTICATION_SERVICE_MOCK.loginUser).toHaveBeenCalledWith('user@example.com', 'password123');
     expect(component.isSubmitting()).toBeTrue();
   });
 
   it('should display error message when login service fails', async () => {
     const errorMessage = 'Ungültige Anmeldedaten.';
-    MINFACTORY_LOGIN_SERVICE_MOCK.loginUser.and.returnValue(Promise.reject(new Error(errorMessage)));
+    MINFACTORY_AUTHENTICATION_SERVICE_MOCK.loginUser.and.returnValue(Promise.reject(new Error(errorMessage)));
 
     component.emailControl.setValue('user@example.com');
     component.passwordControl.setValue('wrongpassword');

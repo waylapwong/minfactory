@@ -7,7 +7,7 @@ import { H1Component } from '../../../../shared/components/h1/h1.component';
 import { InputComponent } from '../../../../shared/components/input/input.component';
 import { SnackbarComponent } from '../../../../shared/components/snackbar/snackbar.component';
 import { Color } from '../../../../shared/enums/color.enum';
-import { MinFactoryLoginService } from '../../services/minfactory-login.service';
+import { MinFactoryAuthenticationService } from '../../services/minfactory-authentication.service';
 
 @Component({
   selector: 'minfactory-login',
@@ -35,8 +35,8 @@ export class MinFactoryLoginComponent implements OnDestroy {
   private redirectTimeoutId: ReturnType<typeof setTimeout> | null = null;
 
   constructor(
+    private readonly authenticationService: MinFactoryAuthenticationService,
     private readonly routingService: RoutingService,
-    private readonly loginService: MinFactoryLoginService,
   ) {}
 
   public get emailControl(): FormControl<string> {
@@ -110,7 +110,7 @@ export class MinFactoryLoginComponent implements OnDestroy {
       const email = this.emailControl.value;
       const password = this.passwordControl.value;
 
-      await this.loginService.loginUser(email, password);
+      await this.authenticationService.loginUser(email, password);
 
       this.redirectTimeoutId = setTimeout(() => {
         this.isSubmitting.set(false);

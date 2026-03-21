@@ -1,8 +1,8 @@
 import { provideZonelessChangeDetection } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { RoutingService } from '../../../../core/routing/routing.service';
-import { MinFactoryRegisterService } from '../../services/minfactory-register.service';
-import { MINFACTORY_REGISTER_SERVICE_MOCK } from '../../services/minfactory-register.service.mock';
+import { MinFactoryAuthenticationService } from '../../services/minfactory-authentication.service';
+import { MINFACTORY_AUTHENTICATION_SERVICE_MOCK } from '../../services/minfactory-authentication.service.mock';
 import { MINFACTORY_ROUTING_SERVICE_MOCK } from '../../services/minfactory-routing.service.mock';
 import { MinFactoryRegisterComponent } from './minfactory-register.component';
 
@@ -17,7 +17,9 @@ describe('MinFactoryRegisterComponent', () => {
 
   const settleRegistration = async (): Promise<void> => {
     const registerPromise: Promise<unknown> | undefined =
-      MINFACTORY_REGISTER_SERVICE_MOCK.registerUser.calls.mostRecent()?.returnValue as Promise<unknown> | undefined;
+      MINFACTORY_AUTHENTICATION_SERVICE_MOCK.registerUser.calls.mostRecent()?.returnValue as
+        | Promise<unknown>
+        | undefined;
 
     try {
       await registerPromise;
@@ -29,8 +31,8 @@ describe('MinFactoryRegisterComponent', () => {
   };
 
   beforeEach(async () => {
-    MINFACTORY_REGISTER_SERVICE_MOCK.registerUser.calls.reset();
-    MINFACTORY_REGISTER_SERVICE_MOCK.registerUser.and.callFake(
+    MINFACTORY_AUTHENTICATION_SERVICE_MOCK.registerUser.calls.reset();
+    MINFACTORY_AUTHENTICATION_SERVICE_MOCK.registerUser.and.callFake(
       async () => ({ email: 'user@example.com', createdAt: new Date() }) as any,
     );
     MINFACTORY_ROUTING_SERVICE_MOCK.navigateToHomePage.calls.reset();
@@ -41,7 +43,7 @@ describe('MinFactoryRegisterComponent', () => {
       providers: [
         provideZonelessChangeDetection(),
         { provide: RoutingService, useValue: MINFACTORY_ROUTING_SERVICE_MOCK },
-        { provide: MinFactoryRegisterService, useValue: MINFACTORY_REGISTER_SERVICE_MOCK },
+        { provide: MinFactoryAuthenticationService, useValue: MINFACTORY_AUTHENTICATION_SERVICE_MOCK },
       ],
     }).compileComponents();
 
@@ -58,7 +60,7 @@ describe('MinFactoryRegisterComponent', () => {
     component.submitRegistration();
 
     expect(component.registerForm.invalid).toBeTrue();
-    expect(MINFACTORY_REGISTER_SERVICE_MOCK.registerUser).not.toHaveBeenCalled();
+    expect(MINFACTORY_AUTHENTICATION_SERVICE_MOCK.registerUser).not.toHaveBeenCalled();
     expect(MINFACTORY_ROUTING_SERVICE_MOCK.navigateToHomePage).not.toHaveBeenCalled();
   });
 
@@ -71,12 +73,12 @@ describe('MinFactoryRegisterComponent', () => {
     component.submitRegistration();
 
     expect(component.registerForm.invalid).toBeTrue();
-    expect(MINFACTORY_REGISTER_SERVICE_MOCK.registerUser).not.toHaveBeenCalled();
+    expect(MINFACTORY_AUTHENTICATION_SERVICE_MOCK.registerUser).not.toHaveBeenCalled();
     expect(MINFACTORY_ROUTING_SERVICE_MOCK.navigateToHomePage).not.toHaveBeenCalled();
   });
 
   it('should submit valid form and call register service', async () => {
-    MINFACTORY_REGISTER_SERVICE_MOCK.registerUser.and.returnValue(Promise.resolve());
+    MINFACTORY_AUTHENTICATION_SERVICE_MOCK.registerUser.and.returnValue(Promise.resolve());
 
     component.emailControl.setValue('user@example.com');
     component.passwordControl.setValue('password123');
@@ -85,13 +87,13 @@ describe('MinFactoryRegisterComponent', () => {
     component.submitRegistration();
     await settleRegistration();
 
-    expect(MINFACTORY_REGISTER_SERVICE_MOCK.registerUser).toHaveBeenCalledWith('user@example.com', 'password123');
+    expect(MINFACTORY_AUTHENTICATION_SERVICE_MOCK.registerUser).toHaveBeenCalledWith('user@example.com', 'password123');
     expect(component.isSubmitting()).toBeTrue();
   });
 
   it('should display error message when register service fails', async () => {
     const errorMessage = 'Diese E-Mail-Adresse wird bereits verwendet.';
-    MINFACTORY_REGISTER_SERVICE_MOCK.registerUser.and.returnValue(Promise.reject(new Error(errorMessage)));
+    MINFACTORY_AUTHENTICATION_SERVICE_MOCK.registerUser.and.returnValue(Promise.reject(new Error(errorMessage)));
 
     component.emailControl.setValue('user@example.com');
     component.passwordControl.setValue('password123');

@@ -7,7 +7,7 @@ import { H1Component } from '../../../../shared/components/h1/h1.component';
 import { SnackbarComponent } from '../../../../shared/components/snackbar/snackbar.component';
 import { Color } from '../../../../shared/enums/color.enum';
 import { MinFactoryProfileViewModel } from '../../models/viewmodels/minfactory-profile.viewmodel';
-import { MinFactoryLogoutService } from '../../services/minfactory-logout.service';
+import { MinFactoryAuthenticationService } from '../../services/minfactory-authentication.service';
 import { MinFactoryProfileService } from '../../services/minfactory-profile.service';
 
 @Component({
@@ -29,7 +29,7 @@ export class MinFactoryProfileComponent implements OnInit {
 
   constructor(
     private readonly profileService: MinFactoryProfileService,
-    private readonly logoutService: MinFactoryLogoutService,
+    private readonly authenticationService: MinFactoryAuthenticationService,
     private readonly routingService: RoutingService,
   ) {}
 
@@ -100,7 +100,7 @@ export class MinFactoryProfileComponent implements OnInit {
 
   private async performLogout(): Promise<void> {
     try {
-      await this.logoutService.logoutUser();
+      await this.authenticationService.logoutUser();
       this.routingService.navigateToHomePage();
     } catch (error) {
       this.isLogoutSubmitting.set(false);
