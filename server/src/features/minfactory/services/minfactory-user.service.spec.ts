@@ -4,6 +4,7 @@ import { MinFactoryUserEntity } from '../models/entities/minfactory-user.entity'
 import { MinFactoryUserRepository } from '../repositories/minfactory-user.repository';
 import { MINFACTORY_USER_REPOSITORY_MOCK } from '../repositories/minfactory-user.repository.mock';
 import { MinFactoryUserService } from './minfactory-user.service';
+import { FirebaseUser } from 'src/core/authentication/models/firebase-user.interface';
 
 describe('MinFactoryUserService', () => {
   let userService: MinFactoryUserService;
@@ -24,8 +25,10 @@ describe('MinFactoryUserService', () => {
   });
 
   describe('createUser', () => {
-    const firebaseUid = 'firebase-uid-123';
-    const email = 'user@example.com';
+    const user: FirebaseUser = {
+      firebaseUid: 'firebase-uid-123',
+      email: 'user@example.com',
+    };
 
     const savedEntity: MinFactoryUserEntity = {
       id: '550e8400-e29b-41d4-a716-446655440000',
@@ -39,7 +42,7 @@ describe('MinFactoryUserService', () => {
       MINFACTORY_USER_REPOSITORY_MOCK.findByEmail.mockResolvedValue(null);
       MINFACTORY_USER_REPOSITORY_MOCK.save.mockResolvedValue(savedEntity);
 
-      const result = await userService.createUser(firebaseUid, email);
+      const result = await userService.createUser(user);
 
       expect(result.email).toBe(savedEntity.email);
       expect(result.createdAt).toBe(savedEntity.createdAt);
@@ -48,7 +51,7 @@ describe('MinFactoryUserService', () => {
     it('should return existing user when firebase uid already exists', async () => {
       MINFACTORY_USER_REPOSITORY_MOCK.findByFirebaseUid.mockResolvedValue(savedEntity);
 
-      const result = await userService.createUser(firebaseUid, email);
+      const result = await userService.createUser(user);
 
       expect(result.email).toBe(savedEntity.email);
       expect(MINFACTORY_USER_REPOSITORY_MOCK.findByEmail).not.toHaveBeenCalled();
@@ -59,7 +62,7 @@ describe('MinFactoryUserService', () => {
       MINFACTORY_USER_REPOSITORY_MOCK.findByFirebaseUid.mockResolvedValue(null);
       MINFACTORY_USER_REPOSITORY_MOCK.findByEmail.mockResolvedValue(savedEntity);
 
-      await expect(userService.createUser(firebaseUid, email)).rejects.toThrow(ConflictException);
+      await expect(userService.createUser(user)).rejects.toThrow(ConflictException);
     });
 
     it('should look up existing users with firebase uid and email before saving', async () => {
@@ -67,10 +70,10 @@ describe('MinFactoryUserService', () => {
       MINFACTORY_USER_REPOSITORY_MOCK.findByEmail.mockResolvedValue(null);
       MINFACTORY_USER_REPOSITORY_MOCK.save.mockResolvedValue(savedEntity);
 
-      await userService.createUser(firebaseUid, email);
+      await userService.createUser(user);
 
-      expect(MINFACTORY_USER_REPOSITORY_MOCK.findByFirebaseUid).toHaveBeenCalledWith(firebaseUid);
-      expect(MINFACTORY_USER_REPOSITORY_MOCK.findByEmail).toHaveBeenCalledWith(email);
+      expect(MINFACTORY_USER_REPOSITORY_MOCK.findByFirebaseUid).toHaveBeenCalledWith(user.firebaseUid);
+      expect(MINFACTORY_USER_REPOSITORY_MOCK.findByEmail).toHaveBeenCalledWith(user.email);
     });
 
     it('should return existing user when save hits duplicate firebase uid race', async () => {
@@ -82,7 +85,7 @@ describe('MinFactoryUserService', () => {
         },
       });
 
-      const result = await userService.createUser(firebaseUid, email);
+      const result = await userService.createUser(user);
 
       expect(result.email).toBe(savedEntity.email);
       expect(MINFACTORY_USER_REPOSITORY_MOCK.findByFirebaseUid).toHaveBeenCalledTimes(2);
@@ -101,12 +104,15 @@ describe('MinFactoryUserService', () => {
         },
       });
 
-      await expect(userService.createUser(firebaseUid, email)).rejects.toThrow(ConflictException);
+      await expect(userService.createUser(user)).rejects.toThrow(ConflictException);
     });
   });
 
   describe('getMe', () => {
-    const firebaseUid = 'firebase-uid-123';
+    const user: FirebaseUser = {
+      firebaseUid: 'firebase-uid-123',
+      email: 'user@example.com',
+    };
 
     const existingEntity: MinFactoryUserEntity = {
       id: '550e8400-e29b-41d4-a716-446655440000',
@@ -118,7 +124,7 @@ describe('MinFactoryUserService', () => {
     it('should return user dto when user is found', async () => {
       MINFACTORY_USER_REPOSITORY_MOCK.findByFirebaseUid.mockResolvedValue(existingEntity);
 
-      const result = await userService.getMe(firebaseUid);
+      const result = await userService.getMe(user);
 
       expect(result.email).toBe(existingEntity.email);
       expect(result.createdAt).toBe(existingEntity.createdAt);
@@ -127,15 +133,15 @@ describe('MinFactoryUserService', () => {
     it('should call repository with the given firebaseUid', async () => {
       MINFACTORY_USER_REPOSITORY_MOCK.findByFirebaseUid.mockResolvedValue(existingEntity);
 
-      await userService.getMe(firebaseUid);
+      await userService.getMe(user);
 
-      expect(MINFACTORY_USER_REPOSITORY_MOCK.findByFirebaseUid).toHaveBeenCalledWith(firebaseUid);
+      expect(MINFACTORY_USER_REPOSITORY_MOCK.findByFirebaseUid).toHaveBeenCalledWith(user.firebaseUid);
     });
 
     it('should throw NotFoundException when user is not found', async () => {
       MINFACTORY_USER_REPOSITORY_MOCK.findByFirebaseUid.mockResolvedValue(null);
 
-      await expect(userService.getMe(firebaseUid)).rejects.toThrow(NotFoundException);
+      await expect(userService.getMe(user)).rejects.toThrow(NotFoundException);
     });
   });
 });

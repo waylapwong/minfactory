@@ -46,7 +46,7 @@ describe('MinFactoryUserController', () => {
       const result = await userController.create(user);
 
       expect(result).toBe(dto);
-      expect(MINFACTORY_USER_SERVICE_MOCK.createUser).toHaveBeenCalledWith(user.firebaseUid, user.email);
+      expect(MINFACTORY_USER_SERVICE_MOCK.createUser).toHaveBeenCalledWith(user);
     });
 
     it('should propagate ConflictException from service', async () => {
@@ -72,7 +72,7 @@ describe('MinFactoryUserController', () => {
       const result = await userController.getMe(user);
 
       expect(result).toBe(dto);
-      expect(MINFACTORY_USER_SERVICE_MOCK.getMe).toHaveBeenCalledWith(user.firebaseUid);
+      expect(MINFACTORY_USER_SERVICE_MOCK.getMe).toHaveBeenCalledWith(user);
     });
 
     it('should propagate NotFoundException from service', async () => {

@@ -5,12 +5,14 @@ import { MinFactoryUser } from '../models/domains/minfactory-user';
 import { MinFactoryUserDto } from '../models/dtos/minfactory-user.dto';
 import { MinFactoryUserEntity } from '../models/entities/minfactory-user.entity';
 import { MinFactoryUserRepository } from '../repositories/minfactory-user.repository';
+import { FirebaseUser } from 'src/core/authentication/models/firebase-user.interface';
 
 @Injectable()
 export class MinFactoryUserService {
   constructor(private readonly userRepository: MinFactoryUserRepository) {}
 
-  public async createUser(firebaseUid: string, email: string): Promise<MinFactoryUserDto> {
+  public async createUser(user: FirebaseUser): Promise<MinFactoryUserDto> {
+    const { firebaseUid, email } = user;
     const existingUserByFirebaseUid: MinFactoryUserEntity | null =
       await this.userRepository.findByFirebaseUid(firebaseUid);
 
@@ -55,7 +57,8 @@ export class MinFactoryUserService {
     }
   }
 
-  public async getMe(firebaseUid: string): Promise<MinFactoryUserDto> {
+  public async getMe(user: FirebaseUser): Promise<MinFactoryUserDto> {
+    const { firebaseUid } = user;
     const entity: MinFactoryUserEntity | null = await this.userRepository.findByFirebaseUid(firebaseUid);
 
     if (!entity) {
