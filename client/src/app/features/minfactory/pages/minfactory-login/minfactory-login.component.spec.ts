@@ -1,9 +1,9 @@
 import { provideZonelessChangeDetection } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ROUTING_SERVICE_MOCK } from '../../../../core/routing/routing.service.mock';
 import { RoutingService } from '../../../../core/routing/routing.service';
 import { MinFactoryAuthenticationService } from '../../services/minfactory-authentication.service';
 import { MINFACTORY_AUTHENTICATION_SERVICE_MOCK } from '../../services/minfactory-authentication.service.mock';
-import { MINFACTORY_ROUTING_SERVICE_MOCK } from '../../services/minfactory-routing.service.mock';
 import { MinFactoryLoginComponent } from './minfactory-login.component';
 
 describe('MinFactoryLoginComponent', () => {
@@ -35,14 +35,14 @@ describe('MinFactoryLoginComponent', () => {
     MINFACTORY_AUTHENTICATION_SERVICE_MOCK.loginUser.and.callFake(
       async () => ({ email: 'user@example.com', createdAt: new Date() }) as any,
     );
-    MINFACTORY_ROUTING_SERVICE_MOCK.navigateToProfile.calls.reset();
-    MINFACTORY_ROUTING_SERVICE_MOCK.navigateToRegister.calls.reset();
+    ROUTING_SERVICE_MOCK.navigateToProfile.calls.reset();
+    ROUTING_SERVICE_MOCK.navigateToRegister.calls.reset();
 
     await TestBed.configureTestingModule({
       imports: [MinFactoryLoginComponent],
       providers: [
         provideZonelessChangeDetection(),
-        { provide: RoutingService, useValue: MINFACTORY_ROUTING_SERVICE_MOCK },
+        { provide: RoutingService, useValue: ROUTING_SERVICE_MOCK },
         { provide: MinFactoryAuthenticationService, useValue: MINFACTORY_AUTHENTICATION_SERVICE_MOCK },
       ],
     }).compileComponents();
@@ -61,7 +61,7 @@ describe('MinFactoryLoginComponent', () => {
 
     expect(component.loginForm.invalid).toBeTrue();
     expect(MINFACTORY_AUTHENTICATION_SERVICE_MOCK.loginUser).not.toHaveBeenCalled();
-    expect(MINFACTORY_ROUTING_SERVICE_MOCK.navigateToProfile).not.toHaveBeenCalled();
+    expect(ROUTING_SERVICE_MOCK.navigateToProfile).not.toHaveBeenCalled();
   });
 
   it('should submit valid form and call login service', async () => {
@@ -90,12 +90,12 @@ describe('MinFactoryLoginComponent', () => {
     expect(component.isSubmitting()).toBeFalse();
     expect(component.isSnackbarOpen()).toBeTrue();
     expect(component.snackbarMessage()).toBe(errorMessage);
-    expect(MINFACTORY_ROUTING_SERVICE_MOCK.navigateToProfile).not.toHaveBeenCalled();
+    expect(ROUTING_SERVICE_MOCK.navigateToProfile).not.toHaveBeenCalled();
   });
 
   it('should navigate to register when navigateToRegister is called', () => {
     component.navigateToRegister();
 
-    expect(MINFACTORY_ROUTING_SERVICE_MOCK.navigateToRegister).toHaveBeenCalled();
+    expect(ROUTING_SERVICE_MOCK.navigateToRegister).toHaveBeenCalled();
   });
 });

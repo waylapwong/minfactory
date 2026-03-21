@@ -1,11 +1,11 @@
 import { provideZonelessChangeDetection } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ROUTING_SERVICE_MOCK } from '../../../../core/routing/routing.service.mock';
 import { RoutingService } from '../../../../core/routing/routing.service';
 import { MinFactoryAuthenticationService } from '../../services/minfactory-authentication.service';
 import { MinFactoryProfileService } from '../../services/minfactory-profile.service';
 import { MINFACTORY_AUTHENTICATION_SERVICE_MOCK } from '../../services/minfactory-authentication.service.mock';
 import { MINFACTORY_PROFILE_SERVICE_MOCK } from '../../services/minfactory-profile.service.mock';
-import { MINFACTORY_ROUTING_SERVICE_MOCK } from '../../services/minfactory-routing.service.mock';
 import { MinFactoryProfileComponent } from './minfactory-profile.component';
 
 describe('MinFactoryProfileComponent', () => {
@@ -40,9 +40,9 @@ describe('MinFactoryProfileComponent', () => {
     }));
     MINFACTORY_AUTHENTICATION_SERVICE_MOCK.logoutUser.calls.reset();
     MINFACTORY_AUTHENTICATION_SERVICE_MOCK.logoutUser.and.resolveTo();
-    MINFACTORY_ROUTING_SERVICE_MOCK.navigateToLogin.calls.reset();
-    MINFACTORY_ROUTING_SERVICE_MOCK.navigateToHomePage.calls.reset();
-    MINFACTORY_ROUTING_SERVICE_MOCK.navigateToApps.calls.reset();
+    ROUTING_SERVICE_MOCK.navigateToLogin.calls.reset();
+    ROUTING_SERVICE_MOCK.navigateToHomePage.calls.reset();
+    ROUTING_SERVICE_MOCK.navigateToApps.calls.reset();
 
     await TestBed.configureTestingModule({
       imports: [MinFactoryProfileComponent],
@@ -50,7 +50,7 @@ describe('MinFactoryProfileComponent', () => {
         provideZonelessChangeDetection(),
         { provide: MinFactoryProfileService, useValue: MINFACTORY_PROFILE_SERVICE_MOCK },
         { provide: MinFactoryAuthenticationService, useValue: MINFACTORY_AUTHENTICATION_SERVICE_MOCK },
-        { provide: RoutingService, useValue: MINFACTORY_ROUTING_SERVICE_MOCK },
+        { provide: RoutingService, useValue: ROUTING_SERVICE_MOCK },
       ],
     }).compileComponents();
 
@@ -78,7 +78,7 @@ describe('MinFactoryProfileComponent', () => {
     fixture.detectChanges();
     await fixture.whenStable();
 
-    expect(MINFACTORY_ROUTING_SERVICE_MOCK.navigateToLogin).toHaveBeenCalled();
+    expect(ROUTING_SERVICE_MOCK.navigateToLogin).toHaveBeenCalled();
   });
 
   it('should expose error state when profile loading fails', async () => {
@@ -95,7 +95,7 @@ describe('MinFactoryProfileComponent', () => {
   it('should navigate to apps', () => {
     component.navigateToApps();
 
-    expect(MINFACTORY_ROUTING_SERVICE_MOCK.navigateToApps).toHaveBeenCalled();
+    expect(ROUTING_SERVICE_MOCK.navigateToApps).toHaveBeenCalled();
   });
 
   it('should reload profile when reloadProfile is called', async () => {
@@ -115,7 +115,7 @@ describe('MinFactoryProfileComponent', () => {
       await settleLogout();
 
       expect(MINFACTORY_AUTHENTICATION_SERVICE_MOCK.logoutUser).toHaveBeenCalled();
-      expect(MINFACTORY_ROUTING_SERVICE_MOCK.navigateToHomePage).toHaveBeenCalled();
+      expect(ROUTING_SERVICE_MOCK.navigateToHomePage).toHaveBeenCalled();
     });
 
     it('should set isLogoutSubmitting while logout is in progress', () => {
@@ -141,7 +141,7 @@ describe('MinFactoryProfileComponent', () => {
       expect(component.isLogoutSubmitting()).toBeFalse();
       expect(component.isSnackbarOpen()).toBeTrue();
       expect(component.snackbarMessage()).toBe(errorMessage);
-      expect(MINFACTORY_ROUTING_SERVICE_MOCK.navigateToHomePage).not.toHaveBeenCalled();
+      expect(ROUTING_SERVICE_MOCK.navigateToHomePage).not.toHaveBeenCalled();
     });
 
     it('should close snackbar when closeSnackbar is called', async () => {
