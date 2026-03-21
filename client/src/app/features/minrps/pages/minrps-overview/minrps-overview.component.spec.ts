@@ -1,28 +1,28 @@
-import { provideZonelessChangeDetection, signal } from '@angular/core';
+import { provideZonelessChangeDetection } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { RoutingService } from '../../../../core/routing/routing.service';
+import { ROUTING_SERVICE_MOCK } from '../../../../core/routing/routing.service.mock';
 import { Color } from '../../../../shared/enums/color.enum';
 import { MinRpsGameService } from '../../services/minrps-game.service';
+import { MINRPS_GAME_SERVICE_MOCK } from '../../services/minrps-game.service.mock';
 import { MinRpsOverviewComponent } from './minrps-overview.component';
 
 describe('MinRpsOverviewComponent', () => {
   let component: MinRpsOverviewComponent;
   let fixture: ComponentFixture<MinRpsOverviewComponent>;
-  let mockGameService: jasmine.SpyObj<MinRpsGameService>;
-  let mockRoutingService: jasmine.SpyObj<RoutingService>;
 
   beforeEach(async () => {
-    mockGameService = jasmine.createSpyObj('MinRpsGameService', ['createGame', 'deleteGame', 'refreshGames'], {
-      games: signal([]),
-    });
-    mockRoutingService = jasmine.createSpyObj('RoutingService', ['navigateToMinRpsMultiplayer']);
+    MINRPS_GAME_SERVICE_MOCK.createGame.calls.reset();
+    MINRPS_GAME_SERVICE_MOCK.deleteGame.calls.reset();
+    MINRPS_GAME_SERVICE_MOCK.refreshGames.calls.reset();
+    ROUTING_SERVICE_MOCK.navigateToMinRpsMultiplayer.calls.reset();
 
     await TestBed.configureTestingModule({
       imports: [MinRpsOverviewComponent],
       providers: [
         provideZonelessChangeDetection(),
-        { provide: MinRpsGameService, useValue: mockGameService },
-        { provide: RoutingService, useValue: mockRoutingService },
+        { provide: MinRpsGameService, useValue: MINRPS_GAME_SERVICE_MOCK },
+        { provide: RoutingService, useValue: ROUTING_SERVICE_MOCK },
       ],
     }).compileComponents();
 
@@ -40,12 +40,12 @@ describe('MinRpsOverviewComponent', () => {
   });
 
   it('should inject game service games signal', () => {
-    expect(component.games).toBe(mockGameService.games);
+    expect(component.games).toBe(MINRPS_GAME_SERVICE_MOCK.games);
   });
 
   describe('ngOnInit()', () => {
     it('should call refreshGames on init', () => {
-      expect(mockGameService.refreshGames).toHaveBeenCalled();
+      expect(MINRPS_GAME_SERVICE_MOCK.refreshGames).toHaveBeenCalled();
     });
   });
 
@@ -59,13 +59,13 @@ describe('MinRpsOverviewComponent', () => {
 
   describe('createGame()', () => {
     it('should create game and close dialog when form is valid', async () => {
-      mockGameService.createGame.and.returnValue(Promise.resolve());
+      MINRPS_GAME_SERVICE_MOCK.createGame.and.returnValue(Promise.resolve());
       component.newGameFormGroup.patchValue({ name: 'Test Game' });
       component.isNewGameDialogOpen.set(true);
 
       await component.createGame();
 
-      expect(mockGameService.createGame).toHaveBeenCalledWith('Test Game');
+      expect(MINRPS_GAME_SERVICE_MOCK.createGame).toHaveBeenCalledWith('Test Game');
       expect(component.isNewGameDialogOpen()).toBe(false);
     });
 
@@ -75,7 +75,7 @@ describe('MinRpsOverviewComponent', () => {
 
       await component.createGame();
 
-      expect(mockGameService.createGame).not.toHaveBeenCalled();
+      expect(MINRPS_GAME_SERVICE_MOCK.createGame).not.toHaveBeenCalled();
       expect(component.isNewGameDialogOpen()).toBe(true);
     });
 
@@ -84,7 +84,7 @@ describe('MinRpsOverviewComponent', () => {
 
       await component.createGame();
 
-      expect(mockGameService.createGame).not.toHaveBeenCalled();
+      expect(MINRPS_GAME_SERVICE_MOCK.createGame).not.toHaveBeenCalled();
     });
 
     it('should not create game when name is too long', async () => {
@@ -92,7 +92,7 @@ describe('MinRpsOverviewComponent', () => {
 
       await component.createGame();
 
-      expect(mockGameService.createGame).not.toHaveBeenCalled();
+      expect(MINRPS_GAME_SERVICE_MOCK.createGame).not.toHaveBeenCalled();
     });
   });
 
@@ -109,20 +109,20 @@ describe('MinRpsOverviewComponent', () => {
 
   describe('confirmDeleteGame()', () => {
     it('should call deleteGame service and close dialog', async () => {
-      mockGameService.deleteGame.and.returnValue(Promise.resolve());
+      MINRPS_GAME_SERVICE_MOCK.deleteGame.and.returnValue(Promise.resolve());
       const mockEvent = jasmine.createSpyObj('MouseEvent', ['stopPropagation']);
       component.openDeleteDialog('test-id', mockEvent);
 
       await component.confirmDeleteGame();
 
-      expect(mockGameService.deleteGame).toHaveBeenCalledWith('test-id');
+      expect(MINRPS_GAME_SERVICE_MOCK.deleteGame).toHaveBeenCalledWith('test-id');
       expect(component.isDeleteDialogOpen()).toBe(false);
     });
 
     it('should close dialog without calling service when no game id is set', async () => {
       await component.confirmDeleteGame();
 
-      expect(mockGameService.deleteGame).not.toHaveBeenCalled();
+      expect(MINRPS_GAME_SERVICE_MOCK.deleteGame).not.toHaveBeenCalled();
       expect(component.isDeleteDialogOpen()).toBe(false);
     });
   });
@@ -134,7 +134,7 @@ describe('MinRpsOverviewComponent', () => {
 
       component.cancelDeleteGame();
 
-      expect(mockGameService.deleteGame).not.toHaveBeenCalled();
+      expect(MINRPS_GAME_SERVICE_MOCK.deleteGame).not.toHaveBeenCalled();
       expect(component.isDeleteDialogOpen()).toBe(false);
     });
   });
@@ -143,7 +143,7 @@ describe('MinRpsOverviewComponent', () => {
     it('should navigate to multiplayer page with game id', () => {
       component.navigateToMultiplayerPage('test-game-id');
 
-      expect(mockRoutingService.navigateToMinRpsMultiplayer).toHaveBeenCalledWith('test-game-id');
+      expect(ROUTING_SERVICE_MOCK.navigateToMinRpsMultiplayer).toHaveBeenCalledWith('test-game-id');
     });
   });
 

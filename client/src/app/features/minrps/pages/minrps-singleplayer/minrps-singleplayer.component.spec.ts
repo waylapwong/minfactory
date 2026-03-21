@@ -1,32 +1,29 @@
-import { provideZonelessChangeDetection, signal } from '@angular/core';
+import { provideZonelessChangeDetection } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MinRpsMove } from '../../../../core/generated';
 import { RoutingService } from '../../../../core/routing/routing.service';
+import { ROUTING_SERVICE_MOCK } from '../../../../core/routing/routing.service.mock';
 import { Color } from '../../../../shared/enums/color.enum';
-import { MinRpsSingleplayerViewModel } from '../../models/viewmodels/minrps-singleplayer.viewmodel';
 import { MinRpsSingleplayerService } from '../../services/minrps-singleplayer.service';
+import { MINRPS_SINGLEPLAYER_SERVICE_MOCK } from '../../services/minrps-singleplayer.service.mock';
 import { MinRpsSingleplayerComponent } from './minrps-singleplayer.component';
 
 describe('MinRpsSingleplayerComponent', () => {
   let component: MinRpsSingleplayerComponent;
   let fixture: ComponentFixture<MinRpsSingleplayerComponent>;
-  let mockService: jasmine.SpyObj<MinRpsSingleplayerService>;
-  let mockRoutingService: jasmine.SpyObj<RoutingService>;
-  let gameSignal: any;
 
   beforeEach(async () => {
-    gameSignal = signal(new MinRpsSingleplayerViewModel());
-    mockService = jasmine.createSpyObj('MinRpsSingleplayerService', ['playGame', 'selectMove', 'setupNewGame'], {
-      game: gameSignal.asReadonly(),
-    });
-    mockRoutingService = jasmine.createSpyObj('RoutingService', ['navigateToMinRps']);
+    MINRPS_SINGLEPLAYER_SERVICE_MOCK.playGame.calls.reset();
+    MINRPS_SINGLEPLAYER_SERVICE_MOCK.selectMove.calls.reset();
+    MINRPS_SINGLEPLAYER_SERVICE_MOCK.setupNewGame.calls.reset();
+    ROUTING_SERVICE_MOCK.navigateToMinRps.calls.reset();
 
     await TestBed.configureTestingModule({
       imports: [MinRpsSingleplayerComponent],
       providers: [
         provideZonelessChangeDetection(),
-        { provide: MinRpsSingleplayerService, useValue: mockService },
-        { provide: RoutingService, useValue: mockRoutingService },
+        { provide: MinRpsSingleplayerService, useValue: MINRPS_SINGLEPLAYER_SERVICE_MOCK },
+        { provide: RoutingService, useValue: ROUTING_SERVICE_MOCK },
       ],
     }).compileComponents();
 
@@ -48,7 +45,7 @@ describe('MinRpsSingleplayerComponent', () => {
   });
 
   it('should inject game signal from service', () => {
-    expect(component.game).toBe(mockService.game);
+    expect(component.game).toBe(MINRPS_SINGLEPLAYER_SERVICE_MOCK.game);
   });
 
   it('should have selectable moves array', () => {
@@ -85,7 +82,7 @@ describe('MinRpsSingleplayerComponent', () => {
   describe('ngOnInit()', () => {
     it('should trigger new game setup process', () => {
       component.ngOnInit();
-      expect(mockService.setupNewGame).toHaveBeenCalledWith(true);
+      expect(MINRPS_SINGLEPLAYER_SERVICE_MOCK.setupNewGame).toHaveBeenCalledWith(true);
     });
   });
 
@@ -99,9 +96,9 @@ describe('MinRpsSingleplayerComponent', () => {
 
   describe('playGame()', () => {
     it('should trigger play game process', async () => {
-      mockService.playGame.and.returnValue(Promise.resolve());
+      MINRPS_SINGLEPLAYER_SERVICE_MOCK.playGame.and.returnValue(Promise.resolve());
       await component.playGame();
-      expect(mockService.playGame).toHaveBeenCalled();
+      expect(MINRPS_SINGLEPLAYER_SERVICE_MOCK.playGame).toHaveBeenCalled();
     });
   });
 

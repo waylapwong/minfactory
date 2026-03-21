@@ -2,25 +2,23 @@ import { provideZonelessChangeDetection } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { of } from 'rxjs';
 import { MinRPSApiService, MinRpsGameDto } from '../../../core/generated';
+import { MINRPS_API_SERVICE_MOCK } from './minrps-api.service.mock';
 import { MinRpsGameRepository } from './minrps-game.repository';
 
 describe('MinRpsGameRepository', () => {
   let repository: MinRpsGameRepository;
-  let mockApiService: jasmine.SpyObj<MinRPSApiService>;
 
   beforeEach(() => {
-    mockApiService = jasmine.createSpyObj('MinRPSApiService', [
-      'createMinRpsGame',
-      'deleteMinRpsGame',
-      'getMinRpsGame',
-      'getAllMinRpsGames',
-    ]);
+    MINRPS_API_SERVICE_MOCK.createMinRpsGame.calls.reset();
+    MINRPS_API_SERVICE_MOCK.deleteMinRpsGame.calls.reset();
+    MINRPS_API_SERVICE_MOCK.getMinRpsGame.calls.reset();
+    MINRPS_API_SERVICE_MOCK.getAllMinRpsGames.calls.reset();
 
     TestBed.configureTestingModule({
       providers: [
         provideZonelessChangeDetection(),
         MinRpsGameRepository,
-        { provide: MinRPSApiService, useValue: mockApiService },
+        { provide: MinRPSApiService, useValue: MINRPS_API_SERVICE_MOCK },
       ],
     });
     repository = TestBed.inject(MinRpsGameRepository);
@@ -39,22 +37,22 @@ describe('MinRpsGameRepository', () => {
         observerCount: 0,
         playerCount: 0,
       };
-      mockApiService.createMinRpsGame.and.returnValue(of(mockDto) as any);
+      MINRPS_API_SERVICE_MOCK.createMinRpsGame.and.returnValue(of(mockDto) as any);
 
       const result = await repository.create('Test Game');
 
       expect(result).toEqual(mockDto);
-      expect(mockApiService.createMinRpsGame).toHaveBeenCalledWith({ name: 'Test Game' });
+      expect(MINRPS_API_SERVICE_MOCK.createMinRpsGame).toHaveBeenCalledWith({ name: 'Test Game' });
     });
   });
 
   describe('delete()', () => {
     it('should delete a game via API service', async () => {
-      mockApiService.deleteMinRpsGame.and.returnValue(of(undefined) as any);
+      MINRPS_API_SERVICE_MOCK.deleteMinRpsGame.and.returnValue(of(undefined) as any);
 
       await repository.delete('test-id');
 
-      expect(mockApiService.deleteMinRpsGame).toHaveBeenCalledWith('test-id');
+      expect(MINRPS_API_SERVICE_MOCK.deleteMinRpsGame).toHaveBeenCalledWith('test-id');
     });
   });
 
@@ -67,12 +65,12 @@ describe('MinRpsGameRepository', () => {
         observerCount: 0,
         playerCount: 0,
       };
-      mockApiService.getMinRpsGame.and.returnValue(of(mockDto) as any);
+      MINRPS_API_SERVICE_MOCK.getMinRpsGame.and.returnValue(of(mockDto) as any);
 
       const result = await repository.get('test-id');
 
       expect(result).toEqual(mockDto);
-      expect(mockApiService.getMinRpsGame).toHaveBeenCalledWith('test-id');
+      expect(MINRPS_API_SERVICE_MOCK.getMinRpsGame).toHaveBeenCalledWith('test-id');
     });
   });
 
@@ -94,12 +92,12 @@ describe('MinRpsGameRepository', () => {
           playerCount: 2,
         },
       ];
-      mockApiService.getAllMinRpsGames.and.returnValue(of(mockDtos) as any);
+      MINRPS_API_SERVICE_MOCK.getAllMinRpsGames.and.returnValue(of(mockDtos) as any);
 
       const result = await repository.getAll();
 
       expect(result).toEqual(mockDtos);
-      expect(mockApiService.getAllMinRpsGames).toHaveBeenCalled();
+      expect(MINRPS_API_SERVICE_MOCK.getAllMinRpsGames).toHaveBeenCalled();
     });
   });
 });

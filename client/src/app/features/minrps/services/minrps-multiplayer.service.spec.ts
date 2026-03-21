@@ -9,25 +9,23 @@ import { MinRpsMatchPlayPayload } from '../models/payloads/minrps-match-play.pay
 import { MinRpsMatchSeatPayload } from '../models/payloads/minrps-match-seat.payload';
 import { MinRpsMatchUpdatedPayload } from '../models/payloads/minrps-match-updated.payload';
 import { MinRpsSocketRepository } from '../repositories/minrps-socket.repository';
+import { MINRPS_SOCKET_REPOSITORY_MOCK } from '../repositories/minrps-socket.repository.mock';
 import { MinRpsMultiplayerService } from './minrps-multiplayer.service';
 
 describe('MinRpsMultiplayerService', () => {
   let service: MinRpsMultiplayerService;
-  let mockSocketRepository: jasmine.SpyObj<MinRpsSocketRepository>;
 
   beforeEach(() => {
-    mockSocketRepository = jasmine.createSpyObj('MinRpsSocketRepository', [
-      'connect',
-      'disconnect',
-      'on',
-      'off',
-      'emit',
-    ]);
+    MINRPS_SOCKET_REPOSITORY_MOCK.connect.calls.reset();
+    MINRPS_SOCKET_REPOSITORY_MOCK.disconnect.calls.reset();
+    MINRPS_SOCKET_REPOSITORY_MOCK.on.calls.reset();
+    MINRPS_SOCKET_REPOSITORY_MOCK.off.calls.reset();
+    MINRPS_SOCKET_REPOSITORY_MOCK.emit.calls.reset();
 
     TestBed.configureTestingModule({
       providers: [
         provideZonelessChangeDetection(),
-        { provide: MinRpsSocketRepository, useValue: mockSocketRepository },
+        { provide: MinRpsSocketRepository, useValue: MINRPS_SOCKET_REPOSITORY_MOCK },
       ],
     });
     service = TestBed.inject(MinRpsMultiplayerService);
@@ -41,14 +39,14 @@ describe('MinRpsMultiplayerService', () => {
     it('should call socketRepository connect', () => {
       service.connect();
 
-      expect(mockSocketRepository.connect).toHaveBeenCalledTimes(1);
+      expect(MINRPS_SOCKET_REPOSITORY_MOCK.connect).toHaveBeenCalledTimes(1);
     });
 
     it('should subscribe to Connected and Updated events', () => {
       service.connect();
 
-      expect(mockSocketRepository.on).toHaveBeenCalledWith(MinRpsMatchEvent.Connected, jasmine.any(Function));
-      expect(mockSocketRepository.on).toHaveBeenCalledWith(MinRpsMatchEvent.Updated, jasmine.any(Function));
+      expect(MINRPS_SOCKET_REPOSITORY_MOCK.on).toHaveBeenCalledWith(MinRpsMatchEvent.Connected, jasmine.any(Function));
+      expect(MINRPS_SOCKET_REPOSITORY_MOCK.on).toHaveBeenCalledWith(MinRpsMatchEvent.Updated, jasmine.any(Function));
     });
 
     it('should only subscribe once even when called multiple times', () => {
@@ -56,7 +54,7 @@ describe('MinRpsMultiplayerService', () => {
       service.connect();
       service.connect();
 
-      expect(mockSocketRepository.on).toHaveBeenCalledTimes(2);
+      expect(MINRPS_SOCKET_REPOSITORY_MOCK.on).toHaveBeenCalledTimes(2);
     });
 
     it('should call connect multiple times if called multiple times', () => {
@@ -64,7 +62,7 @@ describe('MinRpsMultiplayerService', () => {
       service.connect();
       service.connect();
 
-      expect(mockSocketRepository.connect).toHaveBeenCalledTimes(3);
+      expect(MINRPS_SOCKET_REPOSITORY_MOCK.connect).toHaveBeenCalledTimes(3);
     });
   });
 
@@ -72,28 +70,28 @@ describe('MinRpsMultiplayerService', () => {
     it('should call socketRepository disconnect', () => {
       service.disconnect();
 
-      expect(mockSocketRepository.disconnect).toHaveBeenCalledTimes(1);
+      expect(MINRPS_SOCKET_REPOSITORY_MOCK.disconnect).toHaveBeenCalledTimes(1);
     });
 
     it('should unsubscribe from events when connected', () => {
       service.connect();
       service.disconnect();
 
-      expect(mockSocketRepository.off).toHaveBeenCalledWith(MinRpsMatchEvent.Connected, jasmine.any(Function));
-      expect(mockSocketRepository.off).toHaveBeenCalledWith(MinRpsMatchEvent.Updated, jasmine.any(Function));
+      expect(MINRPS_SOCKET_REPOSITORY_MOCK.off).toHaveBeenCalledWith(MinRpsMatchEvent.Connected, jasmine.any(Function));
+      expect(MINRPS_SOCKET_REPOSITORY_MOCK.off).toHaveBeenCalledWith(MinRpsMatchEvent.Updated, jasmine.any(Function));
     });
 
     it('should not unsubscribe if not connected', () => {
       service.disconnect();
 
-      expect(mockSocketRepository.off).not.toHaveBeenCalled();
+      expect(MINRPS_SOCKET_REPOSITORY_MOCK.off).not.toHaveBeenCalled();
     });
 
     it('should call disconnect multiple times if called multiple times', () => {
       service.disconnect();
       service.disconnect();
 
-      expect(mockSocketRepository.disconnect).toHaveBeenCalledTimes(2);
+      expect(MINRPS_SOCKET_REPOSITORY_MOCK.disconnect).toHaveBeenCalledTimes(2);
     });
 
     it('should only unsubscribe once for multiple disconnects after connect', () => {
@@ -101,7 +99,7 @@ describe('MinRpsMultiplayerService', () => {
       service.disconnect();
       service.disconnect();
 
-      expect(mockSocketRepository.off).toHaveBeenCalledTimes(2);
+      expect(MINRPS_SOCKET_REPOSITORY_MOCK.off).toHaveBeenCalledTimes(2);
     });
   });
 
@@ -109,13 +107,13 @@ describe('MinRpsMultiplayerService', () => {
     it('should emit Leave command', () => {
       service.leaveGame();
 
-      expect(mockSocketRepository.emit).toHaveBeenCalledWith(MinRpsMatchCommand.Leave, jasmine.any(Object));
+      expect(MINRPS_SOCKET_REPOSITORY_MOCK.emit).toHaveBeenCalledWith(MinRpsMatchCommand.Leave, jasmine.any(Object));
     });
 
     it('should emit Leave command as MinRpsMatchLeavePayload', () => {
       service.leaveGame();
 
-      const emitArgs = mockSocketRepository.emit.calls.mostRecent().args;
+      const emitArgs = MINRPS_SOCKET_REPOSITORY_MOCK.emit.calls.mostRecent().args;
       expect(emitArgs[0]).toBe(MinRpsMatchCommand.Leave);
       expect(emitArgs[1]).toBeInstanceOf(MinRpsMatchLeavePayload);
     });
@@ -125,13 +123,13 @@ describe('MinRpsMultiplayerService', () => {
     it('should emit Play command', () => {
       service.playGame(MinRpsMove.Rock);
 
-      expect(mockSocketRepository.emit).toHaveBeenCalledWith(MinRpsMatchCommand.Play, jasmine.any(Object));
+      expect(MINRPS_SOCKET_REPOSITORY_MOCK.emit).toHaveBeenCalledWith(MinRpsMatchCommand.Play, jasmine.any(Object));
     });
 
     it('should emit Play command as MinRpsMatchPlayPayload', () => {
       service.playGame(MinRpsMove.Rock);
 
-      const emitArgs = mockSocketRepository.emit.calls.mostRecent().args;
+      const emitArgs = MINRPS_SOCKET_REPOSITORY_MOCK.emit.calls.mostRecent().args;
       expect(emitArgs[0]).toBe(MinRpsMatchCommand.Play);
       expect(emitArgs[1]).toBeInstanceOf(MinRpsMatchPlayPayload);
     });
@@ -141,13 +139,13 @@ describe('MinRpsMultiplayerService', () => {
     it('should emit Seat command', () => {
       service.seatGame('player-1', 1);
 
-      expect(mockSocketRepository.emit).toHaveBeenCalledWith(MinRpsMatchCommand.Seat, jasmine.any(Object));
+      expect(MINRPS_SOCKET_REPOSITORY_MOCK.emit).toHaveBeenCalledWith(MinRpsMatchCommand.Seat, jasmine.any(Object));
     });
 
     it('should emit Seat command as MinRpsMatchSeatPayload', () => {
       service.seatGame('player-1', 1);
 
-      const emitArgs = mockSocketRepository.emit.calls.mostRecent().args;
+      const emitArgs = MINRPS_SOCKET_REPOSITORY_MOCK.emit.calls.mostRecent().args;
       expect(emitArgs[0]).toBe(MinRpsMatchCommand.Seat);
       expect(emitArgs[1]).toBeInstanceOf(MinRpsMatchSeatPayload);
     });
@@ -178,8 +176,9 @@ describe('MinRpsMultiplayerService', () => {
 
       service.connect();
 
-      const updatedCb = mockSocketRepository.on.calls.all().find((c) => c.args[0] === MinRpsMatchEvent.Updated)!
-        .args[1];
+      const updatedCb = MINRPS_SOCKET_REPOSITORY_MOCK.on.calls
+        .all()
+        .find((c) => c.args[0] === MinRpsMatchEvent.Updated)!.args[1];
       updatedCb(updatedPayload);
 
       expect(service.game().result).toBe(MinRpsResult.Player1);
@@ -197,8 +196,9 @@ describe('MinRpsMultiplayerService', () => {
 
       service.connect();
 
-      const connectedCb = mockSocketRepository.on.calls.all().find((c) => c.args[0] === MinRpsMatchEvent.Connected)!
-        .args[1];
+      const connectedCb = MINRPS_SOCKET_REPOSITORY_MOCK.on.calls
+        .all()
+        .find((c) => c.args[0] === MinRpsMatchEvent.Connected)!.args[1];
       connectedCb(connectedPayload);
 
       expect(service.playerId()).toBe('player-123');
@@ -211,12 +211,13 @@ describe('MinRpsMultiplayerService', () => {
 
       service.connect();
 
-      const connectedCb = mockSocketRepository.on.calls.all().find((c) => c.args[0] === MinRpsMatchEvent.Connected)!
-        .args[1];
+      const connectedCb = MINRPS_SOCKET_REPOSITORY_MOCK.on.calls
+        .all()
+        .find((c) => c.args[0] === MinRpsMatchEvent.Connected)!.args[1];
       connectedCb(connectedPayload);
 
       expect(service.playerId()).toBe('player-42');
-      expect(mockSocketRepository.emit).toHaveBeenCalledWith(MinRpsMatchCommand.Join, jasmine.any(Object));
+      expect(MINRPS_SOCKET_REPOSITORY_MOCK.emit).toHaveBeenCalledWith(MinRpsMatchCommand.Join, jasmine.any(Object));
     });
   });
 
@@ -239,8 +240,9 @@ describe('MinRpsMultiplayerService', () => {
 
       service.connect();
 
-      const updatedCb = mockSocketRepository.on.calls.all().find((c) => c.args[0] === MinRpsMatchEvent.Updated)!
-        .args[1];
+      const updatedCb = MINRPS_SOCKET_REPOSITORY_MOCK.on.calls
+        .all()
+        .find((c) => c.args[0] === MinRpsMatchEvent.Updated)!.args[1];
       updatedCb(updatedPayload);
 
       expect(service.game().result).toBe(MinRpsResult.Player2);

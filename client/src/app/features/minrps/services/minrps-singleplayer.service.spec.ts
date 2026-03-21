@@ -2,21 +2,21 @@ import { provideZonelessChangeDetection } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { MinRpsMove, MinRpsPlayResultDto, MinRpsResult } from '../../../core/generated';
 import { MinRpsPlayRepository } from '../repositories/minrps-play.repository';
+import { MINRPS_PLAY_REPOSITORY_MOCK } from '../repositories/minrps-play.repository.mock';
 import { MinRpsSingleplayerService } from './minrps-singleplayer.service';
 
 describe('MinRpsSingleplayerService', () => {
   let service: MinRpsSingleplayerService;
-  let mockRepository: jasmine.SpyObj<MinRpsPlayRepository>;
   const PUFFER_TIME = 2000;
 
   beforeEach(() => {
-    mockRepository = jasmine.createSpyObj('MinRpsPlayRepository', ['play']);
+    MINRPS_PLAY_REPOSITORY_MOCK.play.calls.reset();
 
     TestBed.configureTestingModule({
       providers: [
         provideZonelessChangeDetection(),
         MinRpsSingleplayerService,
-        { provide: MinRpsPlayRepository, useValue: mockRepository },
+        { provide: MinRpsPlayRepository, useValue: MINRPS_PLAY_REPOSITORY_MOCK },
       ],
     });
     service = TestBed.inject(MinRpsSingleplayerService);
@@ -58,7 +58,7 @@ describe('MinRpsSingleplayerService', () => {
     });
 
     it('should reset result history when requested', async () => {
-      mockRepository.play.and.returnValue(
+      MINRPS_PLAY_REPOSITORY_MOCK.play.and.returnValue(
         Promise.resolve({
           player1Move: MinRpsMove.Rock,
           player2Move: MinRpsMove.Scissors,
@@ -88,7 +88,7 @@ describe('MinRpsSingleplayerService', () => {
         player2Move: MinRpsMove.Scissors,
         result: MinRpsResult.Player1,
       };
-      mockRepository.play.and.returnValue(Promise.resolve(mockResult));
+      MINRPS_PLAY_REPOSITORY_MOCK.play.and.returnValue(Promise.resolve(mockResult));
 
       await service.playGame(MinRpsMove.Rock);
 
@@ -102,11 +102,11 @@ describe('MinRpsSingleplayerService', () => {
         player2Move: MinRpsMove.Rock,
         result: MinRpsResult.Player1,
       };
-      mockRepository.play.and.returnValue(Promise.resolve(mockResult));
+      MINRPS_PLAY_REPOSITORY_MOCK.play.and.returnValue(Promise.resolve(mockResult));
 
       await service.playGame(MinRpsMove.Paper);
 
-      expect(mockRepository.play).toHaveBeenCalledWith({
+      expect(MINRPS_PLAY_REPOSITORY_MOCK.play).toHaveBeenCalledWith({
         player1Move: MinRpsMove.Paper,
       });
     });
@@ -117,7 +117,7 @@ describe('MinRpsSingleplayerService', () => {
         player2Move: MinRpsMove.Paper,
         result: MinRpsResult.Player1,
       };
-      mockRepository.play.and.returnValue(Promise.resolve(mockResult));
+      MINRPS_PLAY_REPOSITORY_MOCK.play.and.returnValue(Promise.resolve(mockResult));
 
       await service.playGame(MinRpsMove.Scissors);
 
@@ -134,7 +134,7 @@ describe('MinRpsSingleplayerService', () => {
         player2Move: MinRpsMove.Paper,
         result: MinRpsResult.Player2,
       };
-      mockRepository.play.and.returnValue(Promise.resolve(mockResult));
+      MINRPS_PLAY_REPOSITORY_MOCK.play.and.returnValue(Promise.resolve(mockResult));
 
       await service.playGame(MinRpsMove.Rock);
 
@@ -149,7 +149,7 @@ describe('MinRpsSingleplayerService', () => {
         player2Move: MinRpsMove.Rock,
         result: MinRpsResult.Draw,
       };
-      mockRepository.play.and.returnValue(Promise.resolve(mockResult));
+      MINRPS_PLAY_REPOSITORY_MOCK.play.and.returnValue(Promise.resolve(mockResult));
 
       await service.playGame(MinRpsMove.Rock);
 
@@ -164,7 +164,7 @@ describe('MinRpsSingleplayerService', () => {
         player2Move: MinRpsMove.Scissors,
         result: MinRpsResult.Player1,
       };
-      mockRepository.play.and.returnValue(Promise.resolve(mockResult));
+      MINRPS_PLAY_REPOSITORY_MOCK.play.and.returnValue(Promise.resolve(mockResult));
 
       await service.playGame(MinRpsMove.Rock);
 
@@ -185,7 +185,7 @@ describe('MinRpsSingleplayerService', () => {
         player2Move: MinRpsMove.Scissors,
         result: MinRpsResult.Player1,
       };
-      mockRepository.play.and.returnValue(Promise.resolve(mockResult));
+      MINRPS_PLAY_REPOSITORY_MOCK.play.and.returnValue(Promise.resolve(mockResult));
 
       await service.playGame(MinRpsMove.Rock);
 
@@ -210,7 +210,7 @@ describe('MinRpsSingleplayerService', () => {
         { player1Move: MinRpsMove.Rock, player2Move: MinRpsMove.Scissors, result: MinRpsResult.Player1 },
         { player1Move: MinRpsMove.Rock, player2Move: MinRpsMove.Rock, result: MinRpsResult.Draw },
       ];
-      mockRepository.play.and.callFake(async () => mockResults.shift() as MinRpsPlayResultDto);
+      MINRPS_PLAY_REPOSITORY_MOCK.play.and.callFake(async () => mockResults.shift() as MinRpsPlayResultDto);
 
       for (let i = 0; i < 11; i++) {
         await service.playGame(MinRpsMove.Rock);
@@ -236,7 +236,7 @@ describe('MinRpsSingleplayerService', () => {
         player2Move: MinRpsMove.Paper,
         result: MinRpsResult.Player2,
       };
-      mockRepository.play.and.returnValue(Promise.resolve(mockResult));
+      MINRPS_PLAY_REPOSITORY_MOCK.play.and.returnValue(Promise.resolve(mockResult));
 
       await service.playGame(MinRpsMove.Rock);
 
@@ -252,7 +252,7 @@ describe('MinRpsSingleplayerService', () => {
         player2Move: MinRpsMove.Scissors,
         result: MinRpsResult.Player2,
       };
-      mockRepository.play.and.returnValue(Promise.resolve(mockResult));
+      MINRPS_PLAY_REPOSITORY_MOCK.play.and.returnValue(Promise.resolve(mockResult));
 
       await service.playGame(MinRpsMove.Paper);
 
@@ -268,7 +268,7 @@ describe('MinRpsSingleplayerService', () => {
         player2Move: MinRpsMove.Rock,
         result: MinRpsResult.Player2,
       };
-      mockRepository.play.and.returnValue(Promise.resolve(mockResult));
+      MINRPS_PLAY_REPOSITORY_MOCK.play.and.returnValue(Promise.resolve(mockResult));
 
       await service.playGame(MinRpsMove.Scissors);
 
