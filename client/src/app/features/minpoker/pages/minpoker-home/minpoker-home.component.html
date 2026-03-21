@@ -1,0 +1,30 @@
+<div class="flex h-full flex-col px-4">
+  <!-- TITLE -->
+  <div class="text-center">
+    <min-h1><min-logo>Poker</min-logo></min-h1>
+    <p class="text-gray-500">Wähle deinen Spielmodus</p>
+  </div>
+
+  <!-- GAME MODES -->
+  <div class="flex grow items-center">
+    <div class="flex w-full flex-col gap-4">
+      <!-- SINGLEPLAYER -->
+      <min-card-button [disabled]="true">
+        <div class="flex flex-row items-start justify-between">
+          <min-h2>Singleplayer</min-h2>
+          <min-badge [color]="Color.Gray">soon</min-badge>
+        </div>
+        <p class="text-gray-500">Spiele mit <min-logo>Robo</min-logo></p>
+      </min-card-button>
+
+      <!-- MULTIPLAYER -->
+      <min-card-button [disabled]="true">
+        <div class="flex flex-row items-start justify-between">
+          <min-h2>Multiplayer</min-h2>
+          <min-badge [color]="Color.Gray">soon</min-badge>
+        </div>
+        <p class="text-gray-500">Spiele mit einem Freund</p>
+      </min-card-button>
+    </div>
+  </div>
+</div>

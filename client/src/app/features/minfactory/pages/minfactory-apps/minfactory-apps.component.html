@@ -34,7 +34,16 @@
 <div class="flex w-full grow flex-col gap-2 px-4">
   <!-- CONTENT TAB GAMES -->
   @if (selectedTab() === 1) {
-    <!-- minRPS -->
+    <!-- MINPOKER -->
+    <min-card-button [disabled]="!isMinPokerEnabled" (clicked)="routingService.navigateToMinPoker()">
+      <div class="flex flex-row items-start justify-between">
+        <min-h2><min-logo>Poker</min-logo></min-h2>
+        <min-badge [color]="Color.Yellow">soon</min-badge>
+      </div>
+      <p class="text-left text-sm text-gray-500">Minimalistisches Pokerspiel.</p>
+    </min-card-button>
+
+    <!-- MINRPS -->
     <min-card-button (clicked)="routingService.navigateToMinRps()">
       <div class="flex flex-row items-start justify-between">
         <min-h2><min-logo>RPS</min-logo></min-h2>
@@ -44,11 +53,11 @@
   }
   <!-- CONTENT TAB APPS -->
   @if (selectedTab() === 2) {
-    <!-- minAdvent -->
+    <!-- MINADVENT -->
     <min-card-button [disabled]="true">
       <div class="flex flex-row items-start justify-between">
         <min-h2><min-logo>Advent</min-logo></min-h2>
-        <min-badge [color]="Color.Gray">soon</min-badge>
+        <min-badge [color]="Color.Yellow">soon</min-badge>
       </div>
       <p class="text-left text-sm text-gray-500">Minimalistischer Adventskalender.</p>
     </min-card-button>

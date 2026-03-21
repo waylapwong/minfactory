@@ -24,6 +24,7 @@ export class HeaderComponent {
   public readonly appVersion: Signal<string>;
   public readonly isAuthenticated: Signal<boolean>;
   public readonly isInFactory: Signal<boolean>;
+  public readonly isInMinPoker: Signal<boolean>;
   public readonly isInLogin: Signal<boolean>;
   public readonly isInMinRps: Signal<boolean>;
   public readonly isInProfile: Signal<boolean>;
@@ -50,6 +51,7 @@ export class HeaderComponent {
       { initialValue: this.router.url },
     );
     this.isInFactory = computed(() => this.contextService.app() === AppName.MinFactory);
+    this.isInMinPoker = computed(() => this.contextService.app() === AppName.MinPoker);
     this.isInMinRps = computed(() => this.contextService.app() === AppName.MinRps);
     this.isInProfile = computed(() => this.currentUrl() === `/${MinFactoryPath.Profile}`);
     this.isInRegister = computed(() => this.currentUrl() === `/${MinFactoryPath.Register}`);

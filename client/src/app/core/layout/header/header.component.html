@@ -35,6 +35,20 @@
           </a>
         </li>
       }
+
+      <!-- MINPOKER CONTEXT -->
+      @if (isInMinPoker()) {
+        <li aria-hidden="true" class="leading-none text-gray-500">/</li>
+        <li>
+          <a
+            [routerLink]="AppPath.MinPoker"
+            class="inline-flex h-8 items-center rounded px-2 py-1 leading-none font-bold text-gray-700 transition-colors hover:text-black focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-1 focus-visible:outline-none active:text-gray-900"
+            [attr.aria-current]="isInMinPoker() ? 'page' : null"
+          >
+            <min-logo>Poker</min-logo>
+          </a>
+        </li>
+      }
     </ol>
   </nav>
 
