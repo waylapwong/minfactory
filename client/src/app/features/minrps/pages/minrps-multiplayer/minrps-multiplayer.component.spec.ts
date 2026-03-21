@@ -4,13 +4,13 @@ import { ActivatedRoute, convertToParamMap } from '@angular/router';
 import { of } from 'rxjs';
 import { MinRpsMove, MinRpsResult } from '../../../../core/generated';
 import { RoutingService } from '../../../../core/routing/routing.service';
-import { ROUTING_SERVICE_MOCK } from '../../../../core/routing/routing.service.mock';
+import { ROUTING_SERVICE_MOCK } from '../../../../core/mocks/routing.service.mock';
 import { Color } from '../../../../shared/enums/color.enum';
 import { MinRpsMultiplayerViewModel } from '../../models/viewmodels/minrps-multiplayer.viewmodel';
 import { MinRpsGameService } from '../../services/minrps-game.service';
-import { MINRPS_GAME_SERVICE_MOCK } from '../../services/minrps-game.service.mock';
+import { MINRPS_GAME_SERVICE_MOCK } from '../../mocks/minrps-game.service.mock';
 import { MinRpsMultiplayerService } from '../../services/minrps-multiplayer.service';
-import { MINRPS_MULTIPLAYER_SERVICE_MOCK } from '../../services/minrps-multiplayer.service.mock';
+import { MINRPS_MULTIPLAYER_SERVICE_MOCK } from '../../mocks/minrps-multiplayer.service.mock';
 import { MinRpsMultiplayerComponent } from './minrps-multiplayer.component';
 
 describe('MinRpsMultiplayerComponent', () => {
@@ -45,6 +45,7 @@ describe('MinRpsMultiplayerComponent', () => {
 
     MINRPS_GAME_SERVICE_MOCK.gameExistByID.calls.reset();
     ROUTING_SERVICE_MOCK.navigateToMinRpsOverview.calls.reset();
+    MINRPS_MULTIPLAYER_SERVICE_MOCK.game.set(createViewModel());
     MINRPS_MULTIPLAYER_SERVICE_MOCK.connect.calls.reset();
     MINRPS_MULTIPLAYER_SERVICE_MOCK.disconnect.calls.reset();
     MINRPS_MULTIPLAYER_SERVICE_MOCK.joinGame.calls.reset();

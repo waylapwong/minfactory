@@ -1,9 +1,9 @@
 import { provideZonelessChangeDetection } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { AuthenticationService } from '../../../core/authentication/authentication.service';
-import { AUTHENTICATION_SERVICE_MOCK } from '../../../core/authentication/authentication.service.mock';
+import { AUTHENTICATION_SERVICE_MOCK } from '../../../core/mocks/authentication.service.mock';
 import { MinFactoryUserRepository } from '../repositories/minfactory-user.repository';
-import { MINFACTORY_USER_REPOSITORY_MOCK } from '../repositories/minfactory-user.repository.mock';
+import { MINFACTORY_USER_REPOSITORY_MOCK } from '../mocks/minfactory-user.repository.mock';
 import { MinFactoryAuthenticationService } from './minfactory-authentication.service';
 
 describe('MinFactoryAuthenticationService', () => {

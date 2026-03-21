@@ -2,7 +2,7 @@ import { provideZonelessChangeDetection } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { Auth as FirebaseAuth, User as FirebaseUser } from '@angular/fire/auth';
 import { AuthenticationService } from './authentication.service';
-import { FIREBASE_AUTH_MOCK } from './firebase-auth.mock';
+import { FIREBASE_AUTH_MOCK } from '../mocks/firebase-auth.mock';
 
 describe('AuthenticationService', () => {
   let service: AuthenticationService;

@@ -2,7 +2,7 @@ import { provideZonelessChangeDetection } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { of } from 'rxjs';
 import { MinRPSApiService, MinRpsGameDto } from '../../../core/generated';
-import { MINRPS_API_SERVICE_MOCK } from './minrps-api.service.mock';
+import { MINRPS_API_SERVICE_MOCK } from '../mocks/minrps-api.service.mock';
 import { MinRpsGameRepository } from './minrps-game.repository';
 
 describe('MinRpsGameRepository', () => {

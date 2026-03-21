@@ -9,7 +9,7 @@ import { MinRpsMatchPlayPayload } from '../models/payloads/minrps-match-play.pay
 import { MinRpsMatchSeatPayload } from '../models/payloads/minrps-match-seat.payload';
 import { MinRpsMatchUpdatedPayload } from '../models/payloads/minrps-match-updated.payload';
 import { MinRpsSocketRepository } from '../repositories/minrps-socket.repository';
-import { MINRPS_SOCKET_REPOSITORY_MOCK } from '../repositories/minrps-socket.repository.mock';
+import { MINRPS_SOCKET_REPOSITORY_MOCK } from '../mocks/minrps-socket.repository.mock';
 import { MinRpsMultiplayerService } from './minrps-multiplayer.service';
 
 describe('MinRpsMultiplayerService', () => {

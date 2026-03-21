@@ -1,7 +1,7 @@
 import { provideZonelessChangeDetection } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { RoutingService } from '../../../../core/routing/routing.service';
-import { ROUTING_SERVICE_MOCK } from '../../../../core/routing/routing.service.mock';
+import { ROUTING_SERVICE_MOCK } from '../../../../core/mocks/routing.service.mock';
 import { Color } from '../../../../shared/enums/color.enum';
 import { MinRpsHomeComponent } from './minrps-home.component';
 

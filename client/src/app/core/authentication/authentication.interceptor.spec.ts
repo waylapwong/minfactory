@@ -11,7 +11,7 @@ import { TestBed } from '@angular/core/testing';
 import { firstValueFrom } from 'rxjs';
 import { ENVIRONMENT } from '../../../environments/environment';
 import { AuthenticationService } from './authentication.service';
-import { AUTHENTICATION_SERVICE_MOCK } from './authentication.service.mock';
+import { AUTHENTICATION_SERVICE_MOCK } from '../mocks/authentication.service.mock';
 import { AuthenticationInterceptor } from './authentication.interceptor';
 
 describe('AuthenticationInterceptor', () => {

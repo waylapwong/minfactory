@@ -42,8 +42,8 @@ export class MinFactoryRegisterComponent implements OnDestroy {
   private redirectTimeoutId: ReturnType<typeof setTimeout> | null = null;
 
   constructor(
-    private readonly routingService: RoutingService,
     private readonly authenticationService: MinFactoryAuthenticationService,
+    private readonly routingService: RoutingService,
   ) {}
 
   public get confirmPasswordControl(): FormControl<string> {

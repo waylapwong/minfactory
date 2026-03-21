@@ -2,7 +2,7 @@ import { provideZonelessChangeDetection } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { MinRpsMove, MinRpsPlayResultDto, MinRpsResult } from '../../../core/generated';
 import { MinRpsPlayRepository } from '../repositories/minrps-play.repository';
-import { MINRPS_PLAY_REPOSITORY_MOCK } from '../repositories/minrps-play.repository.mock';
+import { MINRPS_PLAY_REPOSITORY_MOCK } from '../mocks/minrps-play.repository.mock';
 import { MinRpsSingleplayerService } from './minrps-singleplayer.service';
 
 describe('MinRpsSingleplayerService', () => {

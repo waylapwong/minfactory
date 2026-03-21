@@ -2,7 +2,7 @@ import { provideZonelessChangeDetection } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { of } from 'rxjs';
 import { MinFactoryApiService, MinFactoryUserDto } from '../../../core/generated';
-import { MINFACTORY_API_SERVICE_MOCK } from './minfactory-api.service.mock';
+import { MINFACTORY_API_SERVICE_MOCK } from '../mocks/minfactory-api.service.mock';
 import { MinFactoryUserRepository } from './minfactory-user.repository';
 
 describe('MinFactoryUserRepository', () => {

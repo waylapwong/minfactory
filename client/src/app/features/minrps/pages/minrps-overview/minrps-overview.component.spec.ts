@@ -1,10 +1,10 @@
 import { provideZonelessChangeDetection } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { RoutingService } from '../../../../core/routing/routing.service';
-import { ROUTING_SERVICE_MOCK } from '../../../../core/routing/routing.service.mock';
+import { ROUTING_SERVICE_MOCK } from '../../../../core/mocks/routing.service.mock';
 import { Color } from '../../../../shared/enums/color.enum';
 import { MinRpsGameService } from '../../services/minrps-game.service';
-import { MINRPS_GAME_SERVICE_MOCK } from '../../services/minrps-game.service.mock';
+import { MINRPS_GAME_SERVICE_MOCK } from '../../mocks/minrps-game.service.mock';
 import { MinRpsOverviewComponent } from './minrps-overview.component';
 
 describe('MinRpsOverviewComponent', () => {

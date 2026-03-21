@@ -8,7 +8,7 @@ import {
   MinRpsPlayResultDto,
   MinRpsResult,
 } from '../../../core/generated';
-import { MINRPS_API_SERVICE_MOCK } from './minrps-api.service.mock';
+import { MINRPS_API_SERVICE_MOCK } from '../mocks/minrps-api.service.mock';
 import { MinRpsPlayRepository } from './minrps-play.repository';
 
 describe('MinRpsPlayRepository', () => {

@@ -4,9 +4,9 @@ import { User as FirebaseUser } from '@angular/fire/auth';
 import { provideRouter } from '@angular/router';
 import { AppName } from '../../../shared/enums/app-name.enum';
 import { AuthenticationService } from '../../authentication/authentication.service';
-import { AUTHENTICATION_SERVICE_MOCK } from '../../authentication/authentication.service.mock';
+import { AUTHENTICATION_SERVICE_MOCK } from '../../mocks/authentication.service.mock';
 import { ContextService } from '../../context/context.service';
-import { CONTEXT_SERVICE_MOCK } from '../../context/context.service.mock';
+import { CONTEXT_SERVICE_MOCK } from '../../mocks/context.service.mock';
 import { HeaderComponent } from './header.component';
 
 describe('HeaderComponent', () => {
