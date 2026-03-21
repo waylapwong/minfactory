@@ -1,7 +1,7 @@
 import { ConflictException, NotFoundException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
-import { AuthenticationService } from 'src/core/authentication/authentication.service';
-import { AuthenticatedUser, AuthenticationGuard } from 'src/core/authentication/authentication.guard';
+import { AuthenticationService } from 'src/core/authentication/services/authentication.service';
+import { FirebaseUser, AuthenticationGuard } from 'src/core/authentication/guards/authentication.guard';
 import { MinFactoryUserDto } from '../models/dtos/minfactory-user.dto';
 import { MinFactoryUserService } from '../services/minfactory-user.service';
 import { MinFactoryUserController } from './minfactory-user.controller';
@@ -32,7 +32,7 @@ describe('MinFactoryUserController', () => {
   });
 
   describe('create', () => {
-    const user: AuthenticatedUser = {
+    const user: FirebaseUser = {
       firebaseUid: 'firebase-uid-123',
       email: 'user@example.com',
     };
@@ -58,7 +58,7 @@ describe('MinFactoryUserController', () => {
   });
 
   describe('getMe', () => {
-    const user: AuthenticatedUser = {
+    const user: FirebaseUser = {
       firebaseUid: 'firebase-uid-123',
       email: 'user@example.com',
     };

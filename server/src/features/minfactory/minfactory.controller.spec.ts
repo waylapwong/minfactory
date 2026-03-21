@@ -8,7 +8,6 @@ describe('MinFactoryController', () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [MinFactoryController],
     }).compile();
-
     controller = module.get<MinFactoryController>(MinFactoryController);
   });
 

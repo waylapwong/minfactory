@@ -1,6 +1,7 @@
 import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/common';
 import { Request } from 'express';
-import { AuthenticationService } from './authentication.service';
+import { AuthenticationService } from '../services/authentication.service';
+import { AuthenticatedRequest } from '../models/authenticated-request.interface';
 import { DecodedIdToken } from 'firebase-admin/auth';
 
 @Injectable()
@@ -26,7 +27,7 @@ export class AuthenticationGuard implements CanActivate {
       throw new UnauthorizedException('Firebase token is missing required claims');
     }
 
-    (request as AuthenticatedRequest).authUser = { firebaseUid, email };
+    (request as AuthenticatedRequest).firebaseUser = { firebaseUid, email };
 
     return true;
   }
@@ -38,12 +39,3 @@ export class AuthenticationGuard implements CanActivate {
     return authorizationHeader.slice('Bearer '.length);
   }
 }
-
-export type AuthenticatedRequest = Request & {
-  authUser: AuthenticatedUser;
-};
-
-export type AuthenticatedUser = {
-  email: string;
-  firebaseUid: string;
-};

@@ -66,9 +66,8 @@ Das Backend ist in 3 Schichten organisiert.
 - Es sollen keine unnötigen Abstraktionen oder Over-Engineering eingeführt werden
 - Lösungen müssen leicht lesbar, leicht wartbar und leicht testbar sein
 - Die Implementierung bevorzugt klare, explizite Strukturen statt magischer oder impliziter Mechanismen
-- Unit Tests sollen Abhängigkeiten direkt im Test mocken, z. B. mit `provide: Service, useValue: { methode: () => {} }`
-- Mock-Objekte werden direkt in der .spec.ts Datei definiert
-- Es werden keine separaten Mock-Klassen oder Mock-Dateien erstellt, um unnötige Komplexität und Fragmentierung zu vermeiden
+- Es werden separate Mock-Dateien erstellt, um sie in Unit Tests zu verwenden `export const MOCK_SERVICE = { test1: () => {}, test2: () => 'test_value' }`
+- Unit Tests sollen Abhängigkeiten direkt im Test Suite mocken, z. B. mit `providers: [{ provide: Service, useValue: MOCK_SERVICE }]`
 
 # 5. Workflow
 

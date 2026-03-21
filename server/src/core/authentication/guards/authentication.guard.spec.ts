@@ -1,5 +1,5 @@
 import { ExecutionContext, UnauthorizedException } from '@nestjs/common';
-import { AuthenticationService } from './authentication.service';
+import { AuthenticationService } from '../services/authentication.service';
 import { AuthenticationGuard } from './authentication.guard';
 
 describe('AuthenticationGuard', () => {
@@ -31,7 +31,7 @@ describe('AuthenticationGuard', () => {
     } as unknown as ExecutionContext;
   };
 
-  it('should allow request and attach authUser when token is valid', async () => {
+  it('should allow request and attach firebaseUser when token is valid', async () => {
     const context = createExecutionContext('Bearer valid-token');
     mockAuthenticationService.verifyIdToken.mockResolvedValue({
       uid: 'firebase-uid-123',
@@ -44,7 +44,7 @@ describe('AuthenticationGuard', () => {
     expect(mockAuthenticationService.verifyIdToken).toHaveBeenCalledWith('valid-token');
 
     const request = context.switchToHttp().getRequest();
-    expect(request.authUser).toEqual({
+    expect(request.firebaseUser).toEqual({
       firebaseUid: 'firebase-uid-123',
       email: 'user@example.com',
     });

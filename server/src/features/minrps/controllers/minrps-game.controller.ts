@@ -9,7 +9,7 @@ import { API_204 } from 'src/shared/decorators/api-204.decorator';
 import { API_400 } from 'src/shared/decorators/api-400.decorator';
 import { API_404 } from 'src/shared/decorators/api-404.decorator';
 import { API_500 } from 'src/shared/decorators/api-500.decorator';
-import { API_Param_ID } from 'src/shared/decorators/param-id.decorator';
+import { API_Param_ID } from 'src/shared/decorators/api-param-id.decorator';
 import { AppName } from 'src/shared/enums/app-name.enum';
 
 @Controller('minrps/games')

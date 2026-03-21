@@ -1,6 +1,6 @@
 import { Global, Module } from '@nestjs/common';
-import { AuthenticationGuard } from './authentication.guard';
-import { AuthenticationService } from './authentication.service';
+import { AuthenticationGuard } from './guards/authentication.guard';
+import { AuthenticationService } from './services/authentication.service';
 
 @Global()
 @Module({
