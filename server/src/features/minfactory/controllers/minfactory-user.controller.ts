@@ -11,10 +11,10 @@ import { API_401 } from 'src/shared/decorators/api-401.decorator';
 import { API_404 } from 'src/shared/decorators/api-404.decorator';
 import { API_409 } from 'src/shared/decorators/api-409.decorator';
 import { API_500 } from 'src/shared/decorators/api-500.decorator';
-import { AppName } from 'src/shared/enums/app-name.enum';
+import { MinApp } from 'src/shared/enums/minapp.enum';
 
 @Controller('minfactory/users')
-@ApiTags(AppName.MinFactory)
+@ApiTags(MinApp.MinFactory)
 export class MinFactoryUserController {
   constructor(private readonly userService: MinFactoryUserService) {}
 

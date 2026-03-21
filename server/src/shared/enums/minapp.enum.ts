@@ -1,4 +1,4 @@
-export enum AppName {
+export enum MinApp {
   MinFactory = 'minFactory',
   MinRps = 'minRPS',
 }

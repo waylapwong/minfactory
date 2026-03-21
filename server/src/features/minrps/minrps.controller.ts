@@ -1,7 +1,7 @@
 import { Controller } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
-import { AppName } from 'src/shared/enums/app-name.enum';
+import { MinApp } from 'src/shared/enums/minapp.enum';
 
 @Controller('minrps')
-@ApiTags(AppName.MinRps)
+@ApiTags(MinApp.MinRps)
 export class MinRpsController {}
