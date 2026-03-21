@@ -62,10 +62,23 @@ describe('HeaderComponent', () => {
     });
   });
 
+  describe('isInMinPoker computed signal', () => {
+    it('should return true when app is MinPoker', () => {
+      contextService.app.set(AppName.MinPoker);
+      expect(component.isInMinPoker()).toBe(true);
+    });
+
+    it('should return false when app is MinFactory', () => {
+      contextService.app.set(AppName.MinFactory);
+      expect(component.isInMinPoker()).toBe(false);
+    });
+  });
+
   describe('Breadcrumb links routing', () => {
     it('should expose AppPath constant', () => {
       expect(component.AppPath).toBeDefined();
       expect(component.AppPath.Root).toBe('');
+      expect(component.AppPath.MinPoker).toBe('minpoker');
       expect(component.AppPath.MinRps).toBe('minrps');
     });
 
@@ -85,6 +98,16 @@ describe('HeaderComponent', () => {
       expect(rpsLink).toBeTruthy();
     });
 
+    it('should render Poker link with correct routing when in minPoker', () => {
+      contextService.app.set(AppName.MinPoker);
+      fixture.detectChanges();
+      const links = fixture.nativeElement.querySelectorAll('a');
+      expect(links.length).toBeGreaterThanOrEqual(2);
+      const pokerLink = links[1];
+      expect(pokerLink).toBeTruthy();
+      expect((pokerLink as HTMLAnchorElement).textContent?.toLowerCase()).toContain('poker');
+    });
+
     it('should have aria-current="page" on Factory link when in factory', () => {
       contextService.app.set(AppName.MinFactory);
       fixture.detectChanges();
@@ -99,6 +122,14 @@ describe('HeaderComponent', () => {
       const links = fixture.nativeElement.querySelectorAll('a');
       const rpsLink = links[1];
       expect(rpsLink.getAttribute('aria-current')).toBe('page');
+    });
+
+    it('should have aria-current="page" on Poker link when in minPoker', () => {
+      contextService.app.set(AppName.MinPoker);
+      fixture.detectChanges();
+      const links = fixture.nativeElement.querySelectorAll('a');
+      const pokerLink = links[1];
+      expect(pokerLink.getAttribute('aria-current')).toBe('page');
     });
 
     it('should have semantic link styling with hover:text-black', () => {

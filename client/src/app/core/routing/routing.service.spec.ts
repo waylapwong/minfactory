@@ -57,6 +57,13 @@ describe('RoutingService', () => {
     });
   });
 
+  describe('navigateToMinPoker()', () => {
+    it('should navigate to minPoker', () => {
+      service.navigateToMinPoker();
+      expect(ROUTER_MOCK.navigate).toHaveBeenCalledWith([AppPath.MinPoker]);
+    });
+  });
+
   describe('navigateToMinRpsSingleplayerGame()', () => {
     it('should navigate to minRPS singleplayer game', () => {
       service.navigateToMinRpsSingleplayer();
