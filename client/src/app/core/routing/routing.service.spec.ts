@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { AppPath } from '../../app.routes';
 import { MinFactoryPath } from '../../features/minfactory/minfactory.routes';
 import { MinRpsPath } from '../../features/minrps/minrps.routes';
-import { ROUTER_MOCK } from '../../shared/mocks/router.mock';
+import { ROUTER_MOCK } from './router.mock';
 import { RoutingService } from './routing.service';
 
 describe('RoutingService', () => {
