@@ -1,52 +1,6 @@
 {
   "openapi": "3.0.0",
   "paths": {
-    "/minrps/health": {
-      "get": {
-        "operationId": "getMinRpsHealth",
-        "parameters": [],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "string"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Internal Server Error"
-          }
-        },
-        "summary": "",
-        "tags": ["minRPS"]
-      }
-    },
-    "/minrps/version": {
-      "get": {
-        "operationId": "getMinRpsVersion",
-        "parameters": [],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "string"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Internal Server Error"
-          }
-        },
-        "summary": "",
-        "tags": ["minRPS"]
-      }
-    },
     "/minrps/games/{id}": {
       "delete": {
         "operationId": "deleteMinRpsGame",
@@ -215,35 +169,6 @@
         "tags": ["minRPS"]
       }
     },
-    "/minfactory/users": {
-      "post": {
-        "operationId": "createMinFactoryUser",
-        "parameters": [],
-        "responses": {
-          "201": {
-            "description": "Created",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/MinFactoryUserDto"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized"
-          },
-          "409": {
-            "description": "Conflict"
-          },
-          "500": {
-            "description": "Internal Server Error"
-          }
-        },
-        "summary": "",
-        "tags": ["minFactory"]
-      }
-    },
     "/minfactory/users/me": {
       "get": {
         "operationId": "getMinFactoryUserMe",
@@ -272,11 +197,40 @@
         "summary": "",
         "tags": ["minFactory"]
       }
+    },
+    "/minfactory/users": {
+      "post": {
+        "operationId": "createMinFactoryUser",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MinFactoryUserDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "409": {
+            "description": "Conflict"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "summary": "",
+        "tags": ["minFactory"]
+      }
     }
   },
   "info": {
     "title": "minFactory",
-    "description": "minFactory OpenAPI specification. <br/> <a href=\"http://localhost:3000/openapi-json/\" target=\"_blank\">JSON specification</a>",
+    "description": "minFactory OpenAPI specification. \u003Cbr/\u003E \u003Ca href=\"http://localhost:3000/openapi-json/\" target=\"_blank\"\u003EJSON specification\u003C/a\u003E",
     "version": "v0.0.0",
     "contact": {
       "name": "minFactory",
