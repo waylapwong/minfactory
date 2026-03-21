@@ -2,11 +2,11 @@ import { provideZonelessChangeDetection } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { RoutingService } from '../../../../core/routing/routing.service';
 import { MINFACTORY_ROUTING_SERVICE_MOCK } from '../../services/minfactory-routing.service.mock';
-import { AppsComponent } from './apps.component';
+import { MinFactoryAppsComponent } from './minfactory-apps.component';
 
-describe('AppsComponent', () => {
-  let component: AppsComponent;
-  let fixture: ComponentFixture<AppsComponent>;
+describe('MinFactoryAppsComponent', () => {
+  let component: MinFactoryAppsComponent;
+  let fixture: ComponentFixture<MinFactoryAppsComponent>;
 
   beforeEach(async () => {
     MINFACTORY_ROUTING_SERVICE_MOCK.navigateToApps.calls.reset();
@@ -16,14 +16,14 @@ describe('AppsComponent', () => {
     MINFACTORY_ROUTING_SERVICE_MOCK.navigateToRegister.calls.reset();
 
     await TestBed.configureTestingModule({
-      imports: [AppsComponent],
+      imports: [MinFactoryAppsComponent],
       providers: [
         provideZonelessChangeDetection(),
         { provide: RoutingService, useValue: MINFACTORY_ROUTING_SERVICE_MOCK },
       ],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(AppsComponent);
+    fixture = TestBed.createComponent(MinFactoryAppsComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

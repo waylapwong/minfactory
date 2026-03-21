@@ -4,11 +4,11 @@ import { RoutingService } from '../../../../core/routing/routing.service';
 import { MinFactoryRegisterService } from '../../services/minfactory-register.service';
 import { MINFACTORY_REGISTER_SERVICE_MOCK } from '../../services/minfactory-register.service.mock';
 import { MINFACTORY_ROUTING_SERVICE_MOCK } from '../../services/minfactory-routing.service.mock';
-import { RegisterComponent } from './register.component';
+import { MinFactoryRegisterComponent } from './minfactory-register.component';
 
-describe('RegisterComponent', () => {
-  let component: RegisterComponent;
-  let fixture: ComponentFixture<RegisterComponent>;
+describe('MinFactoryRegisterComponent', () => {
+  let component: MinFactoryRegisterComponent;
+  let fixture: ComponentFixture<MinFactoryRegisterComponent>;
 
   const flushMicrotasks = async (): Promise<void> => {
     await Promise.resolve();
@@ -37,7 +37,7 @@ describe('RegisterComponent', () => {
     MINFACTORY_ROUTING_SERVICE_MOCK.navigateToLogin.calls.reset();
 
     await TestBed.configureTestingModule({
-      imports: [RegisterComponent],
+      imports: [MinFactoryRegisterComponent],
       providers: [
         provideZonelessChangeDetection(),
         { provide: RoutingService, useValue: MINFACTORY_ROUTING_SERVICE_MOCK },
@@ -45,7 +45,7 @@ describe('RegisterComponent', () => {
       ],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(RegisterComponent);
+    fixture = TestBed.createComponent(MinFactoryRegisterComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

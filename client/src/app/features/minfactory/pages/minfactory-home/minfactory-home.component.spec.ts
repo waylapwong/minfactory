@@ -1,18 +1,18 @@
 import { provideZonelessChangeDetection } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { HomeComponent } from './home.component';
+import { MinFactoryHomeComponent } from './minfactory-home.component';
 
-describe('HomeComponent', () => {
-  let component: HomeComponent;
-  let fixture: ComponentFixture<HomeComponent>;
+describe('MinFactoryHomeComponent', () => {
+  let component: MinFactoryHomeComponent;
+  let fixture: ComponentFixture<MinFactoryHomeComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [HomeComponent],
+      imports: [MinFactoryHomeComponent],
       providers: [provideZonelessChangeDetection()],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(HomeComponent);
+    fixture = TestBed.createComponent(MinFactoryHomeComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

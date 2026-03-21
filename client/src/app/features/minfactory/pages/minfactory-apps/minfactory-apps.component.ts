@@ -8,12 +8,12 @@ import { Color } from '../../../../shared/enums/color.enum';
 
 @Component({
   selector: 'minfactory-apps',
-  templateUrl: './apps.component.html',
-  styleUrls: ['./apps.component.scss'],
+  templateUrl: './minfactory-apps.component.html',
+  styleUrls: ['./minfactory-apps.component.scss'],
   host: { class: 'block h-full w-full' },
   imports: [BadgeComponent, CardButtonComponent, H2Component, LogoComponent],
 })
-export class AppsComponent {
+export class MinFactoryAppsComponent {
   public readonly Color: typeof Color = Color;
 
   public selectedTab: WritableSignal<number> = signal(1);

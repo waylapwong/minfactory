@@ -11,12 +11,12 @@ import { MinFactoryRegisterService } from '../../services/minfactory-register.se
 
 @Component({
   selector: 'minfactory-register',
-  templateUrl: './register.component.html',
-  styleUrl: './register.component.scss',
+  templateUrl: './minfactory-register.component.html',
+  styleUrl: './minfactory-register.component.scss',
   host: { class: 'block h-full w-full' },
   imports: [ReactiveFormsModule, CardComponent, H1Component, InputComponent, ButtonComponent, SnackbarComponent],
 })
-export class RegisterComponent implements OnDestroy {
+export class MinFactoryRegisterComponent implements OnDestroy {
   public readonly Color: typeof Color = Color;
   public readonly isSnackbarOpen: WritableSignal<boolean> = signal(false);
   public readonly isSubmitting: WritableSignal<boolean> = signal(false);

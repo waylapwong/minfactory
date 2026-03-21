@@ -11,22 +11,27 @@ export enum MinFactoryPath {
 export const MINFACTORY_ROUTES: Routes = [
   {
     path: MinFactoryPath.Root,
-    loadComponent: () => import('./pages/home/home.component').then((m) => m.HomeComponent),
+    loadComponent: () =>
+      import('./pages/minfactory-home/minfactory-home.component').then((m) => m.MinFactoryHomeComponent),
   },
   {
     path: MinFactoryPath.Apps,
-    loadComponent: () => import('./pages/apps/apps.component').then((m) => m.AppsComponent),
-  },
-  {
-    path: MinFactoryPath.Register,
-    loadComponent: () => import('./pages/register/register.component').then((m) => m.RegisterComponent),
+    loadComponent: () =>
+      import('./pages/minfactory-apps/minfactory-apps.component').then((m) => m.MinFactoryAppsComponent),
   },
   {
     path: MinFactoryPath.Login,
-    loadComponent: () => import('./pages/login/login.component').then((m) => m.LoginComponent),
+    loadComponent: () =>
+      import('./pages/minfactory-login/minfactory-login.component').then((m) => m.MinFactoryLoginComponent),
   },
   {
     path: MinFactoryPath.Profile,
-    loadComponent: () => import('./pages/profile/profile.component').then((m) => m.ProfileComponent),
+    loadComponent: () =>
+      import('./pages/minfactory-profile/minfactory-profile.component').then((m) => m.MinFactoryProfileComponent),
+  },
+  {
+    path: MinFactoryPath.Register,
+    loadComponent: () =>
+      import('./pages/minfactory-register/minfactory-register.component').then((m) => m.MinFactoryRegisterComponent),
   },
 ];

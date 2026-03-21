@@ -11,12 +11,12 @@ import { MinFactoryLoginService } from '../../services/minfactory-login.service'
 
 @Component({
   selector: 'minfactory-login',
-  templateUrl: './login.component.html',
-  styleUrl: './login.component.scss',
+  templateUrl: './minfactory-login.component.html',
+  styleUrl: './minfactory-login.component.scss',
   host: { class: 'block h-full w-full' },
   imports: [ReactiveFormsModule, CardComponent, H1Component, InputComponent, ButtonComponent, SnackbarComponent],
 })
-export class LoginComponent implements OnDestroy {
+export class MinFactoryLoginComponent implements OnDestroy {
   public readonly Color: typeof Color = Color;
   public readonly isSnackbarOpen: WritableSignal<boolean> = signal(false);
   public readonly isSubmitting: WritableSignal<boolean> = signal(false);

@@ -12,12 +12,12 @@ import { MinFactoryProfileService } from '../../services/minfactory-profile.serv
 
 @Component({
   selector: 'minfactory-profile',
-  templateUrl: './profile.component.html',
-  styleUrl: './profile.component.scss',
+  templateUrl: './minfactory-profile.component.html',
+  styleUrl: './minfactory-profile.component.scss',
   host: { class: 'block h-full w-full' },
   imports: [CardComponent, H1Component, ButtonComponent, SnackbarComponent],
 })
-export class ProfileComponent implements OnInit {
+export class MinFactoryProfileComponent implements OnInit {
   public readonly Color: typeof Color = Color;
   public readonly errorMessage: WritableSignal<string> = signal('');
   public readonly isError: WritableSignal<boolean> = signal(false);

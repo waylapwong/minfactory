@@ -6,11 +6,11 @@ import { MinFactoryProfileService } from '../../services/minfactory-profile.serv
 import { MINFACTORY_LOGOUT_SERVICE_MOCK } from '../../services/minfactory-logout.service.mock';
 import { MINFACTORY_PROFILE_SERVICE_MOCK } from '../../services/minfactory-profile.service.mock';
 import { MINFACTORY_ROUTING_SERVICE_MOCK } from '../../services/minfactory-routing.service.mock';
-import { ProfileComponent } from './profile.component';
+import { MinFactoryProfileComponent } from './minfactory-profile.component';
 
-describe('ProfileComponent', () => {
-  let component: ProfileComponent;
-  let fixture: ComponentFixture<ProfileComponent>;
+describe('MinFactoryProfileComponent', () => {
+  let component: MinFactoryProfileComponent;
+  let fixture: ComponentFixture<MinFactoryProfileComponent>;
 
   const flushMicrotasks = async (): Promise<void> => {
     await Promise.resolve();
@@ -43,7 +43,7 @@ describe('ProfileComponent', () => {
     MINFACTORY_ROUTING_SERVICE_MOCK.navigateToApps.calls.reset();
 
     await TestBed.configureTestingModule({
-      imports: [ProfileComponent],
+      imports: [MinFactoryProfileComponent],
       providers: [
         provideZonelessChangeDetection(),
         { provide: MinFactoryProfileService, useValue: MINFACTORY_PROFILE_SERVICE_MOCK },
@@ -52,7 +52,7 @@ describe('ProfileComponent', () => {
       ],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(ProfileComponent);
+    fixture = TestBed.createComponent(MinFactoryProfileComponent);
     component = fixture.componentInstance;
   });
 
