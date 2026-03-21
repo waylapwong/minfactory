@@ -1,56 +1,121 @@
-<div class="flex h-full flex-col overflow-y-auto px-4">
-  <!-- TITLE + EXIT -->
-  <div class="relative py-2 text-center">
-    <min-h1><min-logo>Poker</min-logo></min-h1>
-    <div class="absolute right-0 top-0">
-      <min-button [color]="Color.Red" (clicked)="routingService.navigateToMinPoker()">X</min-button>
-    </div>
+<div class="flex h-full flex-col">
+  <div class="flex flex-row justify-between">
+    <!-- SHARE BUTTON -->
+    <min-button
+      (clicked)="shareGameUrl()"
+      [color]="Color.White"
+      ariaLabel="Link zum Spiel kopieren"
+      title="Link kopieren"
+    >
+      <img src="assets/svgs/minrps/share.svg" alt="Link kopieren" class="h-4 w-4" />
+    </min-button>
+    <!-- TITLE -->
+    <min-h2>Way-Lap's Testspiel</min-h2>
+    <!-- LEAVE BUTTON -->
+    <min-button
+      (clicked)="routingService.navigateToMinPoker()"
+      [color]="Color.Red"
+      ariaLabel="Spiel verlassen"
+      title="Spiel verlassen"
+    >
+      <img src="assets/svgs/minrps/exit.svg" alt="Spiel verlassen" class="h-4 w-4" />
+    </min-button>
   </div>
 
-  <!-- OPPONENTS -->
-  <div class="mb-2 flex flex-col gap-1">
-    @for (opponent of opponents; track opponent.name) {
-      <div
-        class="flex items-center rounded-lg border-2 border-black bg-white px-3 py-2"
-        [class.bg-gray-100]="opponent.isActive"
-      >
-        @if (opponent.isActive) {
-          <span class="mr-2">▶</span>
-        }
-        <span class="font-bold">
-          @if (opponent.role) {
-            [{{ opponent.role }}]
-          }
-          {{ opponent.name }}
-        </span>
-        <span class="ml-2 text-gray-600">{{ opponent.chips | number }}</span>
-        @if (opponent.lastAction) {
-          <span class="ml-auto italic text-gray-500">{{ opponent.lastAction }}</span>
+  <!-- PLAYERS -->
+  <div class="flex flex-col gap-1">
+    @for (opponent of opponents; track opponent?.name ?? $index) {
+      <div class="flex items-center font-bold">
+        @if (opponent) {
+          <!-- PLAYER -->
+          <div
+            class="grid w-2/3 grid-cols-4 items-center gap-2 rounded-lg border-2 border-black bg-white px-2 py-1 shadow-2xl transition-transform"
+            [class.translate-x-8]="opponent.isActive"
+            [class.bg-gray-100]="opponent.isActive"
+          >
+            <!-- ROLE -->
+            @if (opponent.role) {
+              <span
+                class="flex h-4 w-4 shrink-0 items-center justify-center rounded-full border-2 border-black bg-yellow-300 text-xs"
+              >
+                {{ opponent.role }}
+              </span>
+            } @else {
+              <span class="h-4 w-4"></span>
+            }
+            <!-- NAME -->
+            <span class="truncate">{{ opponent.name }}</span>
+            <!-- CHIPS -->
+            <span class="text-right text-sm tabular-nums">{{ opponent.chips | number }}</span>
+            <!-- ACTION -->
+            <span class="truncate text-right text-sm">
+              {{ opponent.lastAction || 'Wartet' }}
+            </span>
+          </div>
+          <!-- BET AMOUNT -->
+          <div class="w-1/3 pl-3 text-right">
+            @if (opponent.betAmount) {
+              <span class="text-sm">{{ opponent.betAmount | number }}</span>
+            }
+          </div>
+        } @else {
+          <!-- EMPTY SEAT -->
+          <button
+            type="button"
+            class="w-2/3 cursor-pointer rounded-lg border-2 border-dashed border-gray-500 bg-white px-2 py-1 text-center text-gray-500 shadow-2xl transition-colors hover:bg-gray-100"
+            (click)="openSeatDialog($index)"
+          >
+            Seat Open
+          </button>
+          <div class="w-1/3 pl-3"></div>
         }
       </div>
     }
   </div>
 
+  <min-divider />
+
   <!-- POT + COMMUNITY CARDS -->
-  <div class="mb-2 text-center">
-    <p class="font-bold">Pot: {{ potAmount() | number }}</p>
-    <div class="mt-2 flex justify-center gap-2">
-      @for (card of communityCards; track $index) {
-        <div class="flex h-16 w-12 items-center justify-center rounded-lg border-4 border-black bg-white text-xl font-bold shadow-md">
-          {{ card }}
-        </div>
-      }
+  <div class="flex items-center">
+    <div class="flex flex-1 items-center gap-4">
+      <!-- FLOP -->
+      <div class="flex gap-1">
+        @for (card of communityCards.slice(0, 3); track $index) {
+          <div
+            class="flex h-14 w-10 items-center justify-center rounded-lg border-4 border-black bg-white text-lg font-bold shadow-md"
+          >
+            {{ card }}
+          </div>
+        }
+      </div>
+      <!-- TURN -->
+      <div
+        class="flex h-14 w-10 items-center justify-center rounded-lg border-4 border-black bg-white text-lg font-bold shadow-2xl"
+      >
+        {{ communityCards[3] }}
+      </div>
+      <!-- RIVER -->
+      <div
+        class="flex h-14 w-10 items-center justify-center rounded-lg border-4 border-black bg-white text-lg font-bold shadow-2xl"
+      >
+        {{ communityCards[4] }}
+      </div>
+    </div>
+    <div class="w-1/3 text-right">
+      <p class="text-sm">Pot</p>
+      <p class="font-bold tabular-nums">{{ potAmount() | number }}</p>
     </div>
   </div>
 
   <min-divider />
 
   <!-- PLAYER HAND -->
-  <div class="my-2 text-center">
-    <p class="font-bold">You</p>
-    <div class="mt-2 flex justify-center gap-4">
+  <div class="text-center">
+    <div class="flex justify-center gap-4">
       @for (card of handCards; track $index) {
-        <div class="flex h-24 w-16 items-center justify-center rounded-lg border-4 border-black bg-white text-2xl font-bold shadow-md">
+        <div
+          class="flex h-18 w-12 items-center justify-center rounded-lg border-4 border-black bg-white text-2xl font-bold shadow-2xl"
+        >
           {{ card }}
         </div>
       }
@@ -60,12 +125,16 @@
   <min-divider />
 
   <!-- BET SECTION -->
-  <div class="my-2">
-    <p class="text-center font-bold">Bet: {{ betAmount() | number }}</p>
-    <div class="my-2 flex items-center gap-2">
-      <span class="text-sm">Min</span>
-      <input type="range" class="flex-1" min="40" max="1000" [value]="betAmount()" (input)="onBetChange($event)" />
-      <span class="text-sm">All-In</span>
+  <div>
+    <div class="my-2 flex items-center">
+      <div class="flex w-2/3 items-center gap-2">
+        <span class="text-sm">Min</span>
+        <input type="range" class="flex-1" min="40" max="1000" [value]="betAmount()" (input)="onBetChange($event)" />
+        <span class="text-sm">All-In</span>
+      </div>
+      <div class="w-1/3 pl-3 text-right">
+        <p class="font-bold tabular-nums">Bet: {{ betAmount() | number }}</p>
+      </div>
     </div>
 
     <!-- QUICK BET BUTTONS -->
@@ -84,3 +153,19 @@
     </div>
   </div>
 </div>
+
+<!-- SEAT DIALOG -->
+<min-dialog title="Platz nehmen" [isOpen]="isSeatDialogOpen()" (closed)="closeSeatDialog()">
+  <div class="mb-4 flex flex-col">
+    <min-input
+      label="Spielername"
+      [formControlInput]="seatName"
+      id="seat-name-input"
+      placeholder="Namen eingeben"
+    ></min-input>
+  </div>
+
+  <div class="flex flex-row justify-end">
+    <min-button [color]="Color.Blue" [isDisabled]="seatFormGroup.invalid" (clicked)="seatGame()">Beitreten</min-button>
+  </div>
+</min-dialog>

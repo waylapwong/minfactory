@@ -12,10 +12,7 @@ describe('MinPokerGameComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [MinPokerGameComponent],
-      providers: [
-        provideZonelessChangeDetection(),
-        { provide: RoutingService, useValue: ROUTING_SERVICE_MOCK },
-      ],
+      providers: [provideZonelessChangeDetection(), { provide: RoutingService, useValue: ROUTING_SERVICE_MOCK }],
     }).compileComponents();
 
     fixture = TestBed.createComponent(MinPokerGameComponent);
@@ -40,8 +37,40 @@ describe('MinPokerGameComponent', () => {
     expect(rootContainer.classList.contains('flex-col')).toBe(true);
   });
 
-  it('should have 5 opponents', () => {
-    expect(component.opponents.length).toBe(5);
+  it('should have 6 opponents', () => {
+    expect(component.opponents.length).toBe(6);
+  });
+
+  it('should include bet amounts for opponents with actions', () => {
+    expect(component.opponents[0]).toEqual(
+      jasmine.objectContaining({ name: 'Alex', lastAction: 'Call', betAmount: 40 }),
+    );
+    expect(component.opponents[1]).toEqual(
+      jasmine.objectContaining({ name: 'Mia', lastAction: 'Raise', betAmount: 120 }),
+    );
+    expect(component.opponents[4]).toBeNull();
+  });
+
+  it('should open seat dialog only for empty seats', () => {
+    component.openSeatDialog(4);
+    expect(component.isSeatDialogOpen()).toBe(true);
+    expect(component.selectedSeatIndex()).toBe(4);
+
+    component.closeSeatDialog();
+    component.openSeatDialog(0);
+    expect(component.isSeatDialogOpen()).toBe(false);
+  });
+
+  it('should seat player on empty position', () => {
+    component.openSeatDialog(4);
+    component.seatName.setValue('Chris');
+
+    component.seatGame();
+
+    expect(component.opponents[4]).toEqual(
+      jasmine.objectContaining({ name: 'Chris', chips: 1000, lastAction: 'Sitzt' }),
+    );
+    expect(component.isSeatDialogOpen()).toBe(false);
   });
 
   it('should render community cards', () => {

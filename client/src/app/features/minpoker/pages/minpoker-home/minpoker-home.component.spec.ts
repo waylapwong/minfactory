@@ -12,10 +12,7 @@ describe('MinPokerHomeComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [MinPokerHomeComponent],
-      providers: [
-        provideZonelessChangeDetection(),
-        { provide: RoutingService, useValue: ROUTING_SERVICE_MOCK },
-      ],
+      providers: [provideZonelessChangeDetection(), { provide: RoutingService, useValue: ROUTING_SERVICE_MOCK }],
     }).compileComponents();
 
     fixture = TestBed.createComponent(MinPokerHomeComponent);
