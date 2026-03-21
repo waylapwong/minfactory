@@ -4,7 +4,7 @@ import { MinFactoryUserDto } from '../models/dtos/minfactory-user.dto';
 import { MinFactoryUserService } from '../services/minfactory-user.service';
 import { User } from 'src/core/authentication/decorators/authenticated-user.decorator';
 import { AuthenticationGuard } from 'src/core/authentication/guards/authentication.guard';
-import type { FirebaseUser } from 'src/core/authentication/models/firebase-user.interface';
+import type { FirebaseUserDto } from 'src/core/authentication/models/firebase-user.dto';
 import { API_200 } from 'src/shared/decorators/api-200.decorator';
 import { API_201 } from 'src/shared/decorators/api-201.decorator';
 import { API_401 } from 'src/shared/decorators/api-401.decorator';
@@ -25,7 +25,7 @@ export class MinFactoryUserController {
   @API_401()
   @API_404()
   @API_500()
-  public async getMe(@User() user: FirebaseUser): Promise<MinFactoryUserDto> {
+  public async getMe(@User() user: FirebaseUserDto): Promise<MinFactoryUserDto> {
     return await this.userService.getMe(user);
   }
 
@@ -37,7 +37,7 @@ export class MinFactoryUserController {
   @API_401()
   @API_409()
   @API_500()
-  public async create(@User() user: FirebaseUser): Promise<MinFactoryUserDto> {
+  public async create(@User() user: FirebaseUserDto): Promise<MinFactoryUserDto> {
     return await this.userService.createUser(user);
   }
 }

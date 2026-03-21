@@ -6,7 +6,7 @@ import { MINFACTORY_USER_SERVICE_MOCK } from '../services/minfactory-user.servic
 import { MinFactoryUserController } from './minfactory-user.controller';
 import { AuthenticationGuard } from 'src/core/authentication/guards/authentication.guard';
 import { AUTHENTICATION_GUARD_MOCK } from 'src/core/authentication/guards/authentication.guard.mock';
-import { FirebaseUser } from 'src/core/authentication/models/firebase-user.interface';
+import { FirebaseUserDto } from 'src/core/authentication/models/firebase-user.dto';
 import { AuthenticationService } from 'src/core/authentication/services/authentication.service';
 import { AUTHENTICATION_SERVICE_MOCK } from 'src/core/authentication/services/authentication.service.mock';
 
@@ -31,7 +31,7 @@ describe('MinFactoryUserController', () => {
   });
 
   describe('create', () => {
-    const user: FirebaseUser = {
+    const user: FirebaseUserDto = {
       firebaseUid: 'firebase-uid-123',
       email: 'user@example.com',
     };
@@ -57,7 +57,7 @@ describe('MinFactoryUserController', () => {
   });
 
   describe('getMe', () => {
-    const user: FirebaseUser = {
+    const user: FirebaseUserDto = {
       firebaseUid: 'firebase-uid-123',
       email: 'user@example.com',
     };

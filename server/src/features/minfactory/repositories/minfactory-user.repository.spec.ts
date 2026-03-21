@@ -1,4 +1,5 @@
 import { getRepositoryToken } from '@nestjs/typeorm';
+import { NotFoundException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { MinFactoryUserEntity } from '../models/entities/minfactory-user.entity';
 import { MINFACTORY_USER_TYPEORM_REPOSITORY_MOCK } from './minfactory-user.typeorm-repository.mock';
@@ -39,6 +40,12 @@ describe('MinFactoryUserRepository', () => {
         where: { email: 'user@example.com' },
       });
     });
+
+    it('should throw NotFoundException when user is not found', async () => {
+      MINFACTORY_USER_TYPEORM_REPOSITORY_MOCK.findOne.mockResolvedValue(null);
+
+      await expect(userRepository.findByEmail('missing@example.com')).rejects.toThrow(NotFoundException);
+    });
   });
 
   describe('findByFirebaseUid', () => {
@@ -57,6 +64,12 @@ describe('MinFactoryUserRepository', () => {
       expect(MINFACTORY_USER_TYPEORM_REPOSITORY_MOCK.findOne).toHaveBeenCalledWith({
         where: { firebaseUid: 'firebase-uid-123' },
       });
+    });
+
+    it('should throw NotFoundException when user is not found', async () => {
+      MINFACTORY_USER_TYPEORM_REPOSITORY_MOCK.findOne.mockResolvedValue(null);
+
+      await expect(userRepository.findByFirebaseUid('firebase-uid-123')).rejects.toThrow(NotFoundException);
     });
   });
 

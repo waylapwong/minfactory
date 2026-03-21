@@ -4,7 +4,7 @@ import { MinFactoryUserEntity } from '../models/entities/minfactory-user.entity'
 import { MinFactoryUserRepository } from '../repositories/minfactory-user.repository';
 import { MINFACTORY_USER_REPOSITORY_MOCK } from '../repositories/minfactory-user.repository.mock';
 import { MinFactoryUserService } from './minfactory-user.service';
-import { FirebaseUser } from 'src/core/authentication/models/firebase-user.interface';
+import { FirebaseUserDto } from 'src/core/authentication/models/firebase-user.dto';
 
 describe('MinFactoryUserService', () => {
   let userService: MinFactoryUserService;
@@ -25,7 +25,7 @@ describe('MinFactoryUserService', () => {
   });
 
   describe('createUser', () => {
-    const user: FirebaseUser = {
+    const user: FirebaseUserDto = {
       firebaseUid: 'firebase-uid-123',
       email: 'user@example.com',
     };
@@ -38,8 +38,8 @@ describe('MinFactoryUserService', () => {
     };
 
     it('should create and return user dto on happy path', async () => {
-      MINFACTORY_USER_REPOSITORY_MOCK.findByFirebaseUid.mockResolvedValue(null);
-      MINFACTORY_USER_REPOSITORY_MOCK.findByEmail.mockResolvedValue(null);
+      MINFACTORY_USER_REPOSITORY_MOCK.findByFirebaseUid.mockRejectedValue(new NotFoundException('User not found'));
+      MINFACTORY_USER_REPOSITORY_MOCK.findByEmail.mockRejectedValue(new NotFoundException('User not found'));
       MINFACTORY_USER_REPOSITORY_MOCK.save.mockResolvedValue(savedEntity);
 
       const result = await userService.createUser(user);
@@ -59,15 +59,15 @@ describe('MinFactoryUserService', () => {
     });
 
     it('should throw ConflictException when email already exists for another user', async () => {
-      MINFACTORY_USER_REPOSITORY_MOCK.findByFirebaseUid.mockResolvedValue(null);
+      MINFACTORY_USER_REPOSITORY_MOCK.findByFirebaseUid.mockRejectedValue(new NotFoundException('User not found'));
       MINFACTORY_USER_REPOSITORY_MOCK.findByEmail.mockResolvedValue(savedEntity);
 
       await expect(userService.createUser(user)).rejects.toThrow(ConflictException);
     });
 
     it('should look up existing users with firebase uid and email before saving', async () => {
-      MINFACTORY_USER_REPOSITORY_MOCK.findByFirebaseUid.mockResolvedValue(null);
-      MINFACTORY_USER_REPOSITORY_MOCK.findByEmail.mockResolvedValue(null);
+      MINFACTORY_USER_REPOSITORY_MOCK.findByFirebaseUid.mockRejectedValue(new NotFoundException('User not found'));
+      MINFACTORY_USER_REPOSITORY_MOCK.findByEmail.mockRejectedValue(new NotFoundException('User not found'));
       MINFACTORY_USER_REPOSITORY_MOCK.save.mockResolvedValue(savedEntity);
 
       await userService.createUser(user);
@@ -77,8 +77,10 @@ describe('MinFactoryUserService', () => {
     });
 
     it('should return existing user when save hits duplicate firebase uid race', async () => {
-      MINFACTORY_USER_REPOSITORY_MOCK.findByFirebaseUid.mockResolvedValueOnce(null).mockResolvedValueOnce(savedEntity);
-      MINFACTORY_USER_REPOSITORY_MOCK.findByEmail.mockResolvedValue(null);
+      MINFACTORY_USER_REPOSITORY_MOCK.findByFirebaseUid
+        .mockRejectedValueOnce(new NotFoundException('User not found'))
+        .mockResolvedValueOnce(savedEntity);
+      MINFACTORY_USER_REPOSITORY_MOCK.findByEmail.mockRejectedValue(new NotFoundException('User not found'));
       MINFACTORY_USER_REPOSITORY_MOCK.save.mockRejectedValue({
         driverError: {
           code: 'ER_DUP_ENTRY',
@@ -96,8 +98,12 @@ describe('MinFactoryUserService', () => {
         ...savedEntity,
         firebaseUid: 'other-firebase-uid',
       };
-      MINFACTORY_USER_REPOSITORY_MOCK.findByFirebaseUid.mockResolvedValueOnce(null).mockResolvedValueOnce(null);
-      MINFACTORY_USER_REPOSITORY_MOCK.findByEmail.mockResolvedValueOnce(null).mockResolvedValueOnce(conflictingEntity);
+      MINFACTORY_USER_REPOSITORY_MOCK.findByFirebaseUid
+        .mockRejectedValueOnce(new NotFoundException('User not found'))
+        .mockRejectedValueOnce(new NotFoundException('User not found'));
+      MINFACTORY_USER_REPOSITORY_MOCK.findByEmail
+        .mockRejectedValueOnce(new NotFoundException('User not found'))
+        .mockResolvedValueOnce(conflictingEntity);
       MINFACTORY_USER_REPOSITORY_MOCK.save.mockRejectedValue({
         driverError: {
           errno: 1062,
@@ -109,7 +115,7 @@ describe('MinFactoryUserService', () => {
   });
 
   describe('getMe', () => {
-    const user: FirebaseUser = {
+    const user: FirebaseUserDto = {
       firebaseUid: 'firebase-uid-123',
       email: 'user@example.com',
     };
@@ -139,7 +145,7 @@ describe('MinFactoryUserService', () => {
     });
 
     it('should throw NotFoundException when user is not found', async () => {
-      MINFACTORY_USER_REPOSITORY_MOCK.findByFirebaseUid.mockResolvedValue(null);
+      MINFACTORY_USER_REPOSITORY_MOCK.findByFirebaseUid.mockRejectedValue(new NotFoundException('User not found'));
 
       await expect(userService.getMe(user)).rejects.toThrow(NotFoundException);
     });

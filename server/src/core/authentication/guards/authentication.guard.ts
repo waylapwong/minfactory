@@ -1,7 +1,7 @@
 import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/common';
 import { Request } from 'express';
 import { AuthenticationService } from '../services/authentication.service';
-import { AuthenticatedRequest } from '../models/authenticated-request.interface';
+import { AuthenticatedRequest } from '../models/authenticated-request';
 import { DecodedIdToken } from 'firebase-admin/auth';
 
 @Injectable()
