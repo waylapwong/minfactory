@@ -66,8 +66,8 @@ Das Backend ist in 3 Schichten organisiert.
 - Es sollen keine unnötigen Abstraktionen oder Over-Engineering eingeführt werden
 - Lösungen müssen leicht lesbar, leicht wartbar und leicht testbar sein
 - Die Implementierung bevorzugt klare, explizite Strukturen statt magischer oder impliziter Mechanismen
-- Es werden separate Mock-Dateien erstellt, um sie in Unit Tests zu verwenden `export const MOCK_SERVICE = { test1: () => {}, test2: () => 'test_value' }`
-- Unit Tests sollen Abhängigkeiten direkt im Test Suite mocken, z. B. mit `providers: [{ provide: Service, useValue: MOCK_SERVICE }]`
+- Für jede injizierte Abhängigkeit in Unit Tests wird eine eigene Mock-Datei mit einer zentralen Mock-Konstante erstellt, z. B. `export const AUTHENTICATION_SERVICE_MOCK = { verifyIdToken: jest.fn() }`
+- Unit Tests verwenden diese zentralen Mock-Konstanten direkt in der Test Suite, z. B. mit `providers: [{ provide: Service, useValue: SERVICE_MOCK }]`; Inline-Mocks in den Specs sollen vermieden werden
 
 # 5. Workflow
 
