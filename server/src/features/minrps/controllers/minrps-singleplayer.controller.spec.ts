@@ -1,6 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { MinRpsSingleplayerController } from './minrps-singleplayer.controller';
 import { MinRpsSingleplayerService } from '../services/minrps-singleplayer.service';
+import { MINRPS_SINGLEPLAYER_SERVICE_MOCK } from '../services/minrps-singleplayer.service.mock';
 import { MinRpsPlayDto } from '../models/dtos/minrps-play.dto';
 import { MinRpsPlayResultDto } from '../models/dtos/minrps-play-result.dto';
 import { MinRpsMove } from '../models/enums/minrps-move.enum';
@@ -8,25 +9,23 @@ import { MinRpsResult } from '../models/enums/minrps-game-result.enum';
 
 describe('MinRpsSingleplayerController', () => {
   let controller: MinRpsSingleplayerController;
-  let service: jest.Mocked<MinRpsSingleplayerService>;
 
   beforeEach(async () => {
-    const mockService = {
-      playGame: jest.fn(),
-    };
-
     const module: TestingModule = await Test.createTestingModule({
       controllers: [MinRpsSingleplayerController],
       providers: [
         {
           provide: MinRpsSingleplayerService,
-          useValue: mockService,
+          useValue: MINRPS_SINGLEPLAYER_SERVICE_MOCK,
         },
       ],
     }).compile();
 
     controller = module.get<MinRpsSingleplayerController>(MinRpsSingleplayerController);
-    service = module.get(MinRpsSingleplayerService);
+  });
+
+  afterEach(() => {
+    jest.clearAllMocks();
   });
 
   it('should be defined', () => {
@@ -43,12 +42,12 @@ describe('MinRpsSingleplayerController', () => {
       resultDto.player2Move = MinRpsMove.Scissors;
       resultDto.result = MinRpsResult.Player1;
 
-      service.playGame.mockReturnValue(resultDto);
+      MINRPS_SINGLEPLAYER_SERVICE_MOCK.playGame.mockReturnValue(resultDto);
 
       const result = controller.play(playDto);
 
       expect(result).toBe(resultDto);
-      expect(service.playGame).toHaveBeenCalledWith(playDto);
+      expect(MINRPS_SINGLEPLAYER_SERVICE_MOCK.playGame).toHaveBeenCalledWith(playDto);
     });
   });
 });

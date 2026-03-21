@@ -1,33 +1,29 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
 import { NotFoundException } from '@nestjs/common';
 import { MinRpsGameRepository } from './minrps-game.repository';
 import { MinRpsGameEntity } from '../models/entities/minrps-game.entity';
+import { MINRPS_GAME_TYPEORM_REPOSITORY_MOCK } from './minrps-game.typeorm-repository.mock';
 
 describe('MinRpsGameRepository', () => {
   let repository: MinRpsGameRepository;
-  let mockTypeOrmRepository: jest.Mocked<Repository<MinRpsGameEntity>>;
 
   beforeEach(async () => {
-    mockTypeOrmRepository = {
-      save: jest.fn(),
-      delete: jest.fn(),
-      findOne: jest.fn(),
-      find: jest.fn(),
-    } as any;
-
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         MinRpsGameRepository,
         {
           provide: getRepositoryToken(MinRpsGameEntity),
-          useValue: mockTypeOrmRepository,
+          useValue: MINRPS_GAME_TYPEORM_REPOSITORY_MOCK,
         },
       ],
     }).compile();
 
     repository = module.get<MinRpsGameRepository>(MinRpsGameRepository);
+  });
+
+  afterEach(() => {
+    jest.clearAllMocks();
   });
 
   describe('save', () => {
@@ -36,12 +32,12 @@ describe('MinRpsGameRepository', () => {
       entity.id = 'test-id';
       entity.name = 'Test Game';
 
-      mockTypeOrmRepository.save.mockResolvedValue(entity);
+      MINRPS_GAME_TYPEORM_REPOSITORY_MOCK.save.mockResolvedValue(entity);
 
       const result = await repository.save(entity);
 
       expect(result).toBe(entity);
-      expect(mockTypeOrmRepository.save).toHaveBeenCalledWith(entity);
+      expect(MINRPS_GAME_TYPEORM_REPOSITORY_MOCK.save).toHaveBeenCalledWith(entity);
     });
   });
 
@@ -52,12 +48,12 @@ describe('MinRpsGameRepository', () => {
         Object.assign(new MinRpsGameEntity(), { id: '2', name: 'Game 2' }),
       ];
 
-      mockTypeOrmRepository.find.mockResolvedValue(entities);
+      MINRPS_GAME_TYPEORM_REPOSITORY_MOCK.find.mockResolvedValue(entities);
 
       const result = await repository.findAll();
 
       expect(result).toBe(entities);
-      expect(mockTypeOrmRepository.find).toHaveBeenCalledWith({ order: { createdAt: 'DESC' } });
+      expect(MINRPS_GAME_TYPEORM_REPOSITORY_MOCK.find).toHaveBeenCalledWith({ order: { createdAt: 'DESC' } });
     });
   });
 
@@ -67,16 +63,16 @@ describe('MinRpsGameRepository', () => {
       entity.id = 'test-id';
       entity.name = 'Test Game';
 
-      mockTypeOrmRepository.findOne.mockResolvedValue(entity);
+      MINRPS_GAME_TYPEORM_REPOSITORY_MOCK.findOne.mockResolvedValue(entity);
 
       const result = await repository.findOne('test-id');
 
       expect(result).toBe(entity);
-      expect(mockTypeOrmRepository.findOne).toHaveBeenCalledWith({ where: { id: 'test-id' } });
+      expect(MINRPS_GAME_TYPEORM_REPOSITORY_MOCK.findOne).toHaveBeenCalledWith({ where: { id: 'test-id' } });
     });
 
     it('should throw NotFoundException when entity not found', async () => {
-      mockTypeOrmRepository.findOne.mockResolvedValue(null);
+      MINRPS_GAME_TYPEORM_REPOSITORY_MOCK.findOne.mockResolvedValue(null);
 
       await expect(repository.findOne('non-existent-id')).rejects.toThrow(NotFoundException);
       await expect(repository.findOne('non-existent-id')).rejects.toThrow(
@@ -90,17 +86,17 @@ describe('MinRpsGameRepository', () => {
       const entity = new MinRpsGameEntity();
       entity.id = 'test-id';
 
-      mockTypeOrmRepository.findOne.mockResolvedValue(entity);
-      mockTypeOrmRepository.delete.mockResolvedValue({} as any);
+      MINRPS_GAME_TYPEORM_REPOSITORY_MOCK.findOne.mockResolvedValue(entity);
+      MINRPS_GAME_TYPEORM_REPOSITORY_MOCK.delete.mockResolvedValue({} as any);
 
       await repository.delete('test-id');
 
-      expect(mockTypeOrmRepository.findOne).toHaveBeenCalledWith({ where: { id: 'test-id' } });
-      expect(mockTypeOrmRepository.delete).toHaveBeenCalledWith({ id: 'test-id' });
+      expect(MINRPS_GAME_TYPEORM_REPOSITORY_MOCK.findOne).toHaveBeenCalledWith({ where: { id: 'test-id' } });
+      expect(MINRPS_GAME_TYPEORM_REPOSITORY_MOCK.delete).toHaveBeenCalledWith({ id: 'test-id' });
     });
 
     it('should throw NotFoundException when entity not found for deletion', async () => {
-      mockTypeOrmRepository.findOne.mockResolvedValue(null);
+      MINRPS_GAME_TYPEORM_REPOSITORY_MOCK.findOne.mockResolvedValue(null);
 
       await expect(repository.delete('non-existent-id')).rejects.toThrow(NotFoundException);
     });
