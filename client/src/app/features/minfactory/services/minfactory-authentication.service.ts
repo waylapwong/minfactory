@@ -18,7 +18,7 @@ export class MinFactoryAuthenticationService {
 
   public async loginUser(email: string, password: string): Promise<MinFactoryUser> {
     await this.authenticationService.loginWithEmailAndPassword(email, password);
-    const userDto = await this.userRepository.getMe();
+    const userDto = await this.userRepository.get();
     return MinFactoryDtoMapper.userDtoToDomain(userDto);
   }
 
@@ -35,7 +35,7 @@ export class MinFactoryAuthenticationService {
       }
     }
     await this.ensureRegistrationToken();
-    const userDto: MinFactoryUserDto = await this.userRepository.createUser();
+    const userDto: MinFactoryUserDto = await this.userRepository.create();
     return MinFactoryDtoMapper.userDtoToDomain(userDto);
   }
 

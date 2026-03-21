@@ -10,22 +10,22 @@ import { MinFactoryUserRepository } from '../repositories/minfactory-user.reposi
   providedIn: 'root',
 })
 export class MinFactoryUserService {
-  private readonly cachedUser: WritableSignal<MinFactoryUser | null> = signal(null);
-
   public readonly profile: Signal<MinFactoryProfileViewModel | null> = computed(() => {
     const user: MinFactoryUser | null = this.cachedUser();
     return user ? MinFactoryViewmodelMapper.domainToProfileViewModel(user) : null;
   });
 
-  constructor(private readonly userRepository: MinFactoryUserRepository) {}
+  private readonly cachedUser: WritableSignal<MinFactoryUser | null> = signal(null);
 
-  public async loadProfile(): Promise<void> {
-    const userDto: MinFactoryUserDto = await this.userRepository.getMe();
-    const domain: MinFactoryUser = MinFactoryDtoMapper.userDtoToDomain(userDto);
-    this.cachedUser.set(domain);
-  }
+  constructor(private readonly userRepository: MinFactoryUserRepository) {}
 
   public clearProfileCache(): void {
     this.cachedUser.set(null);
+  }
+
+  public async loadProfile(): Promise<void> {
+    const userDto: MinFactoryUserDto = await this.userRepository.get();
+    const domain: MinFactoryUser = MinFactoryDtoMapper.userDtoToDomain(userDto);
+    this.cachedUser.set(domain);
   }
 }

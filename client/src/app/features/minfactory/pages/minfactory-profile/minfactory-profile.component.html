@@ -24,16 +24,16 @@
             {{ isLogoutSubmitting() ? 'Abmelden...' : 'Abmelden' }}
           </min-button>
         </div>
-      } @else if (profile(); as data) {
+      } @else if (userService.profile(); as user) {
         <dl class="flex flex-col gap-3 rounded-lg border-2 border-gray-200 p-4">
           <div class="rounded-lg bg-gray-100 p-3">
             <dt class="text-xs font-bold tracking-wide text-gray-500 uppercase">E-Mail</dt>
-            <dd class="text-sm break-all text-black">{{ data.email }}</dd>
+            <dd class="text-sm break-all text-black">{{ user.email }}</dd>
           </div>
 
           <div class="rounded-lg bg-gray-100 p-3">
             <dt class="text-xs font-bold tracking-wide text-gray-500 uppercase">Mitglied seit</dt>
-            <dd class="text-sm text-black">{{ data.createdAt }}</dd>
+            <dd class="text-sm text-black">{{ user.createdAt }}</dd>
           </div>
         </dl>
 

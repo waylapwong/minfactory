@@ -26,7 +26,7 @@ describe('MinFactoryUserRepository', () => {
     expect(repository).toBeTruthy();
   });
 
-  describe('createUser()', () => {
+  describe('create()', () => {
     it('should create a minfactory user via API service', async () => {
       const userDto: MinFactoryUserDto = {
         createdAt: '2026-03-19T10:00:00.000Z',
@@ -34,7 +34,7 @@ describe('MinFactoryUserRepository', () => {
       };
       MINFACTORY_API_SERVICE_MOCK.createMinFactoryUser.and.returnValue(of(userDto) as any);
 
-      const result = await repository.createUser();
+      const result = await repository.create();
 
       expect(result).toEqual(userDto);
       expect(MINFACTORY_API_SERVICE_MOCK.createMinFactoryUser).toHaveBeenCalled();

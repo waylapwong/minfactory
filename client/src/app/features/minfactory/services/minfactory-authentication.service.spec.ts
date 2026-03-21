@@ -20,13 +20,13 @@ describe('MinFactoryAuthenticationService', () => {
     AUTHENTICATION_SERVICE_MOCK.getIdToken.and.resolveTo('firebase-token');
     AUTHENTICATION_SERVICE_MOCK.setCurrentUser({ email: 'user@example.com' } as any);
 
-    MINFACTORY_USER_REPOSITORY_MOCK.getMe.calls.reset();
-    MINFACTORY_USER_REPOSITORY_MOCK.getMe.and.callFake(async () => ({
+    MINFACTORY_USER_REPOSITORY_MOCK.get.calls.reset();
+    MINFACTORY_USER_REPOSITORY_MOCK.get.and.callFake(async () => ({
       createdAt: '2026-03-19T10:00:00.000Z',
       email: 'user@example.com',
     }));
-    MINFACTORY_USER_REPOSITORY_MOCK.createUser.calls.reset();
-    MINFACTORY_USER_REPOSITORY_MOCK.createUser.and.callFake(async () => ({
+    MINFACTORY_USER_REPOSITORY_MOCK.create.calls.reset();
+    MINFACTORY_USER_REPOSITORY_MOCK.create.and.callFake(async () => ({
       createdAt: '2026-03-19T10:00:00.000Z',
       email: 'user@example.com',
     }));
@@ -55,7 +55,7 @@ describe('MinFactoryAuthenticationService', () => {
         'user@example.com',
         'password123',
       );
-      expect(MINFACTORY_USER_REPOSITORY_MOCK.getMe).toHaveBeenCalled();
+      expect(MINFACTORY_USER_REPOSITORY_MOCK.get).toHaveBeenCalled();
       expect(result.email).toBe('user@example.com');
       expect(result.createdAt).toEqual(new Date('2026-03-19T10:00:00.000Z'));
     });
@@ -68,11 +68,11 @@ describe('MinFactoryAuthenticationService', () => {
       await expectAsync(service.loginUser('user@example.com', 'wrongpassword')).toBeRejectedWithError(
         'Ungültige Anmeldedaten.',
       );
-      expect(MINFACTORY_USER_REPOSITORY_MOCK.getMe).not.toHaveBeenCalled();
+      expect(MINFACTORY_USER_REPOSITORY_MOCK.get).not.toHaveBeenCalled();
     });
 
     it('should throw error when fetching user fails', async () => {
-      MINFACTORY_USER_REPOSITORY_MOCK.getMe.and.returnValue(Promise.reject(new Error('Benutzer nicht gefunden.')));
+      MINFACTORY_USER_REPOSITORY_MOCK.get.and.returnValue(Promise.reject(new Error('Benutzer nicht gefunden.')));
 
       await expectAsync(service.loginUser('user@example.com', 'password123')).toBeRejectedWithError(
         'Benutzer nicht gefunden.',
@@ -89,7 +89,7 @@ describe('MinFactoryAuthenticationService', () => {
         'password123',
       );
       expect(AUTHENTICATION_SERVICE_MOCK.getIdToken).toHaveBeenCalledWith(true);
-      expect(MINFACTORY_USER_REPOSITORY_MOCK.createUser).toHaveBeenCalled();
+      expect(MINFACTORY_USER_REPOSITORY_MOCK.create).toHaveBeenCalled();
       expect(result.email).toBe('user@example.com');
       expect(result.createdAt).toEqual(new Date('2026-03-19T10:00:00.000Z'));
     });
@@ -102,7 +102,7 @@ describe('MinFactoryAuthenticationService', () => {
       const result = await service.registerUser('user@example.com', 'password123');
 
       expect(AUTHENTICATION_SERVICE_MOCK.getIdToken).toHaveBeenCalledWith(true);
-      expect(MINFACTORY_USER_REPOSITORY_MOCK.createUser).toHaveBeenCalled();
+      expect(MINFACTORY_USER_REPOSITORY_MOCK.create).toHaveBeenCalled();
       expect(result.email).toBe('user@example.com');
     });
 
@@ -114,7 +114,7 @@ describe('MinFactoryAuthenticationService', () => {
       await expectAsync(service.registerUser('user@example.com', 'password123')).toBeRejectedWithError(
         'firebase failed',
       );
-      expect(MINFACTORY_USER_REPOSITORY_MOCK.createUser).not.toHaveBeenCalled();
+      expect(MINFACTORY_USER_REPOSITORY_MOCK.create).not.toHaveBeenCalled();
     });
 
     it('should fail fast when no id token is available after registration', async () => {
@@ -123,7 +123,7 @@ describe('MinFactoryAuthenticationService', () => {
       await expectAsync(service.registerUser('user@example.com', 'password123')).toBeRejectedWithError(
         'Konto erstellt, aber keine gueltige Session vorhanden. Bitte erneut versuchen.',
       );
-      expect(MINFACTORY_USER_REPOSITORY_MOCK.createUser).not.toHaveBeenCalled();
+      expect(MINFACTORY_USER_REPOSITORY_MOCK.create).not.toHaveBeenCalled();
     });
 
     it('should not continue email-already-in-use flow when current user does not match', async () => {
@@ -135,7 +135,7 @@ describe('MinFactoryAuthenticationService', () => {
       await expectAsync(service.registerUser('user@example.com', 'password123')).toBeRejectedWithError(
         'Diese E-Mail-Adresse wird bereits verwendet.',
       );
-      expect(MINFACTORY_USER_REPOSITORY_MOCK.createUser).not.toHaveBeenCalled();
+      expect(MINFACTORY_USER_REPOSITORY_MOCK.create).not.toHaveBeenCalled();
     });
   });
 
@@ -147,9 +147,7 @@ describe('MinFactoryAuthenticationService', () => {
     });
 
     it('should throw error when firebase sign out fails', async () => {
-      AUTHENTICATION_SERVICE_MOCK.signOut.and.returnValue(
-        Promise.reject(new Error('Sign out failed.')),
-      );
+      AUTHENTICATION_SERVICE_MOCK.signOut.and.returnValue(Promise.reject(new Error('Sign out failed.')));
 
       await expectAsync(service.logoutUser()).toBeRejectedWithError('Sign out failed.');
     });

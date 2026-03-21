@@ -8,11 +8,11 @@ import { MinFactoryApiService, MinFactoryUserDto } from '../../../core/generated
 export class MinFactoryUserRepository {
   constructor(private readonly apiService: MinFactoryApiService) {}
 
-  public async createUser(): Promise<MinFactoryUserDto> {
+  public async create(): Promise<MinFactoryUserDto> {
     return await firstValueFrom(this.apiService.createMinFactoryUser());
   }
 
-  public async getMe(): Promise<MinFactoryUserDto> {
+  public async get(): Promise<MinFactoryUserDto> {
     return await firstValueFrom(this.apiService.getMinFactoryUserMe());
   }
 }

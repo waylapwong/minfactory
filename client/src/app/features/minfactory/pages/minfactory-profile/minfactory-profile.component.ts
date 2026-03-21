@@ -1,12 +1,11 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, OnInit, Signal, WritableSignal, signal } from '@angular/core';
+import { Component, OnInit, WritableSignal, signal } from '@angular/core';
 import { RoutingService } from '../../../../core/routing/routing.service';
 import { ButtonComponent } from '../../../../shared/components/button/button.component';
 import { CardComponent } from '../../../../shared/components/card/card.component';
 import { H1Component } from '../../../../shared/components/h1/h1.component';
 import { SnackbarComponent } from '../../../../shared/components/snackbar/snackbar.component';
 import { Color } from '../../../../shared/enums/color.enum';
-import { MinFactoryProfileViewModel } from '../../models/viewmodels/minfactory-profile.viewmodel';
 import { MinFactoryAuthenticationService } from '../../services/minfactory-authentication.service';
 import { MinFactoryUserService } from '../../services/minfactory-user.service';
 
@@ -24,16 +23,13 @@ export class MinFactoryProfileComponent implements OnInit {
   public readonly isLoading: WritableSignal<boolean> = signal(true);
   public readonly isLogoutSubmitting: WritableSignal<boolean> = signal(false);
   public readonly isSnackbarOpen: WritableSignal<boolean> = signal(false);
-  public readonly profile: Signal<MinFactoryProfileViewModel | null>;
   public readonly snackbarMessage: WritableSignal<string> = signal('');
 
   constructor(
+    public readonly userService: MinFactoryUserService,
     private readonly authenticationService: MinFactoryAuthenticationService,
-    private readonly profileService: MinFactoryUserService,
     private readonly routingService: RoutingService,
-  ) {
-    this.profile = this.profileService.profile;
-  }
+  ) {}
 
   public ngOnInit(): void {
     this.reloadProfile();
@@ -82,14 +78,14 @@ export class MinFactoryProfileComponent implements OnInit {
     this.errorMessage.set('');
 
     try {
-      await this.profileService.loadProfile();
+      await this.userService.loadProfile();
     } catch (error) {
       if (this.isUnauthorizedError(error)) {
         this.routingService.navigateToLogin();
         return;
       }
 
-      this.profileService.clearProfileCache();
+      this.userService.clearProfileCache();
       this.isError.set(true);
       this.errorMessage.set(
         error instanceof Error ? error.message : 'Profil konnte nicht geladen werden. Bitte versuche es erneut.',

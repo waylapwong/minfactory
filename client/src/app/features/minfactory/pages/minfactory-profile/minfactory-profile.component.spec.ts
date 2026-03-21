@@ -1,10 +1,10 @@
 import { provideZonelessChangeDetection } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { ROUTING_SERVICE_MOCK } from '../../../../core/routing/routing.service.mock';
 import { RoutingService } from '../../../../core/routing/routing.service';
+import { ROUTING_SERVICE_MOCK } from '../../../../core/routing/routing.service.mock';
 import { MinFactoryAuthenticationService } from '../../services/minfactory-authentication.service';
-import { MinFactoryUserService } from '../../services/minfactory-user.service';
 import { MINFACTORY_AUTHENTICATION_SERVICE_MOCK } from '../../services/minfactory-authentication.service.mock';
+import { MinFactoryUserService } from '../../services/minfactory-user.service';
 import { MINFACTORY_USER_SERVICE_MOCK } from '../../services/minfactory-user.service.mock';
 import { MinFactoryProfileComponent } from './minfactory-profile.component';
 
@@ -70,7 +70,6 @@ describe('MinFactoryProfileComponent', () => {
     await fixture.whenStable();
 
     expect(MINFACTORY_USER_SERVICE_MOCK.loadProfile).toHaveBeenCalled();
-    expect(component.profile()?.email).toBe('user@example.com');
     expect(component.isLoading()).toBeFalse();
     expect(component.isError()).toBeFalse();
   });
@@ -92,7 +91,6 @@ describe('MinFactoryProfileComponent', () => {
 
     expect(component.isError()).toBeTrue();
     expect(component.errorMessage()).toBe('Server down');
-    expect(component.profile()).toBeNull();
     expect(MINFACTORY_USER_SERVICE_MOCK.clearProfileCache).toHaveBeenCalled();
   });
 
