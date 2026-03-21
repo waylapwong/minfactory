@@ -9,7 +9,7 @@ import { Color } from '../../../../shared/enums/color.enum';
 @Component({
   selector: 'minpoker-home',
   templateUrl: './minpoker-home.component.html',
-  styles: [],
+  styleUrls: ['./minpoker-home.component.scss'],
   imports: [BadgeComponent, CardButtonComponent, H2Component, LogoComponent, H1Component],
 })
 export class MinPokerHomeComponent {

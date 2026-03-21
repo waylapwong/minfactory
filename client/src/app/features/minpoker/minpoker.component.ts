@@ -6,7 +6,7 @@ import { AppName } from '../../shared/enums/app-name.enum';
 @Component({
   selector: 'min-poker',
   templateUrl: './minpoker.component.html',
-  styles: [],
+  styleUrls: ['./minpoker.component.scss'],
   host: { class: 'block h-full' },
   imports: [RouterOutlet],
 })
