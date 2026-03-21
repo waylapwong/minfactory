@@ -11,10 +11,7 @@ describe('MinFactoryAppsComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [MinFactoryAppsComponent],
-      providers: [
-        provideZonelessChangeDetection(),
-        { provide: RoutingService, useValue: ROUTING_SERVICE_MOCK },
-      ],
+      providers: [provideZonelessChangeDetection(), { provide: RoutingService, useValue: ROUTING_SERVICE_MOCK }],
     }).compileComponents();
 
     fixture = TestBed.createComponent(MinFactoryAppsComponent);

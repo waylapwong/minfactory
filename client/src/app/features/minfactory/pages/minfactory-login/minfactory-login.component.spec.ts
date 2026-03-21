@@ -17,9 +17,7 @@ describe('MinFactoryLoginComponent', () => {
 
   const settleLogin = async (): Promise<void> => {
     const loginPromise: Promise<unknown> | undefined =
-      MINFACTORY_AUTHENTICATION_SERVICE_MOCK.loginUser.calls.mostRecent()?.returnValue as
-        | Promise<unknown>
-        | undefined;
+      MINFACTORY_AUTHENTICATION_SERVICE_MOCK.loginUser.calls.mostRecent()?.returnValue as Promise<unknown> | undefined;
 
     try {
       await loginPromise;
