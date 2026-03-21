@@ -2,34 +2,28 @@ import { provideZonelessChangeDetection } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { AuthenticationService } from '../../../core/authentication/authentication.service';
 import { MinFactoryUserRepository } from '../repositories/minfactory-user.repository';
+import { MINFACTORY_USER_REPOSITORY_MOCK } from '../repositories/minfactory-user.repository.mock';
+import { MINFACTORY_AUTHENTICATION_SERVICE_MOCK } from './minfactory-authentication.service.mock';
 import { MinFactoryLoginService } from './minfactory-login.service';
 
 describe('MinFactoryLoginService', () => {
   let service: MinFactoryLoginService;
-  let authServiceMock: {
-    loginWithEmailAndPassword: jasmine.Spy;
-  };
-  let userRepositoryMock: jasmine.SpyObj<MinFactoryUserRepository>;
 
   beforeEach(() => {
-    authServiceMock = {
-      loginWithEmailAndPassword: jasmine.createSpy('loginWithEmailAndPassword').and.returnValue(Promise.resolve()),
-    };
-    userRepositoryMock = jasmine.createSpyObj('MinFactoryUserRepository', ['getMe']);
-
-    userRepositoryMock.getMe.and.returnValue(
-      Promise.resolve({
-        createdAt: '2026-03-19T10:00:00.000Z',
-        email: 'user@example.com',
-      }),
-    );
+    MINFACTORY_AUTHENTICATION_SERVICE_MOCK.loginWithEmailAndPassword.calls.reset();
+    MINFACTORY_AUTHENTICATION_SERVICE_MOCK.loginWithEmailAndPassword.and.resolveTo();
+    MINFACTORY_USER_REPOSITORY_MOCK.getMe.calls.reset();
+    MINFACTORY_USER_REPOSITORY_MOCK.getMe.and.callFake(async () => ({
+      createdAt: '2026-03-19T10:00:00.000Z',
+      email: 'user@example.com',
+    }));
 
     TestBed.configureTestingModule({
       providers: [
         provideZonelessChangeDetection(),
         MinFactoryLoginService,
-        { provide: AuthenticationService, useValue: authServiceMock as unknown as AuthenticationService },
-        { provide: MinFactoryUserRepository, useValue: userRepositoryMock },
+        { provide: AuthenticationService, useValue: MINFACTORY_AUTHENTICATION_SERVICE_MOCK },
+        { provide: MinFactoryUserRepository, useValue: MINFACTORY_USER_REPOSITORY_MOCK },
       ],
     });
 
@@ -44,23 +38,28 @@ describe('MinFactoryLoginService', () => {
     it('should login with firebase and then fetch minfactory user', async () => {
       const result = await service.loginUser('user@example.com', 'password123');
 
-      expect(authServiceMock.loginWithEmailAndPassword).toHaveBeenCalledWith('user@example.com', 'password123');
-      expect(userRepositoryMock.getMe).toHaveBeenCalled();
+      expect(MINFACTORY_AUTHENTICATION_SERVICE_MOCK.loginWithEmailAndPassword).toHaveBeenCalledWith(
+        'user@example.com',
+        'password123',
+      );
+      expect(MINFACTORY_USER_REPOSITORY_MOCK.getMe).toHaveBeenCalled();
       expect(result.email).toBe('user@example.com');
       expect(result.createdAt).toEqual(new Date('2026-03-19T10:00:00.000Z'));
     });
 
     it('should not fetch minfactory user when firebase login fails', async () => {
-      authServiceMock.loginWithEmailAndPassword.and.returnValue(Promise.reject(new Error('Ungültige Anmeldedaten.')));
+      MINFACTORY_AUTHENTICATION_SERVICE_MOCK.loginWithEmailAndPassword.and.returnValue(
+        Promise.reject(new Error('Ungültige Anmeldedaten.')),
+      );
 
       await expectAsync(service.loginUser('user@example.com', 'wrongpassword')).toBeRejectedWithError(
         'Ungültige Anmeldedaten.',
       );
-      expect(userRepositoryMock.getMe).not.toHaveBeenCalled();
+      expect(MINFACTORY_USER_REPOSITORY_MOCK.getMe).not.toHaveBeenCalled();
     });
 
     it('should throw error when fetching user fails', async () => {
-      userRepositoryMock.getMe.and.returnValue(Promise.reject(new Error('Benutzer nicht gefunden.')));
+      MINFACTORY_USER_REPOSITORY_MOCK.getMe.and.returnValue(Promise.reject(new Error('Benutzer nicht gefunden.')));
 
       await expectAsync(service.loginUser('user@example.com', 'password123')).toBeRejectedWithError(
         'Benutzer nicht gefunden.',

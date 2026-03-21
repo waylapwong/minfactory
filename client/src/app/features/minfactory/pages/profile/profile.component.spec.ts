@@ -3,18 +3,14 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { RoutingService } from '../../../../core/routing/routing.service';
 import { MinFactoryLogoutService } from '../../services/minfactory-logout.service';
 import { MinFactoryProfileService } from '../../services/minfactory-profile.service';
+import { MINFACTORY_LOGOUT_SERVICE_MOCK } from '../../services/minfactory-logout.service.mock';
+import { MINFACTORY_PROFILE_SERVICE_MOCK } from '../../services/minfactory-profile.service.mock';
+import { MINFACTORY_ROUTING_SERVICE_MOCK } from '../../services/minfactory-routing.service.mock';
 import { ProfileComponent } from './profile.component';
 
 describe('ProfileComponent', () => {
   let component: ProfileComponent;
   let fixture: ComponentFixture<ProfileComponent>;
-  let profileServiceMock: { loadProfile: jasmine.Spy };
-  let logoutServiceMock: { logoutUser: jasmine.Spy };
-  let routingServiceMock: {
-    navigateToApps: jasmine.Spy;
-    navigateToLogin: jasmine.Spy;
-    navigateToHomePage: jasmine.Spy;
-  };
 
   const flushMicrotasks = async (): Promise<void> => {
     await Promise.resolve();
@@ -22,9 +18,8 @@ describe('ProfileComponent', () => {
   };
 
   const settleLogout = async (): Promise<void> => {
-    const logoutPromise: Promise<unknown> | undefined = logoutServiceMock.logoutUser.calls.mostRecent()?.returnValue as
-      | Promise<unknown>
-      | undefined;
+    const logoutPromise: Promise<unknown> | undefined = MINFACTORY_LOGOUT_SERVICE_MOCK.logoutUser.calls.mostRecent()
+      ?.returnValue as Promise<unknown> | undefined;
 
     try {
       await logoutPromise;
@@ -36,32 +31,24 @@ describe('ProfileComponent', () => {
   };
 
   beforeEach(async () => {
-    profileServiceMock = {
-      loadProfile: jasmine.createSpy('loadProfile').and.returnValue(
-        Promise.resolve({
-          createdAt: '19.03.2026, 11:00',
-          email: 'user@example.com',
-        }),
-      ),
-    };
-
-    logoutServiceMock = {
-      logoutUser: jasmine.createSpy('logoutUser').and.returnValue(Promise.resolve()),
-    };
-
-    routingServiceMock = {
-      navigateToApps: jasmine.createSpy('navigateToApps'),
-      navigateToLogin: jasmine.createSpy('navigateToLogin'),
-      navigateToHomePage: jasmine.createSpy('navigateToHomePage'),
-    };
+    MINFACTORY_PROFILE_SERVICE_MOCK.loadProfile.calls.reset();
+    MINFACTORY_PROFILE_SERVICE_MOCK.loadProfile.and.callFake(async () => ({
+      createdAt: '19.03.2026, 11:00',
+      email: 'user@example.com',
+    }));
+    MINFACTORY_LOGOUT_SERVICE_MOCK.logoutUser.calls.reset();
+    MINFACTORY_LOGOUT_SERVICE_MOCK.logoutUser.and.resolveTo();
+    MINFACTORY_ROUTING_SERVICE_MOCK.navigateToLogin.calls.reset();
+    MINFACTORY_ROUTING_SERVICE_MOCK.navigateToHomePage.calls.reset();
+    MINFACTORY_ROUTING_SERVICE_MOCK.navigateToApps.calls.reset();
 
     await TestBed.configureTestingModule({
       imports: [ProfileComponent],
       providers: [
         provideZonelessChangeDetection(),
-        { provide: MinFactoryProfileService, useValue: profileServiceMock },
-        { provide: MinFactoryLogoutService, useValue: logoutServiceMock },
-        { provide: RoutingService, useValue: routingServiceMock },
+        { provide: MinFactoryProfileService, useValue: MINFACTORY_PROFILE_SERVICE_MOCK },
+        { provide: MinFactoryLogoutService, useValue: MINFACTORY_LOGOUT_SERVICE_MOCK },
+        { provide: RoutingService, useValue: MINFACTORY_ROUTING_SERVICE_MOCK },
       ],
     }).compileComponents();
 
@@ -77,23 +64,23 @@ describe('ProfileComponent', () => {
     fixture.detectChanges();
     await fixture.whenStable();
 
-    expect(profileServiceMock.loadProfile).toHaveBeenCalled();
+    expect(MINFACTORY_PROFILE_SERVICE_MOCK.loadProfile).toHaveBeenCalled();
     expect(component.profile()?.email).toBe('user@example.com');
     expect(component.isLoading()).toBeFalse();
     expect(component.isError()).toBeFalse();
   });
 
   it('should navigate to login when profile loading fails with unauthorized error', async () => {
-    profileServiceMock.loadProfile.and.returnValue(Promise.reject(new Error('401 Unauthorized')));
+    MINFACTORY_PROFILE_SERVICE_MOCK.loadProfile.and.returnValue(Promise.reject(new Error('401 Unauthorized')));
 
     fixture.detectChanges();
     await fixture.whenStable();
 
-    expect(routingServiceMock.navigateToLogin).toHaveBeenCalled();
+    expect(MINFACTORY_ROUTING_SERVICE_MOCK.navigateToLogin).toHaveBeenCalled();
   });
 
   it('should expose error state when profile loading fails', async () => {
-    profileServiceMock.loadProfile.and.returnValue(Promise.reject(new Error('Server down')));
+    MINFACTORY_PROFILE_SERVICE_MOCK.loadProfile.and.returnValue(Promise.reject(new Error('Server down')));
 
     fixture.detectChanges();
     await fixture.whenStable();
@@ -106,18 +93,18 @@ describe('ProfileComponent', () => {
   it('should navigate to apps', () => {
     component.navigateToApps();
 
-    expect(routingServiceMock.navigateToApps).toHaveBeenCalled();
+    expect(MINFACTORY_ROUTING_SERVICE_MOCK.navigateToApps).toHaveBeenCalled();
   });
 
   it('should reload profile when reloadProfile is called', async () => {
     fixture.detectChanges();
     await fixture.whenStable();
-    profileServiceMock.loadProfile.calls.reset();
+    MINFACTORY_PROFILE_SERVICE_MOCK.loadProfile.calls.reset();
 
     component.reloadProfile();
     await fixture.whenStable();
 
-    expect(profileServiceMock.loadProfile).toHaveBeenCalled();
+    expect(MINFACTORY_PROFILE_SERVICE_MOCK.loadProfile).toHaveBeenCalled();
   });
 
   describe('logout()', () => {
@@ -125,8 +112,8 @@ describe('ProfileComponent', () => {
       component.logout();
       await settleLogout();
 
-      expect(logoutServiceMock.logoutUser).toHaveBeenCalled();
-      expect(routingServiceMock.navigateToHomePage).toHaveBeenCalled();
+      expect(MINFACTORY_LOGOUT_SERVICE_MOCK.logoutUser).toHaveBeenCalled();
+      expect(MINFACTORY_ROUTING_SERVICE_MOCK.navigateToHomePage).toHaveBeenCalled();
     });
 
     it('should set isLogoutSubmitting while logout is in progress', () => {
@@ -139,12 +126,12 @@ describe('ProfileComponent', () => {
       component.logout();
       component.logout();
 
-      expect(logoutServiceMock.logoutUser).toHaveBeenCalledTimes(1);
+      expect(MINFACTORY_LOGOUT_SERVICE_MOCK.logoutUser).toHaveBeenCalledTimes(1);
     });
 
     it('should show snackbar and reset submitting state when logout fails', async () => {
       const errorMessage = 'Logout fehlgeschlagen.';
-      logoutServiceMock.logoutUser.and.returnValue(Promise.reject(new Error(errorMessage)));
+      MINFACTORY_LOGOUT_SERVICE_MOCK.logoutUser.and.returnValue(Promise.reject(new Error(errorMessage)));
 
       component.logout();
       await settleLogout();
@@ -152,11 +139,11 @@ describe('ProfileComponent', () => {
       expect(component.isLogoutSubmitting()).toBeFalse();
       expect(component.isSnackbarOpen()).toBeTrue();
       expect(component.snackbarMessage()).toBe(errorMessage);
-      expect(routingServiceMock.navigateToHomePage).not.toHaveBeenCalled();
+      expect(MINFACTORY_ROUTING_SERVICE_MOCK.navigateToHomePage).not.toHaveBeenCalled();
     });
 
     it('should close snackbar when closeSnackbar is called', async () => {
-      logoutServiceMock.logoutUser.and.returnValue(Promise.reject(new Error('error')));
+      MINFACTORY_LOGOUT_SERVICE_MOCK.logoutUser.and.returnValue(Promise.reject(new Error('error')));
       component.logout();
       await settleLogout();
 

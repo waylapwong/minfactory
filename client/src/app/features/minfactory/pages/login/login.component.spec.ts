@@ -2,6 +2,8 @@ import { provideZonelessChangeDetection } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { RoutingService } from '../../../../core/routing/routing.service';
 import { MinFactoryLoginService } from '../../services/minfactory-login.service';
+import { MINFACTORY_LOGIN_SERVICE_MOCK } from '../../services/minfactory-login.service.mock';
+import { MINFACTORY_ROUTING_SERVICE_MOCK } from '../../services/minfactory-routing.service.mock';
 import { LoginComponent } from './login.component';
 
 describe('LoginComponent', () => {
@@ -14,9 +16,8 @@ describe('LoginComponent', () => {
   };
 
   const settleLogin = async (): Promise<void> => {
-    const loginPromise: Promise<unknown> | undefined = loginServiceMock.loginUser.calls.mostRecent()?.returnValue as
-      | Promise<unknown>
-      | undefined;
+    const loginPromise: Promise<unknown> | undefined = MINFACTORY_LOGIN_SERVICE_MOCK.loginUser.calls.mostRecent()
+      ?.returnValue as Promise<unknown> | undefined;
 
     try {
       await loginPromise;
@@ -27,41 +28,26 @@ describe('LoginComponent', () => {
     await flushMicrotasks();
   };
 
-  const routingServiceMock = {
-    navigateToProfile: jasmine.createSpy('navigateToProfile'),
-    navigateToRegister: jasmine.createSpy('navigateToRegister'),
-  };
-
-  const loginServiceMock = {
-    loginUser: jasmine.createSpy('loginUser').and.returnValue(Promise.resolve()),
-  };
-
   beforeEach(async () => {
+    MINFACTORY_LOGIN_SERVICE_MOCK.loginUser.calls.reset();
+    MINFACTORY_LOGIN_SERVICE_MOCK.loginUser.and.callFake(
+      async () => ({ email: 'user@example.com', createdAt: new Date() }) as any,
+    );
+    MINFACTORY_ROUTING_SERVICE_MOCK.navigateToProfile.calls.reset();
+    MINFACTORY_ROUTING_SERVICE_MOCK.navigateToRegister.calls.reset();
+
     await TestBed.configureTestingModule({
       imports: [LoginComponent],
       providers: [
         provideZonelessChangeDetection(),
-        {
-          provide: RoutingService,
-          useValue: routingServiceMock,
-        },
-        {
-          provide: MinFactoryLoginService,
-          useValue: loginServiceMock,
-        },
+        { provide: RoutingService, useValue: MINFACTORY_ROUTING_SERVICE_MOCK },
+        { provide: MinFactoryLoginService, useValue: MINFACTORY_LOGIN_SERVICE_MOCK },
       ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(LoginComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
-  });
-
-  afterEach(() => {
-    routingServiceMock.navigateToProfile.calls.reset();
-    routingServiceMock.navigateToRegister.calls.reset();
-    loginServiceMock.loginUser.calls.reset();
-    loginServiceMock.loginUser.and.returnValue(Promise.resolve());
   });
 
   it('should create', () => {
@@ -72,12 +58,12 @@ describe('LoginComponent', () => {
     component.submitLogin();
 
     expect(component.loginForm.invalid).toBeTrue();
-    expect(loginServiceMock.loginUser).not.toHaveBeenCalled();
-    expect(routingServiceMock.navigateToProfile).not.toHaveBeenCalled();
+    expect(MINFACTORY_LOGIN_SERVICE_MOCK.loginUser).not.toHaveBeenCalled();
+    expect(MINFACTORY_ROUTING_SERVICE_MOCK.navigateToProfile).not.toHaveBeenCalled();
   });
 
   it('should submit valid form and call login service', async () => {
-    loginServiceMock.loginUser.and.returnValue(Promise.resolve());
+    MINFACTORY_LOGIN_SERVICE_MOCK.loginUser.and.returnValue(Promise.resolve());
 
     component.emailControl.setValue('user@example.com');
     component.passwordControl.setValue('password123');
@@ -85,13 +71,13 @@ describe('LoginComponent', () => {
     component.submitLogin();
     await settleLogin();
 
-    expect(loginServiceMock.loginUser).toHaveBeenCalledWith('user@example.com', 'password123');
+    expect(MINFACTORY_LOGIN_SERVICE_MOCK.loginUser).toHaveBeenCalledWith('user@example.com', 'password123');
     expect(component.isSubmitting()).toBeTrue();
   });
 
   it('should display error message when login service fails', async () => {
     const errorMessage = 'Ungültige Anmeldedaten.';
-    loginServiceMock.loginUser.and.returnValue(Promise.reject(new Error(errorMessage)));
+    MINFACTORY_LOGIN_SERVICE_MOCK.loginUser.and.returnValue(Promise.reject(new Error(errorMessage)));
 
     component.emailControl.setValue('user@example.com');
     component.passwordControl.setValue('wrongpassword');
@@ -102,12 +88,12 @@ describe('LoginComponent', () => {
     expect(component.isSubmitting()).toBeFalse();
     expect(component.isSnackbarOpen()).toBeTrue();
     expect(component.snackbarMessage()).toBe(errorMessage);
-    expect(routingServiceMock.navigateToProfile).not.toHaveBeenCalled();
+    expect(MINFACTORY_ROUTING_SERVICE_MOCK.navigateToProfile).not.toHaveBeenCalled();
   });
 
   it('should navigate to register when navigateToRegister is called', () => {
     component.navigateToRegister();
 
-    expect(routingServiceMock.navigateToRegister).toHaveBeenCalled();
+    expect(MINFACTORY_ROUTING_SERVICE_MOCK.navigateToRegister).toHaveBeenCalled();
   });
 });
