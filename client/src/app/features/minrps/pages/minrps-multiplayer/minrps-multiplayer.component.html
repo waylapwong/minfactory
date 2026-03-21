@@ -45,7 +45,7 @@
             <img
               class="h-16 w-16"
               [alt]="game().heroMove"
-              [src]="`assets/svgs/minrps/${game().heroMove ?? 'uncertainty'}.svg`"
+              [src]="`assets/svgs/minrps/${game().heroMove}.svg`"
             />
           </minrps-card>
         } @else if (selectedMove() !== MinRpsMove.None) {
@@ -89,7 +89,7 @@
             <img
               class="h-16 w-16"
               [alt]="game().villainMove"
-              [src]="`assets/svgs/minrps/${game().villainMove ?? 'uncertainty'}.svg`"
+              [src]="`assets/svgs/minrps/${game().villainMove}.svg`"
             />
           </minrps-card>
         } @else {
@@ -121,7 +121,7 @@
             <img
               class="h-16 w-16"
               [alt]="game().villainMove"
-              [src]="`assets/svgs/minrps/${game().villainMove ?? 'uncertainty'}.svg`"
+              [src]="`assets/svgs/minrps/${game().villainMove}.svg`"
             />
           </minrps-card>
         } @else if (game().villainHasSelectedMove) {
