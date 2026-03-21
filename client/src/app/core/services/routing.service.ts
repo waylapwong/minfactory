@@ -14,20 +14,12 @@ export class RoutingService {
     this.router.navigate([AppPath.Root, MinFactoryPath.Apps]);
   }
 
-  public navigateToLogin(): void {
-    this.router.navigate([AppPath.Root, MinFactoryPath.Login]);
-  }
-
-  public navigateToProfile(): void {
-    this.router.navigate([AppPath.Root, MinFactoryPath.Profile]);
-  }
-
-  public navigateToRegister(): void {
-    this.router.navigate([AppPath.Root, MinFactoryPath.Register]);
-  }
-
   public navigateToHomePage(): void {
     this.router.navigate([AppPath.Root]);
+  }
+
+  public navigateToLogin(): void {
+    this.router.navigate([AppPath.Root, MinFactoryPath.Login]);
   }
 
   public navigateToMinRps(): void {
@@ -44,5 +36,13 @@ export class RoutingService {
 
   public navigateToMinRpsSingleplayer(): void {
     this.router.navigate([AppPath.MinRps, MinRpsPath.Singleplayer]);
+  }
+
+  public navigateToProfile(): void {
+    this.router.navigate([AppPath.Root, MinFactoryPath.Profile]);
+  }
+
+  public navigateToRegister(): void {
+    this.router.navigate([AppPath.Root, MinFactoryPath.Register]);
   }
 }

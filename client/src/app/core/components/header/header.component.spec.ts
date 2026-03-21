@@ -1,13 +1,13 @@
 import { provideZonelessChangeDetection } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { HeaderComponent } from './header.component';
-import { provideRouter } from '@angular/router';
 import { User as FirebaseUser } from '@angular/fire/auth';
+import { provideRouter } from '@angular/router';
 import { AppName } from '../../../shared/enums/app-name.enum';
-import { CONTEXT_SERVICE_MOCK } from '../../../shared/mocks/context.service.mock';
 import { AuthService } from '../../services/auth.service';
 import { AUTH_SERVICE_MOCK } from '../../services/auth.service.mock';
 import { ContextService } from '../../services/context.service';
+import { CONTEXT_SERVICE_MOCK } from '../../services/context.service.mock';
+import { HeaderComponent } from './header.component';
 
 describe('HeaderComponent', () => {
   let component: HeaderComponent;

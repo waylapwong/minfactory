@@ -1,7 +1,6 @@
 import { provideZonelessChangeDetection } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
-import { Auth } from '@angular/fire/auth';
-import * as firebaseAuth from '@angular/fire/auth';
+import { Auth as FirebaseAuth, User as FirebaseUser } from '@angular/fire/auth';
 import { FIREBASE_AUTH_MOCK } from '../../shared/mocks/firebase-auth.mock';
 import { AuthService } from './auth.service';
 
@@ -14,7 +13,10 @@ describe('AuthService', () => {
     FIREBASE_AUTH_MOCK.signOut.calls.reset();
 
     TestBed.configureTestingModule({
-      providers: [provideZonelessChangeDetection(), { provide: Auth, useValue: FIREBASE_AUTH_MOCK as unknown as Auth }],
+      providers: [
+        provideZonelessChangeDetection(),
+        { provide: FirebaseAuth, useValue: FIREBASE_AUTH_MOCK as unknown as FirebaseAuth },
+      ],
     });
 
     service = TestBed.inject(AuthService);
@@ -27,7 +29,7 @@ describe('AuthService', () => {
   it('should update auth signals when auth state changes', () => {
     const currentUser = {
       getIdToken: jasmine.createSpy('getIdToken').and.resolveTo('firebase-token'),
-    } as unknown as firebaseAuth.User;
+    } as unknown as FirebaseUser;
 
     FIREBASE_AUTH_MOCK.emitAuthStateChanged(currentUser);
 
@@ -41,7 +43,7 @@ describe('AuthService', () => {
 
   it('should return the firebase id token of the current user', async () => {
     const getIdToken = jasmine.createSpy('getIdToken').and.resolveTo('firebase-token');
-    FIREBASE_AUTH_MOCK.currentUser = { getIdToken } as unknown as firebaseAuth.User;
+    FIREBASE_AUTH_MOCK.currentUser = { getIdToken } as unknown as FirebaseUser;
 
     await expectAsync(service.getIdToken(true)).toBeResolvedTo('firebase-token');
     expect(getIdToken).toHaveBeenCalledOnceWith(true);
