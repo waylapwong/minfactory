@@ -1,22 +1,18 @@
 import { getRepositoryToken } from '@nestjs/typeorm';
+import { NotFoundException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { MinFactoryUserEntity } from '../models/entities/minfactory-user.entity';
+import { MINFACTORY_USER_TYPEORM_REPOSITORY_MOCK } from '../mocks/minfactory-user.typeorm-repository.mock';
 import { MinFactoryUserRepository } from './minfactory-user.repository';
 
 describe('MinFactoryUserRepository', () => {
   let userRepository: MinFactoryUserRepository;
 
-  const mockTypeOrmRepository = {
-    findOne: jest.fn(),
-    count: jest.fn(),
-    save: jest.fn(),
-  };
-
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         MinFactoryUserRepository,
-        { provide: getRepositoryToken(MinFactoryUserEntity), useValue: mockTypeOrmRepository },
+        { provide: getRepositoryToken(MinFactoryUserEntity), useValue: MINFACTORY_USER_TYPEORM_REPOSITORY_MOCK },
       ],
     }).compile();
 
@@ -35,14 +31,20 @@ describe('MinFactoryUserRepository', () => {
         email: 'user@example.com',
         createdAt: new Date('2025-01-01T00:00:00.000Z'),
       };
-      mockTypeOrmRepository.findOne.mockResolvedValue(entity);
+      MINFACTORY_USER_TYPEORM_REPOSITORY_MOCK.findOne.mockResolvedValue(entity);
 
       const result = await userRepository.findByEmail('user@example.com');
 
       expect(result).toBe(entity);
-      expect(mockTypeOrmRepository.findOne).toHaveBeenCalledWith({
+      expect(MINFACTORY_USER_TYPEORM_REPOSITORY_MOCK.findOne).toHaveBeenCalledWith({
         where: { email: 'user@example.com' },
       });
+    });
+
+    it('should throw NotFoundException when user is not found', async () => {
+      MINFACTORY_USER_TYPEORM_REPOSITORY_MOCK.findOne.mockResolvedValue(null);
+
+      await expect(userRepository.findByEmail('missing@example.com')).rejects.toThrow(NotFoundException);
     });
   });
 
@@ -54,14 +56,20 @@ describe('MinFactoryUserRepository', () => {
         email: 'user@example.com',
         createdAt: new Date('2025-01-01T00:00:00.000Z'),
       };
-      mockTypeOrmRepository.findOne.mockResolvedValue(entity);
+      MINFACTORY_USER_TYPEORM_REPOSITORY_MOCK.findOne.mockResolvedValue(entity);
 
       const result = await userRepository.findByFirebaseUid('firebase-uid-123');
 
       expect(result).toBe(entity);
-      expect(mockTypeOrmRepository.findOne).toHaveBeenCalledWith({
+      expect(MINFACTORY_USER_TYPEORM_REPOSITORY_MOCK.findOne).toHaveBeenCalledWith({
         where: { firebaseUid: 'firebase-uid-123' },
       });
+    });
+
+    it('should throw NotFoundException when user is not found', async () => {
+      MINFACTORY_USER_TYPEORM_REPOSITORY_MOCK.findOne.mockResolvedValue(null);
+
+      await expect(userRepository.findByFirebaseUid('firebase-uid-123')).rejects.toThrow(NotFoundException);
     });
   });
 
@@ -76,12 +84,12 @@ describe('MinFactoryUserRepository', () => {
         id: '550e8400-e29b-41d4-a716-446655440000',
         createdAt: new Date(),
       };
-      mockTypeOrmRepository.save.mockResolvedValue(savedEntity);
+      MINFACTORY_USER_TYPEORM_REPOSITORY_MOCK.save.mockResolvedValue(savedEntity);
 
       const result = await userRepository.save(entity);
 
       expect(result).toBe(savedEntity);
-      expect(mockTypeOrmRepository.save).toHaveBeenCalledWith(entity);
+      expect(MINFACTORY_USER_TYPEORM_REPOSITORY_MOCK.save).toHaveBeenCalledWith(entity);
     });
   });
 });

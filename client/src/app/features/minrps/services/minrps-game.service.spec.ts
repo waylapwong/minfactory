@@ -2,20 +2,23 @@ import { provideZonelessChangeDetection } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { MinRpsGameDto } from '../../../core/generated';
 import { MinRpsGameRepository } from '../repositories/minrps-game.repository';
+import { MINRPS_GAME_REPOSITORY_MOCK } from '../mocks/minrps-game.repository.mock';
 import { MinRpsGameService } from './minrps-game.service';
 
 describe('MinRpsGameService', () => {
   let service: MinRpsGameService;
-  let mockRepository: jasmine.SpyObj<MinRpsGameRepository>;
 
   beforeEach(() => {
-    mockRepository = jasmine.createSpyObj('MinRpsGameRepository', ['create', 'delete', 'get', 'getAll']);
+    MINRPS_GAME_REPOSITORY_MOCK.create.calls.reset();
+    MINRPS_GAME_REPOSITORY_MOCK.delete.calls.reset();
+    MINRPS_GAME_REPOSITORY_MOCK.get.calls.reset();
+    MINRPS_GAME_REPOSITORY_MOCK.getAll.calls.reset();
 
     TestBed.configureTestingModule({
       providers: [
         provideZonelessChangeDetection(),
         MinRpsGameService,
-        { provide: MinRpsGameRepository, useValue: mockRepository },
+        { provide: MinRpsGameRepository, useValue: MINRPS_GAME_REPOSITORY_MOCK },
       ],
     });
     service = TestBed.inject(MinRpsGameService);
@@ -34,11 +37,11 @@ describe('MinRpsGameService', () => {
         observerCount: 0,
         playerCount: 0,
       };
-      mockRepository.create.and.returnValue(Promise.resolve(mockDto));
+      MINRPS_GAME_REPOSITORY_MOCK.create.and.returnValue(Promise.resolve(mockDto));
 
       await service.createGame('Test Game');
 
-      expect(mockRepository.create).toHaveBeenCalledWith('Test Game');
+      expect(MINRPS_GAME_REPOSITORY_MOCK.create).toHaveBeenCalledWith('Test Game');
       expect(service.games().length).toBe(1);
     });
 
@@ -57,7 +60,7 @@ describe('MinRpsGameService', () => {
         observerCount: 0,
         playerCount: 0,
       };
-      mockRepository.create.and.returnValues(Promise.resolve(mockDto1), Promise.resolve(mockDto2));
+      MINRPS_GAME_REPOSITORY_MOCK.create.and.returnValues(Promise.resolve(mockDto1), Promise.resolve(mockDto2));
 
       await service.createGame('Test Game 1');
       await service.createGame('Test Game 2');
@@ -78,13 +81,13 @@ describe('MinRpsGameService', () => {
         observerCount: 0,
         playerCount: 0,
       };
-      mockRepository.create.and.returnValue(Promise.resolve(mockDto));
-      mockRepository.delete.and.returnValue(Promise.resolve());
+      MINRPS_GAME_REPOSITORY_MOCK.create.and.returnValue(Promise.resolve(mockDto));
+      MINRPS_GAME_REPOSITORY_MOCK.delete.and.returnValue(Promise.resolve());
 
       await service.createGame('Test Game');
       await service.deleteGame('test-id');
 
-      expect(mockRepository.delete).toHaveBeenCalledWith('test-id');
+      expect(MINRPS_GAME_REPOSITORY_MOCK.delete).toHaveBeenCalledWith('test-id');
       expect(service.games().length).toBe(0);
     });
 
@@ -110,12 +113,12 @@ describe('MinRpsGameService', () => {
         observerCount: 0,
         playerCount: 0,
       };
-      mockRepository.create.and.returnValues(
+      MINRPS_GAME_REPOSITORY_MOCK.create.and.returnValues(
         Promise.resolve(mockDto1),
         Promise.resolve(mockDto2),
         Promise.resolve(mockDto3),
       );
-      mockRepository.delete.and.returnValue(Promise.resolve());
+      MINRPS_GAME_REPOSITORY_MOCK.delete.and.returnValue(Promise.resolve());
 
       await service.createGame('Test Game 1');
       await service.createGame('Test Game 2');
@@ -138,7 +141,7 @@ describe('MinRpsGameService', () => {
         observerCount: 0,
         playerCount: 0,
       };
-      mockRepository.get.and.returnValue(Promise.resolve(mockDto));
+      MINRPS_GAME_REPOSITORY_MOCK.get.and.returnValue(Promise.resolve(mockDto));
 
       const exists = await service.gameExistByID('test-id');
 
@@ -146,7 +149,7 @@ describe('MinRpsGameService', () => {
     });
 
     it('should return false if game does not exist', async () => {
-      mockRepository.get.and.returnValue(Promise.reject(new Error('Not found')));
+      MINRPS_GAME_REPOSITORY_MOCK.get.and.returnValue(Promise.reject(new Error('Not found')));
 
       const exists = await service.gameExistByID('test-id');
 
@@ -172,11 +175,11 @@ describe('MinRpsGameService', () => {
           playerCount: 0,
         },
       ];
-      mockRepository.getAll.and.returnValue(Promise.resolve(mockDtos));
+      MINRPS_GAME_REPOSITORY_MOCK.getAll.and.returnValue(Promise.resolve(mockDtos));
 
       await service.refreshGames();
 
-      expect(mockRepository.getAll).toHaveBeenCalled();
+      expect(MINRPS_GAME_REPOSITORY_MOCK.getAll).toHaveBeenCalled();
       expect(service.games().length).toBe(2);
     });
   });

@@ -1,7 +1,7 @@
 import { Component, OnDestroy, OnInit, Signal, WritableSignal, computed, inject, signal } from '@angular/core';
 import { AppPath } from '../../../../app.routes';
 import { MinRpsMove, MinRpsResult } from '../../../../core/generated';
-import { RoutingService } from '../../../../core/services/routing.service';
+import { RoutingService } from '../../../../core/routing/routing.service';
 import { ButtonComponent } from '../../../../shared/components/button/button.component';
 import { DialogComponent } from '../../../../shared/components/dialog/dialog.component';
 import { DividerComponent } from '../../../../shared/components/divider/divider.component';

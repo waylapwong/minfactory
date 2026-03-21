@@ -6,37 +6,26 @@ import { MinRpsMatchLeavePayload } from '../models/payloads/minrps-match-leave.p
 import { MinRpsMatchPlayPayload } from '../models/payloads/minrps-match-play.payload';
 import { MinRpsMatchSeatPayload } from '../models/payloads/minrps-match-seat.payload';
 import { MinRpsMultiplayerService } from '../services/minrps-multiplayer.service';
+import { MINRPS_MULTIPLAYER_SERVICE_MOCK } from '../mocks/minrps-multiplayer.service.mock';
 import { MinRpsGateway } from './minrps.gateway';
 
 describe('MinRpsGateway', () => {
   let gateway: MinRpsGateway;
-  let multiplayerService: jest.Mocked<MinRpsMultiplayerService>;
   let mockSocket: jest.Mocked<Socket>;
   let mockServer: jest.Mocked<Server>;
 
   beforeEach(async () => {
-    const mockMultiplayerService = {
-      handleConnection: jest.fn(),
-      handleDisconnect: jest.fn(),
-      joinMatch: jest.fn(),
-      leaveMatch: jest.fn(),
-      seatPlayer: jest.fn(),
-      playMatch: jest.fn(),
-      resetMatch: jest.fn(),
-    };
-
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         MinRpsGateway,
         {
           provide: MinRpsMultiplayerService,
-          useValue: mockMultiplayerService,
+          useValue: MINRPS_MULTIPLAYER_SERVICE_MOCK,
         },
       ],
     }).compile();
 
     gateway = module.get<MinRpsGateway>(MinRpsGateway);
-    multiplayerService = module.get(MinRpsMultiplayerService);
 
     mockSocket = {
       id: 'test-socket',
@@ -55,6 +44,10 @@ describe('MinRpsGateway', () => {
     gateway.server = mockServer;
   });
 
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
+
   it('should be defined', () => {
     expect(gateway).toBeDefined();
   });
@@ -62,13 +55,13 @@ describe('MinRpsGateway', () => {
   describe('handleConnection', () => {
     it('should send Connected event with playerId', () => {
       const playerId = 'test-player-id';
-      multiplayerService.handleConnection.mockReturnValue({
+      MINRPS_MULTIPLAYER_SERVICE_MOCK.handleConnection.mockReturnValue({
         playerId,
       } as any);
 
       gateway.handleConnection(mockSocket);
 
-      expect(multiplayerService.handleConnection).toHaveBeenCalledWith(mockSocket);
+      expect(MINRPS_MULTIPLAYER_SERVICE_MOCK.handleConnection).toHaveBeenCalledWith(mockSocket);
       expect(mockSocket.emit).toHaveBeenCalled();
     });
   });
@@ -80,11 +73,11 @@ describe('MinRpsGateway', () => {
         playerId: 'player-1',
       };
       const mockEvent = { matchId: 'match-1' };
-      multiplayerService.joinMatch.mockReturnValue(mockEvent as any);
+      MINRPS_MULTIPLAYER_SERVICE_MOCK.joinMatch.mockReturnValue(mockEvent as any);
 
       gateway.handleJoinCommand(mockSocket, joinPayload);
 
-      expect(multiplayerService.joinMatch).toHaveBeenCalledWith(mockSocket, joinPayload);
+      expect(MINRPS_MULTIPLAYER_SERVICE_MOCK.joinMatch).toHaveBeenCalledWith(mockSocket, joinPayload);
       expect(mockServer.to).toHaveBeenCalledWith('match-1');
     });
   });
@@ -96,11 +89,11 @@ describe('MinRpsGateway', () => {
         playerId: 'player-1',
       };
       const mockEvent = { matchId: 'match-1' };
-      multiplayerService.leaveMatch.mockReturnValue(mockEvent as any);
+      MINRPS_MULTIPLAYER_SERVICE_MOCK.leaveMatch.mockReturnValue(mockEvent as any);
 
       gateway.handleLeaveCommand(mockSocket, leavePayload);
 
-      expect(multiplayerService.leaveMatch).toHaveBeenCalledWith(mockSocket, leavePayload);
+      expect(MINRPS_MULTIPLAYER_SERVICE_MOCK.leaveMatch).toHaveBeenCalledWith(mockSocket, leavePayload);
       expect(mockServer.to).toHaveBeenCalledWith('match-1');
     });
   });
@@ -125,7 +118,7 @@ describe('MinRpsGateway', () => {
         player2Name: 'Bob',
         result: 'None',
       };
-      multiplayerService.playMatch.mockReturnValue(mockEvent as any);
+      MINRPS_MULTIPLAYER_SERVICE_MOCK.playMatch.mockReturnValue(mockEvent as any);
 
       const mockOpponentEmit = jest.fn();
       const mockExcept = jest.fn().mockReturnValue({ emit: mockOpponentEmit });
@@ -133,7 +126,7 @@ describe('MinRpsGateway', () => {
 
       gateway.handlePlayCommand(mockSocket, playPayload);
 
-      expect(multiplayerService.playMatch).toHaveBeenCalledWith(playPayload);
+      expect(MINRPS_MULTIPLAYER_SERVICE_MOCK.playMatch).toHaveBeenCalledWith(playPayload);
       // Playing client receives the event with their own move visible
       expect(mockSocket.emit).toHaveBeenCalled();
       // Opponent notification goes to the room, excluding the playing client
@@ -170,19 +163,19 @@ describe('MinRpsGateway', () => {
         player1Move: MinRpsMove.None,
         player2Move: MinRpsMove.None,
       };
-      multiplayerService.playMatch.mockReturnValue(mockEvent as any);
-      multiplayerService.resetMatch.mockReturnValue(resetEvent as any);
+      MINRPS_MULTIPLAYER_SERVICE_MOCK.playMatch.mockReturnValue(mockEvent as any);
+      MINRPS_MULTIPLAYER_SERVICE_MOCK.resetMatch.mockReturnValue(resetEvent as any);
 
       gateway.handlePlayCommand(mockSocket, playPayload);
 
-      expect(multiplayerService.playMatch).toHaveBeenCalledWith(playPayload);
-      expect(multiplayerService.resetMatch).not.toHaveBeenCalled();
+      expect(MINRPS_MULTIPLAYER_SERVICE_MOCK.playMatch).toHaveBeenCalledWith(playPayload);
+      expect(MINRPS_MULTIPLAYER_SERVICE_MOCK.resetMatch).not.toHaveBeenCalled();
       expect(mockServer.to).toHaveBeenCalledTimes(1);
       expect(mockServer.to).toHaveBeenCalledWith('match-1');
 
       jest.advanceTimersByTime(3000);
 
-      expect(multiplayerService.resetMatch).toHaveBeenCalledWith('match-1');
+      expect(MINRPS_MULTIPLAYER_SERVICE_MOCK.resetMatch).toHaveBeenCalledWith('match-1');
       expect(mockServer.to).toHaveBeenCalledTimes(2);
 
       jest.useRealTimers();
@@ -195,13 +188,14 @@ describe('MinRpsGateway', () => {
         matchId: 'match-1',
         playerId: 'player-1',
         playerName: 'Alice',
+        seat: 1,
       };
       const mockEvent = { matchId: 'match-1' };
-      multiplayerService.seatPlayer.mockReturnValue(mockEvent as any);
+      MINRPS_MULTIPLAYER_SERVICE_MOCK.seatPlayer.mockReturnValue(mockEvent as any);
 
       gateway.handleSeatCommand(seatPayload);
 
-      expect(multiplayerService.seatPlayer).toHaveBeenCalledWith(seatPayload);
+      expect(MINRPS_MULTIPLAYER_SERVICE_MOCK.seatPlayer).toHaveBeenCalledWith(seatPayload);
       expect(mockServer.to).toHaveBeenCalledWith('match-1');
     });
   });
@@ -209,20 +203,20 @@ describe('MinRpsGateway', () => {
   describe('handleDisconnect', () => {
     it('should handle disconnect and broadcast if player was in a match', () => {
       const mockEvent = { matchId: 'match-1' };
-      multiplayerService.handleDisconnect.mockReturnValue(mockEvent as any);
+      MINRPS_MULTIPLAYER_SERVICE_MOCK.handleDisconnect.mockReturnValue(mockEvent as any);
 
       gateway.handleDisconnect(mockSocket);
 
-      expect(multiplayerService.handleDisconnect).toHaveBeenCalledWith(mockSocket);
+      expect(MINRPS_MULTIPLAYER_SERVICE_MOCK.handleDisconnect).toHaveBeenCalledWith(mockSocket);
       expect(mockServer.to).toHaveBeenCalledWith('match-1');
     });
 
     it('should handle disconnect with no active match', () => {
-      multiplayerService.handleDisconnect.mockReturnValue(null);
+      MINRPS_MULTIPLAYER_SERVICE_MOCK.handleDisconnect.mockReturnValue(null);
 
       gateway.handleDisconnect(mockSocket);
 
-      expect(multiplayerService.handleDisconnect).toHaveBeenCalledWith(mockSocket);
+      expect(MINRPS_MULTIPLAYER_SERVICE_MOCK.handleDisconnect).toHaveBeenCalledWith(mockSocket);
       expect(mockServer.to).not.toHaveBeenCalled();
     });
   });

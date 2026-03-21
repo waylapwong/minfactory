@@ -1,33 +1,29 @@
 import { MinRpsGameController } from './minrps-game.controller';
 import { Test, TestingModule } from '@nestjs/testing';
 import { MinRpsGameService } from '../services/minrps-game.service';
+import { MINRPS_GAME_SERVICE_MOCK } from '../mocks/minrps-game.service.mock';
 import { MinRpsCreateGameDto } from '../models/dtos/minrps-create-game.dto';
 import { MinRpsGameDto } from '../models/dtos/minrps-game.dto';
 
 describe('MinRpsGameController', () => {
   let controller: MinRpsGameController;
-  let service: jest.Mocked<MinRpsGameService>;
 
   beforeEach(async () => {
-    const mockService = {
-      createGame: jest.fn(),
-      deleteGame: jest.fn(),
-      getAllGames: jest.fn(),
-      getGame: jest.fn(),
-    };
-
     const module: TestingModule = await Test.createTestingModule({
       controllers: [MinRpsGameController],
       providers: [
         {
           provide: MinRpsGameService,
-          useValue: mockService,
+          useValue: MINRPS_GAME_SERVICE_MOCK,
         },
       ],
     }).compile();
 
     controller = module.get<MinRpsGameController>(MinRpsGameController);
-    service = module.get(MinRpsGameService);
+  });
+
+  afterEach(() => {
+    jest.clearAllMocks();
   });
 
   it('should be defined', () => {
@@ -43,22 +39,22 @@ describe('MinRpsGameController', () => {
       gameDto.id = 'test-id';
       gameDto.name = 'Test Game';
 
-      service.createGame.mockResolvedValue(gameDto);
+      MINRPS_GAME_SERVICE_MOCK.createGame.mockResolvedValue(gameDto);
 
       const result = await controller.create(createDto);
 
       expect(result).toBe(gameDto);
-      expect(service.createGame).toHaveBeenCalledWith(createDto);
+      expect(MINRPS_GAME_SERVICE_MOCK.createGame).toHaveBeenCalledWith(createDto);
     });
   });
 
   describe('delete', () => {
     it('should delete a game', async () => {
-      service.deleteGame.mockResolvedValue(undefined);
+      MINRPS_GAME_SERVICE_MOCK.deleteGame.mockResolvedValue(undefined);
 
       await controller.delete('test-id');
 
-      expect(service.deleteGame).toHaveBeenCalledWith('test-id');
+      expect(MINRPS_GAME_SERVICE_MOCK.deleteGame).toHaveBeenCalledWith('test-id');
     });
   });
 
@@ -69,12 +65,12 @@ describe('MinRpsGameController', () => {
         Object.assign(new MinRpsGameDto(), { id: '2', name: 'Game 2' }),
       ];
 
-      service.getAllGames.mockResolvedValue(gameDtos);
+      MINRPS_GAME_SERVICE_MOCK.getAllGames.mockResolvedValue(gameDtos);
 
       const result = await controller.getAll();
 
       expect(result).toBe(gameDtos);
-      expect(service.getAllGames).toHaveBeenCalled();
+      expect(MINRPS_GAME_SERVICE_MOCK.getAllGames).toHaveBeenCalled();
     });
   });
 
@@ -84,12 +80,12 @@ describe('MinRpsGameController', () => {
       gameDto.id = 'test-id';
       gameDto.name = 'Test Game';
 
-      service.getGame.mockResolvedValue(gameDto);
+      MINRPS_GAME_SERVICE_MOCK.getGame.mockResolvedValue(gameDto);
 
       const result = await controller.get('test-id');
 
       expect(result).toBe(gameDto);
-      expect(service.getGame).toHaveBeenCalledWith('test-id');
+      expect(MINRPS_GAME_SERVICE_MOCK.getGame).toHaveBeenCalledWith('test-id');
     });
   });
 });

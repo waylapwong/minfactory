@@ -1,7 +1,7 @@
 import { Controller } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
-import { AppName } from 'src/shared/enums/app-name.enum';
+import { MinApp } from 'src/shared/enums/minapp.enum';
 
 @Controller('minfactory')
-@ApiTags(AppName.MinFactory)
+@ApiTags(MinApp.MinFactory)
 export class MinFactoryController {}

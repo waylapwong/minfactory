@@ -2,20 +2,20 @@ import { provideZonelessChangeDetection } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { of } from 'rxjs';
 import { MinFactoryApiService, MinFactoryUserDto } from '../../../core/generated';
+import { MINFACTORY_API_SERVICE_MOCK } from '../mocks/minfactory-api.service.mock';
 import { MinFactoryUserRepository } from './minfactory-user.repository';
 
 describe('MinFactoryUserRepository', () => {
   let repository: MinFactoryUserRepository;
-  let mockApiService: jasmine.SpyObj<MinFactoryApiService>;
 
   beforeEach(() => {
-    mockApiService = jasmine.createSpyObj('MinFactoryApiService', ['createMinFactoryUser']);
+    MINFACTORY_API_SERVICE_MOCK.createMinFactoryUser.calls.reset();
 
     TestBed.configureTestingModule({
       providers: [
         provideZonelessChangeDetection(),
         MinFactoryUserRepository,
-        { provide: MinFactoryApiService, useValue: mockApiService },
+        { provide: MinFactoryApiService, useValue: MINFACTORY_API_SERVICE_MOCK },
       ],
     });
 
@@ -26,18 +26,18 @@ describe('MinFactoryUserRepository', () => {
     expect(repository).toBeTruthy();
   });
 
-  describe('createUser()', () => {
+  describe('create()', () => {
     it('should create a minfactory user via API service', async () => {
       const userDto: MinFactoryUserDto = {
         createdAt: '2026-03-19T10:00:00.000Z',
         email: 'user@example.com',
       };
-      mockApiService.createMinFactoryUser.and.returnValue(of(userDto) as any);
+      MINFACTORY_API_SERVICE_MOCK.createMinFactoryUser.and.returnValue(of(userDto) as any);
 
-      const result = await repository.createUser();
+      const result = await repository.create();
 
       expect(result).toEqual(userDto);
-      expect(mockApiService.createMinFactoryUser).toHaveBeenCalled();
+      expect(MINFACTORY_API_SERVICE_MOCK.createMinFactoryUser).toHaveBeenCalled();
     });
   });
 });

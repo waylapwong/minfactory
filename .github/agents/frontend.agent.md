@@ -63,9 +63,8 @@ Das Frontend ist in 3 Schichten organisiert.
 - Es sollen keine unnötigen Abstraktionen oder Over-Engineering eingeführt werden
 - Lösungen müssen leicht lesbar, leicht wartbar und leicht testbar sein
 - Die Implementierung bevorzugt klare, explizite Strukturen statt magischer oder impliziter Mechanismen
-- Unit Tests sollen Abhängigkeiten direkt im Test mocken, z. B. mit `provide: Service, useValue: { methode: () => {} }`
-- Mock-Objekte werden direkt in der .spec.ts Datei definiert
-- Es werden keine separaten Mock-Klassen oder Mock-Dateien erstellt, um unnötige Komplexität und Fragmentierung zu vermeiden
+- Für jede injizierte Abhängigkeit in Unit Tests wird eine eigene Mock-Datei mit einer zentralen Mock-Konstante erstellt, z. B. `export const AUTHENTICATION_SERVICE_MOCK = { verifyIdToken: jasmine.createSpy('verifyIdToken') }`
+- Unit Tests verwenden diese zentralen Mock-Konstanten direkt in der Test Suite, z. B. mit `providers: [{ provide: Service, useValue: SERVICE_MOCK }]`; Inline-Mocks in den Specs sollen vermieden werden
 - Dependency Injection: Es wird bevorzugt Constructor Injection verwendet, um Angular Services zu injecten; `inject()` wird nur in Fällen ohne Constructor (z. B. bei Funktionen, Standalone-Signals oder Initializern) eingesetzt.
 
 # 5. Workflow

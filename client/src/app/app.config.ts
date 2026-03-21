@@ -16,7 +16,7 @@ import { provideRouter } from '@angular/router';
 import { ENVIRONMENT } from '../environments/environment';
 import { APP_ROUTES } from './app.routes';
 import { ApiModule, BASE_PATH } from './core/generated';
-import { FirebaseAuthInterceptor } from './core/interceptors/firebase-auth.interceptor';
+import { AuthenticationInterceptor } from './core/authentication/authentication.interceptor';
 
 function getFirebaseProviders(): (Provider | EnvironmentProviders)[] {
   const { FIREBASE_CONFIG } = ENVIRONMENT;
@@ -35,7 +35,7 @@ function getFirebaseProviders(): (Provider | EnvironmentProviders)[] {
   return [
     provideFirebaseApp(() => initializeApp(FIREBASE_CONFIG)),
     provideAuth(() => getAuth()),
-    { provide: HTTP_INTERCEPTORS, useClass: FirebaseAuthInterceptor, multi: true },
+    { provide: HTTP_INTERCEPTORS, useClass: AuthenticationInterceptor, multi: true },
   ];
 }
 

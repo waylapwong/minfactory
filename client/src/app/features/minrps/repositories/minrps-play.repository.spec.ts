@@ -8,20 +8,20 @@ import {
   MinRpsPlayResultDto,
   MinRpsResult,
 } from '../../../core/generated';
+import { MINRPS_API_SERVICE_MOCK } from '../mocks/minrps-api.service.mock';
 import { MinRpsPlayRepository } from './minrps-play.repository';
 
 describe('MinRpsPlayRepository', () => {
   let repository: MinRpsPlayRepository;
-  let mockApiService: jasmine.SpyObj<MinRPSApiService>;
 
   beforeEach(() => {
-    mockApiService = jasmine.createSpyObj('MinRPSApiService', ['playMinRpsGame']);
+    MINRPS_API_SERVICE_MOCK.playMinRpsGame.calls.reset();
 
     TestBed.configureTestingModule({
       providers: [
         provideZonelessChangeDetection(),
         MinRpsPlayRepository,
-        { provide: MinRPSApiService, useValue: mockApiService },
+        { provide: MinRPSApiService, useValue: MINRPS_API_SERVICE_MOCK },
       ],
     });
     repository = TestBed.inject(MinRpsPlayRepository);
@@ -41,12 +41,12 @@ describe('MinRpsPlayRepository', () => {
         player2Move: MinRpsMove.Scissors,
         result: MinRpsResult.Player1,
       };
-      mockApiService.playMinRpsGame.and.returnValue(of(resultDto) as any);
+      MINRPS_API_SERVICE_MOCK.playMinRpsGame.and.returnValue(of(resultDto) as any);
 
       const result = await repository.play(playDto);
 
       expect(result).toEqual(resultDto);
-      expect(mockApiService.playMinRpsGame).toHaveBeenCalledWith(playDto);
+      expect(MINRPS_API_SERVICE_MOCK.playMinRpsGame).toHaveBeenCalledWith(playDto);
     });
 
     it('should handle different game outcomes', async () => {
@@ -58,7 +58,7 @@ describe('MinRpsPlayRepository', () => {
         player2Move: MinRpsMove.Rock,
         result: MinRpsResult.Player1,
       };
-      mockApiService.playMinRpsGame.and.returnValue(of(resultDto) as any);
+      MINRPS_API_SERVICE_MOCK.playMinRpsGame.and.returnValue(of(resultDto) as any);
 
       const result = await repository.play(playDto);
 

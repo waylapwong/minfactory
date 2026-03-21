@@ -1,23 +1,21 @@
 import { provideZonelessChangeDetection } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { RoutingService } from '../../../../core/services/routing.service';
+import { RoutingService } from '../../../../core/routing/routing.service';
+import { ROUTING_SERVICE_MOCK } from '../../../../core/mocks/routing.service.mock';
 import { Color } from '../../../../shared/enums/color.enum';
 import { MinRpsHomeComponent } from './minrps-home.component';
 
 describe('MinRpsHomeComponent', () => {
   let component: MinRpsHomeComponent;
   let fixture: ComponentFixture<MinRpsHomeComponent>;
-  let mockRoutingService: jasmine.SpyObj<RoutingService>;
 
   beforeEach(async () => {
-    mockRoutingService = jasmine.createSpyObj('RoutingService', [
-      'navigateToMinRpsSingleplayer',
-      'navigateToMinRpsOverview',
-    ]);
+    ROUTING_SERVICE_MOCK.navigateToMinRpsSingleplayer.calls.reset();
+    ROUTING_SERVICE_MOCK.navigateToMinRpsOverview.calls.reset();
 
     await TestBed.configureTestingModule({
       imports: [MinRpsHomeComponent],
-      providers: [provideZonelessChangeDetection(), { provide: RoutingService, useValue: mockRoutingService }],
+      providers: [provideZonelessChangeDetection(), { provide: RoutingService, useValue: ROUTING_SERVICE_MOCK }],
     }).compileComponents();
 
     fixture = TestBed.createComponent(MinRpsHomeComponent);
@@ -34,7 +32,7 @@ describe('MinRpsHomeComponent', () => {
   });
 
   it('should inject RoutingService', () => {
-    expect(component.routingService).toBe(mockRoutingService);
+    expect(component.routingService).toBe(ROUTING_SERVICE_MOCK);
   });
 
   it('should render root layout container in template', () => {

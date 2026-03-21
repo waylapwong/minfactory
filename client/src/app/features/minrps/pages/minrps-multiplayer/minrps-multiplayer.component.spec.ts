@@ -1,23 +1,22 @@
-import { WritableSignal, provideZonelessChangeDetection, signal } from '@angular/core';
+import { provideZonelessChangeDetection } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ActivatedRoute, convertToParamMap } from '@angular/router';
 import { of } from 'rxjs';
 import { MinRpsMove, MinRpsResult } from '../../../../core/generated';
-import { RoutingService } from '../../../../core/services/routing.service';
+import { RoutingService } from '../../../../core/routing/routing.service';
+import { ROUTING_SERVICE_MOCK } from '../../../../core/mocks/routing.service.mock';
 import { Color } from '../../../../shared/enums/color.enum';
 import { MinRpsMultiplayerViewModel } from '../../models/viewmodels/minrps-multiplayer.viewmodel';
 import { MinRpsGameService } from '../../services/minrps-game.service';
+import { MINRPS_GAME_SERVICE_MOCK } from '../../mocks/minrps-game.service.mock';
 import { MinRpsMultiplayerService } from '../../services/minrps-multiplayer.service';
+import { MINRPS_MULTIPLAYER_SERVICE_MOCK } from '../../mocks/minrps-multiplayer.service.mock';
 import { MinRpsMultiplayerComponent } from './minrps-multiplayer.component';
 
 describe('MinRpsMultiplayerComponent', () => {
   let component: MinRpsMultiplayerComponent;
   let fixture: ComponentFixture<MinRpsMultiplayerComponent>;
   let clipboardWriteTextSpy: jasmine.Spy;
-  let mockGameService: jasmine.SpyObj<MinRpsGameService>;
-  let mockRoutingService: jasmine.SpyObj<RoutingService>;
-  let mockMultiplayerService: jasmine.SpyObj<MinRpsMultiplayerService>;
-  let mockGameSignal: WritableSignal<MinRpsMultiplayerViewModel>;
 
   const createViewModel = (overrides: Partial<MinRpsMultiplayerViewModel> = {}): MinRpsMultiplayerViewModel => {
     const vm = new MinRpsMultiplayerViewModel();
@@ -36,7 +35,6 @@ describe('MinRpsMultiplayerComponent', () => {
   };
 
   beforeEach(async () => {
-    mockGameSignal = signal(createViewModel());
     clipboardWriteTextSpy = jasmine.createSpy('writeText').and.returnValue(Promise.resolve());
     Object.defineProperty(navigator, 'clipboard', {
       configurable: true,
@@ -45,15 +43,17 @@ describe('MinRpsMultiplayerComponent', () => {
       },
     });
 
-    mockGameService = jasmine.createSpyObj('MinRpsGameService', ['gameExistByID'], {
-      games: signal([]),
-    });
-    mockRoutingService = jasmine.createSpyObj('RoutingService', ['navigateToMinRpsOverview']);
-    mockMultiplayerService = jasmine.createSpyObj(
-      'MinRpsMultiplayerService',
-      ['connect', 'disconnect', 'joinGame', 'leaveGame', 'seatGame', 'selectMove', 'setGameId', 'playGame'],
-      { game: mockGameSignal },
-    );
+    MINRPS_GAME_SERVICE_MOCK.gameExistByID.calls.reset();
+    ROUTING_SERVICE_MOCK.navigateToMinRpsOverview.calls.reset();
+    MINRPS_MULTIPLAYER_SERVICE_MOCK.game.set(createViewModel());
+    MINRPS_MULTIPLAYER_SERVICE_MOCK.connect.calls.reset();
+    MINRPS_MULTIPLAYER_SERVICE_MOCK.disconnect.calls.reset();
+    MINRPS_MULTIPLAYER_SERVICE_MOCK.joinGame.calls.reset();
+    MINRPS_MULTIPLAYER_SERVICE_MOCK.leaveGame.calls.reset();
+    MINRPS_MULTIPLAYER_SERVICE_MOCK.seatGame.calls.reset();
+    MINRPS_MULTIPLAYER_SERVICE_MOCK.selectMove.calls.reset();
+    MINRPS_MULTIPLAYER_SERVICE_MOCK.setGameId.calls.reset();
+    MINRPS_MULTIPLAYER_SERVICE_MOCK.playGame.calls.reset();
 
     const mockActivatedRoute = {
       snapshot: {
@@ -62,15 +62,15 @@ describe('MinRpsMultiplayerComponent', () => {
       queryParams: of({ id: 'test-id' }),
     };
 
-    mockGameService.gameExistByID.and.returnValue(Promise.resolve(true));
+    MINRPS_GAME_SERVICE_MOCK.gameExistByID.and.returnValue(Promise.resolve(true));
 
     await TestBed.configureTestingModule({
       imports: [MinRpsMultiplayerComponent],
       providers: [
         provideZonelessChangeDetection(),
-        { provide: MinRpsGameService, useValue: mockGameService },
-        { provide: RoutingService, useValue: mockRoutingService },
-        { provide: MinRpsMultiplayerService, useValue: mockMultiplayerService },
+        { provide: MinRpsGameService, useValue: MINRPS_GAME_SERVICE_MOCK },
+        { provide: RoutingService, useValue: ROUTING_SERVICE_MOCK },
+        { provide: MinRpsMultiplayerService, useValue: MINRPS_MULTIPLAYER_SERVICE_MOCK },
         { provide: ActivatedRoute, useValue: mockActivatedRoute },
       ],
     }).compileComponents();
@@ -98,39 +98,39 @@ describe('MinRpsMultiplayerComponent', () => {
 
   describe('ngOnInit()', () => {
     it('should call setGameId with route id', () => {
-      expect(mockMultiplayerService.setGameId).toHaveBeenCalledWith('test-id');
+      expect(MINRPS_MULTIPLAYER_SERVICE_MOCK.setGameId).toHaveBeenCalledWith('test-id');
     });
 
     it('should connect to multiplayer service', () => {
-      expect(mockMultiplayerService.connect).toHaveBeenCalled();
+      expect(MINRPS_MULTIPLAYER_SERVICE_MOCK.connect).toHaveBeenCalled();
     });
 
     it('should check if game exists', () => {
-      expect(mockGameService.gameExistByID).toHaveBeenCalledWith('test-id');
+      expect(MINRPS_GAME_SERVICE_MOCK.gameExistByID).toHaveBeenCalledWith('test-id');
     });
 
     it('should navigate away if game does not exist', async () => {
-      mockGameService.gameExistByID.and.returnValue(Promise.resolve(false));
+      MINRPS_GAME_SERVICE_MOCK.gameExistByID.and.returnValue(Promise.resolve(false));
       await component['checkGameExists']('non-existent-id');
-      expect(mockRoutingService.navigateToMinRpsOverview).toHaveBeenCalled();
+      expect(ROUTING_SERVICE_MOCK.navigateToMinRpsOverview).toHaveBeenCalled();
     });
 
     it('should not navigate away if game exists', async () => {
-      mockGameService.gameExistByID.and.returnValue(Promise.resolve(true));
+      MINRPS_GAME_SERVICE_MOCK.gameExistByID.and.returnValue(Promise.resolve(true));
       await component['checkGameExists']('test-id');
-      expect(mockRoutingService.navigateToMinRpsOverview).not.toHaveBeenCalled();
+      expect(ROUTING_SERVICE_MOCK.navigateToMinRpsOverview).not.toHaveBeenCalled();
     });
   });
 
   describe('ngOnDestroy()', () => {
     it('should call leaveGame on destroy', () => {
       component.ngOnDestroy();
-      expect(mockMultiplayerService.leaveGame).toHaveBeenCalled();
+      expect(MINRPS_MULTIPLAYER_SERVICE_MOCK.leaveGame).toHaveBeenCalled();
     });
 
     it('should disconnect from multiplayer service', () => {
       component.ngOnDestroy();
-      expect(mockMultiplayerService.disconnect).toHaveBeenCalled();
+      expect(MINRPS_MULTIPLAYER_SERVICE_MOCK.disconnect).toHaveBeenCalled();
     });
 
     it('should resolve any pending canDeactivate promise with false', async () => {
@@ -169,21 +169,21 @@ describe('MinRpsMultiplayerComponent', () => {
 
   describe('playGame()', () => {
     it('should call multiplayerService.playGame when not observer', () => {
-      mockGameSignal.set(createViewModel({ isObserver: false }));
+      MINRPS_MULTIPLAYER_SERVICE_MOCK.game.set(createViewModel({ isObserver: false }));
       component.playGame();
-      expect(mockMultiplayerService.playGame).toHaveBeenCalled();
+      expect(MINRPS_MULTIPLAYER_SERVICE_MOCK.playGame).toHaveBeenCalled();
     });
 
     it('should not call multiplayerService.playGame when is observer', () => {
-      mockGameSignal.set(createViewModel({ isObserver: true }));
+      MINRPS_MULTIPLAYER_SERVICE_MOCK.game.set(createViewModel({ isObserver: true }));
       component.playGame();
-      expect(mockMultiplayerService.playGame).not.toHaveBeenCalled();
+      expect(MINRPS_MULTIPLAYER_SERVICE_MOCK.playGame).not.toHaveBeenCalled();
     });
   });
 
   describe('result history', () => {
     it('should render history entries in player view', () => {
-      mockGameSignal.set(
+      MINRPS_MULTIPLAYER_SERVICE_MOCK.game.set(
         createViewModel({ isObserver: false, resultHistory: [MinRpsResult.Player1, MinRpsResult.Draw] }),
       );
       fixture.detectChanges();
@@ -247,35 +247,35 @@ describe('MinRpsMultiplayerComponent', () => {
 
   describe('openSeatDialog()', () => {
     it('should open dialog for seat 1 when canTakeHeroSeat is true', () => {
-      mockGameSignal.set(createViewModel({ canTakeHeroSeat: true }));
+      MINRPS_MULTIPLAYER_SERVICE_MOCK.game.set(createViewModel({ canTakeHeroSeat: true }));
       component.openSeatDialog(1);
       expect(component.selectedSeat()).toBe(1);
       expect(component.isSeatDialogOpen()).toBe(true);
     });
 
     it('should not open dialog for seat 1 when canTakeHeroSeat is false', () => {
-      mockGameSignal.set(createViewModel({ canTakeHeroSeat: false }));
+      MINRPS_MULTIPLAYER_SERVICE_MOCK.game.set(createViewModel({ canTakeHeroSeat: false }));
       component.isSeatDialogOpen.set(false);
       component.openSeatDialog(1);
       expect(component.isSeatDialogOpen()).toBe(false);
     });
 
     it('should open dialog for seat 2 when canTakeVillainSeat is true', () => {
-      mockGameSignal.set(createViewModel({ canTakeVillainSeat: true }));
+      MINRPS_MULTIPLAYER_SERVICE_MOCK.game.set(createViewModel({ canTakeVillainSeat: true }));
       component.openSeatDialog(2);
       expect(component.selectedSeat()).toBe(2);
       expect(component.isSeatDialogOpen()).toBe(true);
     });
 
     it('should not open dialog for seat 2 when canTakeVillainSeat is false', () => {
-      mockGameSignal.set(createViewModel({ canTakeVillainSeat: false }));
+      MINRPS_MULTIPLAYER_SERVICE_MOCK.game.set(createViewModel({ canTakeVillainSeat: false }));
       component.isSeatDialogOpen.set(false);
       component.openSeatDialog(2);
       expect(component.isSeatDialogOpen()).toBe(false);
     });
 
     it('should reset form when opening dialog', () => {
-      mockGameSignal.set(createViewModel({ canTakeHeroSeat: true }));
+      MINRPS_MULTIPLAYER_SERVICE_MOCK.game.set(createViewModel({ canTakeHeroSeat: true }));
       component.seatFormGroup.patchValue({ name: 'Old Name' });
       component.openSeatDialog(1);
       expect(component.seatName.value).toBe('');
@@ -309,7 +309,7 @@ describe('MinRpsMultiplayerComponent', () => {
     });
 
     it('should resolve immediately with true when game is non-existent', async () => {
-      mockGameService.gameExistByID.and.returnValue(Promise.resolve(false));
+      MINRPS_GAME_SERVICE_MOCK.gameExistByID.and.returnValue(Promise.resolve(false));
       await component['checkGameExists']('non-existent-id');
       const result = component.canDeactivate();
       await expectAsync(result).toBeResolvedTo(true);
@@ -354,7 +354,7 @@ describe('MinRpsMultiplayerComponent', () => {
 
       component.seatGame();
 
-      expect(mockMultiplayerService.seatGame).toHaveBeenCalled();
+      expect(MINRPS_MULTIPLAYER_SERVICE_MOCK.seatGame).toHaveBeenCalled();
       expect(component.isSeatDialogOpen()).toBe(false);
     });
 
@@ -364,7 +364,7 @@ describe('MinRpsMultiplayerComponent', () => {
 
       component.seatGame();
 
-      expect(mockMultiplayerService.seatGame).not.toHaveBeenCalled();
+      expect(MINRPS_MULTIPLAYER_SERVICE_MOCK.seatGame).not.toHaveBeenCalled();
     });
 
     it('should not call multiplayerService.seatGame when no seat selected', () => {
@@ -373,7 +373,7 @@ describe('MinRpsMultiplayerComponent', () => {
 
       component.seatGame();
 
-      expect(mockMultiplayerService.seatGame).not.toHaveBeenCalled();
+      expect(MINRPS_MULTIPLAYER_SERVICE_MOCK.seatGame).not.toHaveBeenCalled();
     });
 
     it('should reset selectedSeat to 0 after success', () => {
@@ -391,7 +391,7 @@ describe('MinRpsMultiplayerComponent', () => {
 
       component.seatGame();
 
-      expect(mockMultiplayerService.seatGame).not.toHaveBeenCalled();
+      expect(MINRPS_MULTIPLAYER_SERVICE_MOCK.seatGame).not.toHaveBeenCalled();
     });
   });
 

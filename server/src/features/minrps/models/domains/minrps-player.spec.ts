@@ -1,5 +1,5 @@
-import { MinRpsPlayer } from './minrps-player';
 import { MinRpsMove } from '../enums/minrps-move.enum';
+import { MinRpsPlayer } from './minrps-player';
 
 describe('MinRpsPlayer', () => {
   it('should create with default values', () => {

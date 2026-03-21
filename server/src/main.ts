@@ -1,13 +1,10 @@
 import { ClassSerializerInterceptor, ValidationPipe } from '@nestjs/common';
 import { NestFactory, Reflector } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-
 import helmet from 'helmet';
-
 import * as packageJson from '../package.json';
-
 import { AppModule } from './app.module';
-import { AppName } from './shared/enums/app-name.enum';
+import { MinApp } from './shared/enums/minapp.enum';
 
 async function bootstrap() {
   // APPLICATION
@@ -40,12 +37,12 @@ async function bootstrap() {
 
   // OPENAPI
   const SWAGGER_CONFIG = new DocumentBuilder()
-    .setTitle(AppName.MinFactory)
+    .setTitle(MinApp.MinFactory)
     .setVersion(`v${packageJson.version}`)
     .setDescription(
-      `${AppName.MinFactory} OpenAPI specification. <br/> <a href="http://localhost:3000/openapi-json/" target="_blank">JSON specification</a>`,
+      `${MinApp.MinFactory} OpenAPI specification. <br/> <a href="http://localhost:3000/openapi-json/" target="_blank">JSON specification</a>`,
     )
-    .setContact(AppName.MinFactory, 'https://minFactory.com', '')
+    .setContact(MinApp.MinFactory, 'https://minFactory.com', '')
     .build();
   const SWAGGER_DOCUMENT = SwaggerModule.createDocument(application, SWAGGER_CONFIG);
   SwaggerModule.setup('openapi', application, SWAGGER_DOCUMENT);

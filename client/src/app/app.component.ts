@@ -1,10 +1,10 @@
 import { Component, Signal, computed, inject } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { FooterComponent } from './core/components/footer/footer.component';
-import { HeaderComponent } from './core/components/header/header.component';
-import { ContextService } from './core/services/context.service';
-import { AppName } from './shared/enums/app-name.enum';
+import { ContextService } from './core/context/context.service';
+import { FooterComponent } from './core/layout/footer/footer.component';
+import { HeaderComponent } from './core/layout/header/header.component';
 import { DividerComponent } from './shared/components/divider/divider.component';
+import { AppName } from './shared/enums/app-name.enum';
 
 @Component({
   selector: 'min-root',
