@@ -3,9 +3,9 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ROUTING_SERVICE_MOCK } from '../../../../core/routing/routing.service.mock';
 import { RoutingService } from '../../../../core/routing/routing.service';
 import { MinFactoryAuthenticationService } from '../../services/minfactory-authentication.service';
-import { MinFactoryProfileService } from '../../services/minfactory-profile.service';
+import { MinFactoryUserService } from '../../services/minfactory-user.service';
 import { MINFACTORY_AUTHENTICATION_SERVICE_MOCK } from '../../services/minfactory-authentication.service.mock';
-import { MINFACTORY_PROFILE_SERVICE_MOCK } from '../../services/minfactory-profile.service.mock';
+import { MINFACTORY_USER_SERVICE_MOCK } from '../../services/minfactory-user.service.mock';
 import { MinFactoryProfileComponent } from './minfactory-profile.component';
 
 describe('MinFactoryProfileComponent', () => {
@@ -19,9 +19,7 @@ describe('MinFactoryProfileComponent', () => {
 
   const settleLogout = async (): Promise<void> => {
     const logoutPromise: Promise<unknown> | undefined =
-      MINFACTORY_AUTHENTICATION_SERVICE_MOCK.logoutUser.calls.mostRecent()?.returnValue as
-        | Promise<unknown>
-        | undefined;
+      MINFACTORY_AUTHENTICATION_SERVICE_MOCK.logoutUser.calls.mostRecent()?.returnValue as Promise<unknown> | undefined;
 
     try {
       await logoutPromise;
@@ -33,11 +31,16 @@ describe('MinFactoryProfileComponent', () => {
   };
 
   beforeEach(async () => {
-    MINFACTORY_PROFILE_SERVICE_MOCK.loadProfile.calls.reset();
-    MINFACTORY_PROFILE_SERVICE_MOCK.loadProfile.and.callFake(async () => ({
-      createdAt: '19.03.2026, 11:00',
-      email: 'user@example.com',
-    }));
+    MINFACTORY_USER_SERVICE_MOCK.setProfile.calls.reset();
+    MINFACTORY_USER_SERVICE_MOCK.clearProfileCache.calls.reset();
+    MINFACTORY_USER_SERVICE_MOCK.clearProfileCache();
+    MINFACTORY_USER_SERVICE_MOCK.loadProfile.calls.reset();
+    MINFACTORY_USER_SERVICE_MOCK.loadProfile.and.callFake(async (): Promise<void> => {
+      MINFACTORY_USER_SERVICE_MOCK.setProfile({
+        createdAt: '19.03.2026, 11:00',
+        email: 'user@example.com',
+      });
+    });
     MINFACTORY_AUTHENTICATION_SERVICE_MOCK.logoutUser.calls.reset();
     MINFACTORY_AUTHENTICATION_SERVICE_MOCK.logoutUser.and.resolveTo();
     ROUTING_SERVICE_MOCK.navigateToLogin.calls.reset();
@@ -48,7 +51,7 @@ describe('MinFactoryProfileComponent', () => {
       imports: [MinFactoryProfileComponent],
       providers: [
         provideZonelessChangeDetection(),
-        { provide: MinFactoryProfileService, useValue: MINFACTORY_PROFILE_SERVICE_MOCK },
+        { provide: MinFactoryUserService, useValue: MINFACTORY_USER_SERVICE_MOCK },
         { provide: MinFactoryAuthenticationService, useValue: MINFACTORY_AUTHENTICATION_SERVICE_MOCK },
         { provide: RoutingService, useValue: ROUTING_SERVICE_MOCK },
       ],
@@ -66,14 +69,14 @@ describe('MinFactoryProfileComponent', () => {
     fixture.detectChanges();
     await fixture.whenStable();
 
-    expect(MINFACTORY_PROFILE_SERVICE_MOCK.loadProfile).toHaveBeenCalled();
+    expect(MINFACTORY_USER_SERVICE_MOCK.loadProfile).toHaveBeenCalled();
     expect(component.profile()?.email).toBe('user@example.com');
     expect(component.isLoading()).toBeFalse();
     expect(component.isError()).toBeFalse();
   });
 
   it('should navigate to login when profile loading fails with unauthorized error', async () => {
-    MINFACTORY_PROFILE_SERVICE_MOCK.loadProfile.and.returnValue(Promise.reject(new Error('401 Unauthorized')));
+    MINFACTORY_USER_SERVICE_MOCK.loadProfile.and.returnValue(Promise.reject(new Error('401 Unauthorized')));
 
     fixture.detectChanges();
     await fixture.whenStable();
@@ -82,7 +85,7 @@ describe('MinFactoryProfileComponent', () => {
   });
 
   it('should expose error state when profile loading fails', async () => {
-    MINFACTORY_PROFILE_SERVICE_MOCK.loadProfile.and.returnValue(Promise.reject(new Error('Server down')));
+    MINFACTORY_USER_SERVICE_MOCK.loadProfile.and.returnValue(Promise.reject(new Error('Server down')));
 
     fixture.detectChanges();
     await fixture.whenStable();
@@ -90,6 +93,7 @@ describe('MinFactoryProfileComponent', () => {
     expect(component.isError()).toBeTrue();
     expect(component.errorMessage()).toBe('Server down');
     expect(component.profile()).toBeNull();
+    expect(MINFACTORY_USER_SERVICE_MOCK.clearProfileCache).toHaveBeenCalled();
   });
 
   it('should navigate to apps', () => {
@@ -101,12 +105,12 @@ describe('MinFactoryProfileComponent', () => {
   it('should reload profile when reloadProfile is called', async () => {
     fixture.detectChanges();
     await fixture.whenStable();
-    MINFACTORY_PROFILE_SERVICE_MOCK.loadProfile.calls.reset();
+    MINFACTORY_USER_SERVICE_MOCK.loadProfile.calls.reset();
 
     component.reloadProfile();
     await fixture.whenStable();
 
-    expect(MINFACTORY_PROFILE_SERVICE_MOCK.loadProfile).toHaveBeenCalled();
+    expect(MINFACTORY_USER_SERVICE_MOCK.loadProfile).toHaveBeenCalled();
   });
 
   describe('logout()', () => {

@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { AuthenticationService } from '../../../core/authentication/authentication.service';
+import { MinFactoryUserDto } from '../../../core/generated';
 import { MinFactoryDtoMapper } from '../mapper/minfactory-dto.mapper';
 import { MinFactoryUser } from '../models/domains/minfactory-user';
 import { MinFactoryUserRepository } from '../repositories/minfactory-user.repository';
@@ -33,11 +34,8 @@ export class MinFactoryAuthenticationService {
         throw error;
       }
     }
-
     await this.ensureRegistrationToken();
-
-    const userDto = await this.userRepository.createUser();
-
+    const userDto: MinFactoryUserDto = await this.userRepository.createUser();
     return MinFactoryDtoMapper.userDtoToDomain(userDto);
   }
 
@@ -45,15 +43,12 @@ export class MinFactoryAuthenticationService {
     if (!(error instanceof Error) || error.message !== this.EMAIL_ALREADY_IN_USE_ERROR) {
       return false;
     }
-
     const currentUserEmail = this.authenticationService.currentUser()?.email?.toLowerCase() ?? '';
-
     return currentUserEmail === email.toLowerCase();
   }
 
   private async ensureRegistrationToken(): Promise<void> {
     const idToken: string | null = await this.authenticationService.getIdToken(true);
-
     if (!idToken) {
       throw new Error('Konto erstellt, aber keine gueltige Session vorhanden. Bitte erneut versuchen.');
     }
