@@ -8,8 +8,8 @@ import { MinFactoryPath } from '../../../features/minfactory/minfactory.routes';
 import { LogoComponent } from '../../../shared/components/logo/logo.component';
 import { PopoverComponent } from '../../../shared/components/popover/popover.component';
 import { AppName } from '../../../shared/enums/app-name.enum';
-import { AuthService } from '../../services/auth.service';
-import { ContextService } from '../../services/context.service';
+import { AuthenticationService } from '../../authentication/authentication.service';
+import { ContextService } from '../../context/context.service';
 
 @Component({
   selector: 'min-header',
@@ -34,7 +34,7 @@ export class HeaderComponent {
   constructor(
     private readonly router: Router,
     private readonly contextService: ContextService,
-    private readonly authService: AuthService,
+    private readonly authService: AuthenticationService,
   ) {
     this.appVersion = this.contextService.appVersion;
     this.isAuthenticated = this.authService.isAuthenticated;

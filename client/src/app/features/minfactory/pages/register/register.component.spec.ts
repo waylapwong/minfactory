@@ -1,6 +1,6 @@
 import { provideZonelessChangeDetection } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { RoutingService } from '../../../../core/services/routing.service';
+import { RoutingService } from '../../../../core/routing/routing.service';
 import { MinFactoryRegisterService } from '../../services/minfactory-register.service';
 import { RegisterComponent } from './register.component';
 

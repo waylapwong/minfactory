@@ -3,7 +3,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ActivatedRoute, convertToParamMap } from '@angular/router';
 import { of } from 'rxjs';
 import { MinRpsMove, MinRpsResult } from '../../../../core/generated';
-import { RoutingService } from '../../../../core/services/routing.service';
+import { RoutingService } from '../../../../core/routing/routing.service';
 import { Color } from '../../../../shared/enums/color.enum';
 import { MinRpsMultiplayerViewModel } from '../../models/viewmodels/minrps-multiplayer.viewmodel';
 import { MinRpsGameService } from '../../services/minrps-game.service';

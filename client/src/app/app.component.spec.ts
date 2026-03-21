@@ -3,7 +3,7 @@ import { TestBed } from '@angular/core/testing';
 import { Auth } from '@angular/fire/auth';
 import { provideRouter } from '@angular/router';
 import { AppComponent } from './app.component';
-import { ContextService } from './core/services/context.service';
+import { ContextService } from './core/context/context.service';
 import { AppName } from './shared/enums/app-name.enum';
 
 describe('AppComponent', () => {

@@ -2,12 +2,12 @@ import { HttpEvent, HttpHandler, HttpInterceptor, HttpRequest } from '@angular/c
 import { Injectable } from '@angular/core';
 import { Observable, defer, from, of } from 'rxjs';
 import { ENVIRONMENT } from '../../../environments/environment';
-import { AuthService } from '../services/auth.service';
+import { AuthenticationService } from '../authentication/authentication.service';
 import { catchError, switchMap } from 'rxjs/operators';
 
 @Injectable()
 export class FirebaseAuthInterceptor implements HttpInterceptor {
-  constructor(private readonly authService: AuthService) {}
+  constructor(private readonly authService: AuthenticationService) {}
 
   public intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
     if (!this.isApiRequest(request.url) || request.headers.has('Authorization')) {

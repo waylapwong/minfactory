@@ -3,10 +3,10 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { User as FirebaseUser } from '@angular/fire/auth';
 import { provideRouter } from '@angular/router';
 import { AppName } from '../../../shared/enums/app-name.enum';
-import { AuthService } from '../../services/auth.service';
-import { AUTH_SERVICE_MOCK } from '../../services/auth.service.mock';
-import { ContextService } from '../../services/context.service';
-import { CONTEXT_SERVICE_MOCK } from '../../services/context.service.mock';
+import { AuthenticationService } from '../../authentication/authentication.service';
+import { AUTHENTICATION_SERVICE_MOCK } from '../../authentication/authentication.service.mock';
+import { ContextService } from '../../context/context.service';
+import { CONTEXT_SERVICE_MOCK } from '../../context/context.service.mock';
 import { HeaderComponent } from './header.component';
 
 describe('HeaderComponent', () => {
@@ -15,7 +15,7 @@ describe('HeaderComponent', () => {
   let contextService: typeof CONTEXT_SERVICE_MOCK;
 
   beforeEach(async () => {
-    AUTH_SERVICE_MOCK.setCurrentUser(null);
+    AUTHENTICATION_SERVICE_MOCK.setCurrentUser(null);
     CONTEXT_SERVICE_MOCK.app.set(AppName.MinFactory);
 
     await TestBed.configureTestingModule({
@@ -23,7 +23,7 @@ describe('HeaderComponent', () => {
       providers: [
         provideZonelessChangeDetection(),
         provideRouter([]),
-        { provide: AuthService, useValue: AUTH_SERVICE_MOCK },
+        { provide: AuthenticationService, useValue: AUTHENTICATION_SERVICE_MOCK },
         { provide: ContextService, useValue: CONTEXT_SERVICE_MOCK },
       ],
     }).compileComponents();
@@ -120,7 +120,7 @@ describe('HeaderComponent', () => {
     });
 
     it('should render account icon when user is authenticated', () => {
-      AUTH_SERVICE_MOCK.setCurrentUser({
+      AUTHENTICATION_SERVICE_MOCK.setCurrentUser({
         getIdToken: jasmine.createSpy('getIdToken').and.resolveTo('firebase-token'),
       } as unknown as FirebaseUser);
       fixture.detectChanges();

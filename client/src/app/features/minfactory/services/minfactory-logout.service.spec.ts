@@ -1,6 +1,6 @@
 import { provideZonelessChangeDetection } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
-import { AuthService } from '../../../core/services/auth.service';
+import { AuthenticationService } from '../../../core/authentication/authentication.service';
 import { MinFactoryLogoutService } from './minfactory-logout.service';
 
 describe('MinFactoryLogoutService', () => {
@@ -18,7 +18,7 @@ describe('MinFactoryLogoutService', () => {
       providers: [
         provideZonelessChangeDetection(),
         MinFactoryLogoutService,
-        { provide: AuthService, useValue: authServiceMock as unknown as AuthService },
+        { provide: AuthenticationService, useValue: authServiceMock as unknown as AuthenticationService },
       ],
     });
 

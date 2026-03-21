@@ -2,7 +2,7 @@ import { Component, OnDestroy, OnInit, Signal, WritableSignal, computed, inject,
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { MinRpsMove, MinRpsResult } from '../../../../core/generated';
-import { RoutingService } from '../../../../core/services/routing.service';
+import { RoutingService } from '../../../../core/routing/routing.service';
 import { ButtonComponent } from '../../../../shared/components/button/button.component';
 import { DialogComponent } from '../../../../shared/components/dialog/dialog.component';
 import { DividerComponent } from '../../../../shared/components/divider/divider.component';

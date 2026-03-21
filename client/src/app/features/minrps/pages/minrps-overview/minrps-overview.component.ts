@@ -1,7 +1,7 @@
 import { DatePipe } from '@angular/common';
 import { Component, OnInit, Signal, WritableSignal, inject, signal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { RoutingService } from '../../../../core/services/routing.service';
+import { RoutingService } from '../../../../core/routing/routing.service';
 import { ButtonComponent } from '../../../../shared/components/button/button.component';
 import { CardButtonComponent } from '../../../../shared/components/card-button/card-button.component';
 import { DialogComponent } from '../../../../shared/components/dialog/dialog.component';

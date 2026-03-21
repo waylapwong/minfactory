@@ -3,7 +3,7 @@ import { User as FirebaseUser } from '@angular/fire/auth';
 
 const cachedCurrentUser: WritableSignal<FirebaseUser | null> = signal(null);
 
-export const AUTH_SERVICE_MOCK = {
+export const AUTHENTICATION_SERVICE_MOCK = {
   currentUser: computed(() => cachedCurrentUser()),
   isAuthenticated: computed(() => cachedCurrentUser() !== null),
   getIdToken: jasmine

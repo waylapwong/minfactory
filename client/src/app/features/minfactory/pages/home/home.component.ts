@@ -1,5 +1,5 @@
 import { Component, inject } from '@angular/core';
-import { RoutingService } from '../../../../core/services/routing.service';
+import { RoutingService } from '../../../../core/routing/routing.service';
 import { ButtonComponent } from '../../../../shared/components/button/button.component';
 import { H1Component } from '../../../../shared/components/h1/h1.component';
 import { LogoComponent } from '../../../../shared/components/logo/logo.component';

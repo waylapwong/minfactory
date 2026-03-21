@@ -9,7 +9,7 @@ import {
 @Injectable({
   providedIn: 'root',
 })
-export class AuthService {
+export class AuthenticationService {
   private readonly cachedCurrentUser: WritableSignal<FirebaseUser | null> = signal(null);
 
   public currentUser: Signal<FirebaseUser | null> = computed(() => this.cachedCurrentUser());

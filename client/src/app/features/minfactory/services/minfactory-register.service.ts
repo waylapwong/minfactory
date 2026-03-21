@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { AuthService } from '../../../core/services/auth.service';
+import { AuthenticationService } from '../../../core/authentication/authentication.service';
 import { MinFactoryDtoMapper } from '../mapper/minfactory-dto.mapper';
 import { MinFactoryUser } from '../models/domains/minfactory-user';
 import { MinFactoryUserRepository } from '../repositories/minfactory-user.repository';
@@ -11,7 +11,7 @@ export class MinFactoryRegisterService {
   private readonly EMAIL_ALREADY_IN_USE_ERROR = 'Diese E-Mail-Adresse wird bereits verwendet.';
 
   constructor(
-    private readonly authService: AuthService,
+    private readonly authService: AuthenticationService,
     private readonly userRepository: MinFactoryUserRepository,
   ) {}
 

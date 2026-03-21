@@ -1,11 +1,11 @@
 import { Injectable } from '@angular/core';
-import { AuthService } from '../../../core/services/auth.service';
+import { AuthenticationService } from '../../../core/authentication/authentication.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class MinFactoryLogoutService {
-  constructor(private readonly authService: AuthService) {}
+  constructor(private readonly authService: AuthenticationService) {}
 
   public async logoutUser(): Promise<void> {
     await this.authService.signOut();

@@ -2,10 +2,10 @@ import { provideZonelessChangeDetection } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { Auth as FirebaseAuth, User as FirebaseUser } from '@angular/fire/auth';
 import { FIREBASE_AUTH_MOCK } from '../../shared/mocks/firebase-auth.mock';
-import { AuthService } from './auth.service';
+import { AuthenticationService } from './authentication.service';
 
-describe('AuthService', () => {
-  let service: AuthService;
+describe('AuthenticationService', () => {
+  let service: AuthenticationService;
 
   beforeEach(() => {
     FIREBASE_AUTH_MOCK.currentUser = null;
@@ -19,7 +19,7 @@ describe('AuthService', () => {
       ],
     });
 
-    service = TestBed.inject(AuthService);
+    service = TestBed.inject(AuthenticationService);
   });
 
   it('should be created', () => {
