@@ -1,5 +1,8 @@
 export const ENVIRONMENT = {
   API_BASE_PATH: 'https://minfactory-65293f731f4e.herokuapp.com',
+  FEATURE_FLAGS: {
+    MINPOKER: false,
+  },
   FIREBASE_CONFIG: {
     apiKey: 'AIzaSyByEEGoEhJjOA7qrKDeFILV6bnUdhhYj6g',
     authDomain: 'minfactory-98686.firebaseapp.com',

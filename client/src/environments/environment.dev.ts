@@ -1,5 +1,8 @@
 export const ENVIRONMENT = {
   API_BASE_PATH: 'http://localhost:3000',
+  FEATURE_FLAGS: {
+    MINPOKER: true,
+  },
   FIREBASE_CONFIG: {
     apiKey: 'AIzaSyByEEGoEhJjOA7qrKDeFILV6bnUdhhYj6g',
     authDomain: 'minfactory-98686.firebaseapp.com',

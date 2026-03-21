@@ -1,4 +1,5 @@
 import { Component, WritableSignal, signal } from '@angular/core';
+import { ENVIRONMENT } from '../../../../../environments/environment';
 import { RoutingService } from '../../../../core/routing/routing.service';
 import { BadgeComponent } from '../../../../shared/components/badge/badge.component';
 import { CardButtonComponent } from '../../../../shared/components/card-button/card-button.component';
@@ -15,6 +16,7 @@ import { Color } from '../../../../shared/enums/color.enum';
 })
 export class MinFactoryAppsComponent {
   public readonly Color: typeof Color = Color;
+  public readonly isMinPokerEnabled: boolean = ENVIRONMENT.FEATURE_FLAGS.MINPOKER;
 
   public selectedTab: WritableSignal<number> = signal(1);
 
