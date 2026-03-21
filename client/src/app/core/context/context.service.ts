@@ -7,6 +7,7 @@ import { AppName } from '../../shared/enums/app-name.enum';
 export class ContextService {
   private readonly appVersions: Readonly<Record<AppName, string>> = {
     [AppName.MinFactory]: `${AppName.MinFactory} v0.2.0`,
+    [AppName.MinPoker]: `${AppName.MinPoker} v0.0.0`,
     [AppName.MinRps]: `${AppName.MinRps} v0.2.1`,
   };
 
