@@ -3,9 +3,13 @@ import { CanActivateFn, Router, UrlTree } from '@angular/router';
 import { ENVIRONMENT } from '../../../environments/environment';
 import { AppPath } from '../../app.routes';
 
-const FEATURE_FLAGS: Record<string, boolean> = {
-  minpoker: ENVIRONMENT.FEATURE_FLAGS.MINPOKER,
-};
+function isFeatureEnabled(feature: string): boolean {
+  const featureFlags: Record<string, boolean> = {
+    minpoker: ENVIRONMENT.FEATURE_FLAGS.MINPOKER,
+  };
+
+  return featureFlags[feature] ?? false;
+}
 
 export const featureFlagGuard: CanActivateFn = (route): boolean | UrlTree => {
   const router: Router = inject(Router);
@@ -15,5 +19,5 @@ export const featureFlagGuard: CanActivateFn = (route): boolean | UrlTree => {
     return true;
   }
 
-  return FEATURE_FLAGS[feature] ? true : router.createUrlTree([AppPath.Root]);
+  return isFeatureEnabled(feature) ? true : router.createUrlTree([AppPath.Root]);
 };
