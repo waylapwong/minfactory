@@ -10,7 +10,11 @@ describe('ProfileComponent', () => {
   let fixture: ComponentFixture<ProfileComponent>;
   let profileServiceMock: { loadProfile: jasmine.Spy };
   let logoutServiceMock: { logoutUser: jasmine.Spy };
-  let routingServiceMock: { navigateToApps: jasmine.Spy; navigateToLogin: jasmine.Spy; navigateToHomePage: jasmine.Spy };
+  let routingServiceMock: {
+    navigateToApps: jasmine.Spy;
+    navigateToLogin: jasmine.Spy;
+    navigateToHomePage: jasmine.Spy;
+  };
 
   const flushMicrotasks = async (): Promise<void> => {
     await Promise.resolve();
@@ -18,8 +22,9 @@ describe('ProfileComponent', () => {
   };
 
   const settleLogout = async (): Promise<void> => {
-    const logoutPromise: Promise<unknown> | undefined = logoutServiceMock.logoutUser.calls.mostRecent()
-      ?.returnValue as Promise<unknown> | undefined;
+    const logoutPromise: Promise<unknown> | undefined = logoutServiceMock.logoutUser.calls.mostRecent()?.returnValue as
+      | Promise<unknown>
+      | undefined;
 
     try {
       await logoutPromise;

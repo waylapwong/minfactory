@@ -1,38 +1,36 @@
-import { provideZonelessChangeDetection, signal, WritableSignal } from '@angular/core';
+import { provideZonelessChangeDetection } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { HeaderComponent } from './header.component';
 import { provideRouter } from '@angular/router';
+import { User as FirebaseUser } from '@angular/fire/auth';
 import { AppName } from '../../../shared/enums/app-name.enum';
+import { CONTEXT_SERVICE_MOCK } from '../../../shared/mocks/context.service.mock';
 import { AuthService } from '../../services/auth.service';
+import { AUTH_SERVICE_MOCK } from '../../services/auth.service.mock';
 import { ContextService } from '../../services/context.service';
 
 describe('HeaderComponent', () => {
   let component: HeaderComponent;
   let fixture: ComponentFixture<HeaderComponent>;
-  let contextService: ContextService;
-  let isAuthenticated: WritableSignal<boolean>;
+  let contextService: typeof CONTEXT_SERVICE_MOCK;
 
   beforeEach(async () => {
-    isAuthenticated = signal(false);
+    AUTH_SERVICE_MOCK.setCurrentUser(null);
+    CONTEXT_SERVICE_MOCK.app.set(AppName.MinFactory);
 
     await TestBed.configureTestingModule({
       imports: [HeaderComponent],
       providers: [
         provideZonelessChangeDetection(),
         provideRouter([]),
-        ContextService,
-        {
-          provide: AuthService,
-          useValue: {
-            isAuthenticated,
-          },
-        },
+        { provide: AuthService, useValue: AUTH_SERVICE_MOCK },
+        { provide: ContextService, useValue: CONTEXT_SERVICE_MOCK },
       ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(HeaderComponent);
     component = fixture.componentInstance;
-    contextService = TestBed.inject(ContextService);
+    contextService = TestBed.inject(ContextService) as typeof CONTEXT_SERVICE_MOCK;
     fixture.detectChanges();
   });
 
@@ -122,7 +120,9 @@ describe('HeaderComponent', () => {
     });
 
     it('should render account icon when user is authenticated', () => {
-      isAuthenticated.set(true);
+      AUTH_SERVICE_MOCK.setCurrentUser({
+        getIdToken: jasmine.createSpy('getIdToken').and.resolveTo('firebase-token'),
+      } as unknown as FirebaseUser);
       fixture.detectChanges();
 
       const links = fixture.nativeElement.querySelectorAll('a');

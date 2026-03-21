@@ -2,33 +2,19 @@ import { provideZonelessChangeDetection } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { Auth } from '@angular/fire/auth';
 import * as firebaseAuth from '@angular/fire/auth';
+import { FIREBASE_AUTH_MOCK } from '../../shared/mocks/firebase-auth.mock';
 import { AuthService } from './auth.service';
 
 describe('AuthService', () => {
   let service: AuthService;
-  let authMock: {
-    currentUser: firebaseAuth.User | null;
-    onAuthStateChanged: jasmine.Spy;
-    signOut: jasmine.Spy;
-  };
-  let authStateChangedCallback: ((user: firebaseAuth.User | null) => void) | undefined;
 
   beforeEach(() => {
-    authMock = {
-      currentUser: null,
-      onAuthStateChanged: jasmine.createSpy('onAuthStateChanged').and.callFake((nextOrObserver: unknown) => {
-        authStateChangedCallback =
-          typeof nextOrObserver === 'function'
-            ? (nextOrObserver as (user: firebaseAuth.User | null) => void)
-            : (nextOrObserver as { next?: (user: firebaseAuth.User | null) => void }).next;
-
-        return () => undefined;
-      }),
-      signOut: jasmine.createSpy('signOut').and.resolveTo(),
-    };
+    FIREBASE_AUTH_MOCK.currentUser = null;
+    FIREBASE_AUTH_MOCK.onAuthStateChanged.calls.reset();
+    FIREBASE_AUTH_MOCK.signOut.calls.reset();
 
     TestBed.configureTestingModule({
-      providers: [provideZonelessChangeDetection(), { provide: Auth, useValue: authMock as unknown as Auth }],
+      providers: [provideZonelessChangeDetection(), { provide: Auth, useValue: FIREBASE_AUTH_MOCK as unknown as Auth }],
     });
 
     service = TestBed.inject(AuthService);
@@ -43,7 +29,7 @@ describe('AuthService', () => {
       getIdToken: jasmine.createSpy('getIdToken').and.resolveTo('firebase-token'),
     } as unknown as firebaseAuth.User;
 
-    authStateChangedCallback?.(currentUser);
+    FIREBASE_AUTH_MOCK.emitAuthStateChanged(currentUser);
 
     expect(service.currentUser()).toBe(currentUser);
     expect(service.isAuthenticated()).toBeTrue();
@@ -55,7 +41,7 @@ describe('AuthService', () => {
 
   it('should return the firebase id token of the current user', async () => {
     const getIdToken = jasmine.createSpy('getIdToken').and.resolveTo('firebase-token');
-    authMock.currentUser = { getIdToken } as unknown as firebaseAuth.User;
+    FIREBASE_AUTH_MOCK.currentUser = { getIdToken } as unknown as firebaseAuth.User;
 
     await expectAsync(service.getIdToken(true)).toBeResolvedTo('firebase-token');
     expect(getIdToken).toHaveBeenCalledOnceWith(true);
@@ -64,6 +50,6 @@ describe('AuthService', () => {
   it('should sign out through firebase auth', async () => {
     await service.signOut();
 
-    expect(authMock.signOut).toHaveBeenCalledOnceWith();
+    expect(FIREBASE_AUTH_MOCK.signOut).toHaveBeenCalledOnceWith();
   });
 });
