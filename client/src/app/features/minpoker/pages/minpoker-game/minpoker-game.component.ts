@@ -4,7 +4,6 @@ import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } 
 import { RoutingService } from '../../../../core/routing/routing.service';
 import { ButtonComponent } from '../../../../shared/components/button/button.component';
 import { DialogComponent } from '../../../../shared/components/dialog/dialog.component';
-import { DividerComponent } from '../../../../shared/components/divider/divider.component';
 import { H2Component } from '../../../../shared/components/h2/h2.component';
 import { InputComponent } from '../../../../shared/components/input/input.component';
 import { Color } from '../../../../shared/enums/color.enum';
@@ -23,15 +22,7 @@ interface Opponent {
   templateUrl: './minpoker-game.component.html',
   styleUrls: ['./minpoker-game.component.scss'],
   host: { class: 'block h-full w-full' },
-  imports: [
-    ButtonComponent,
-    DecimalPipe,
-    DialogComponent,
-    DividerComponent,
-    H2Component,
-    InputComponent,
-    ReactiveFormsModule,
-  ],
+  imports: [ButtonComponent, DecimalPipe, DialogComponent, H2Component, InputComponent, ReactiveFormsModule],
 })
 export class MinPokerGameComponent {
   public readonly Color: typeof Color = Color;
@@ -45,9 +36,6 @@ export class MinPokerGameComponent {
     null,
     { name: 'Way-Lap', chips: 1030, lastAction: 'Call', betAmount: 120 },
   ];
-  public isSeatDialogOpen: WritableSignal<boolean> = signal(false);
-  public seatFormGroup: FormGroup = new FormGroup({});
-  public selectedSeatIndex: WritableSignal<number> = signal(-1);
 
   private readonly cachedBetAmount: WritableSignal<number> = signal(120);
   private readonly cachedCallAmount: WritableSignal<number> = signal(40);
@@ -55,7 +43,10 @@ export class MinPokerGameComponent {
 
   public betAmount: Signal<number> = computed(() => this.cachedBetAmount());
   public callAmount: Signal<number> = computed(() => this.cachedCallAmount());
+  public isSeatDialogOpen: WritableSignal<boolean> = signal(false);
   public potAmount: Signal<number> = computed(() => this.cachedPotAmount());
+  public seatFormGroup: FormGroup = new FormGroup({});
+  public selectedSeatIndex: WritableSignal<number> = signal(-1);
 
   constructor(
     private readonly formBuilder: FormBuilder,
@@ -73,15 +64,6 @@ export class MinPokerGameComponent {
     this.selectedSeatIndex.set(-1);
   }
 
-  public openSeatDialog(seatIndex: number): void {
-    if (seatIndex < 0 || seatIndex >= this.opponents.length || this.opponents[seatIndex]) {
-      return;
-    }
-    this.seatFormGroup = this.createSeatFormGroup();
-    this.selectedSeatIndex.set(seatIndex);
-    this.isSeatDialogOpen.set(true);
-  }
-
   public onBetChange(event: Event): void {
     const input = event.target as HTMLInputElement;
     this.cachedBetAmount.set(Number(input.value));
@@ -89,27 +71,17 @@ export class MinPokerGameComponent {
 
   public onCall(): void {}
 
-  public onFold(): void {
-    this.routingService.navigateToMinPoker();
-  }
+  public onFold(): void {}
 
   public onRaise(): void {}
 
-  public onSetBet(amount: 'min' | 'half-pot' | 'pot' | 'all-in'): void {
-    switch (amount) {
-      case 'min':
-        this.cachedBetAmount.set(MIN_BET);
-        break;
-      case 'half-pot':
-        this.cachedBetAmount.set(Math.floor(this.potAmount() / 2));
-        break;
-      case 'pot':
-        this.cachedBetAmount.set(this.potAmount());
-        break;
-      case 'all-in':
-        this.cachedBetAmount.set(this.opponents.reduce((max, o) => Math.max(max, o?.chips ?? 0), 0));
-        break;
+  public openSeatDialog(seatIndex: number): void {
+    if (seatIndex < 0 || seatIndex >= this.opponents.length || this.opponents[seatIndex]) {
+      return;
     }
+    this.seatFormGroup = this.createSeatFormGroup();
+    this.selectedSeatIndex.set(seatIndex);
+    this.isSeatDialogOpen.set(true);
   }
 
   public seatGame(): void {

@@ -22,22 +22,22 @@ export class ButtonComponent {
     return computed(() => {
       const baseClass: string =
         'w-full cursor-pointer rounded-lg border-4 border-black px-2 py-1 text-center font-bold shadow-2xl ' +
-        'transform transition-all duration-100 ' +
+        'transform transition-all duration-300 ' +
         'active:translate-y-0.5 active:shadow-none ' +
         'disabled:cursor-not-allowed disabled:bg-gray-300 disabled:opacity-50 disabled:shadow-none disabled:hover:bg-gray-300 disabled:active:translate-0 ';
       switch (this.color()) {
         case Color.Blue:
           return baseClass + 'bg-blue-300 hover:bg-blue-500 focus:bg-blue-500';
         case Color.Red:
-          return baseClass + 'bg-red-300 hover:bg-red-500  focus:bg-red-500';
+          return baseClass + 'bg-red-300 hover:bg-red-500 focus:bg-red-500';
         case Color.Green:
-          return baseClass + 'bg-green-300 hover:bg-green-500  focus:bg-green-500';
+          return baseClass + 'bg-green-300 hover:bg-green-500 focus:bg-green-500';
         case Color.Yellow:
-          return baseClass + 'bg-yellow-300 hover:bg-yellow-500focus:bg-yellow-500';
+          return baseClass + 'bg-yellow-300 hover:bg-yellow-500 focus:bg-yellow-500';
         case Color.Gray:
-          return baseClass + 'bg-gray-300 hover:bg-gray-500  focus:bg-gray-500';
+          return baseClass + 'bg-gray-300 hover:bg-gray-500 focus:bg-gray-500';
         default:
-          return baseClass + 'bg-white hover:bg-gray-100  focus:bg-gray-100';
+          return baseClass + 'bg-white hover:bg-gray-300 focus:bg-gray-300';
       }
     });
   }
