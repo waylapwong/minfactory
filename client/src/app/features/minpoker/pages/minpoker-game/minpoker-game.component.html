@@ -33,7 +33,7 @@
         >
           <img src="assets/svgs/minpoker/test.svg" alt="minFactory" />
           <span class="w-full truncate">{{ opponent.name }}</span>
-          <span class="w-full truncate text-xs text-gray-700 tabular-nums">{{ opponent.chips | number }}</span>
+          <span class="w-full truncate text-xs text-gray-500">{{ opponent.chips | number }}</span>
         </div>
       } @else {
         <!-- EMPTY SEAT -->
@@ -87,8 +87,8 @@
         class="col-start-1 col-end-2 flex flex-col items-center justify-center rounded-lg border-2 border-black bg-white p-1 text-center font-bold shadow-2xl"
       >
         <img src="assets/svgs/minpoker/test.svg" alt="minFactory" />
-        <span class="truncate leading-5">Way-Lap</span>
-        <span class="truncate text-xs leading-5 text-gray-700">{{ 1100 | number }}</span>
+        <span class="w-full truncate">Way-Lap</span>
+        <span class="w-full truncate text-xs text-gray-500">{{ 1100 | number }}</span>
       </div>
       <!-- HERO HAND -->
       <div class="col-start-2 col-end-5 flex flex-row items-center justify-center gap-1">
