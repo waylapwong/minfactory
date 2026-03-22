@@ -28,12 +28,12 @@
       @if (opponent) {
         <!-- VILLAIN CARD -->
         <div
-          class="flex flex-col items-center justify-center rounded-lg border-2 border-black bg-white text-center font-bold shadow-2xl"
+          class="flex flex-col items-center justify-center rounded-lg border-2 border-black bg-white p-1 text-center font-bold shadow-2xl"
           [class.bg-gray-100]="opponent.isActive"
         >
           <img src="assets/svgs/minpoker/test.svg" alt="minFactory" />
-          <span class="truncate leading-5">{{ opponent.name }}</span>
-          <span class="truncate text-xs leading-5 text-gray-700 tabular-nums">{{ opponent.chips | number }}</span>
+          <span class="w-full truncate">{{ opponent.name }}</span>
+          <span class="w-full truncate text-xs text-gray-700 tabular-nums">{{ opponent.chips | number }}</span>
         </div>
       } @else {
         <!-- EMPTY SEAT -->
@@ -48,10 +48,8 @@
     }
   </div>
 
-  <div class="my-2"></div>
-
   <!-- BOARD -->
-  <div class="flex flex-col items-center gap-2 rounded-4xl border-4 bg-green-700 p-2">
+  <div class="my-4 flex flex-col items-center gap-2 rounded-4xl border-8 bg-green-700 p-2">
     <!-- VILLAIN BET SIZES -->
     <div class="grid w-full grid-cols-5 gap-2 text-center text-sm font-bold tabular-nums">
       @for (opponent of opponents.slice(0, 5); track opponent?.name ?? $index) {
@@ -80,15 +78,13 @@
     </div>
   </div>
 
-  <div class="my-2"></div>
-
   <!-- HERO SIDE -->
   <div class="flex grow flex-col gap-2 text-center">
     <!-- HERO STATUS -->
     <div class="grid grid-cols-5">
       <!-- HERO CARD -->
       <div
-        class="col-start-1 col-end-2 flex flex-col items-center justify-center rounded-lg border-2 border-black bg-white text-center font-bold shadow-2xl"
+        class="col-start-1 col-end-2 flex flex-col items-center justify-center rounded-lg border-2 border-black bg-blue-300 text-center font-bold shadow-2xl"
       >
         <img src="assets/svgs/minpoker/test.svg" alt="minFactory" />
         <span class="truncate leading-5">Way-Lap</span>

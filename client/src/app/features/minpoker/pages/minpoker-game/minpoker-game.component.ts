@@ -30,8 +30,8 @@ export class MinPokerGameComponent {
   public readonly handCards: readonly string[] = ['?', '?'];
   public readonly opponents: (Opponent | null)[] = [
     { role: 'D', name: 'Alex', chips: 1240, lastAction: 'Call', betAmount: 40 },
-    { name: 'Mia', chips: 980, lastAction: 'Raise', betAmount: 120 },
-    { name: 'Noah', chips: 1120, isActive: true, lastAction: 'Denkt nach' },
+    { name: 'Miadfsfdfsfddfsdfsd', chips: 980, lastAction: 'Raise', betAmount: 120 },
+    { name: 'Noahadsadsfdsfdsfdsfsdfdsfsdfs', chips: 1120, isActive: true, lastAction: 'Denkt nach' },
     { name: 'Emma', chips: 1560, lastAction: 'Fold' },
     null,
     { name: 'Way-Lap', chips: 1030, lastAction: 'Call', betAmount: 120 },
