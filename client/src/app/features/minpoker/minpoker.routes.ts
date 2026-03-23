@@ -1,4 +1,5 @@
 import { Routes } from '@angular/router';
+import { leaveGameGuard } from './guards/leave-game.guard';
 
 export enum MinPokerPath {
   Root = '',
@@ -12,6 +13,7 @@ export const MINPOKER_ROUTES: Routes = [
   },
   {
     path: MinPokerPath.Game,
+    canDeactivate: [leaveGameGuard],
     loadComponent: () => import('./pages/minpoker-game/minpoker-game.component').then((m) => m.MinPokerGameComponent),
   },
 ];

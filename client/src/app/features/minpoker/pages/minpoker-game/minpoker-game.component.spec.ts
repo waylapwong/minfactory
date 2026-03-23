@@ -84,12 +84,12 @@ describe('MinPokerGameComponent', () => {
     expect(component.handCards).toEqual(['?', '?']);
   });
 
-  it('should have initial betAmount of 120', () => {
-    expect(component.betAmount()).toBe(120);
+  it('should have initial betAmount of 2', () => {
+    expect(component.betAmount()).toBe(2);
   });
 
-  it('should have initial callAmount of 40', () => {
-    expect(component.callAmount()).toBe(40);
+  it('should have initial callAmount of 120', () => {
+    expect(component.callAmount()).toBe(120);
   });
 
   it('should have potAmount of 240', () => {
@@ -103,7 +103,7 @@ describe('MinPokerGameComponent', () => {
 
   describe('heroBetAmount', () => {
     it('should have heroBetAmount signal', () => {
-      expect(component.heroBetAmount()).toBe(120);
+      expect(component.heroBetAmount()).toBe(2);
     });
 
     it('should update heroBetAmount when betAmount changes', () => {
@@ -127,29 +127,39 @@ describe('MinPokerGameComponent', () => {
       expect(component.isLeaveDialogOpen()).toBe(false);
     });
 
-    it('should open leave dialog on openLeaveDialog()', () => {
-      component.openLeaveDialog();
+    it('should open leave dialog on canDeactivate()', () => {
+      void component.canDeactivate();
       expect(component.isLeaveDialogOpen()).toBe(true);
     });
 
-    it('should close leave dialog on closeLeaveDialog()', () => {
+    it('should close leave dialog on cancelLeave()', () => {
       component.isLeaveDialogOpen.set(true);
-      component.closeLeaveDialog();
+      component.cancelLeave();
       expect(component.isLeaveDialogOpen()).toBe(false);
     });
 
-    it('should navigate to minpoker and close dialog on confirmLeaveGame()', () => {
-      component.isLeaveDialogOpen.set(true);
-      component.confirmLeaveGame();
+    it('should resolve canDeactivate with true on confirmLeave()', async () => {
+      const promise = component.canDeactivate();
+      component.confirmLeave();
+
+      await expectAsync(promise).toBeResolvedTo(true);
       expect(component.isLeaveDialogOpen()).toBe(false);
-      expect(ROUTING_SERVICE_MOCK.navigateToMinPoker).toHaveBeenCalled();
     });
 
-    it('should prevent default on beforeunload event', () => {
-      const event = new Event('beforeunload') as BeforeUnloadEvent;
-      spyOn(event, 'preventDefault');
-      component.onBeforeUnload(event);
-      expect(event.preventDefault).toHaveBeenCalled();
+    it('should resolve canDeactivate with false on cancelLeave()', async () => {
+      const promise = component.canDeactivate();
+      component.cancelLeave();
+
+      await expectAsync(promise).toBeResolvedTo(false);
+      expect(component.isLeaveDialogOpen()).toBe(false);
+    });
+
+    it('should resolve pending canDeactivate with false on destroy', async () => {
+      const promise = component.canDeactivate();
+
+      component.ngOnDestroy();
+
+      await expectAsync(promise).toBeResolvedTo(false);
     });
   });
 });

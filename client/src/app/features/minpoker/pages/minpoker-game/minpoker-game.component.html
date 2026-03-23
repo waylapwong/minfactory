@@ -12,7 +12,12 @@
     <!-- TITLE -->
     <min-h2>Way-Lap's Testspiel</min-h2>
     <!-- LEAVE BUTTON -->
-    <min-button (clicked)="openLeaveDialog()" [color]="Color.Red" ariaLabel="Spiel verlassen" title="Spiel verlassen">
+    <min-button
+      (clicked)="routingService.navigateToMinPoker()"
+      [color]="Color.Red"
+      ariaLabel="Spiel verlassen"
+      title="Spiel verlassen"
+    >
       <img src="assets/svgs/minrps/exit.svg" alt="Spiel verlassen" class="h-4 w-4" />
     </min-button>
   </div>
@@ -23,7 +28,7 @@
         <!-- VILLAIN CARD -->
         <div
           class="flex flex-col items-center justify-center rounded-lg border-2 border-black p-1 font-bold shadow-2xl transition-colors"
-          [class.bg-green-300]="opponent.isActive"
+          [class.bg-blue-300]="opponent.isActive"
           [class.bg-white]="!opponent.isActive"
         >
           <img [src]="getAvatarPath(opponent.avatar)" [alt]="opponent.name" />
@@ -46,7 +51,7 @@
   <!-- BOARD -->
   <div class="my-4 flex flex-col items-center rounded-4xl border-8 bg-green-700 p-2">
     <!-- VILLAIN BET SIZES -->
-    <div class="text-centedr grid w-full grid-cols-5 gap-2 text-sm font-bold">
+    <div class="grid w-full grid-cols-5 gap-2 text-sm font-bold">
       @for (opponent of opponents.slice(0, 5); track opponent?.name ?? $index) {
         <div>
           @if (opponent && opponent.betAmount) {
@@ -69,9 +74,9 @@
     <div class="my-1 flex w-full flex-row justify-center gap-1">
       @for (card of communityCards; track $index) {
         <div
-          class="flex h-21 w-15 items-center justify-center rounded-lg border-4 border-black bg-white text-lg font-bold shadow-2xl"
+          class="flex h-21 w-15 items-center justify-center rounded-lg border-4 border-black bg-gray-300 font-mono text-4xl font-bold"
         >
-          {{ card }}
+          <min-logo class="text-xs">Poker</min-logo>
         </div>
       }
     </div>
@@ -96,12 +101,13 @@
   <div class="flex grow flex-col gap-2">
     <div class="grid grid-cols-5 items-center justify-center gap-2">
       <!-- HERO HAND -->
-      <div class="col-start-2 col-end-5 flex flex-row items-center justify-center gap-1">
+      <div class="col-start-2 col-end-5 flex flex-row justify-center gap-1">
         @for (card of handCards; track $index) {
           <div
-            class="flex h-21 w-15 items-center justify-center rounded-lg border-4 border-black bg-white text-2xl font-bold shadow-2xl"
+            class="flex h-21 w-15 flex-col justify-center rounded-lg border-4 border-black bg-white font-mono text-4xl font-bold shadow-2xl"
           >
-            {{ card }}
+            <span class="h-8">A</span>
+            <span>&spades;</span>
           </div>
         }
       </div>
@@ -123,9 +129,9 @@
     </div>
     <!-- BET SLIDER -->
     <min-slider
-      [min]="40"
-      [max]="1000"
-      [step]="10"
+      [min]="2"
+      [max]="200"
+      [step]="1"
       [value]="betAmount()"
       minLabel="Min"
       maxLabel="All-In"
@@ -154,12 +160,12 @@
 </min-dialog>
 
 <!-- LEAVE GAME DIALOG -->
-<min-dialog title="Spiel verlassen" [isOpen]="isLeaveDialogOpen()" (closed)="closeLeaveDialog()">
+<min-dialog title="Spiel verlassen" [isOpen]="isLeaveDialogOpen()" (closed)="cancelLeave()">
   <div class="mb-4">
     <p>Bist du sicher, dass du das Spiel verlassen möchtest?</p>
   </div>
   <div class="flex flex-row justify-end gap-2">
-    <min-button [color]="Color.Gray" (clicked)="closeLeaveDialog()">Abbrechen</min-button>
-    <min-button [color]="Color.Red" (clicked)="confirmLeaveGame()">Verlassen</min-button>
+    <min-button [color]="Color.Gray" (clicked)="cancelLeave()">Abbrechen</min-button>
+    <min-button [color]="Color.Red" (clicked)="confirmLeave()">Verlassen</min-button>
   </div>
 </min-dialog>

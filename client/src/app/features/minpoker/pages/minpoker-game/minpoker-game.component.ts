@@ -1,14 +1,16 @@
 import { DecimalPipe } from '@angular/common';
-import { Component, HostListener, Signal, WritableSignal, computed, signal } from '@angular/core';
+import { Component, OnDestroy, Signal, WritableSignal, computed, signal } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RoutingService } from '../../../../core/routing/routing.service';
 import { ButtonComponent } from '../../../../shared/components/button/button.component';
 import { DialogComponent } from '../../../../shared/components/dialog/dialog.component';
 import { H2Component } from '../../../../shared/components/h2/h2.component';
 import { InputComponent } from '../../../../shared/components/input/input.component';
+import { LogoComponent } from '../../../../shared/components/logo/logo.component';
 import { SelectComponent, SelectOption } from '../../../../shared/components/select/select.component';
 import { SliderComponent } from '../../../../shared/components/slider/slider.component';
 import { Color } from '../../../../shared/enums/color.enum';
+import { CanLeaveGame } from '../../guards/leave-game.guard';
 
 interface Opponent {
   avatar: string;
@@ -34,9 +36,10 @@ interface Opponent {
     ReactiveFormsModule,
     SelectComponent,
     SliderComponent,
+    LogoComponent,
   ],
 })
-export class MinPokerGameComponent {
+export class MinPokerGameComponent implements OnDestroy, CanLeaveGame {
   public readonly Color: typeof Color = Color;
   public readonly avatarOptions: readonly SelectOption[] = AVATAR_FILE_NAMES.map((avatarFileName) => ({
     imageSrc: this.getAvatarPath(avatarFileName),
@@ -46,16 +49,16 @@ export class MinPokerGameComponent {
   public readonly communityCards: readonly string[] = ['?', '?', '?', '?', '?'];
   public readonly handCards: readonly string[] = ['?', '?'];
   public readonly opponents: (Opponent | null)[] = [
-    { avatar: 'woman-1.svg', role: 'D', name: 'Alex', chips: 1240, lastAction: 'Call', betAmount: 40,  },
-    { avatar: 'man-2.svg', name: 'Mia', chips: 980, lastAction: 'Raise', betAmount: 120 },
-    { avatar: 'man-3.svg', name: 'Noah', chips: 1120, isActive: true, lastAction: 'Denkt nach' },
-    { avatar: 'woman-4.svg', name: 'Emma', chips: 1560, lastAction: 'Fold' },
+    { avatar: 'woman-1.svg', role: 'D', name: 'Alex', chips: 160, lastAction: 'Call', betAmount: 40 },
+    { avatar: 'man-2.svg', name: 'Mia', chips: 80, lastAction: 'Raise', betAmount: 120 },
+    { avatar: 'man-3.svg', name: 'Noah', chips: 200, isActive: true, lastAction: 'Denkt nach' },
+    { avatar: 'woman-4.svg', name: 'Emma', chips: 200, lastAction: 'Fold' },
     null,
     { avatar: 'man-1.svg', name: 'Way-Lap', chips: 1030, lastAction: 'Call', betAmount: 120 },
   ];
 
-  private readonly cachedBetAmount: WritableSignal<number> = signal(120);
-  private readonly cachedCallAmount: WritableSignal<number> = signal(40);
+  private readonly cachedBetAmount: WritableSignal<number> = signal(2);
+  private readonly cachedCallAmount: WritableSignal<number> = signal(120);
   private readonly cachedPotAmount: WritableSignal<number> = signal(240);
 
   public betAmount: Signal<number> = computed(() => this.cachedBetAmount());
@@ -66,6 +69,8 @@ export class MinPokerGameComponent {
   public potAmount: Signal<number> = computed(() => this.cachedPotAmount());
   public seatFormGroup: FormGroup = new FormGroup({});
   public selectedSeatIndex: WritableSignal<number> = signal(-1);
+
+  private leaveConfirmationResolver: ((value: boolean) => void) | null = null;
 
   constructor(
     private readonly formBuilder: FormBuilder,
@@ -82,14 +87,24 @@ export class MinPokerGameComponent {
     return this.seatFormGroup.get('name') as FormControl<string>;
   }
 
-  @HostListener('window:beforeunload', ['$event'])
-  public onBeforeUnload(event: BeforeUnloadEvent): void {
-    event.preventDefault();
-    event.returnValue = '';
+  public ngOnDestroy(): void {
+    this.leaveConfirmationResolver?.(false);
+    this.leaveConfirmationResolver = null;
   }
 
-  public closeLeaveDialog(): void {
+  public canDeactivate(): Promise<boolean> {
+    this.leaveConfirmationResolver?.(false);
+    this.closeSeatDialog();
+    this.isLeaveDialogOpen.set(true);
+    return new Promise<boolean>((resolve) => {
+      this.leaveConfirmationResolver = resolve;
+    });
+  }
+
+  public cancelLeave(): void {
     this.isLeaveDialogOpen.set(false);
+    this.leaveConfirmationResolver?.(false);
+    this.leaveConfirmationResolver = null;
   }
 
   public closeSeatDialog(): void {
@@ -97,9 +112,10 @@ export class MinPokerGameComponent {
     this.selectedSeatIndex.set(-1);
   }
 
-  public confirmLeaveGame(): void {
+  public confirmLeave(): void {
     this.isLeaveDialogOpen.set(false);
-    void this.routingService.navigateToMinPoker();
+    this.leaveConfirmationResolver?.(true);
+    this.leaveConfirmationResolver = null;
   }
 
   public getAvatarPath(avatarFileName: string): string {
@@ -112,14 +128,9 @@ export class MinPokerGameComponent {
 
   public onCall(): void {}
 
-  public onFold(): void {
-  }
+  public onFold(): void {}
 
   public onRaise(): void {}
-
-  public openLeaveDialog(): void {
-    this.isLeaveDialogOpen.set(true);
-  }
 
   public openSeatDialog(seatIndex: number): void {
     if (seatIndex < 0 || seatIndex >= this.opponents.length || this.opponents[seatIndex]) {
@@ -129,8 +140,6 @@ export class MinPokerGameComponent {
     this.selectedSeatIndex.set(seatIndex);
     this.isSeatDialogOpen.set(true);
   }
-
-  public openise(): void {}
 
   public seatGame(): void {
     if (this.seatFormGroup.invalid || this.selectedSeatIndex() === -1) {
