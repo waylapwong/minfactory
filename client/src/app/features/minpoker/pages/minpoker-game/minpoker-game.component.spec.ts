@@ -64,12 +64,12 @@ describe('MinPokerGameComponent', () => {
   it('should seat player on empty position', () => {
     component.openSeatDialog(4);
     component.seatName.setValue('Chris');
-    component.seatAvatar.setValue('man-5.svg');
+    component.seatAvatar.setValue('man-4.svg');
 
     component.seatGame();
 
     expect(component.opponents[4]).toEqual(
-      jasmine.objectContaining({ name: 'Chris', avatar: 'man-5.svg', chips: 1000, lastAction: 'Sitzt' }),
+      jasmine.objectContaining({ name: 'Chris', avatar: 'man-4.svg', chips: 1000, lastAction: 'Sitzt' }),
     );
     expect(component.isSeatDialogOpen()).toBe(false);
   });
