@@ -115,21 +115,15 @@
       <min-button [color]="Color.Yellow" (clicked)="onRaise()">Raise</min-button>
     </div>
     <!-- BET SLIDER -->
-    <div class="">
-      <div class="flex items-center gap-2">
-        <span class="text-xs">Min</span>
-        <input
-          type="range"
-          class="flex-1"
-          min="40"
-          max="1000"
-          step="10"
-          [value]="betAmount()"
-          (input)="onBetChange($event)"
-        />
-        <span class="text-xs">All-In</span>
-      </div>
-    </div>
+    <min-slider
+      [min]="40"
+      [max]="1000"
+      [step]="10"
+      [value]="betAmount()"
+      minLabel="Min"
+      maxLabel="All-In"
+      (valueChange)="onBetChange($event)"
+    />
   </div>
 </div>
 

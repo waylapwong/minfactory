@@ -1,0 +1,22 @@
+<div class="flex w-full flex-col gap-1">
+  @if (label()) {
+    <label class="font-bold">{{ label() }}</label>
+  }
+  <div class="flex items-center gap-4 rounded-lg border-4 border-black bg-white px-4 py-2 shadow-2xl">
+    @if (minLabel()) {
+      <span class="min-w-fit text-xs font-bold">{{ minLabel() }}</span>
+    }
+    <input
+      class="slider flex-1"
+      type="range"
+      [min]="min()"
+      [max]="max()"
+      [step]="step()"
+      [value]="value()"
+      (input)="onInput($event)"
+    />
+    @if (maxLabel()) {
+      <span class="min-w-fit text-xs font-bold">{{ maxLabel() }}</span>
+    }
+  </div>
+</div>

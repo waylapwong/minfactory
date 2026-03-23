@@ -6,6 +6,7 @@ import { ButtonComponent } from '../../../../shared/components/button/button.com
 import { DialogComponent } from '../../../../shared/components/dialog/dialog.component';
 import { H2Component } from '../../../../shared/components/h2/h2.component';
 import { InputComponent } from '../../../../shared/components/input/input.component';
+import { SliderComponent } from '../../../../shared/components/slider/slider.component';
 import { Color } from '../../../../shared/enums/color.enum';
 
 interface Opponent {
@@ -22,7 +23,7 @@ interface Opponent {
   templateUrl: './minpoker-game.component.html',
   styleUrls: ['./minpoker-game.component.scss'],
   host: { class: 'block h-full w-full' },
-  imports: [ButtonComponent, DecimalPipe, DialogComponent, H2Component, InputComponent, ReactiveFormsModule],
+  imports: [ButtonComponent, DecimalPipe, DialogComponent, H2Component, InputComponent, ReactiveFormsModule, SliderComponent],
 })
 export class MinPokerGameComponent {
   public readonly Color: typeof Color = Color;
@@ -64,9 +65,8 @@ export class MinPokerGameComponent {
     this.selectedSeatIndex.set(-1);
   }
 
-  public onBetChange(event: Event): void {
-    const input = event.target as HTMLInputElement;
-    this.cachedBetAmount.set(Number(input.value));
+  public onBetChange(value: number): void {
+    this.cachedBetAmount.set(value);
   }
 
   public onCall(): void {}
