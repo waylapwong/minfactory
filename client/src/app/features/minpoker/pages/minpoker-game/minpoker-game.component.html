@@ -1,0 +1,172 @@
+<div class="flex h-full flex-col text-center">
+  <div class="flex flex-row justify-between">
+    <!-- SHARE BUTTON -->
+    <min-button
+      (clicked)="shareGameUrl()"
+      [color]="Color.White"
+      ariaLabel="Link zum Spiel kopieren"
+      title="Link kopieren"
+    >
+      <img src="assets/svgs/minrps/share.svg" alt="Link kopieren" class="h-4 w-4" />
+    </min-button>
+    <!-- TITLE -->
+    <min-h2>Way-Lap's Testspiel</min-h2>
+    <!-- LEAVE BUTTON -->
+    <min-button
+      (clicked)="routingService.navigateToMinPoker()"
+      [color]="Color.Red"
+      ariaLabel="Spiel verlassen"
+      title="Spiel verlassen"
+    >
+      <img src="assets/svgs/minrps/exit.svg" alt="Spiel verlassen" class="h-4 w-4" />
+    </min-button>
+  </div>
+  <!-- VILLAIN SIDE -->
+  <div class="grid grid-cols-5 gap-2">
+    @for (opponent of opponents.slice(0, 5); track opponent?.name ?? $index) {
+      @if (opponent) {
+        <!-- VILLAIN CARD -->
+        <div
+          class="flex flex-col items-center justify-center rounded-lg border-2 border-black p-1 font-bold shadow-2xl transition-colors"
+          [class.bg-blue-300]="opponent.isActive"
+          [class.bg-white]="!opponent.isActive"
+        >
+          <img [src]="getAvatarPath(opponent.avatar)" [alt]="opponent.name" />
+          <span class="w-full truncate">{{ opponent.name }}</span>
+          <span class="w-full truncate text-xs text-gray-500">{{ opponent.chips | number }}</span>
+        </div>
+      } @else {
+        <!-- EMPTY SEAT -->
+        <button
+          type="button"
+          class="flex min-h-16 cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-gray-500 bg-white font-bold text-gray-500 transition-colors hover:bg-gray-300"
+          (click)="openSeatDialog($index)"
+          aria-label="Platz nehmen"
+        >
+          <img src="assets/svgs/minpoker/ui/add.svg" alt="" class="h-8 w-8" />
+        </button>
+      }
+    }
+  </div>
+
+  <!-- BOARD -->
+  <div class="my-4 flex flex-col items-center rounded-4xl border-8 bg-green-700 p-2">
+    <!-- VILLAIN BET SIZES -->
+    <div class="grid w-full grid-cols-5 gap-2 text-sm font-bold">
+      @for (opponent of opponents.slice(0, 5); track opponent?.name ?? $index) {
+        <div>
+          @if (opponent && opponent.betAmount) {
+            {{ opponent.betAmount | number }}
+          }
+        </div>
+      }
+    </div>
+    <!-- VILLAIN DEALER BUTTON  -->
+    <div class="grid w-full grid-cols-5 gap-2 text-sm font-bold">
+      @for (opponent of opponents.slice(0, 5); track opponent?.name ?? $index) {
+        <div class="flex flex-row justify-center">
+          @if (opponent?.role === 'D') {
+            <span class="h-6 w-6 rounded-full border-2 border-black bg-white">D</span>
+          }
+        </div>
+      }
+    </div>
+    <!-- COMMUNITY CARDS -->
+    <div class="my-1 flex w-full flex-row justify-center gap-1">
+      @for (card of communityCards; track $index) {
+        <div
+          class="flex h-21 w-15 items-center justify-center rounded-lg border-4 border-black bg-gray-300 font-mono text-4xl font-bold"
+        >
+          <min-logo class="text-xs">Poker</min-logo>
+        </div>
+      }
+    </div>
+    <!-- HERO DEALER BUTTON  -->
+    <div class="grid w-full grid-cols-5 gap-2 text-sm font-bold">
+      <div class="col-start-5 col-end-6 flex flex-row justify-center">
+        <span class="h-6 w-6 rounded-full border-2 border-black bg-white">D</span>
+      </div>
+    </div>
+    <!-- POT & HERO BET SIZE -->
+    <div class="grid w-full grid-cols-5 gap-2 text-sm font-bold">
+      <!-- POT -->
+      <div class="col-start-3 col-end-4">
+        Pot: <span class="tabular-nums">{{ potAmount() | number }}</span>
+      </div>
+      <!-- HERO BET SIZE -->
+      <div class="col-start-5 col-end-6 flex flex-row justify-center">185</div>
+    </div>
+  </div>
+
+  <!-- HERO SIDE -->
+  <div class="flex grow flex-col gap-2">
+    <div class="grid grid-cols-5 items-center justify-center gap-2">
+      <!-- HERO HAND -->
+      <div class="col-start-2 col-end-5 flex flex-row justify-center gap-1">
+        @for (card of handCards; track $index) {
+          <div
+            class="flex h-21 w-15 flex-col justify-center rounded-lg border-4 border-black bg-white font-mono text-4xl font-bold shadow-2xl"
+          >
+            <span class="h-8">A</span>
+            <span>&spades;</span>
+          </div>
+        }
+      </div>
+      <!-- HERO CARD -->
+      <div
+        class="col-start-5 col-end-6 flex flex-col items-center justify-center rounded-lg border-2 border-black bg-white p-1 font-bold shadow-2xl transition-colors"
+        [class.bg-blue-300]="false"
+      >
+        <img src="assets/svgs/minpoker/avatars/man-1.svg" alt="minFactory" />
+        <span class="w-full truncate">Way-Lap</span>
+        <span class="w-full truncate text-xs text-gray-500">{{ 1100 | number }}</span>
+      </div>
+    </div>
+    <!-- ACTION BUTTONS -->
+    <div class="grid grid-cols-3 gap-2">
+      <min-button [color]="Color.Red" (clicked)="onFold()">Fold</min-button>
+      <min-button [color]="Color.Blue" (clicked)="onCall()">Call {{ callAmount() | number }}</min-button>
+      <min-button [color]="Color.Yellow" (clicked)="onRaise()">Raise {{ betAmount() | number }}</min-button>
+    </div>
+    <!-- BET SLIDER -->
+    <min-slider
+      [min]="2"
+      [max]="200"
+      [step]="1"
+      [value]="betAmount()"
+      minLabel="Min"
+      maxLabel="All-In"
+      (valueChange)="onBetChange($event)"
+    />
+  </div>
+</div>
+
+<!-- SEAT DIALOG -->
+<min-dialog title="Platz nehmen" [isOpen]="isSeatDialogOpen()" (closed)="closeSeatDialog()">
+  <div class="mb-4 flex flex-col gap-2">
+    <min-input id="seat-name-input" label="Spielername" placeholder="Namen eingeben" [formControlInput]="seatName">
+    </min-input>
+    <min-select
+      id="seat-avatar-select"
+      label="Avatar"
+      placeholder="Avatar auswählen"
+      [options]="avatarOptions"
+      [formControlInput]="seatAvatar"
+    >
+    </min-select>
+  </div>
+  <div class="flex flex-row justify-end">
+    <min-button [color]="Color.Green" [isDisabled]="seatFormGroup.invalid" (clicked)="seatGame()">Beitreten</min-button>
+  </div>
+</min-dialog>
+
+<!-- LEAVE GAME DIALOG -->
+<min-dialog title="Spiel verlassen" [isOpen]="isLeaveDialogOpen()" (closed)="cancelLeave()">
+  <div class="mb-4">
+    <p>Bist du sicher, dass du das Spiel verlassen möchtest?</p>
+  </div>
+  <div class="flex flex-row justify-end gap-2">
+    <min-button [color]="Color.Gray" (clicked)="cancelLeave()">Abbrechen</min-button>
+    <min-button [color]="Color.Red" (clicked)="confirmLeave()">Verlassen</min-button>
+  </div>
+</min-dialog>

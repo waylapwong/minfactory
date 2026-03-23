@@ -4,6 +4,7 @@ import { RoutingService } from '../../../../core/routing/routing.service';
 import { ButtonComponent } from '../../../../shared/components/button/button.component';
 import { CardComponent } from '../../../../shared/components/card/card.component';
 import { H1Component } from '../../../../shared/components/h1/h1.component';
+import { LogoComponent } from '../../../../shared/components/logo/logo.component';
 import { SnackbarComponent } from '../../../../shared/components/snackbar/snackbar.component';
 import { Color } from '../../../../shared/enums/color.enum';
 import { MinFactoryAuthenticationService } from '../../services/minfactory-authentication.service';
@@ -14,7 +15,7 @@ import { MinFactoryUserService } from '../../services/minfactory-user.service';
   templateUrl: './minfactory-profile.component.html',
   styleUrl: './minfactory-profile.component.scss',
   host: { class: 'block h-full w-full' },
-  imports: [CardComponent, H1Component, ButtonComponent, SnackbarComponent],
+  imports: [CardComponent, H1Component, ButtonComponent, SnackbarComponent, LogoComponent],
 })
 export class MinFactoryProfileComponent implements OnInit {
   public readonly Color: typeof Color = Color;
