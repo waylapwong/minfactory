@@ -31,7 +31,7 @@
           class="flex flex-col items-center justify-center rounded-lg border-2 border-black bg-white p-1 text-center font-bold shadow-2xl"
           [class.bg-gray-100]="opponent.isActive"
         >
-          <img src="assets/svgs/minpoker/avatars/woman-1.svg" alt="minFactory" />
+          <img [src]="getAvatarPath(opponent.avatar)" [alt]="opponent.name" />
           <span class="w-full truncate">{{ opponent.name }}</span>
           <span class="w-full truncate text-xs text-gray-500">{{ opponent.chips | number }}</span>
         </div>
@@ -129,9 +129,17 @@
 
 <!-- SEAT DIALOG -->
 <min-dialog title="Platz nehmen" [isOpen]="isSeatDialogOpen()" (closed)="closeSeatDialog()">
-  <div class="mb-4 flex flex-col">
+  <div class="mb-4 flex flex-col gap-2">
     <min-input id="seat-name-input" label="Spielername" placeholder="Namen eingeben" [formControlInput]="seatName">
     </min-input>
+    <min-select
+      id="seat-avatar-select"
+      label="Avatar"
+      placeholder="Avatar auswählen"
+      [options]="avatarOptions"
+      [formControlInput]="seatAvatar"
+    >
+    </min-select>
   </div>
   <div class="flex flex-row justify-end">
     <min-button [color]="Color.Green" [isDisabled]="seatFormGroup.invalid" (clicked)="seatGame()">Beitreten</min-button>

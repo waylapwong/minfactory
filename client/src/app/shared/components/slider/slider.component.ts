@@ -7,6 +7,9 @@ import { Component, InputSignal, OutputEmitterRef, input, output } from '@angula
   imports: [],
 })
 export class SliderComponent {
+  private static nextId: number = 0;
+
+  public readonly inputId: string = `min-slider-${SliderComponent.nextId++}`;
   public readonly label: InputSignal<string> = input('');
   public readonly max: InputSignal<number> = input.required<number>();
   public readonly maxLabel: InputSignal<string> = input('');

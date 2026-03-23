@@ -6,10 +6,12 @@ import { ButtonComponent } from '../../../../shared/components/button/button.com
 import { DialogComponent } from '../../../../shared/components/dialog/dialog.component';
 import { H2Component } from '../../../../shared/components/h2/h2.component';
 import { InputComponent } from '../../../../shared/components/input/input.component';
+import { SelectComponent, SelectOption } from '../../../../shared/components/select/select.component';
 import { SliderComponent } from '../../../../shared/components/slider/slider.component';
 import { Color } from '../../../../shared/enums/color.enum';
 
 interface Opponent {
+  avatar: string;
   betAmount?: number;
   chips: number;
   isActive?: boolean;
@@ -23,19 +25,33 @@ interface Opponent {
   templateUrl: './minpoker-game.component.html',
   styleUrls: ['./minpoker-game.component.scss'],
   host: { class: 'block h-full w-full' },
-  imports: [ButtonComponent, DecimalPipe, DialogComponent, H2Component, InputComponent, ReactiveFormsModule, SliderComponent],
+  imports: [
+    ButtonComponent,
+    DecimalPipe,
+    DialogComponent,
+    H2Component,
+    InputComponent,
+    ReactiveFormsModule,
+    SelectComponent,
+    SliderComponent,
+  ],
 })
 export class MinPokerGameComponent {
   public readonly Color: typeof Color = Color;
+  public readonly avatarOptions: readonly SelectOption[] = AVATAR_FILE_NAMES.map((avatarFileName) => ({
+    imageSrc: this.getAvatarPath(avatarFileName),
+    label: this.getAvatarLabel(avatarFileName),
+    value: avatarFileName,
+  }));
   public readonly communityCards: readonly string[] = ['?', '?', '?', '?', '?'];
   public readonly handCards: readonly string[] = ['?', '?'];
   public readonly opponents: (Opponent | null)[] = [
-    { role: 'D', name: 'Alex', chips: 1240, lastAction: 'Call', betAmount: 40 },
-    { name: 'Miadfsfdfsfddfsdfsd', chips: 980, lastAction: 'Raise', betAmount: 120 },
-    { name: 'Noahadsadsfdsfdsfdsfsdfdsfsdfs', chips: 1120, isActive: true, lastAction: 'Denkt nach' },
-    { name: 'Emma', chips: 1560, lastAction: 'Fold' },
+    { avatar: 'woman-1.svg', role: 'D', name: 'Alex', chips: 1240, lastAction: 'Call', betAmount: 40 },
+    { avatar: 'man-2.svg', name: 'Mia', chips: 980, lastAction: 'Raise', betAmount: 120 },
+    { avatar: 'man-3.svg', name: 'Noah', chips: 1120, isActive: true, lastAction: 'Denkt nach' },
+    { avatar: 'woman-4.svg', name: 'Emma', chips: 1560, lastAction: 'Fold' },
     null,
-    { name: 'Way-Lap', chips: 1030, lastAction: 'Call', betAmount: 120 },
+    { avatar: 'man-1.svg', name: 'Way-Lap', chips: 1030, lastAction: 'Call', betAmount: 120 },
   ];
 
   private readonly cachedBetAmount: WritableSignal<number> = signal(120);
@@ -56,6 +72,10 @@ export class MinPokerGameComponent {
     this.seatFormGroup = this.createSeatFormGroup();
   }
 
+  public get seatAvatar(): FormControl {
+    return this.seatFormGroup.get('avatar') as FormControl<string>;
+  }
+
   public get seatName(): FormControl {
     return this.seatFormGroup.get('name') as FormControl<string>;
   }
@@ -65,13 +85,18 @@ export class MinPokerGameComponent {
     this.selectedSeatIndex.set(-1);
   }
 
+  public getAvatarPath(avatarFileName: string): string {
+    return `assets/svgs/minpoker/avatars/${avatarFileName}`;
+  }
+
   public onBetChange(value: number): void {
     this.cachedBetAmount.set(value);
   }
 
   public onCall(): void {}
 
-  public onFold(): void {}
+  public onFold(): void {
+  }
 
   public onRaise(): void {}
 
@@ -94,6 +119,7 @@ export class MinPokerGameComponent {
     }
 
     this.opponents[this.selectedSeatIndex()] = {
+      avatar: this.seatAvatar.value,
       chips: DEFAULT_SEAT_CHIPS,
       lastAction: 'Sitzt',
       name: playerName,
@@ -108,10 +134,29 @@ export class MinPokerGameComponent {
 
   private createSeatFormGroup(): FormGroup {
     return this.formBuilder.group({
+      avatar: ['', [Validators.required]],
       name: ['', [Validators.maxLength(16), Validators.required]],
     });
   }
+
+  private getAvatarLabel(avatarFileName: string): string {
+    return avatarFileName
+      .replace('.svg', '')
+      .split('-')
+      .map((value) => value.charAt(0).toUpperCase() + value.slice(1))
+      .join(' ');
+  }
 }
 
+const AVATAR_FILE_NAMES: readonly string[] = [
+  'man-1.svg',
+  'man-2.svg',
+  'man-3.svg',
+  'man-4.svg',
+  'woman-1.svg',
+  'woman-2.svg',
+  'woman-3.svg',
+  'woman-4.svg',
+  'woman-5.svg',
+];
 const DEFAULT_SEAT_CHIPS = 1000;
-const MIN_BET = 40;

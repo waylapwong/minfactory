@@ -64,11 +64,12 @@ describe('MinPokerGameComponent', () => {
   it('should seat player on empty position', () => {
     component.openSeatDialog(4);
     component.seatName.setValue('Chris');
+    component.seatAvatar.setValue('man-5.svg');
 
     component.seatGame();
 
     expect(component.opponents[4]).toEqual(
-      jasmine.objectContaining({ name: 'Chris', chips: 1000, lastAction: 'Sitzt' }),
+      jasmine.objectContaining({ name: 'Chris', avatar: 'man-5.svg', chips: 1000, lastAction: 'Sitzt' }),
     );
     expect(component.isSeatDialogOpen()).toBe(false);
   });
@@ -96,29 +97,8 @@ describe('MinPokerGameComponent', () => {
   });
 
   it('should update betAmount on onBetChange', () => {
-    const event = { target: { value: '300' } } as unknown as Event;
-    component.onBetChange(event);
+    component.onBetChange(300);
     expect(component.betAmount()).toBe(300);
-  });
-
-  it('should set betAmount to min on onSetBet min', () => {
-    component.onSetBet('min');
-    expect(component.betAmount()).toBe(40);
-  });
-
-  it('should set betAmount to half pot on onSetBet half-pot', () => {
-    component.onSetBet('half-pot');
-    expect(component.betAmount()).toBe(120);
-  });
-
-  it('should set betAmount to pot on onSetBet pot', () => {
-    component.onSetBet('pot');
-    expect(component.betAmount()).toBe(240);
-  });
-
-  it('should set betAmount to all-in on onSetBet all-in', () => {
-    component.onSetBet('all-in');
-    expect(component.betAmount()).toBe(1560);
   });
 
   it('should call navigateToMinPoker on onFold', () => {
