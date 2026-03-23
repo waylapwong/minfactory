@@ -20,7 +20,6 @@
     transition:
       box-shadow 0.15s ease,
       transform 0.15s ease;
-
     &:active {
       box-shadow: none;
       transform: translateY(1px);
@@ -35,8 +34,18 @@
     height: 24px;
     border-radius: 6px;
     border: 4px solid black;
-    background: white;
+    background: #ffdf20;
     cursor: pointer;
+    transition:
+      box-shadow 0.15s ease,
+      transform 0.15s ease;
+    &:active {
+      box-shadow: none;
+      transform: translateY(1px);
+    }
+    &:hover {
+      background: #efb100;
+    }
   }
 
   &::-moz-range-track {

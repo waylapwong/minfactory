@@ -22,7 +22,7 @@ export class ButtonComponent {
     return computed(() => {
       const baseClass: string =
         'w-full cursor-pointer rounded-lg border-4 border-black px-2 py-1 text-center font-bold shadow-2xl ' +
-        'transform transition-all duration-300 ' +
+        'transform transition-all duration-100 ' +
         'active:translate-y-0.5 active:shadow-none ' +
         'disabled:cursor-not-allowed disabled:bg-gray-300 disabled:opacity-50 disabled:shadow-none disabled:hover:bg-gray-300 disabled:active:translate-0 ';
       switch (this.color()) {
