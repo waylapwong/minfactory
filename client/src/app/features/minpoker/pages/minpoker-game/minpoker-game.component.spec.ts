@@ -100,4 +100,56 @@ describe('MinPokerGameComponent', () => {
     component.onBetChange(300);
     expect(component.betAmount()).toBe(300);
   });
+
+  describe('heroBetAmount', () => {
+    it('should have heroBetAmount signal', () => {
+      expect(component.heroBetAmount()).toBe(120);
+    });
+
+    it('should update heroBetAmount when betAmount changes', () => {
+      component.onBetChange(250);
+      expect(component.heroBetAmount()).toBe(250);
+    });
+  });
+
+  describe('active player display', () => {
+    it('should have opponent with isActive flag', () => {
+      expect(component.opponents[2]).toEqual(jasmine.objectContaining({ isActive: true, name: 'Noah' }));
+    });
+
+    it('should have dealer button role for an opponent', () => {
+      expect(component.opponents[0]).toEqual(jasmine.objectContaining({ role: 'D', name: 'Alex' }));
+    });
+  });
+
+  describe('Leave Game Dialog', () => {
+    it('should initialize with isLeaveDialogOpen closed', () => {
+      expect(component.isLeaveDialogOpen()).toBe(false);
+    });
+
+    it('should open leave dialog on openLeaveDialog()', () => {
+      component.openLeaveDialog();
+      expect(component.isLeaveDialogOpen()).toBe(true);
+    });
+
+    it('should close leave dialog on closeLeaveDialog()', () => {
+      component.isLeaveDialogOpen.set(true);
+      component.closeLeaveDialog();
+      expect(component.isLeaveDialogOpen()).toBe(false);
+    });
+
+    it('should navigate to minpoker and close dialog on confirmLeaveGame()', () => {
+      component.isLeaveDialogOpen.set(true);
+      component.confirmLeaveGame();
+      expect(component.isLeaveDialogOpen()).toBe(false);
+      expect(ROUTING_SERVICE_MOCK.navigateToMinPoker).toHaveBeenCalled();
+    });
+
+    it('should prevent default on beforeunload event', () => {
+      const event = new Event('beforeunload') as BeforeUnloadEvent;
+      spyOn(event, 'preventDefault');
+      component.onBeforeUnload(event);
+      expect(event.preventDefault).toHaveBeenCalled();
+    });
+  });
 });
