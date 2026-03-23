@@ -1,4 +1,4 @@
-import { Component, ElementRef, HostListener, InputSignal, WritableSignal, inject, input, signal } from '@angular/core';
+import { Component, ElementRef, HostListener, InputSignal, WritableSignal, input, signal } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 
 export interface SelectOption {
@@ -22,7 +22,7 @@ export class SelectComponent {
   public placeholder: InputSignal<string> = input('');
   public readonly isOpen: WritableSignal<boolean> = signal(false);
 
-  private readonly elementRef: ElementRef<HTMLElement> = inject(ElementRef<HTMLElement>);
+  constructor(private readonly elementRef: ElementRef<HTMLElement>) {}
 
   public get selectedOption(): SelectOption | null {
     const value: string = this.formControlInput().value;
