@@ -15,6 +15,7 @@
       [step]="step()"
       [value]="value()"
       (input)="onInput($event)"
+      [attr.aria-label]="label() || 'Slider'"
     />
     @if (maxLabel()) {
       <span class="min-w-fit text-xs font-bold">{{ maxLabel() }}</span>
