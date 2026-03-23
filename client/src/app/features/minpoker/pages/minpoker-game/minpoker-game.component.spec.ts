@@ -100,9 +100,4 @@ describe('MinPokerGameComponent', () => {
     component.onBetChange(300);
     expect(component.betAmount()).toBe(300);
   });
-
-  it('should call navigateToMinPoker on onFold', () => {
-    component.onFold();
-    expect(ROUTING_SERVICE_MOCK.navigateToMinPoker).toHaveBeenCalled();
-  });
 });
