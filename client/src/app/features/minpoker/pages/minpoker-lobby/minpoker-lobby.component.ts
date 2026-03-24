@@ -11,10 +11,11 @@ import { MinPokerLobbyViewModel } from '../../models/viewmodels/minpoker-lobby.v
 @Component({
   selector: 'min-minpoker-lobby',
   templateUrl: './minpoker-lobby.component.html',
-  styles: [],
+  styleUrls: ['./minpoker-lobby.component.scss'],
   imports: [CardButtonComponent, H2Component, H1Component, ButtonComponent, DatePipe],
 })
 export class MinPokerLobbyComponent {
   public readonly Color: typeof Color = Color;
+
   public games: Signal<MinPokerLobbyViewModel[]> = signal(MINPOKER_LOBBY_MOCK_GAMES);
 }
