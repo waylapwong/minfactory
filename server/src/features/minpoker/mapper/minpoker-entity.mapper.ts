@@ -7,10 +7,11 @@ export class MinPokerEntityMapper {
 
     domain.bigBlind = entity.bigBlind;
     domain.createdAt = entity.createdAt;
+    domain.creatorId = entity.creator?.id ?? '';
     domain.id = entity.id;
     domain.name = entity.name;
     domain.smallBlind = entity.smallBlind;
-    domain.creatorId = entity.creator && entity.creator.id ? entity.creator.id : '';
+    domain.tableSize = entity.tableSize;
 
     return domain;
   }

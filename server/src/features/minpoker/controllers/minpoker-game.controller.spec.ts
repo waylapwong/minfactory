@@ -1,5 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { MinPokerCreateGameDto } from '../models/dtos/minpoker-create-game.dto';
+import { MinPokerGameDto } from '../models/dtos/minpoker-game.dto';
 import { MinPokerGameController } from './minpoker-game.controller';
 import { AuthenticationGuard } from 'src/core/authentication/guards/authentication.guard';
 import { AuthenticationService } from 'src/core/authentication/services/authentication.service';
@@ -11,12 +12,12 @@ import { MinPokerGameService } from 'src/features/minpoker/services/minpoker-gam
 describe('MinPokerGameController', () => {
   let controller: MinPokerGameController;
 
-  const mockGames = [
+  const mockGames: MinPokerGameDto[] = [
     {
       bigBlind: 2,
       createdAt: new Date('2026-03-24T18:45:30.000Z'),
       id: '550e8400-e29b-41d4-a716-446655440000',
-      maxPlayerCount: 6,
+      tableSize: 6,
       name: 'Evening Table',
       observerCount: 2,
       playerCount: 4,
@@ -26,7 +27,7 @@ describe('MinPokerGameController', () => {
       bigBlind: 2,
       createdAt: new Date('2026-03-24T19:10:00.000Z'),
       id: '660e8400-e29b-41d4-a716-446655440000',
-      maxPlayerCount: 6,
+      tableSize: 6,
       name: 'Turbo Sit and Go',
       observerCount: 1,
       playerCount: 3,
@@ -72,11 +73,11 @@ describe('MinPokerGameController', () => {
       expect(result[0]).toMatchObject({
         bigBlind: 2,
         id: '550e8400-e29b-41d4-a716-446655440000',
-        maxPlayerCount: 6,
         name: 'Evening Table',
         observerCount: 2,
         playerCount: 4,
         smallBlind: 1,
+        tableSize: 6,
       });
       expect(MINPOKER_GAME_SERVICE_MOCK.getAllGames).toHaveBeenCalledWith(fakeUser);
     });

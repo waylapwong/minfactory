@@ -9,13 +9,12 @@ export class MinPokerDomainMapper {
 
     dto.bigBlind = domain.bigBlind;
     dto.createdAt = domain.createdAt;
-    dto.creatorId = domain.creatorId;
     dto.id = domain.id;
     dto.name = domain.name;
     dto.observerCount = 0;
     dto.playerCount = domain.players ? domain.players.filter((p) => p && p.id !== '').length : 0;
     dto.smallBlind = domain.smallBlind;
-    dto.tableSize = 6;
+    dto.tableSize = domain.tableSize;
 
     return dto;
   }

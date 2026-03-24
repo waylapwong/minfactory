@@ -74,7 +74,10 @@ export class MinPokerLobbyComponent implements OnInit {
 
   private createFormGroup(): FormGroup {
     return new FormGroup({
-      name: new FormControl('', [Validators.maxLength(32), Validators.minLength(2), Validators.required]),
+      name: new FormControl('', {
+        nonNullable: true,
+        validators: [Validators.maxLength(32), Validators.minLength(2), Validators.required],
+      }),
     });
   }
 

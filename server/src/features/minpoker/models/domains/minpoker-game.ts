@@ -7,7 +7,6 @@ export class MinPokerGame {
   public id: string = '';
   public name: string = '';
   public players: MinPokerPlayer[] = [];
-  public private;
   public smallBlind: number = 1;
   public tableSize: number = 6;
 
