@@ -4,12 +4,14 @@ README.md
 api.module.ts
 api/api.ts
 api/min-factory-api.service.ts
+api/min-poker-api.service.ts
 api/min-rps-api.service.ts
 configuration.ts
 encoder.ts
 git_push.sh
 index.ts
 model/min-factory-user-dto.ts
+model/min-poker-game-dto.ts
 model/min-rps-create-game-dto.ts
 model/min-rps-game-dto.ts
 model/min-rps-move.ts

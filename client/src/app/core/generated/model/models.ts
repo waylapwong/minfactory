@@ -1,4 +1,5 @@
 export * from './min-factory-user-dto';
+export * from './min-poker-game-dto';
 export * from './min-rps-create-game-dto';
 export * from './min-rps-game-dto';
 export * from './min-rps-move';
