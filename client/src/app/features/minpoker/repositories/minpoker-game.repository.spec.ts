@@ -9,7 +9,7 @@ describe('MinPokerGameRepository', () => {
   let repository: MinPokerGameRepository;
 
   beforeEach(() => {
-    MINPOKER_API_SERVICE_MOCK.getAllMinPokerGamesForUser.calls.reset();
+    MINPOKER_API_SERVICE_MOCK.getAllMinPokerGames.calls.reset();
 
     TestBed.configureTestingModule({
       providers: [
@@ -51,12 +51,12 @@ describe('MinPokerGameRepository', () => {
         },
       ];
 
-      MINPOKER_API_SERVICE_MOCK.getAllMinPokerGamesForUser.and.returnValue(of(mockDtos) as any);
+      MINPOKER_API_SERVICE_MOCK.getAllMinPokerGames.and.returnValue(of(mockDtos) as any);
 
       const result = await repository.getAll();
 
       expect(result).toEqual(mockDtos);
-      expect(MINPOKER_API_SERVICE_MOCK.getAllMinPokerGamesForUser).toHaveBeenCalled();
+      expect(MINPOKER_API_SERVICE_MOCK.getAllMinPokerGames).toHaveBeenCalled();
     });
   });
 });

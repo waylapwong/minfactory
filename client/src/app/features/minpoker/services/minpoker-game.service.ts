@@ -10,20 +10,22 @@ import { MinPokerGameRepository } from '../repositories/minpoker-game.repository
   providedIn: 'root',
 })
 export class MinPokerGameService {
-  private readonly cachedGames: WritableSignal<MinPokerGame[]> = signal([]);
+  private readonly cachedPokerGames: WritableSignal<MinPokerGame[]> = signal([]);
 
-  public games: Signal<MinPokerLobbyViewModel[]> = computed(() =>
-    this.cachedGames().map(MinPokerDomainMapper.domainToLobbyViewModel),
+  public lobbyViewModels: Signal<MinPokerLobbyViewModel[]> = computed(() =>
+    this.cachedPokerGames().map(MinPokerDomainMapper.domainToLobbyViewModel),
   );
 
   constructor(private readonly gameRepository: MinPokerGameRepository) {}
 
-  public async refreshGames(): Promise<void> {
+  public async loadGames(): Promise<void> {
+    // Get DTOs
     const dtos: MinPokerGameDto[] = await this.gameRepository.getAll();
+    // Map to Domains and sort by Date
     const domains: MinPokerGame[] = dtos
       .map(MinPokerDtoMapper.gameDtoToDomain)
       .sort((a: MinPokerGame, b: MinPokerGame) => b.createdAt.getTime() - a.createdAt.getTime());
-
-    this.cachedGames.set(domains);
+    // Cache Domains
+    this.cachedPokerGames.set(domains);
   }
 }

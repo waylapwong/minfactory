@@ -9,6 +9,6 @@ export class MinPokerGameRepository {
   constructor(private readonly apiService: MinPokerApiService) {}
 
   public async getAll(): Promise<MinPokerGameDto[]> {
-    return await firstValueFrom(this.apiService.getAllMinPokerGamesForUser());
+    return await firstValueFrom(this.apiService.getAllMinPokerGames());
   }
 }

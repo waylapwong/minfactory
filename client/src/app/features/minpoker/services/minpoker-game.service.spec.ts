@@ -26,7 +26,7 @@ describe('MinPokerGameService', () => {
     expect(service).toBeTruthy();
   });
 
-  describe('refreshGames()', () => {
+  describe('loadGames()', () => {
     it('should refresh and map games from repository', async () => {
       const mockDtos: MinPokerGameDto[] = [
         {
@@ -53,14 +53,14 @@ describe('MinPokerGameService', () => {
 
       MINPOKER_GAME_REPOSITORY_MOCK.getAll.and.returnValue(Promise.resolve(mockDtos));
 
-      await service.refreshGames();
+      await service.loadGames();
 
       expect(MINPOKER_GAME_REPOSITORY_MOCK.getAll).toHaveBeenCalled();
-      expect(service.games().length).toBe(2);
-      expect(service.games()[0].id).toBe('id-2');
-      expect(service.games()[1].id).toBe('id-1');
-      expect(service.games()[0].smallBlind).toBe(25);
-      expect(service.games()[0].bigBlind).toBe(50);
+      expect(service.lobbyViewModels().length).toBe(2);
+      expect(service.lobbyViewModels()[0].id).toBe('id-2');
+      expect(service.lobbyViewModels()[1].id).toBe('id-1');
+      expect(service.lobbyViewModels()[0].smallBlind).toBe(25);
+      expect(service.lobbyViewModels()[0].bigBlind).toBe(50);
     });
   });
 });

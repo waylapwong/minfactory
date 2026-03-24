@@ -13,7 +13,7 @@ export class MinPokerGameController {
   @Get()
   @HttpCode(200)
   @UseGuards(AuthenticationGuard)
-  @ApiOperation({ operationId: 'getAllMinPokerGamesForUser' })
+  @ApiOperation({ operationId: 'getAllMinPokerGames' })
   @API_200({ isArray: true, type: MinPokerGameDto })
   @API_401()
   @API_500()

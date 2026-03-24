@@ -3,7 +3,7 @@
   "paths": {
     "/minpoker/games": {
       "get": {
-        "operationId": "getAllMinPokerGamesForUser",
+        "operationId": "getAllMinPokerGames",
         "parameters": [],
         "responses": {
           "200": {

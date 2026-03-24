@@ -24,10 +24,10 @@ export class MinPokerLobbyComponent implements OnInit {
     public readonly routingService: RoutingService,
     private readonly gameService: MinPokerGameService,
   ) {
-    this.games = this.gameService.games;
+    this.games = this.gameService.lobbyViewModels;
   }
 
   public ngOnInit(): void {
-    this.gameService.refreshGames();
+    this.gameService.loadGames();
   }
 }
