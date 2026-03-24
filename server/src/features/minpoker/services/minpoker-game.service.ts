@@ -37,9 +37,10 @@ export class MinPokerGameService {
     await this.gameRepository.delete(id);
   }
 
-  public async getAllGames(creatorId: string): Promise<MinPokerGameDto[]> {
+  public async getAllGames(firebaseUser: FirebaseUserDto): Promise<MinPokerGameDto[]> {
+    const userEntity: MinFactoryUserEntity = await this.userRepository.findByFirebaseUid(firebaseUser.firebaseUid);
     // Find all Entities for creator
-    const entities: MinPokerGameEntity[] = await this.gameRepository.findAllByCreator(creatorId);
+    const entities: MinPokerGameEntity[] = await this.gameRepository.findAllByCreator(userEntity.id);
     // Map to DTOs
     const domains: MinPokerGame[] = entities.map(MinPokerEntityMapper.entityToDomain);
     const dtos: MinPokerGameDto[] = domains.map(MinPokerDomainMapper.domainToDto);

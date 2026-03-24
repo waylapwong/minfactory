@@ -15,6 +15,7 @@ describe('MinPokerLobbyComponent', () => {
   beforeEach(async () => {
     MINPOKER_GAME_SERVICE_MOCK.loadGames.calls.reset();
     MINPOKER_GAME_SERVICE_MOCK.createGame.calls.reset();
+    MINPOKER_GAME_SERVICE_MOCK.createGame.and.resolveTo();
     resolveLoadGames = null;
     MINPOKER_GAME_SERVICE_MOCK.loadGames.and.callFake(
       () =>
@@ -120,5 +121,32 @@ describe('MinPokerLobbyComponent', () => {
       expect(component.isError()).toBeTrue();
       expect(component.errorMessage()).toBe('Create failed');
     });
+
+    it('should show fallback error when createGame rejects with non-error', async () => {
+      component.openNewGameDialog();
+      fixture.detectChanges();
+
+      component.newGameName.setValue('Valid Name');
+      MINPOKER_GAME_SERVICE_MOCK.createGame.and.rejectWith('unexpected');
+
+      await component.createGame();
+
+      expect(component.isError()).toBeTrue();
+      expect(component.errorMessage()).toBe('Spiel konnte nicht erstellt werden.');
+    });
+  });
+
+  it('should show fallback error state when loading games fails with non-error', async () => {
+    resolveLoadGames?.();
+    await fixture.whenStable();
+
+    MINPOKER_GAME_SERVICE_MOCK.loadGames.and.rejectWith('unexpected');
+
+    component.reloadGames();
+    await fixture.whenStable();
+
+    expect(component.isLoading()).toBeFalse();
+    expect(component.isError()).toBeTrue();
+    expect(component.errorMessage()).toBe('Spiele konnten nicht geladen werden. Bitte versuche es erneut.');
   });
 });

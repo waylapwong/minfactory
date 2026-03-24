@@ -53,11 +53,6 @@ export class MinFactoryUserService {
     }
   }
 
-  public async findEntityByFirebaseUid(user: FirebaseUserDto): Promise<MinFactoryUserEntity> {
-    const { firebaseUid } = user;
-    return await this.userRepository.findByFirebaseUid(firebaseUid);
-  }
-
   public async getMe(user: FirebaseUserDto): Promise<MinFactoryUserDto> {
     const { firebaseUid } = user;
     const entity: MinFactoryUserEntity = await this.userRepository.findByFirebaseUid(firebaseUid);

@@ -86,5 +86,39 @@ describe('MinPokerGameService', () => {
       expect(service.lobbyViewModels().length).toBe(1);
       expect(service.lobbyViewModels()[0].id).toBe('new-id');
     });
+
+    it('should sort created game against already cached games', async () => {
+      MINPOKER_GAME_REPOSITORY_MOCK.getAll.and.returnValue(
+        Promise.resolve([
+          {
+            bigBlind: 20,
+            createdAt: new Date('2026-01-01T18:00:00.000Z').toISOString(),
+            id: 'older-id',
+            tableSize: 6,
+            name: 'Older Game',
+            observerCount: 0,
+            playerCount: 2,
+            smallBlind: 10,
+          },
+        ]),
+      );
+      MINPOKER_GAME_REPOSITORY_MOCK.create.and.returnValue(
+        Promise.resolve({
+          bigBlind: 50,
+          createdAt: new Date('2026-01-02T18:00:00.000Z').toISOString(),
+          id: 'newer-id',
+          tableSize: 6,
+          name: 'Newer Game',
+          observerCount: 0,
+          playerCount: 1,
+          smallBlind: 25,
+        }),
+      );
+
+      await service.loadGames();
+      await service.createGame('Newer Game');
+
+      expect(service.lobbyViewModels().map((game) => game.id)).toEqual(['newer-id', 'older-id']);
+    });
   });
 });

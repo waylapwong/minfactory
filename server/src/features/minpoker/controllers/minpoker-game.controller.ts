@@ -6,7 +6,6 @@ import { MinPokerGameService } from '../services/minpoker-game.service';
 import { FirebaseUser } from 'src/core/authentication/decorators/firebase-user.decorator';
 import { AuthenticationGuard } from 'src/core/authentication/guards/authentication.guard';
 import type { FirebaseUserDto } from 'src/core/authentication/models/firebase-user.dto';
-import { MinFactoryUserService } from 'src/features/minfactory/services/minfactory-user.service';
 import { API_200 } from 'src/shared/decorators/api-200.decorator';
 import { API_201 } from 'src/shared/decorators/api-201.decorator';
 import { API_400 } from 'src/shared/decorators/api-400.decorator';
@@ -17,10 +16,7 @@ import { MinApp } from 'src/shared/enums/minapp.enum';
 @Controller('minpoker/games')
 @ApiTags(MinApp.MinPoker)
 export class MinPokerGameController {
-  constructor(
-    private readonly gameService: MinPokerGameService,
-    private readonly userService: MinFactoryUserService,
-  ) {}
+  constructor(private readonly gameService: MinPokerGameService) {}
 
   @Get()
   @HttpCode(200)
@@ -30,8 +26,7 @@ export class MinPokerGameController {
   @API_401()
   @API_500()
   public async getAll(@FirebaseUser() firebaseUser: FirebaseUserDto): Promise<MinPokerGameDto[]> {
-    const userEntity = await this.userService.findEntityByFirebaseUid(firebaseUser);
-    return await this.gameService.getAllGames(userEntity.id);
+    return await this.gameService.getAllGames(firebaseUser);
   }
 
   @Post()
