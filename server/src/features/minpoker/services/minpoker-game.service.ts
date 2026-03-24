@@ -38,8 +38,8 @@ export class MinPokerGameService {
   }
 
   public async getAllGames(firebaseUser: FirebaseUserDto): Promise<MinPokerGameDto[]> {
-    const userEntity: MinFactoryUserEntity = await this.userRepository.findByFirebaseUid(firebaseUser.firebaseUid);
     // Find all Entities for creator
+    const userEntity: MinFactoryUserEntity = await this.userRepository.findByFirebaseUid(firebaseUser.firebaseUid);
     const entities: MinPokerGameEntity[] = await this.gameRepository.findAllByCreator(userEntity.id);
     // Map to DTOs
     const domains: MinPokerGame[] = entities.map(MinPokerEntityMapper.entityToDomain);
