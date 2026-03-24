@@ -18,7 +18,6 @@ export class MinPokerGameController {
   @API_401()
   @API_500()
   public getAll(): MinPokerGameDto[] {
-    // TODO: In einer späteren Iteration den authenticated @User verwenden und nur eigene Games zurückgeben.
     return [
       {
         bigBlind: 2,

@@ -1,0 +1,23 @@
+import { MinPokerPlayer } from './minpoker-player';
+
+export class MinPokerGame {
+  public bigBlind: number = 2;
+  public createdAt: Date = new Date(0);
+  public id: string = '';
+  public name: string = '';
+  public players: MinPokerPlayer[] = [
+    new MinPokerPlayer(),
+    new MinPokerPlayer(),
+    new MinPokerPlayer(),
+    new MinPokerPlayer(),
+    new MinPokerPlayer(),
+    new MinPokerPlayer(),
+  ];
+  public smallBlind: number = 1;
+
+  constructor(init?: Partial<MinPokerGame>) {
+    if (init) {
+      Object.assign(this, init);
+    }
+  }
+}
