@@ -53,7 +53,10 @@ describe('MinPokerGameRepository', () => {
       const result = await repository.findAll();
 
       expect(result).toBe(entities);
-      expect(MINPOKER_GAME_TYPEORM_REPOSITORY_MOCK.find).toHaveBeenCalledWith({ order: { createdAt: 'DESC' } });
+      expect(MINPOKER_GAME_TYPEORM_REPOSITORY_MOCK.find).toHaveBeenCalledWith({
+        relations: ['creator'],
+        order: { createdAt: 'DESC' },
+      });
     });
   });
 

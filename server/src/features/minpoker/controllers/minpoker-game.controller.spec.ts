@@ -7,6 +7,7 @@ import { AUTHENTICATION_GUARD_MOCK } from 'src/core/mocks/authentication.guard.m
 import { AUTHENTICATION_SERVICE_MOCK } from 'src/core/mocks/authentication.service.mock';
 import { MINPOKER_GAME_SERVICE_MOCK } from 'src/features/minpoker/mocks/minpoker-game.service.mock';
 import { MinPokerGameService } from 'src/features/minpoker/services/minpoker-game.service';
+import { MinFactoryUserService } from 'src/features/minfactory/services/minfactory-user.service';
 
 describe('MinPokerGameController', () => {
   let controller: MinPokerGameController;
@@ -36,7 +37,7 @@ describe('MinPokerGameController', () => {
 
   beforeEach(() => {
     MINPOKER_GAME_SERVICE_MOCK.getAllGames.mockResolvedValue(mockGames);
-    MINPOKER_GAME_SERVICE_MOCK.createGame.mockImplementation((dto: MinPokerCreateGameDto) =>
+    MINPOKER_GAME_SERVICE_MOCK.createGame.mockImplementation((dto: MinPokerCreateGameDto, creatorId: string) =>
       Promise.resolve({
         ...mockGames[0],
         id: 'new-id',
@@ -47,12 +48,17 @@ describe('MinPokerGameController', () => {
   });
 
   beforeEach(async () => {
+    const MINFACTORY_USER_SERVICE_MOCK = {
+      findEntityByFirebaseUid: jest.fn().mockResolvedValue({ id: 'creator-1' }),
+    };
+
     const module: TestingModule = await Test.createTestingModule({
       controllers: [MinPokerGameController],
       providers: [
         { provide: AuthenticationGuard, useValue: AUTHENTICATION_GUARD_MOCK },
         { provide: AuthenticationService, useValue: AUTHENTICATION_SERVICE_MOCK },
         { provide: MinPokerGameService, useValue: MINPOKER_GAME_SERVICE_MOCK },
+        { provide: MinFactoryUserService, useValue: MINFACTORY_USER_SERVICE_MOCK },
       ],
     }).compile();
 
@@ -65,7 +71,8 @@ describe('MinPokerGameController', () => {
 
   describe('getAll()', () => {
     it('should return mock game dtos', async () => {
-      const result = await controller.getAll();
+      const fakeUser = { firebaseUid: 'fb-1', email: 'u@e.com' } as any;
+      const result = await controller.getAll(fakeUser);
 
       expect(result).toHaveLength(2);
       expect(result[0]).toMatchObject({
@@ -77,7 +84,7 @@ describe('MinPokerGameController', () => {
         playerCount: 4,
         smallBlind: 1,
       });
-      expect(MINPOKER_GAME_SERVICE_MOCK.getAllGames).toHaveBeenCalled();
+      expect(MINPOKER_GAME_SERVICE_MOCK.getAllGames).toHaveBeenCalledWith('creator-1');
     });
   });
 
@@ -85,10 +92,11 @@ describe('MinPokerGameController', () => {
     it('should create a new game via service and return dto', async () => {
       const dto: MinPokerCreateGameDto = { name: 'New Table' } as MinPokerCreateGameDto;
 
-      const result = await controller.create(dto);
+      const fakeUser = { firebaseUid: 'fb-1', email: 'u@e.com' } as any;
+      const result = await controller.create(fakeUser, dto);
 
       expect(result).toMatchObject({ name: 'New Table', id: 'new-id' });
-      expect(MINPOKER_GAME_SERVICE_MOCK.createGame).toHaveBeenCalledWith(dto);
+      expect(MINPOKER_GAME_SERVICE_MOCK.createGame).toHaveBeenCalledWith(dto, 'creator-1');
     });
   });
 });

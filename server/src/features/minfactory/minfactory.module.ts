@@ -10,5 +10,6 @@ import { MinFactoryUserService } from './services/minfactory-user.service';
   imports: [TypeOrmModule.forFeature([MinFactoryUserEntity])],
   controllers: [MinFactoryController, MinFactoryUserController],
   providers: [MinFactoryUserService, MinFactoryUserRepository],
+  exports: [MinFactoryUserService],
 })
 export class MinFactoryModule {}

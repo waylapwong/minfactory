@@ -13,7 +13,15 @@ export class MinPokerGameRepository {
   }
 
   public async findAll(): Promise<MinPokerGameEntity[]> {
-    return await this.repository.find({ order: { createdAt: 'DESC' } });
+    return await this.repository.find({ relations: ['creator'], order: { createdAt: 'DESC' } });
+  }
+
+  public async findAllByCreator(creatorId: string): Promise<MinPokerGameEntity[]> {
+    return await this.repository.find({
+      where: { creator: { id: creatorId } },
+      relations: ['creator'],
+      order: { createdAt: 'DESC' },
+    });
   }
 
   public async findOne(id: string): Promise<MinPokerGameEntity> {

@@ -10,6 +10,7 @@ export class MinPokerEntityMapper {
     domain.id = entity.id;
     domain.name = entity.name;
     domain.smallBlind = entity.smallBlind;
+    domain.creatorId = entity.creator && entity.creator.id ? entity.creator.id : '';
 
     return domain;
   }

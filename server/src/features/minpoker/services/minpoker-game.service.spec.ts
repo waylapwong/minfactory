@@ -38,7 +38,7 @@ describe('MinPokerGameService', () => {
 
       MINPOKER_GAME_REPOSITORY_MOCK.save.mockResolvedValue(savedEntity);
 
-      const result = await service.createGame(createDto);
+      const result = await service.createGame(createDto, 'creator-1');
 
       expect(result).toBeDefined();
       expect(result.name).toBe('Test Poker Table');
@@ -56,13 +56,13 @@ describe('MinPokerGameService', () => {
         Object.assign(new MinPokerGameEntity(), { id: '2', name: 'Table 2', createdAt: new Date() }),
       ];
 
-      MINPOKER_GAME_REPOSITORY_MOCK.findAll.mockResolvedValue(entities);
+      MINPOKER_GAME_REPOSITORY_MOCK.findAllByCreator.mockResolvedValue(entities);
 
-      const result = await service.getAllGames();
+      const result = await service.getAllGames('creator-1');
 
       expect(result).toHaveLength(2);
       expect(result[0].name).toBe('Table 1');
-      expect(MINPOKER_GAME_REPOSITORY_MOCK.findAll).toHaveBeenCalled();
+      expect(MINPOKER_GAME_REPOSITORY_MOCK.findAllByCreator).toHaveBeenCalledWith('creator-1');
     });
   });
 

@@ -3,6 +3,9 @@ import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { MinPokerCreateGameDto } from '../models/dtos/minpoker-create-game.dto';
 import { MinPokerGameDto } from '../models/dtos/minpoker-game.dto';
 import { MinPokerGameService } from '../services/minpoker-game.service';
+import { User } from 'src/core/authentication/decorators/authenticated-user.decorator';
+import type { FirebaseUserDto } from 'src/core/authentication/models/firebase-user.dto';
+import { MinFactoryUserService } from 'src/features/minfactory/services/minfactory-user.service';
 import { AuthenticationGuard } from 'src/core/authentication/guards/authentication.guard';
 import { API_200 } from 'src/shared/decorators/api-200.decorator';
 import { API_201 } from 'src/shared/decorators/api-201.decorator';
@@ -14,7 +17,10 @@ import { MinApp } from 'src/shared/enums/minapp.enum';
 @Controller('minpoker/games')
 @ApiTags(MinApp.MinPoker)
 export class MinPokerGameController {
-  constructor(private readonly gameService: MinPokerGameService) {}
+  constructor(
+    private readonly gameService: MinPokerGameService,
+    private readonly userService: MinFactoryUserService,
+  ) {}
 
   @Get()
   @HttpCode(200)
@@ -23,8 +29,9 @@ export class MinPokerGameController {
   @API_200({ isArray: true, type: MinPokerGameDto })
   @API_401()
   @API_500()
-  public async getAll(): Promise<MinPokerGameDto[]> {
-    return await this.gameService.getAllGames();
+  public async getAll(@User() user: FirebaseUserDto): Promise<MinPokerGameDto[]> {
+    const userEntity = await this.userService.findEntityByFirebaseUid(user);
+    return await this.gameService.getAllGames(userEntity.id);
   }
 
   @Post()
@@ -35,7 +42,8 @@ export class MinPokerGameController {
   @API_400()
   @API_401()
   @API_500()
-  public async create(@Body() dto: MinPokerCreateGameDto): Promise<MinPokerGameDto> {
-    return await this.gameService.createGame(dto);
+  public async create(@User() user: FirebaseUserDto, @Body() dto: MinPokerCreateGameDto): Promise<MinPokerGameDto> {
+    const userEntity = await this.userService.findEntityByFirebaseUid(user);
+    return await this.gameService.createGame(dto, userEntity.id);
   }
 }

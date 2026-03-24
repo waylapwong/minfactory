@@ -12,6 +12,11 @@ import { FirebaseUserDto } from 'src/core/authentication/models/firebase-user.dt
 export class MinFactoryUserService {
   constructor(private readonly userRepository: MinFactoryUserRepository) {}
 
+  public async findEntityByFirebaseUid(user: FirebaseUserDto): Promise<MinFactoryUserEntity> {
+    const { firebaseUid } = user;
+    return await this.userRepository.findByFirebaseUid(firebaseUid);
+  }
+
   public async createUser(user: FirebaseUserDto): Promise<MinFactoryUserDto> {
     const { firebaseUid, email } = user;
     const existingUserByFirebaseUid: MinFactoryUserEntity | null = await this.findByFirebaseUidOrNull(firebaseUid);

@@ -5,6 +5,7 @@ export class MinPokerGame {
   public createdAt: Date = new Date(0);
   public id: string = '';
   public name: string = '';
+  public creatorId: string = '';
   public players: MinPokerPlayer[] = [];
   public private;
   public smallBlind: number = 1;

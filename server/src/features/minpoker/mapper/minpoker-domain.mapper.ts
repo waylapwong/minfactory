@@ -1,6 +1,7 @@
 import { MinPokerGame } from '../models/domains/minpoker-game';
 import { MinPokerGameDto } from '../models/dtos/minpoker-game.dto';
 import { MinPokerGameEntity } from '../models/entities/minpoker-game.entity';
+import { MinFactoryUserEntity } from 'src/features/minfactory/models/entities/minfactory-user.entity';
 
 export class MinPokerDomainMapper {
   public static domainToDto(domain: MinPokerGame): MinPokerGameDto {
@@ -10,6 +11,7 @@ export class MinPokerDomainMapper {
     dto.createdAt = domain.createdAt;
     dto.id = domain.id;
     dto.name = domain.name;
+    dto.creatorId = domain.creatorId;
     dto.observerCount = 0;
     dto.playerCount = domain.players ? domain.players.filter((p) => p && p.id !== '').length : 0;
     dto.smallBlind = domain.smallBlind;
@@ -31,6 +33,11 @@ export class MinPokerDomainMapper {
     entity.name = domain.name;
     entity.smallBlind = domain.smallBlind;
     entity.tableSize = domain.tableSize;
+    if (domain.creatorId && domain.creatorId !== '') {
+      const creator: MinFactoryUserEntity = new MinFactoryUserEntity();
+      creator.id = domain.creatorId;
+      entity.creator = creator;
+    }
 
     return entity;
   }
