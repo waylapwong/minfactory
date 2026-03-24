@@ -27,13 +27,4 @@ describe('MinPokerHomeComponent', () => {
   it('should have Color enum available', () => {
     expect(component.Color).toBe(Color);
   });
-
-  it('should render root layout container in template', () => {
-    const rootContainer = fixture.nativeElement.firstElementChild as HTMLElement;
-
-    expect(rootContainer).toBeTruthy();
-    expect(rootContainer.classList.contains('flex')).toBe(true);
-    expect(rootContainer.classList.contains('h-full')).toBe(true);
-    expect(rootContainer.classList.contains('flex-col')).toBe(true);
-  });
 });

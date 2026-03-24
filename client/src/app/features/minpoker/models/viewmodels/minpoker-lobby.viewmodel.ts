@@ -1,6 +1,5 @@
 export class MinPokerLobbyViewModel {
   public bigBlind!: number;
-  public buyIn!: number;
   public createdAt!: Date;
   public id!: string;
   public maxPlayerCount!: number;
