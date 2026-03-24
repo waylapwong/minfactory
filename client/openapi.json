@@ -28,6 +28,43 @@
         },
         "summary": "",
         "tags": ["minPoker"]
+      },
+      "post": {
+        "operationId": "createMinPokerGame",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MinPokerCreateGameDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MinPokerGameDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "summary": "",
+        "tags": ["minPoker"]
       }
     },
     "/minrps/games/{id}": {
@@ -290,12 +327,6 @@
             "example": "550e8400-e29b-41d4-a716-446655440000",
             "format": "uuid"
           },
-          "maxPlayerCount": {
-            "type": "number",
-            "example": 6,
-            "minimum": 6,
-            "maximum": 6
-          },
           "name": {
             "type": "string",
             "example": "Test Name",
@@ -318,18 +349,27 @@
             "example": 1,
             "minimum": 1,
             "maximum": 1
+          },
+          "tableSize": {
+            "type": "number",
+            "example": 6,
+            "minimum": 6,
+            "maximum": 6
           }
         },
-        "required": [
-          "bigBlind",
-          "createdAt",
-          "id",
-          "maxPlayerCount",
-          "name",
-          "observerCount",
-          "playerCount",
-          "smallBlind"
-        ]
+        "required": ["bigBlind", "createdAt", "id", "name", "observerCount", "playerCount", "smallBlind", "tableSize"]
+      },
+      "MinPokerCreateGameDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "Test Name",
+            "maxLength": 32,
+            "minLength": 2
+          }
+        },
+        "required": ["name"]
       },
       "MinRpsGameDto": {
         "type": "object",

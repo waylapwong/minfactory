@@ -11,14 +11,7 @@
  */
 
 
-export interface MinPokerGameDto { 
-    bigBlind: number;
-    createdAt: string;
-    id: string;
+export interface MinPokerCreateGameDto { 
     name: string;
-    observerCount: number;
-    playerCount: number;
-    smallBlind: number;
-    tableSize: number;
 }
 

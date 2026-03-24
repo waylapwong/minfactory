@@ -7,7 +7,7 @@ export class MinPokerGameDto {
   public createdAt: Date;
   @ApiProperty({ example: '550e8400-e29b-41d4-a716-446655440000', format: 'uuid' })
   public id: string;
-  @ApiProperty({ example: 'Test Name', maxLength: 16, minLength: 2 })
+  @ApiProperty({ example: 'Test Name', maxLength: 32, minLength: 2 })
   public name: string;
   @ApiProperty({ example: 10, minimum: 0 })
   public observerCount: number;
