@@ -25,7 +25,10 @@ export class MinPokerGameRepository {
   }
 
   public async findOne(id: string): Promise<MinPokerGameEntity> {
-    const entity: MinPokerGameEntity | null = await this.repository.findOne({ where: { id } });
+    const entity: MinPokerGameEntity | null = await this.repository.findOne({
+      where: { id },
+      relations: ['creator'],
+    });
     if (!entity) {
       throw new NotFoundException(`minPoker game with ID ${id} not found`);
     }

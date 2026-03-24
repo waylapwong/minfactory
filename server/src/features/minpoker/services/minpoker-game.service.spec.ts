@@ -82,12 +82,46 @@ describe('MinPokerGameService', () => {
   });
 
   describe('deleteGame()', () => {
-    it('should delete a game by id', async () => {
+    it('should delete a game by id when user is the creator', async () => {
+      const firebaseUser = { firebaseUid: 'fb-creator-1' } as any;
+      const userEntity = { id: 'creator-1' };
+      const gameEntity = Object.assign(new MinPokerGameEntity(), {
+        id: 'game-id',
+        name: 'Test Table',
+        creator: userEntity,
+      });
+
+      MINFACTORY_USER_REPOSITORY_MOCK.findByFirebaseUid.mockResolvedValue(userEntity);
+      MINPOKER_GAME_REPOSITORY_MOCK.findOne.mockResolvedValue(gameEntity);
       MINPOKER_GAME_REPOSITORY_MOCK.delete.mockResolvedValue(undefined);
 
-      await service.deleteGame('some-id');
+      await service.deleteGame('game-id', firebaseUser);
 
-      expect(MINPOKER_GAME_REPOSITORY_MOCK.delete).toHaveBeenCalledWith('some-id');
+      expect(MINFACTORY_USER_REPOSITORY_MOCK.findByFirebaseUid).toHaveBeenCalledWith('fb-creator-1');
+      expect(MINPOKER_GAME_REPOSITORY_MOCK.findOne).toHaveBeenCalledWith('game-id');
+      expect(MINPOKER_GAME_REPOSITORY_MOCK.delete).toHaveBeenCalledWith('game-id');
+    });
+
+    it('should throw ForbiddenException when user is not the creator', async () => {
+      const firebaseUser = { firebaseUid: 'fb-user-2' } as any;
+      const userEntity = { id: 'user-2' };
+      const creatorEntity = { id: 'creator-1' };
+      const gameEntity = Object.assign(new MinPokerGameEntity(), {
+        id: 'game-id',
+        name: 'Test Table',
+        creator: creatorEntity,
+      });
+
+      MINFACTORY_USER_REPOSITORY_MOCK.findByFirebaseUid.mockResolvedValue(userEntity);
+      MINPOKER_GAME_REPOSITORY_MOCK.findOne.mockResolvedValue(gameEntity);
+
+      await expect(service.deleteGame('game-id', firebaseUser)).rejects.toThrow(
+        'You are not authorized to delete this game',
+      );
+
+      expect(MINFACTORY_USER_REPOSITORY_MOCK.findByFirebaseUid).toHaveBeenCalledWith('fb-user-2');
+      expect(MINPOKER_GAME_REPOSITORY_MOCK.findOne).toHaveBeenCalledWith('game-id');
+      expect(MINPOKER_GAME_REPOSITORY_MOCK.delete).not.toHaveBeenCalled();
     });
   });
 });

@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { ForbiddenException, Injectable } from '@nestjs/common';
 import { MinPokerDomainMapper } from '../mapper/minpoker-domain.mapper';
 import { MinPokerDtoMapper } from '../mapper/minpoker-dto.mapper';
 import { MinPokerEntityMapper } from '../mapper/minpoker-entity.mapper';
@@ -33,7 +33,15 @@ export class MinPokerGameService {
     return savedDto;
   }
 
-  public async deleteGame(id: string): Promise<void> {
+  public async deleteGame(id: string, firebaseUser: FirebaseUserDto): Promise<void> {
+    // Find User ID
+    const userEntity: MinFactoryUserEntity = await this.userRepository.findByFirebaseUid(firebaseUser.firebaseUid);
+    // Find Game and verify ownership
+    const gameEntity: MinPokerGameEntity = await this.gameRepository.findOne(id);
+    if (gameEntity.creator.id !== userEntity.id) {
+      throw new ForbiddenException('You are not authorized to delete this game');
+    }
+    // Delete Game
     await this.gameRepository.delete(id);
   }
 
