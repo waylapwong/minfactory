@@ -71,7 +71,10 @@ describe('MinPokerGameRepository', () => {
       const result = await repository.findOne('test-id');
 
       expect(result).toBe(entity);
-      expect(MINPOKER_GAME_TYPEORM_REPOSITORY_MOCK.findOne).toHaveBeenCalledWith({ where: { id: 'test-id' } });
+      expect(MINPOKER_GAME_TYPEORM_REPOSITORY_MOCK.findOne).toHaveBeenCalledWith({
+        where: { id: 'test-id' },
+        relations: ['creator'],
+      });
     });
 
     it('should throw NotFoundException when entity not found', async () => {
@@ -94,7 +97,10 @@ describe('MinPokerGameRepository', () => {
 
       await repository.delete('test-id');
 
-      expect(MINPOKER_GAME_TYPEORM_REPOSITORY_MOCK.findOne).toHaveBeenCalledWith({ where: { id: 'test-id' } });
+      expect(MINPOKER_GAME_TYPEORM_REPOSITORY_MOCK.findOne).toHaveBeenCalledWith({
+        where: { id: 'test-id' },
+        relations: ['creator'],
+      });
       expect(MINPOKER_GAME_TYPEORM_REPOSITORY_MOCK.delete).toHaveBeenCalledWith({ id: 'test-id' });
     });
 

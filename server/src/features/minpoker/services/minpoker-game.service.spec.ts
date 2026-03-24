@@ -115,7 +115,9 @@ describe('MinPokerGameService', () => {
       MINFACTORY_USER_REPOSITORY_MOCK.findByFirebaseUid.mockResolvedValue(userEntity);
       MINPOKER_GAME_REPOSITORY_MOCK.findOne.mockResolvedValue(gameEntity);
 
-      await expect(service.deleteGame('game-id', firebaseUser)).rejects.toThrow('You are not authorized to delete this game');
+      await expect(service.deleteGame('game-id', firebaseUser)).rejects.toThrow(
+        'You are not authorized to delete this game',
+      );
 
       expect(MINFACTORY_USER_REPOSITORY_MOCK.findByFirebaseUid).toHaveBeenCalledWith('fb-user-2');
       expect(MINPOKER_GAME_REPOSITORY_MOCK.findOne).toHaveBeenCalledWith('game-id');
