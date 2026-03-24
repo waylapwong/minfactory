@@ -1,5 +1,5 @@
 import { DatePipe } from '@angular/common';
-import { Component, OnInit, Signal } from '@angular/core';
+import { Component, OnInit, Signal, WritableSignal, signal } from '@angular/core';
 import { RoutingService } from '../../../../core/routing/routing.service';
 import { ButtonComponent } from '../../../../shared/components/button/button.component';
 import { CardButtonComponent } from '../../../../shared/components/card-button/card-button.component';
@@ -17,6 +17,9 @@ import { MinPokerGameService } from '../../services/minpoker-game.service';
 })
 export class MinPokerLobbyComponent implements OnInit {
   public readonly Color: typeof Color = Color;
+  public readonly errorMessage: WritableSignal<string> = signal('');
+  public readonly isError: WritableSignal<boolean> = signal(false);
+  public readonly isLoading: WritableSignal<boolean> = signal(true);
 
   public games: Signal<MinPokerLobbyViewModel[]>;
 
@@ -28,6 +31,27 @@ export class MinPokerLobbyComponent implements OnInit {
   }
 
   public ngOnInit(): void {
-    this.gameService.loadGames();
+    this.reloadGames();
+  }
+
+  public reloadGames(): void {
+    void this.loadLobbyGames();
+  }
+
+  private async loadLobbyGames(): Promise<void> {
+    this.isLoading.set(true);
+    this.isError.set(false);
+    this.errorMessage.set('');
+
+    try {
+      await this.gameService.loadGames();
+    } catch (error) {
+      this.isError.set(true);
+      this.errorMessage.set(
+        error instanceof Error ? error.message : 'Spiele konnten nicht geladen werden. Bitte versuche es erneut.',
+      );
+    } finally {
+      this.isLoading.set(false);
+    }
   }
 }

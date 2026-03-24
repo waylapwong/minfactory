@@ -10,9 +10,17 @@ import { MinPokerLobbyComponent } from './minpoker-lobby.component';
 describe('MinPokerLobbyComponent', () => {
   let component: MinPokerLobbyComponent;
   let fixture: ComponentFixture<MinPokerLobbyComponent>;
+  let resolveLoadGames: (() => void) | null;
 
   beforeEach(async () => {
     MINPOKER_GAME_SERVICE_MOCK.loadGames.calls.reset();
+    resolveLoadGames = null;
+    MINPOKER_GAME_SERVICE_MOCK.loadGames.and.callFake(
+      () =>
+        new Promise<void>((resolve: () => void) => {
+          resolveLoadGames = resolve;
+        }),
+    );
 
     await TestBed.configureTestingModule({
       imports: [MinPokerLobbyComponent],
@@ -42,5 +50,31 @@ describe('MinPokerLobbyComponent', () => {
 
   it('should call refreshGames on init', () => {
     expect(MINPOKER_GAME_SERVICE_MOCK.loadGames).toHaveBeenCalled();
+  });
+
+  it('should expose loading state while games are loading', () => {
+    expect(component.isLoading()).toBeTrue();
+  });
+
+  it('should disable loading state after games loaded', async () => {
+    resolveLoadGames?.();
+
+    await fixture.whenStable();
+
+    expect(component.isLoading()).toBeFalse();
+  });
+
+  it('should expose error state when games loading fails', async () => {
+    resolveLoadGames?.();
+    await fixture.whenStable();
+
+    MINPOKER_GAME_SERVICE_MOCK.loadGames.and.rejectWith(new Error('Server down'));
+
+    component.reloadGames();
+    await fixture.whenStable();
+
+    expect(component.isLoading()).toBeFalse();
+    expect(component.isError()).toBeTrue();
+    expect(component.errorMessage()).toBe('Server down');
   });
 });

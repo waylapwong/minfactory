@@ -15,31 +15,62 @@
 
   <!-- GAMES -->
   <div class="flex flex-col gap-2">
-    @for (game of games(); track $index) {
-      <min-card-button>
-        <div class="flex flex-row items-start justify-between">
-          <min-h2 class="grow text-left break-all">{{ game.name }}</min-h2>
-          <min-button [color]="Color.Red">
-            <img src="assets/svgs/minfactory/ui/close.svg" alt="Spiel löschen" class="h-4 w-4" />
-          </min-button>
-        </div>
-        <div class="flex flex-row gap-2 text-left text-sm text-gray-500">
-          <img src="assets/svgs/minpoker/player.svg" alt="Spieler" class="h-5 w-5" />
-          {{ game.playerCount }}/{{ game.maxPlayerCount }}
-        </div>
-        <div class="flex flex-row gap-2 text-left text-sm text-gray-500">
-          <img src="assets/svgs/minpoker/observer.svg" alt="Beobachter" class="h-5 w-5" />
-          {{ game.observerCount }}
-        </div>
-        <div class="flex flex-row gap-2 text-left text-sm text-gray-500">
-          <img src="assets/svgs/minpoker/blinds.svg" alt="Blinds" class="h-5 w-5" />
-          {{ game.smallBlind }} / {{ game.bigBlind }}
-        </div>
-        <div class="flex flex-row gap-2 text-left text-sm text-gray-500">
-          <img src="assets/svgs/minpoker/calendar.svg" alt="Datum" class="h-5 w-5" />
-          {{ game.createdAt | date: 'd. MMMM yyyy' }}, {{ game.createdAt | date: 'HH:mm' }} Uhr
-        </div>
-      </min-card-button>
+    @if (isLoading()) {
+      <output aria-busy="true" class="flex flex-col gap-2" aria-live="polite">
+        @for (item of [1, 2, 3]; track $index) {
+          <div class="flex flex-col gap-4 rounded-lg border border-4 border-gray-500 bg-white p-2">
+            <div class="flex flex-row justify-between">
+              <div class="h-8 w-44 animate-pulse rounded-lg bg-gray-300"></div>
+              <div class="h-8 w-10 animate-pulse rounded-lg bg-gray-300"></div>
+            </div>
+            <div class="flex flex-col gap-1">
+              <div class="h-5 w-12 animate-pulse rounded-lg bg-gray-300"></div>
+              <div class="h-5 w-8 animate-pulse rounded-lg bg-gray-300"></div>
+              <div class="h-5 w-16 animate-pulse rounded-lg bg-gray-300"></div>
+              <div class="h-5 w-24 animate-pulse rounded-lg bg-gray-300"></div>
+            </div>
+          </div>
+        }
+      </output>
+    } @else if (isError()) {
+      <div class="rounded-lg border-4 border-red-300 bg-red-100 p-2 text-sm text-red-500" aria-live="polite">
+        <p class="font-bold">Fehler</p>
+        <p>{{ errorMessage() }}</p>
+      </div>
+      <div class="flex flex-row justify-center">
+        <min-button [color]="Color.Gray" (clicked)="reloadGames()">
+          <img src="assets/svgs/minfactory/ui/refresh.svg" alt="Spiel löschen" class="h-4 w-4" />
+        </min-button>
+      </div>
+    } @else {
+      @for (game of games(); track $index) {
+        <min-card-button>
+          <div class="flex flex-row justify-between">
+            <min-h2 class="grow text-left break-all">{{ game.name }}</min-h2>
+            <min-button [color]="Color.Red">
+              <img src="assets/svgs/minfactory/ui/close.svg" alt="Spiel löschen" class="h-4 w-4" />
+            </min-button>
+          </div>
+          <div class="flex flex-col gap-1">
+            <div class="flex flex-row gap-2 text-left text-sm text-gray-500">
+              <img src="assets/svgs/minpoker/player.svg" alt="Spieler" class="h-5 w-5" />
+              {{ game.playerCount }}/{{ game.maxPlayerCount }}
+            </div>
+            <div class="flex flex-row gap-2 text-left text-sm text-gray-500">
+              <img src="assets/svgs/minpoker/observer.svg" alt="Beobachter" class="h-5 w-5" />
+              {{ game.observerCount }}
+            </div>
+            <div class="flex flex-row gap-2 text-left text-sm text-gray-500">
+              <img src="assets/svgs/minpoker/blinds.svg" alt="Blinds" class="h-5 w-5" />
+              {{ game.smallBlind }} / {{ game.bigBlind }}
+            </div>
+            <div class="flex flex-row gap-2 text-left text-sm text-gray-500">
+              <img src="assets/svgs/minpoker/calendar.svg" alt="Datum" class="h-5 w-5" />
+              {{ game.createdAt | date: 'd. MMMM yyyy' }}, {{ game.createdAt | date: 'HH:mm' }} Uhr
+            </div>
+          </div>
+        </min-card-button>
+      }
     }
   </div>
 </div>

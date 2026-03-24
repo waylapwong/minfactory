@@ -4,7 +4,7 @@ import { MinPokerLobbyViewModel } from '../models/viewmodels/minpoker-lobby.view
 const gamesSignal = signal<MinPokerLobbyViewModel[]>([]);
 
 export const MINPOKER_GAME_SERVICE_MOCK = {
-  loadGames: jasmine.createSpy('loadGames'),
+  loadGames: jasmine.createSpy('loadGames').and.resolveTo(),
   lobbyViewModels: gamesSignal.asReadonly(),
   games: gamesSignal.asReadonly(),
 };
