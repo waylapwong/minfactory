@@ -1,6 +1,5 @@
 @BASE_PATH = http://localhost:3000/minrps
 @GAMES = games
-@HEALTH = health
 @ID = f534f71c-d81b-43b1-b963-073cab444708
 @PLAY = play
 @VERSION = version
@@ -39,13 +38,3 @@ Content-Type: application/json
 {
   "player1Move": "rock"
 }
-
-
-### GET /health
-GET {{BASE_PATH}}/{{HEALTH}}
-Accept: application/json
-
-
-### GET /version
-GET {{BASE_PATH}}/{{VERSION}}
-Accept: application/json

@@ -22,8 +22,12 @@ export class MinPokerDomainMapper {
     const entity: MinPokerGameEntity = new MinPokerGameEntity();
 
     entity.bigBlind = domain.bigBlind;
-    entity.createdAt = domain.createdAt;
-    entity.id = domain.id;
+    if (domain.createdAt.getTime() !== new Date(0).getTime()) {
+      entity.createdAt = domain.createdAt;
+    }
+    if (domain.id !== '') {
+      entity.id = domain.id;
+    }
     entity.name = domain.name;
     entity.smallBlind = domain.smallBlind;
     entity.tableSize = domain.tableSize;

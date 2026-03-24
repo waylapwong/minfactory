@@ -1,4 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { MINPOKER_GAME_REPOSITORY_MOCK } from '../mocks/minpoker-game.repository.mock';
 import { MinPokerCreateGameDto } from '../models/dtos/minpoker-create-game.dto';
 import { MinPokerGameEntity } from '../models/entities/minpoker-game.entity';
 import { MinPokerGameRepository } from '../repositories/minpoker-game.repository';
@@ -7,18 +8,10 @@ import { MinPokerGameService } from './minpoker-game.service';
 describe('MinPokerGameService', () => {
   let service: MinPokerGameService;
 
-  const MINPOKER_GAME_REPOSITORY_MOCK = {
-    save: jest.fn(),
-    findAll: jest.fn(),
-    findOne: jest.fn(),
-    delete: jest.fn(),
-  };
-
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [MinPokerGameService, { provide: MinPokerGameRepository, useValue: MINPOKER_GAME_REPOSITORY_MOCK }],
     }).compile();
-
     service = module.get<MinPokerGameService>(MinPokerGameService);
   });
 

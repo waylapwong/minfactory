@@ -5,6 +5,7 @@ import { AuthenticationGuard } from 'src/core/authentication/guards/authenticati
 import { AuthenticationService } from 'src/core/authentication/services/authentication.service';
 import { AUTHENTICATION_GUARD_MOCK } from 'src/core/mocks/authentication.guard.mock';
 import { AUTHENTICATION_SERVICE_MOCK } from 'src/core/mocks/authentication.service.mock';
+import { MINPOKER_GAME_SERVICE_MOCK } from 'src/features/minpoker/mocks/minpoker-game.service.mock';
 import { MinPokerGameService } from 'src/features/minpoker/services/minpoker-game.service';
 
 describe('MinPokerGameController', () => {
@@ -33,17 +34,17 @@ describe('MinPokerGameController', () => {
     },
   ];
 
-  const MINPOKER_GAME_SERVICE_MOCK = {
-    getAllGames: jest.fn().mockResolvedValue(mockGames),
-    createGame: jest.fn().mockImplementation((dto: MinPokerCreateGameDto) =>
+  beforeEach(() => {
+    MINPOKER_GAME_SERVICE_MOCK.getAllGames.mockResolvedValue(mockGames);
+    MINPOKER_GAME_SERVICE_MOCK.createGame.mockImplementation((dto: MinPokerCreateGameDto) =>
       Promise.resolve({
         ...mockGames[0],
         id: 'new-id',
         name: dto.name,
         createdAt: new Date(),
       }),
-    ),
-  };
+    );
+  });
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
