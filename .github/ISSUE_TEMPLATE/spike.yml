@@ -1,6 +1,6 @@
 name: Spike
 description: Spike Ticket
-title: "[Spike] "
+title: "[Spike]"
 
 body:
   - type: textarea

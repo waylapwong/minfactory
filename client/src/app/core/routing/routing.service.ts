@@ -31,6 +31,10 @@ export class RoutingService {
     this.router.navigate([AppPath.MinPoker]);
   }
 
+  public navigateToMinPokerLobby(): void {
+    this.router.navigate([AppPath.MinPoker, MinPokerPath.Lobby]);
+  }
+
   public navigateToMinPokerGame(): void {
     this.router.navigate([AppPath.MinPoker, MinPokerPath.Game]);
   }

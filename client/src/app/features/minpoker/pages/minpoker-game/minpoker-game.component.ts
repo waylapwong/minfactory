@@ -10,7 +10,7 @@ import { LogoComponent } from '../../../../shared/components/logo/logo.component
 import { SelectComponent, SelectOption } from '../../../../shared/components/select/select.component';
 import { SliderComponent } from '../../../../shared/components/slider/slider.component';
 import { Color } from '../../../../shared/enums/color.enum';
-import { CanLeaveGame } from '../../guards/leave-game.guard';
+import { CanLeaveGame } from '../../../../shared/guards/leave-game.guard';
 
 interface Opponent {
   avatar: string;

@@ -11,6 +11,7 @@ import { Color } from '../../../../shared/enums/color.enum';
   selector: 'minpoker-home',
   templateUrl: './minpoker-home.component.html',
   styleUrls: ['./minpoker-home.component.scss'],
+  host: { class: 'block h-full w-full' },
   imports: [ButtonComponent, CardButtonComponent, H2Component, LogoComponent, H1Component],
 })
 export class MinPokerHomeComponent {

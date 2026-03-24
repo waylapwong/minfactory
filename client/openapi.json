@@ -1,6 +1,35 @@
 {
   "openapi": "3.0.0",
   "paths": {
+    "/minpoker/games": {
+      "get": {
+        "operationId": "getAllMinPokerGames",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/MinPokerGameDto"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "summary": "",
+        "tags": ["minPoker"]
+      }
+    },
     "/minrps/games/{id}": {
       "delete": {
         "operationId": "deleteMinRpsGame",
@@ -242,6 +271,66 @@
   "servers": [],
   "components": {
     "schemas": {
+      "MinPokerGameDto": {
+        "type": "object",
+        "properties": {
+          "bigBlind": {
+            "type": "number",
+            "example": 2,
+            "minimum": 2,
+            "maximum": 2
+          },
+          "createdAt": {
+            "format": "date-time",
+            "type": "string",
+            "example": "2026-03-24T18:45:30.000Z"
+          },
+          "id": {
+            "type": "string",
+            "example": "550e8400-e29b-41d4-a716-446655440000",
+            "format": "uuid"
+          },
+          "maxPlayerCount": {
+            "type": "number",
+            "example": 6,
+            "minimum": 6,
+            "maximum": 6
+          },
+          "name": {
+            "type": "string",
+            "example": "Test Name",
+            "maxLength": 32,
+            "minLength": 2
+          },
+          "observerCount": {
+            "type": "number",
+            "example": 10,
+            "minimum": 0
+          },
+          "playerCount": {
+            "type": "number",
+            "example": 3,
+            "minimum": 0,
+            "maximum": 6
+          },
+          "smallBlind": {
+            "type": "number",
+            "example": 1,
+            "minimum": 1,
+            "maximum": 1
+          }
+        },
+        "required": [
+          "bigBlind",
+          "createdAt",
+          "id",
+          "maxPlayerCount",
+          "name",
+          "observerCount",
+          "playerCount",
+          "smallBlind"
+        ]
+      },
       "MinRpsGameDto": {
         "type": "object",
         "properties": {

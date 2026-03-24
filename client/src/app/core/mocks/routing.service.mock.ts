@@ -5,6 +5,7 @@ export const ROUTING_SERVICE_MOCK = {
   navigateToProfile: jasmine.createSpy('navigateToProfile'),
   navigateToRegister: jasmine.createSpy('navigateToRegister'),
   navigateToMinPoker: jasmine.createSpy('navigateToMinPoker'),
+  navigateToMinPokerLobby: jasmine.createSpy('navigateToMinPokerLobby'),
   navigateToMinPokerGame: jasmine.createSpy('navigateToMinPokerGame'),
   navigateToMinRps: jasmine.createSpy('navigateToMinRps'),
   navigateToMinRpsMultiplayer: jasmine.createSpy('navigateToMinRpsMultiplayer'),

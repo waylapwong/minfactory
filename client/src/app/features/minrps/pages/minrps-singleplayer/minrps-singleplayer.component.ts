@@ -6,10 +6,10 @@ import { ButtonComponent } from '../../../../shared/components/button/button.com
 import { DialogComponent } from '../../../../shared/components/dialog/dialog.component';
 import { DividerComponent } from '../../../../shared/components/divider/divider.component';
 import { Color } from '../../../../shared/enums/color.enum';
+import { CanLeaveGame } from '../../../../shared/guards/leave-game.guard';
 import { MinRpsCardComponent } from '../../components/minrps-card/minrps-card.component';
 import { MinRpsMoveComponent } from '../../components/minrps-move/minrps-move.component';
 import { MinRpsResultHistoryComponent } from '../../components/minrps-result-history/minrps-result-history.component';
-import { CanLeaveGame } from '../../guards/leave-game.guard';
 import { MinRpsSingleplayerViewModel } from '../../models/viewmodels/minrps-singleplayer.viewmodel';
 import { MinRpsSingleplayerService } from '../../services/minrps-singleplayer.service';
 

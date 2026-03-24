@@ -28,22 +28,18 @@ export class AuthenticationService {
 
   private getRequiredEnvironmentVariable(name: string): string {
     const value: string | undefined = process.env[name]?.trim();
-
     if (!value) {
       throw new Error(`${name} is not configured`);
     }
-
     return value;
   }
 
   private getRequiredPrivateKey(): string {
     const escapedNewLine: string = String.raw`\n`;
     const privateKey: string | undefined = process.env.FIREBASE_PRIVATE_KEY?.replaceAll(escapedNewLine, '\n');
-
     if (!privateKey) {
       throw new Error('FIREBASE_PRIVATE_KEY is not configured');
     }
-
     return privateKey;
   }
 }
