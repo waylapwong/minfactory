@@ -1,0 +1,55 @@
+<div class="flex h-full flex-col px-4">
+  <!-- TITLE -->
+  <div class="relative flex items-center justify-center">
+    <!-- BACK BUTTON -->
+    <div class="absolute top-0 left-0">
+      <min-button ariaLabel="Zurück" title="Zurück" [color]="Color.White">
+        <img src="assets/svgs/minrps/back.svg" alt="Zurück" class="h-4 w-4" />
+      </min-button>
+    </div>
+    <!-- TITLE -->
+    <min-h1>Lobby</min-h1>
+    <!-- NEW GAME BUTTON -->
+    <div class="absolute top-0 right-0">
+      <min-button ariaLabel="Neues Spiel" title="Neues Spiel" [color]="Color.Blue">
+        <img src="assets/svgs/minpoker/ui/add.svg" alt="Neues Spiel" class="h-4 w-4" />
+      </min-button>
+    </div>
+  </div>
+
+  <!-- GAMES -->
+  @for (game of games(); track $index) {
+    <min-card-button class="mb-2">
+      <div class="flex flex-row items-start justify-between">
+        <min-h2 class="grow break-all text-left">{{ game.name }}</min-h2>
+        <min-button [color]="Color.Red">
+          <img src="assets/svgs/minrps/delete.svg" alt="Spiel löschen" class="h-4 w-4" />
+        </min-button>
+      </div>
+      <div class="flex flex-row items-end gap-2 text-left text-sm text-gray-500">
+        <img src="assets/svgs/minrps/pawn.svg" alt="Spieler" class="h-5 w-5" />
+        {{ game.playerCount }}/{{ game.maxPlayerCount }}
+      </div>
+      <div class="flex flex-row items-end gap-2 text-left text-sm text-gray-500">
+        <img src="assets/svgs/minrps/observer.svg" alt="Beobachter" class="h-5 w-5" />
+        {{ game.observerCount }}
+      </div>
+      <div class="flex flex-row items-end gap-2 text-left text-sm text-gray-500">
+        <span class="inline-flex h-5 w-5 items-center justify-center text-xs font-bold">SB</span>
+        {{ game.smallBlind }} / {{ game.bigBlind }}
+      </div>
+      <div class="flex flex-row items-end gap-2 text-left text-sm text-gray-500">
+        <span class="inline-flex h-5 w-5 items-center justify-center text-xs font-bold">BI</span>
+        {{ game.buyIn }}
+      </div>
+      <div class="flex flex-row items-end gap-2 text-left text-sm text-gray-500">
+        <img src="assets/svgs/minrps/calendar.svg" alt="Datum" class="h-5 w-5" />
+        {{ game.createdAt | date: 'd. MMMM yyyy' }}
+      </div>
+      <div class="flex flex-row items-end gap-2 text-left text-sm text-gray-500">
+        <img src="assets/svgs/minrps/clock.svg" alt="Uhrzeit" class="h-5 w-5" />
+        {{ game.createdAt | date: 'HH:mm' }}
+      </div>
+    </min-card-button>
+  }
+</div>
