@@ -1,5 +1,4 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { MinPokerGame } from '../models/domains/minpoker-game';
 import { MinPokerCreateGameDto } from '../models/dtos/minpoker-create-game.dto';
 import { MinPokerGameEntity } from '../models/entities/minpoker-game.entity';
 import { MinPokerGameRepository } from '../repositories/minpoker-game.repository';
@@ -17,10 +16,7 @@ describe('MinPokerGameService', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [
-        MinPokerGameService,
-        { provide: MinPokerGameRepository, useValue: MINPOKER_GAME_REPOSITORY_MOCK },
-      ],
+      providers: [MinPokerGameService, { provide: MinPokerGameRepository, useValue: MINPOKER_GAME_REPOSITORY_MOCK }],
     }).compile();
 
     service = module.get<MinPokerGameService>(MinPokerGameService);
@@ -45,7 +41,7 @@ describe('MinPokerGameService', () => {
       savedEntity.createdAt = new Date();
       savedEntity.bigBlind = 2;
       savedEntity.smallBlind = 1;
-      savedEntity.maxPlayerCount = 6;
+      savedEntity.tableSize = 6;
 
       MINPOKER_GAME_REPOSITORY_MOCK.save.mockResolvedValue(savedEntity);
 
@@ -54,7 +50,9 @@ describe('MinPokerGameService', () => {
       expect(result).toBeDefined();
       expect(result.name).toBe('Test Poker Table');
       expect(result.id).toBe('poker-id');
-      expect(MINPOKER_GAME_REPOSITORY_MOCK.save).toHaveBeenCalledWith(expect.objectContaining({ name: 'Test Poker Table' }));
+      expect(MINPOKER_GAME_REPOSITORY_MOCK.save).toHaveBeenCalledWith(
+        expect.objectContaining({ name: 'Test Poker Table' }),
+      );
     });
   });
 
