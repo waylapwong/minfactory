@@ -13,6 +13,10 @@ export class MinPokerGameRepository {
     return await firstValueFrom(this.apiService.createMinPokerGame(dto));
   }
 
+  public async delete(id: string): Promise<void> {
+    return await firstValueFrom(this.apiService.deleteMinPokerGame(id));
+  }
+
   public async getAll(): Promise<MinPokerGameDto[]> {
     return await firstValueFrom(this.apiService.getAllMinPokerGames());
   }

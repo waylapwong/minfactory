@@ -26,6 +26,15 @@ export class MinPokerGameService {
     );
   }
 
+  public async deleteGame(id: string): Promise<void> {
+    await this.gameRepository.delete(id);
+    this.cachedPokerGames.update((games: MinPokerGame[]) =>
+      games
+        .filter((game: MinPokerGame) => game.id !== id)
+        .sort((a: MinPokerGame, b: MinPokerGame) => b.createdAt.getTime() - a.createdAt.getTime()),
+    );
+  }
+
   public async loadGames(): Promise<void> {
     // Get DTOs
     const dtos: MinPokerGameDto[] = await this.gameRepository.getAll();

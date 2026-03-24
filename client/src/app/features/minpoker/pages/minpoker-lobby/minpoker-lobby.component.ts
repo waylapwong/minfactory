@@ -33,8 +33,11 @@ export class MinPokerLobbyComponent implements OnInit {
   public readonly isLoading: WritableSignal<boolean> = signal(true);
 
   public games: Signal<MinPokerLobbyViewModel[]>;
+  public isDeleteDialogOpen: WritableSignal<boolean> = signal(false);
   public isNewGameDialogOpen: WritableSignal<boolean> = signal(false);
   public newGameFormGroup: FormGroup = this.createFormGroup();
+
+  private gameIdToDelete: string | null = null;
 
   constructor(
     public readonly routingService: RoutingService,
@@ -51,6 +54,24 @@ export class MinPokerLobbyComponent implements OnInit {
     this.reloadGames();
   }
 
+  public cancelDeleteGame(): void {
+    this.isDeleteDialogOpen.set(false);
+    this.gameIdToDelete = null;
+  }
+
+  public async confirmDeleteGame(): Promise<void> {
+    if (this.gameIdToDelete) {
+      try {
+        await this.gameService.deleteGame(this.gameIdToDelete);
+      } catch (error: unknown) {
+        this.isError.set(true);
+        this.errorMessage.set(error instanceof Error ? error.message : 'Spiel konnte nicht gelöscht werden.');
+      }
+    }
+    this.isDeleteDialogOpen.set(false);
+    this.gameIdToDelete = null;
+  }
+
   public async createGame(): Promise<void> {
     if (this.newGameFormGroup.valid) {
       try {
@@ -61,6 +82,12 @@ export class MinPokerLobbyComponent implements OnInit {
         this.errorMessage.set(error instanceof Error ? error.message : 'Spiel konnte nicht erstellt werden.');
       }
     }
+  }
+
+  public openDeleteDialog(id: string, event: MouseEvent): void {
+    event.stopPropagation();
+    this.gameIdToDelete = id;
+    this.isDeleteDialogOpen.set(true);
   }
 
   public openNewGameDialog(): void {
