@@ -43,7 +43,7 @@ describe('MinPokerGameService', () => {
           bigBlind: 50,
           createdAt: new Date('2026-01-02T18:00:00.000Z').toISOString(),
           id: 'id-2',
-          maxPlayerCount: 9,
+          maxPlayerCount: 6,
           name: 'Game 2',
           observerCount: 1,
           playerCount: 4,

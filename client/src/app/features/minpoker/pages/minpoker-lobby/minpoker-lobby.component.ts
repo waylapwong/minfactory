@@ -13,7 +13,7 @@ import { MinPokerGameService } from '../../services/minpoker-game.service';
   templateUrl: './minpoker-lobby.component.html',
   styleUrls: ['./minpoker-lobby.component.scss'],
   host: { class: 'block h-full w-full' },
-  imports: [CardButtonComponent, H2Component, ButtonComponent, DatePipe, H2Component],
+  imports: [CardButtonComponent, H2Component, ButtonComponent, DatePipe],
 })
 export class MinPokerLobbyComponent implements OnInit {
   public readonly Color: typeof Color = Color;

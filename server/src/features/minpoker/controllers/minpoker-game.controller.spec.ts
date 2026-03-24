@@ -32,7 +32,7 @@ describe('MinPokerGameController', () => {
       expect(result[0]).toMatchObject({
         bigBlind: 2,
         id: '550e8400-e29b-41d4-a716-446655440000',
-        maxPlayerCount: 9,
+        maxPlayerCount: 6,
         name: 'Evening Table',
         observerCount: 2,
         playerCount: 4,
