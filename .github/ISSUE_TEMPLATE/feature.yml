@@ -1,6 +1,6 @@
 name: Feature
 description: Feature Ticket
-title: "[Feature] "
+title: "[Feature]"
 
 body:
   - type: textarea

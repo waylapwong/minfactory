@@ -1,6 +1,6 @@
 name: Task
 description: Task Ticket
-title: "[Task] "
+title: "[Task]"
 
 body:
   - type: textarea

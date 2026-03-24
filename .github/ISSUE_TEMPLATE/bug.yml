@@ -1,6 +1,6 @@
 name: Bug
 description: Bug Ticket
-title: "[Bug] "
+title: "[Bug]"
 
 body:
   - type: textarea
