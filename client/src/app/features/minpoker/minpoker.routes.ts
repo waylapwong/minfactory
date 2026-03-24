@@ -1,5 +1,5 @@
 import { Routes } from '@angular/router';
-import { leaveGameGuard } from './guards/leave-game.guard';
+import { leaveGameGuard } from '../../shared/guards/leave-game.guard';
 
 export enum MinPokerPath {
   Root = '',
