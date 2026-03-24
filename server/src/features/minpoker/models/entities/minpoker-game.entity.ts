@@ -1,4 +1,4 @@
-import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, ManyToOne, JoinColumn } from 'typeorm';
+import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { MinFactoryUserEntity } from 'src/features/minfactory/models/entities/minfactory-user.entity';
 
 @Entity({ name: 'minpoker_games' })
@@ -13,9 +13,9 @@ export class MinPokerGameEntity {
   public tableSize: number;
   @CreateDateColumn()
   public createdAt: Date;
-  @PrimaryGeneratedColumn('uuid')
-  public id: string;
   @ManyToOne(() => MinFactoryUserEntity, { nullable: false })
   @JoinColumn({ name: 'creator_id' })
   public creator: MinFactoryUserEntity;
+  @PrimaryGeneratedColumn('uuid')
+  public id: string;
 }

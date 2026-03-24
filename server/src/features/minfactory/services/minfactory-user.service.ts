@@ -12,11 +12,6 @@ import { FirebaseUserDto } from 'src/core/authentication/models/firebase-user.dt
 export class MinFactoryUserService {
   constructor(private readonly userRepository: MinFactoryUserRepository) {}
 
-  public async findEntityByFirebaseUid(user: FirebaseUserDto): Promise<MinFactoryUserEntity> {
-    const { firebaseUid } = user;
-    return await this.userRepository.findByFirebaseUid(firebaseUid);
-  }
-
   public async createUser(user: FirebaseUserDto): Promise<MinFactoryUserDto> {
     const { firebaseUid, email } = user;
     const existingUserByFirebaseUid: MinFactoryUserEntity | null = await this.findByFirebaseUidOrNull(firebaseUid);
@@ -58,6 +53,11 @@ export class MinFactoryUserService {
     }
   }
 
+  public async findEntityByFirebaseUid(user: FirebaseUserDto): Promise<MinFactoryUserEntity> {
+    const { firebaseUid } = user;
+    return await this.userRepository.findByFirebaseUid(firebaseUid);
+  }
+
   public async getMe(user: FirebaseUserDto): Promise<MinFactoryUserDto> {
     const { firebaseUid } = user;
     const entity: MinFactoryUserEntity = await this.userRepository.findByFirebaseUid(firebaseUid);
@@ -69,6 +69,30 @@ export class MinFactoryUserService {
     const savedDomain: MinFactoryUser = MinFactoryUserEntityMapper.entityToDomain(entity);
 
     return MinFactoryUserDomainMapper.domainToDto(savedDomain);
+  }
+
+  private async findByEmailOrNull(email: string): Promise<MinFactoryUserEntity | null> {
+    try {
+      return await this.userRepository.findByEmail(email);
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        return null;
+      }
+
+      throw error;
+    }
+  }
+
+  private async findByFirebaseUidOrNull(firebaseUid: string): Promise<MinFactoryUserEntity | null> {
+    try {
+      return await this.userRepository.findByFirebaseUid(firebaseUid);
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        return null;
+      }
+
+      throw error;
+    }
   }
 
   private isDuplicateUserError(error: unknown): boolean {
@@ -84,29 +108,5 @@ export class MinFactoryUserService {
     };
 
     return driverError.driverError?.code === 'ER_DUP_ENTRY' || driverError.driverError?.errno === 1062;
-  }
-
-  private async findByFirebaseUidOrNull(firebaseUid: string): Promise<MinFactoryUserEntity | null> {
-    try {
-      return await this.userRepository.findByFirebaseUid(firebaseUid);
-    } catch (error) {
-      if (error instanceof NotFoundException) {
-        return null;
-      }
-
-      throw error;
-    }
-  }
-
-  private async findByEmailOrNull(email: string): Promise<MinFactoryUserEntity | null> {
-    try {
-      return await this.userRepository.findByEmail(email);
-    } catch (error) {
-      if (error instanceof NotFoundException) {
-        return null;
-      }
-
-      throw error;
-    }
   }
 }

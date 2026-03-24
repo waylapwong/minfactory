@@ -9,9 +9,9 @@ export class MinPokerDomainMapper {
 
     dto.bigBlind = domain.bigBlind;
     dto.createdAt = domain.createdAt;
+    dto.creatorId = domain.creatorId;
     dto.id = domain.id;
     dto.name = domain.name;
-    dto.creatorId = domain.creatorId;
     dto.observerCount = 0;
     dto.playerCount = domain.players ? domain.players.filter((p) => p && p.id !== '').length : 0;
     dto.smallBlind = domain.smallBlind;
@@ -27,17 +27,17 @@ export class MinPokerDomainMapper {
     if (domain.createdAt.getTime() !== new Date(0).getTime()) {
       entity.createdAt = domain.createdAt;
     }
+    if (domain.creatorId && domain.creatorId !== '') {
+      const creator: MinFactoryUserEntity = new MinFactoryUserEntity();
+      creator.id = domain.creatorId;
+      entity.creator = creator;
+    }
     if (domain.id !== '') {
       entity.id = domain.id;
     }
     entity.name = domain.name;
     entity.smallBlind = domain.smallBlind;
     entity.tableSize = domain.tableSize;
-    if (domain.creatorId && domain.creatorId !== '') {
-      const creator: MinFactoryUserEntity = new MinFactoryUserEntity();
-      creator.id = domain.creatorId;
-      entity.creator = creator;
-    }
 
     return entity;
   }

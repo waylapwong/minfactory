@@ -7,15 +7,23 @@ import { MinPokerCreateGameDto } from '../models/dtos/minpoker-create-game.dto';
 import { MinPokerGameDto } from '../models/dtos/minpoker-game.dto';
 import { MinPokerGameEntity } from '../models/entities/minpoker-game.entity';
 import { MinPokerGameRepository } from '../repositories/minpoker-game.repository';
+import { FirebaseUserDto } from 'src/core/authentication/models/firebase-user.dto';
+import { MinFactoryUserEntity } from 'src/features/minfactory/models/entities/minfactory-user.entity';
+import { MinFactoryUserRepository } from 'src/features/minfactory/repositories/minfactory-user.repository';
 
 @Injectable()
 export class MinPokerGameService {
-  constructor(private readonly gameRepository: MinPokerGameRepository) {}
+  constructor(
+    private readonly gameRepository: MinPokerGameRepository,
+    private readonly userRepository: MinFactoryUserRepository,
+  ) {}
 
-  public async createGame(dto: MinPokerCreateGameDto, creatorId: string): Promise<MinPokerGameDto> {
+  public async createGame(dto: MinPokerCreateGameDto, firebaseUser: FirebaseUserDto): Promise<MinPokerGameDto> {
+    // Find User ID
+    const userEntity: MinFactoryUserEntity = await this.userRepository.findByFirebaseUid(firebaseUser.firebaseUid);
     // Map to Entity
     const domain: MinPokerGame = MinPokerDtoMapper.createDtoToDomain(dto);
-    domain.creatorId = creatorId;
+    domain.creatorId = userEntity.id;
     const entity: MinPokerGameEntity = MinPokerDomainMapper.domainToEntity(domain);
     // Save to DB
     const savedEntity: MinPokerGameEntity = await this.gameRepository.save(entity);
