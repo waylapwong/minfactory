@@ -1,4 +1,5 @@
 import { Routes } from '@angular/router';
+import { authenticationGuard } from './core/guards/authentication.guard';
 import { featureFlagGuard } from './core/guards/feature-flag.guard';
 import { AppName } from './shared/enums/app-name.enum';
 
@@ -19,7 +20,7 @@ export const APP_ROUTES: Routes = [
   {
     path: AppPath.MinPoker,
     title: AppName.MinPoker,
-    canActivate: [featureFlagGuard],
+    canActivate: [featureFlagGuard, authenticationGuard],
     data: { feature: 'minpoker' },
     loadChildren: () => import('./features/minpoker/minpoker.routes').then((m) => m.MINPOKER_ROUTES),
     loadComponent: () => import('./features/minpoker/minpoker.component').then((m) => m.MinPokerComponent),
