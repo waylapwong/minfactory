@@ -11,6 +11,8 @@ import {
 })
 export class AuthenticationService {
   private readonly cachedCurrentUser: WritableSignal<FirebaseUser | null> = signal(null);
+  private readonly authStateInitialized: Promise<void>;
+  private resolveAuthStateInitialized?: () => void;
 
   public currentUser: Signal<FirebaseUser | null> = computed(() => this.cachedCurrentUser());
   public isAuthenticated: Signal<boolean> = computed(() => this.currentUser() !== null);
@@ -19,13 +21,22 @@ export class AuthenticationService {
     private readonly firebaseAuth: FirebaseAuth,
     private readonly destroyRef: DestroyRef,
   ) {
+    this.authStateInitialized = new Promise<void>((resolve: () => void) => {
+      this.resolveAuthStateInitialized = resolve;
+    });
+
     const unsubscribe = this.firebaseAuth.onAuthStateChanged((user: FirebaseUser | null) => {
       this.cachedCurrentUser.set(user);
+      this.resolveAuthStateInitialized?.();
+      this.resolveAuthStateInitialized = undefined;
     });
+
     this.destroyRef.onDestroy(unsubscribe);
   }
 
   public async getIdToken(forceRefresh: boolean = false): Promise<string | null> {
+    await this.authStateInitialized;
+
     const currentUser: FirebaseUser | null = this.firebaseAuth.currentUser ?? this.currentUser();
 
     if (!currentUser) {

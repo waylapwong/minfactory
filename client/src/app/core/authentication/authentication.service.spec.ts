@@ -38,12 +38,15 @@ describe('AuthenticationService', () => {
   });
 
   it('should return null when no current user exists', async () => {
+    FIREBASE_AUTH_MOCK.emitAuthStateChanged(null);
+
     await expectAsync(service.getIdToken()).toBeResolvedTo(null);
   });
 
   it('should return the firebase id token of the current user', async () => {
     const getIdToken = jasmine.createSpy('getIdToken').and.resolveTo('firebase-token');
     FIREBASE_AUTH_MOCK.currentUser = { getIdToken } as unknown as FirebaseUser;
+    FIREBASE_AUTH_MOCK.emitAuthStateChanged(FIREBASE_AUTH_MOCK.currentUser);
 
     await expectAsync(service.getIdToken(true)).toBeResolvedTo('firebase-token');
     expect(getIdToken).toHaveBeenCalledOnceWith(true);
