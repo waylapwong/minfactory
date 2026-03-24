@@ -7,4 +7,5 @@ export const MINPOKER_GAME_SERVICE_MOCK = {
   loadGames: jasmine.createSpy('loadGames').and.resolveTo(),
   lobbyViewModels: gamesSignal.asReadonly(),
   games: gamesSignal.asReadonly(),
+  createGame: jasmine.createSpy('createGame').and.resolveTo(),
 };

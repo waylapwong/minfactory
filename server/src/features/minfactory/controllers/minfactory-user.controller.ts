@@ -2,7 +2,7 @@ import { Controller, Get, HttpCode, Post, UseGuards } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { MinFactoryUserDto } from '../models/dtos/minfactory-user.dto';
 import { MinFactoryUserService } from '../services/minfactory-user.service';
-import { User } from 'src/core/authentication/decorators/authenticated-user.decorator';
+import { FirebaseUser } from 'src/core/authentication/decorators/firebase-user.decorator';
 import { AuthenticationGuard } from 'src/core/authentication/guards/authentication.guard';
 import type { FirebaseUserDto } from 'src/core/authentication/models/firebase-user.dto';
 import { API_200 } from 'src/shared/decorators/api-200.decorator';
@@ -25,7 +25,7 @@ export class MinFactoryUserController {
   @API_401()
   @API_404()
   @API_500()
-  public async getMe(@User() user: FirebaseUserDto): Promise<MinFactoryUserDto> {
+  public async getMe(@FirebaseUser() user: FirebaseUserDto): Promise<MinFactoryUserDto> {
     return await this.userService.getMe(user);
   }
 
@@ -37,7 +37,7 @@ export class MinFactoryUserController {
   @API_401()
   @API_409()
   @API_500()
-  public async create(@User() user: FirebaseUserDto): Promise<MinFactoryUserDto> {
+  public async create(@FirebaseUser() user: FirebaseUserDto): Promise<MinFactoryUserDto> {
     return await this.userService.createUser(user);
   }
 }

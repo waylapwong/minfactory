@@ -8,11 +8,11 @@ export class MinPokerDtoMapper {
     domain.bigBlind = dto.bigBlind;
     domain.createdAt = new Date(dto.createdAt);
     domain.id = dto.id;
-    domain.maxPlayerCount = dto.maxPlayerCount;
     domain.name = dto.name;
     domain.observerCount = dto.observerCount;
     domain.playerCount = dto.playerCount;
     domain.smallBlind = dto.smallBlind;
+    domain.tableSize = dto.tableSize;
 
     return domain;
   }

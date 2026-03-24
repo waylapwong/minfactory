@@ -1,0 +1,20 @@
+@BASE_PATH = http://localhost:3000/minpoker
+@GAMES = games
+@TOKEN = _____
+
+
+### GET /games
+GET {{BASE_PATH}}/{{GAMES}}
+Accept: application/json
+Authorization: Bearer {{TOKEN}}
+
+
+### POST /games
+POST {{BASE_PATH}}/{{GAMES}}
+Accept: application/json
+Content-Type: application/json
+Authorization: Bearer {{TOKEN}}
+
+{
+  "name": "Test"
+}

@@ -1,12 +1,14 @@
+import { MinPokerPlayer } from './minpoker-player';
+
 export class MinPokerGame {
-  public bigBlind: number = 0;
+  public bigBlind: number = 2;
   public createdAt: Date = new Date(0);
+  public creatorId: string = '';
   public id: string = '';
   public name: string = '';
-  public observerCount: number = 0;
-  public playerCount: number = 0;
-  public smallBlind: number = 0;
-  public tableSize: number = 0;
+  public players: MinPokerPlayer[] = [];
+  public smallBlind: number = 1;
+  public tableSize: number = 6;
 
   constructor(init?: Partial<MinPokerGame>) {
     if (init) {

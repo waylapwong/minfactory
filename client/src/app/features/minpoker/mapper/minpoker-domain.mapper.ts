@@ -8,7 +8,7 @@ export class MinPokerDomainMapper {
     viewModel.bigBlind = domain.bigBlind;
     viewModel.createdAt = domain.createdAt;
     viewModel.id = domain.id;
-    viewModel.maxPlayerCount = domain.maxPlayerCount;
+    viewModel.maxPlayerCount = domain.tableSize;
     viewModel.name = domain.name;
     viewModel.observerCount = domain.observerCount;
     viewModel.playerCount = domain.playerCount;

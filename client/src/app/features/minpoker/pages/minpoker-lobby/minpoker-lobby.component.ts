@@ -1,9 +1,12 @@
 import { DatePipe } from '@angular/common';
 import { Component, OnInit, Signal, WritableSignal, signal } from '@angular/core';
+import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RoutingService } from '../../../../core/routing/routing.service';
 import { ButtonComponent } from '../../../../shared/components/button/button.component';
 import { CardButtonComponent } from '../../../../shared/components/card-button/card-button.component';
+import { DialogComponent } from '../../../../shared/components/dialog/dialog.component';
 import { H2Component } from '../../../../shared/components/h2/h2.component';
+import { InputComponent } from '../../../../shared/components/input/input.component';
 import { Color } from '../../../../shared/enums/color.enum';
 import { MinPokerLobbyViewModel } from '../../models/viewmodels/minpoker-lobby.viewmodel';
 import { MinPokerGameService } from '../../services/minpoker-game.service';
@@ -13,7 +16,15 @@ import { MinPokerGameService } from '../../services/minpoker-game.service';
   templateUrl: './minpoker-lobby.component.html',
   styleUrls: ['./minpoker-lobby.component.scss'],
   host: { class: 'block h-full w-full' },
-  imports: [CardButtonComponent, H2Component, ButtonComponent, DatePipe],
+  imports: [
+    CardButtonComponent,
+    H2Component,
+    ButtonComponent,
+    DialogComponent,
+    InputComponent,
+    ReactiveFormsModule,
+    DatePipe,
+  ],
 })
 export class MinPokerLobbyComponent implements OnInit {
   public readonly Color: typeof Color = Color;
@@ -22,6 +33,8 @@ export class MinPokerLobbyComponent implements OnInit {
   public readonly isLoading: WritableSignal<boolean> = signal(true);
 
   public games: Signal<MinPokerLobbyViewModel[]>;
+  public isNewGameDialogOpen: WritableSignal<boolean> = signal(false);
+  public newGameFormGroup: FormGroup = this.createFormGroup();
 
   constructor(
     public readonly routingService: RoutingService,
@@ -30,12 +43,42 @@ export class MinPokerLobbyComponent implements OnInit {
     this.games = this.gameService.lobbyViewModels;
   }
 
+  public get newGameName(): FormControl {
+    return this.newGameFormGroup.get('name') as FormControl;
+  }
+
   public ngOnInit(): void {
     this.reloadGames();
   }
 
+  public async createGame(): Promise<void> {
+    if (this.newGameFormGroup.valid) {
+      try {
+        await this.gameService.createGame(this.newGameName.value);
+        this.isNewGameDialogOpen.set(false);
+      } catch (error: unknown) {
+        this.isError.set(true);
+        this.errorMessage.set(error instanceof Error ? error.message : 'Spiel konnte nicht erstellt werden.');
+      }
+    }
+  }
+
+  public openNewGameDialog(): void {
+    this.newGameFormGroup = this.createFormGroup();
+    this.isNewGameDialogOpen.set(true);
+  }
+
   public reloadGames(): void {
     void this.loadLobbyGames();
+  }
+
+  private createFormGroup(): FormGroup {
+    return new FormGroup({
+      name: new FormControl('', {
+        nonNullable: true,
+        validators: [Validators.maxLength(32), Validators.minLength(2), Validators.required],
+      }),
+    });
   }
 
   private async loadLobbyGames(): Promise<void> {

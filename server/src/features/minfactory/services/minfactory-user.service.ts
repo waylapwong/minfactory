@@ -66,19 +66,16 @@ export class MinFactoryUserService {
     return MinFactoryUserDomainMapper.domainToDto(savedDomain);
   }
 
-  private isDuplicateUserError(error: unknown): boolean {
-    if (!error || typeof error !== 'object') {
-      return false;
+  private async findByEmailOrNull(email: string): Promise<MinFactoryUserEntity | null> {
+    try {
+      return await this.userRepository.findByEmail(email);
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        return null;
+      }
+
+      throw error;
     }
-
-    const driverError = error as {
-      driverError?: {
-        code?: string;
-        errno?: number;
-      };
-    };
-
-    return driverError.driverError?.code === 'ER_DUP_ENTRY' || driverError.driverError?.errno === 1062;
   }
 
   private async findByFirebaseUidOrNull(firebaseUid: string): Promise<MinFactoryUserEntity | null> {
@@ -93,15 +90,18 @@ export class MinFactoryUserService {
     }
   }
 
-  private async findByEmailOrNull(email: string): Promise<MinFactoryUserEntity | null> {
-    try {
-      return await this.userRepository.findByEmail(email);
-    } catch (error) {
-      if (error instanceof NotFoundException) {
-        return null;
-      }
-
-      throw error;
+  private isDuplicateUserError(error: unknown): boolean {
+    if (!error || typeof error !== 'object') {
+      return false;
     }
+
+    const driverError = error as {
+      driverError?: {
+        code?: string;
+        errno?: number;
+      };
+    };
+
+    return driverError.driverError?.code === 'ER_DUP_ENTRY' || driverError.driverError?.errno === 1062;
   }
 }

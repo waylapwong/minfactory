@@ -8,7 +8,7 @@ describe('MinPokerDtoMapper', () => {
         bigBlind: 100,
         createdAt: '2026-01-01T18:00:00.000Z',
         id: 'game-id',
-        maxPlayerCount: 6,
+        tableSize: 6,
         name: 'Evening Table',
         observerCount: 2,
         playerCount: 4,
@@ -24,6 +24,7 @@ describe('MinPokerDtoMapper', () => {
       expect(domain.observerCount).toBe(2);
       expect(domain.smallBlind).toBe(50);
       expect(domain.bigBlind).toBe(100);
+      expect(domain.tableSize).toBe(6);
     });
   });
 });

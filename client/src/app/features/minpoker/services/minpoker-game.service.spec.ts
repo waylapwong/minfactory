@@ -10,6 +10,7 @@ describe('MinPokerGameService', () => {
 
   beforeEach(() => {
     MINPOKER_GAME_REPOSITORY_MOCK.getAll.calls.reset();
+    MINPOKER_GAME_REPOSITORY_MOCK.create.calls.reset();
 
     TestBed.configureTestingModule({
       providers: [
@@ -33,7 +34,7 @@ describe('MinPokerGameService', () => {
           bigBlind: 20,
           createdAt: new Date('2026-01-01T18:00:00.000Z').toISOString(),
           id: 'id-1',
-          maxPlayerCount: 6,
+          tableSize: 6,
           name: 'Game 1',
           observerCount: 0,
           playerCount: 2,
@@ -43,7 +44,7 @@ describe('MinPokerGameService', () => {
           bigBlind: 50,
           createdAt: new Date('2026-01-02T18:00:00.000Z').toISOString(),
           id: 'id-2',
-          maxPlayerCount: 6,
+          tableSize: 6,
           name: 'Game 2',
           observerCount: 1,
           playerCount: 4,
@@ -61,6 +62,63 @@ describe('MinPokerGameService', () => {
       expect(service.lobbyViewModels()[1].id).toBe('id-1');
       expect(service.lobbyViewModels()[0].smallBlind).toBe(25);
       expect(service.lobbyViewModels()[0].bigBlind).toBe(50);
+    });
+  });
+
+  describe('createGame()', () => {
+    it('should create a game and update cached games', async () => {
+      const mockDto: MinPokerGameDto = {
+        bigBlind: 50,
+        createdAt: new Date().toISOString(),
+        id: 'new-id',
+        tableSize: 6,
+        name: 'New Game',
+        observerCount: 0,
+        playerCount: 1,
+        smallBlind: 25,
+      };
+
+      MINPOKER_GAME_REPOSITORY_MOCK.create.and.returnValue(Promise.resolve(mockDto));
+
+      await service.createGame('New Game');
+
+      expect(MINPOKER_GAME_REPOSITORY_MOCK.create).toHaveBeenCalledWith({ name: 'New Game' });
+      expect(service.lobbyViewModels().length).toBe(1);
+      expect(service.lobbyViewModels()[0].id).toBe('new-id');
+    });
+
+    it('should sort created game against already cached games', async () => {
+      MINPOKER_GAME_REPOSITORY_MOCK.getAll.and.returnValue(
+        Promise.resolve([
+          {
+            bigBlind: 20,
+            createdAt: new Date('2026-01-01T18:00:00.000Z').toISOString(),
+            id: 'older-id',
+            tableSize: 6,
+            name: 'Older Game',
+            observerCount: 0,
+            playerCount: 2,
+            smallBlind: 10,
+          },
+        ]),
+      );
+      MINPOKER_GAME_REPOSITORY_MOCK.create.and.returnValue(
+        Promise.resolve({
+          bigBlind: 50,
+          createdAt: new Date('2026-01-02T18:00:00.000Z').toISOString(),
+          id: 'newer-id',
+          tableSize: 6,
+          name: 'Newer Game',
+          observerCount: 0,
+          playerCount: 1,
+          smallBlind: 25,
+        }),
+      );
+
+      await service.loadGames();
+      await service.createGame('Newer Game');
+
+      expect(service.lobbyViewModels().map((game) => game.id)).toEqual(['newer-id', 'older-id']);
     });
   });
 });

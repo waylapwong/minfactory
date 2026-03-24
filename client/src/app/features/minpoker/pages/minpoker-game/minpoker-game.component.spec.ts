@@ -61,6 +61,16 @@ describe('MinPokerGameComponent', () => {
     expect(component.isSeatDialogOpen()).toBe(false);
   });
 
+  it('should ignore invalid seat indexes when opening seat dialog', () => {
+    component.openSeatDialog(-1);
+    expect(component.isSeatDialogOpen()).toBeFalse();
+    expect(component.selectedSeatIndex()).toBe(-1);
+
+    component.openSeatDialog(component.opponents.length);
+    expect(component.isSeatDialogOpen()).toBeFalse();
+    expect(component.selectedSeatIndex()).toBe(-1);
+  });
+
   it('should seat player on empty position', () => {
     component.openSeatDialog(4);
     component.seatName.setValue('Chris');
@@ -72,6 +82,35 @@ describe('MinPokerGameComponent', () => {
       jasmine.objectContaining({ name: 'Chris', avatar: 'man-4.svg', chips: 1000, lastAction: 'Sitzt' }),
     );
     expect(component.isSeatDialogOpen()).toBe(false);
+  });
+
+  it('should not seat player when form is invalid', () => {
+    component.openSeatDialog(4);
+
+    component.seatGame();
+
+    expect(component.opponents[4]).toBeNull();
+    expect(component.isSeatDialogOpen()).toBeTrue();
+  });
+
+  it('should not seat player when no seat is selected', () => {
+    component.seatName.setValue('Chris');
+    component.seatAvatar.setValue('man-4.svg');
+
+    component.seatGame();
+
+    expect(component.opponents[4]).toBeNull();
+  });
+
+  it('should not seat player when trimmed name is empty', () => {
+    component.openSeatDialog(4);
+    component.seatName.setValue('   ');
+    component.seatAvatar.setValue('man-4.svg');
+
+    component.seatGame();
+
+    expect(component.opponents[4]).toBeNull();
+    expect(component.isSeatDialogOpen()).toBeTrue();
   });
 
   it('should render community cards', () => {
@@ -99,6 +138,49 @@ describe('MinPokerGameComponent', () => {
   it('should update betAmount on onBetChange', () => {
     component.onBetChange(300);
     expect(component.betAmount()).toBe(300);
+  });
+
+  it('should expose avatar options with labels and image paths', () => {
+    expect(component.avatarOptions.length).toBe(9);
+    expect(component.avatarOptions[0]).toEqual(
+      jasmine.objectContaining({
+        imageSrc: 'assets/svgs/minpoker/avatars/man-1.svg',
+        label: 'Man 1',
+        value: 'man-1.svg',
+      }),
+    );
+  });
+
+  it('should return avatar asset path', () => {
+    expect(component.getAvatarPath('woman-3.svg')).toBe('assets/svgs/minpoker/avatars/woman-3.svg');
+  });
+
+  it('should call clipboard API when sharing the game url', async () => {
+    const clipboardSpy = jasmine.createSpy('writeText').and.resolveTo();
+    const originalClipboard = navigator.clipboard;
+
+    Object.defineProperty(navigator, 'clipboard', {
+      configurable: true,
+      value: { writeText: clipboardSpy },
+    });
+
+    component.shareGameUrl();
+    await Promise.resolve();
+
+    expect(clipboardSpy).toHaveBeenCalledWith(globalThis.location.href);
+
+    Object.defineProperty(navigator, 'clipboard', {
+      configurable: true,
+      value: originalClipboard,
+    });
+  });
+
+  it('should allow calling action handlers', () => {
+    expect(() => {
+      component.onCall();
+      component.onFold();
+      component.onRaise();
+    }).not.toThrow();
   });
 
   describe('heroBetAmount', () => {
@@ -132,6 +214,15 @@ describe('MinPokerGameComponent', () => {
       expect(component.isLeaveDialogOpen()).toBe(true);
     });
 
+    it('should close an open seat dialog when canDeactivate is called', () => {
+      component.openSeatDialog(4);
+
+      void component.canDeactivate();
+
+      expect(component.isSeatDialogOpen()).toBeFalse();
+      expect(component.selectedSeatIndex()).toBe(-1);
+    });
+
     it('should close leave dialog on cancelLeave()', () => {
       component.isLeaveDialogOpen.set(true);
       component.cancelLeave();
@@ -160,6 +251,17 @@ describe('MinPokerGameComponent', () => {
       component.ngOnDestroy();
 
       await expectAsync(promise).toBeResolvedTo(false);
+    });
+
+    it('should resolve a previous pending canDeactivate with false before opening a new one', async () => {
+      const firstPromise = component.canDeactivate();
+      const secondPromise = component.canDeactivate();
+
+      await expectAsync(firstPromise).toBeResolvedTo(false);
+
+      component.confirmLeave();
+
+      await expectAsync(secondPromise).toBeResolvedTo(true);
     });
   });
 });
