@@ -8,7 +8,7 @@
     <!-- TITLE -->
     <min-h2>Poker Lobby</min-h2>
     <!-- BUTTON: NEW GAME -->
-    <min-button ariaLabel="Neues Spiel" title="Neues Spiel" [color]="Color.Blue">
+    <min-button ariaLabel="Neues Spiel" title="Neues Spiel" [color]="Color.Green" (clicked)="openNewGameDialog()">
       <img src="assets/svgs/minfactory/ui/add.svg" alt="Neues Spiel" class="h-4 w-4" />
     </min-button>
   </div>
@@ -74,3 +74,35 @@
     }
   </div>
 </div>
+
+<!-- NEW GAME DIALOG -->
+<min-dialog title="Neues Spiel" [isOpen]="isNewGameDialogOpen()" (closed)="isNewGameDialogOpen.set(false)">
+  <div class="flex flex-col gap-4">
+    <div>
+      <min-input
+        id="poker-game-name-input"
+        label="Spielname"
+        [formControlInput]="newGameName"
+        [maxLength]="32"
+        [minLength]="2"
+      >
+      </min-input>
+      @if (newGameName.invalid && newGameName.touched) {
+        @if (newGameName.errors?.['required']) {
+          <p class="text-sm text-red-500" aria-live="assertive">Der Spielname darf nicht leer sein.</p>
+        }
+        @if (newGameName.errors?.['minlength']) {
+          <p class="text-sm text-red-500" aria-live="assertive">Der Spielname muss mindestens 2 Zeichen lang sein.</p>
+        }
+        @if (newGameName.errors?.['maxlength']) {
+          <p class="text-sm text-red-500" aria-live="assertive">Der Spielname darf maximal 32 Zeichen lang sein.</p>
+        }
+      }
+    </div>
+    <div class="flex flex-row justify-end">
+      <min-button [color]="Color.Green" [isDisabled]="newGameFormGroup.invalid" (clicked)="createGame()">
+        Spiel erstellen
+      </min-button>
+    </div>
+  </div>
+</min-dialog>

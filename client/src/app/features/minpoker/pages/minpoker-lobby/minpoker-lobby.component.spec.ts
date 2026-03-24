@@ -14,6 +14,7 @@ describe('MinPokerLobbyComponent', () => {
 
   beforeEach(async () => {
     MINPOKER_GAME_SERVICE_MOCK.loadGames.calls.reset();
+    MINPOKER_GAME_SERVICE_MOCK.createGame.calls.reset();
     resolveLoadGames = null;
     MINPOKER_GAME_SERVICE_MOCK.loadGames.and.callFake(
       () =>
@@ -76,5 +77,48 @@ describe('MinPokerLobbyComponent', () => {
     expect(component.isLoading()).toBeFalse();
     expect(component.isError()).toBeTrue();
     expect(component.errorMessage()).toBe('Server down');
+  });
+
+  describe('new game dialog and creation', () => {
+    it('should open new game dialog and create a game when form valid', async () => {
+      component.openNewGameDialog();
+      fixture.detectChanges();
+
+      expect(component.isNewGameDialogOpen()).toBeTrue();
+
+      component.newGameName.setValue('Ab');
+      expect(component.newGameFormGroup.valid).toBeTrue();
+
+      await component.createGame();
+
+      expect(MINPOKER_GAME_SERVICE_MOCK.createGame).toHaveBeenCalledWith('Ab');
+      expect(component.isNewGameDialogOpen()).toBeFalse();
+    });
+
+    it('should not create game if form invalid', async () => {
+      component.openNewGameDialog();
+      fixture.detectChanges();
+
+      component.newGameName.setValue('A'); // too short
+      expect(component.newGameFormGroup.invalid).toBeTrue();
+
+      await component.createGame();
+
+      expect(MINPOKER_GAME_SERVICE_MOCK.createGame).not.toHaveBeenCalled();
+      expect(component.isNewGameDialogOpen()).toBeTrue();
+    });
+
+    it('should show error when createGame rejects', async () => {
+      component.openNewGameDialog();
+      fixture.detectChanges();
+
+      component.newGameName.setValue('Valid Name');
+      MINPOKER_GAME_SERVICE_MOCK.createGame.and.rejectWith(new Error('Create failed'));
+
+      await component.createGame();
+
+      expect(component.isError()).toBeTrue();
+      expect(component.errorMessage()).toBe('Create failed');
+    });
   });
 });

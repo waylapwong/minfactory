@@ -13,6 +13,8 @@
       ` ${isFormControlInvalid() ? 'border-red-500 focus:ring-red-500' : 'border-black focus:ring-black'}`
     "
     [attr.autocomplete]="autocomplete() || null"
+    [attr.maxlength]="maxLength() || null"
+    [attr.minlength]="minLength() || null"
     [formControl]="formControlInput()"
     [id]="id()"
     [placeholder]="placeholder()"

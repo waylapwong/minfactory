@@ -18,6 +18,14 @@ export class MinPokerGameService {
 
   constructor(private readonly gameRepository: MinPokerGameRepository) {}
 
+  public async createGame(name: string): Promise<void> {
+    const dto: MinPokerGameDto = await this.gameRepository.create({ name });
+    const domain: MinPokerGame = MinPokerDtoMapper.gameDtoToDomain(dto);
+    this.cachedPokerGames.update((games: MinPokerGame[]) =>
+      [domain, ...games].sort((a: MinPokerGame, b: MinPokerGame) => b.createdAt.getTime() - a.createdAt.getTime()),
+    );
+  }
+
   public async loadGames(): Promise<void> {
     // Get DTOs
     const dtos: MinPokerGameDto[] = await this.gameRepository.getAll();

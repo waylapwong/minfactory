@@ -10,6 +10,7 @@ describe('MinPokerGameService', () => {
 
   beforeEach(() => {
     MINPOKER_GAME_REPOSITORY_MOCK.getAll.calls.reset();
+    MINPOKER_GAME_REPOSITORY_MOCK.create.calls.reset();
 
     TestBed.configureTestingModule({
       providers: [
@@ -61,6 +62,29 @@ describe('MinPokerGameService', () => {
       expect(service.lobbyViewModels()[1].id).toBe('id-1');
       expect(service.lobbyViewModels()[0].smallBlind).toBe(25);
       expect(service.lobbyViewModels()[0].bigBlind).toBe(50);
+    });
+  });
+
+  describe('createGame()', () => {
+    it('should create a game and update cached games', async () => {
+      const mockDto: MinPokerGameDto = {
+        bigBlind: 50,
+        createdAt: new Date().toISOString(),
+        id: 'new-id',
+        tableSize: 6,
+        name: 'New Game',
+        observerCount: 0,
+        playerCount: 1,
+        smallBlind: 25,
+      };
+
+      MINPOKER_GAME_REPOSITORY_MOCK.create.and.returnValue(Promise.resolve(mockDto));
+
+      await service.createGame('New Game');
+
+      expect(MINPOKER_GAME_REPOSITORY_MOCK.create).toHaveBeenCalledWith({ name: 'New Game' });
+      expect(service.lobbyViewModels().length).toBe(1);
+      expect(service.lobbyViewModels()[0].id).toBe('new-id');
     });
   });
 });
