@@ -59,7 +59,21 @@ export class MinFactoryUserService {
 
   public async deleteMe(user: FirebaseUserDto): Promise<void> {
     const { firebaseUid } = user;
-    await this.authenticationService.deleteUser(firebaseUid);
+
+    const entity: MinFactoryUserEntity | null = await this.findByFirebaseUidOrNull(firebaseUid);
+
+    if (!entity) {
+      throw new NotFoundException('User not found');
+    }
+
+    try {
+      await this.authenticationService.deleteUser(firebaseUid);
+    } catch (error) {
+      if (!this.isFirebaseUserNotFoundError(error)) {
+        throw error;
+      }
+    }
+
     await this.userRepository.deleteByFirebaseUid(firebaseUid);
   }
 
@@ -98,6 +112,14 @@ export class MinFactoryUserService {
 
       throw error;
     }
+  }
+
+  private isFirebaseUserNotFoundError(error: unknown): boolean {
+    if (!error || typeof error !== 'object') {
+      return false;
+    }
+
+    return (error as { code?: string }).code === 'auth/user-not-found';
   }
 
   private isDuplicateUserError(error: unknown): boolean {

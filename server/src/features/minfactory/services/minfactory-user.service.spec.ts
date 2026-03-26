@@ -160,17 +160,34 @@ describe('MinFactoryUserService', () => {
       email: 'user@example.com',
     };
 
-    it('should delete firebase user and then db user', async () => {
+    const existingEntity: MinFactoryUserEntity = {
+      id: '550e8400-e29b-41d4-a716-446655440000',
+      firebaseUid: 'firebase-uid-123',
+      email: 'user@example.com',
+      createdAt: new Date('2025-01-01T00:00:00.000Z'),
+    };
+
+    it('should check DB, delete Firebase user, then delete DB user', async () => {
+      MINFACTORY_USER_REPOSITORY_MOCK.findByFirebaseUid.mockResolvedValue(existingEntity);
       AUTHENTICATION_SERVICE_MOCK.deleteUser.mockResolvedValue(undefined);
       MINFACTORY_USER_REPOSITORY_MOCK.deleteByFirebaseUid.mockResolvedValue(undefined);
 
       await userService.deleteMe(user);
 
+      expect(MINFACTORY_USER_REPOSITORY_MOCK.findByFirebaseUid).toHaveBeenCalledWith(user.firebaseUid);
       expect(AUTHENTICATION_SERVICE_MOCK.deleteUser).toHaveBeenCalledWith(user.firebaseUid);
       expect(MINFACTORY_USER_REPOSITORY_MOCK.deleteByFirebaseUid).toHaveBeenCalledWith(user.firebaseUid);
     });
 
-    it('should delete firebase user before db user', async () => {
+    it('should throw NotFoundException without touching Firebase when user is not found in DB', async () => {
+      MINFACTORY_USER_REPOSITORY_MOCK.findByFirebaseUid.mockRejectedValue(new NotFoundException('User not found'));
+
+      await expect(userService.deleteMe(user)).rejects.toThrow(NotFoundException);
+      expect(AUTHENTICATION_SERVICE_MOCK.deleteUser).not.toHaveBeenCalled();
+    });
+
+    it('should delete Firebase user before DB user', async () => {
+      MINFACTORY_USER_REPOSITORY_MOCK.findByFirebaseUid.mockResolvedValue(existingEntity);
       const callOrder: string[] = [];
       AUTHENTICATION_SERVICE_MOCK.deleteUser.mockImplementation(async () => {
         callOrder.push('firebase');
@@ -184,18 +201,22 @@ describe('MinFactoryUserService', () => {
       expect(callOrder).toEqual(['firebase', 'db']);
     });
 
-    it('should propagate error when firebase deletion fails', async () => {
+    it('should propagate error when Firebase deletion fails with unexpected error', async () => {
+      MINFACTORY_USER_REPOSITORY_MOCK.findByFirebaseUid.mockResolvedValue(existingEntity);
       AUTHENTICATION_SERVICE_MOCK.deleteUser.mockRejectedValue(new Error('Firebase error'));
 
       await expect(userService.deleteMe(user)).rejects.toThrow('Firebase error');
       expect(MINFACTORY_USER_REPOSITORY_MOCK.deleteByFirebaseUid).not.toHaveBeenCalled();
     });
 
-    it('should propagate NotFoundException when db user is not found', async () => {
-      AUTHENTICATION_SERVICE_MOCK.deleteUser.mockResolvedValue(undefined);
-      MINFACTORY_USER_REPOSITORY_MOCK.deleteByFirebaseUid.mockRejectedValue(new NotFoundException('User not found'));
+    it('should still delete DB user when Firebase user is already deleted (auth/user-not-found)', async () => {
+      MINFACTORY_USER_REPOSITORY_MOCK.findByFirebaseUid.mockResolvedValue(existingEntity);
+      AUTHENTICATION_SERVICE_MOCK.deleteUser.mockRejectedValue({ code: 'auth/user-not-found' });
+      MINFACTORY_USER_REPOSITORY_MOCK.deleteByFirebaseUid.mockResolvedValue(undefined);
 
-      await expect(userService.deleteMe(user)).rejects.toThrow(NotFoundException);
+      await userService.deleteMe(user);
+
+      expect(MINFACTORY_USER_REPOSITORY_MOCK.deleteByFirebaseUid).toHaveBeenCalledWith(user.firebaseUid);
     });
   });
 });
