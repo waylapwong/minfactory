@@ -7,10 +7,14 @@ import { MinFactoryUserDto } from '../models/dtos/minfactory-user.dto';
 import { MinFactoryUserEntity } from '../models/entities/minfactory-user.entity';
 import { MinFactoryUserRepository } from '../repositories/minfactory-user.repository';
 import { FirebaseUserDto } from 'src/core/authentication/models/firebase-user.dto';
+import { AuthenticationService } from 'src/core/authentication/services/authentication.service';
 
 @Injectable()
 export class MinFactoryUserService {
-  constructor(private readonly userRepository: MinFactoryUserRepository) {}
+  constructor(
+    private readonly userRepository: MinFactoryUserRepository,
+    private readonly authenticationService: AuthenticationService,
+  ) {}
 
   public async createUser(user: FirebaseUserDto): Promise<MinFactoryUserDto> {
     const { firebaseUid, email } = user;
@@ -51,6 +55,12 @@ export class MinFactoryUserService {
 
       throw error;
     }
+  }
+
+  public async deleteMe(user: FirebaseUserDto): Promise<void> {
+    const { firebaseUid } = user;
+    await this.authenticationService.deleteUser(firebaseUid);
+    await this.userRepository.deleteByFirebaseUid(firebaseUid);
   }
 
   public async getMe(user: FirebaseUserDto): Promise<MinFactoryUserDto> {
