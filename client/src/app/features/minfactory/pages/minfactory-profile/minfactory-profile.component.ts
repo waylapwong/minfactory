@@ -49,6 +49,10 @@ export class MinFactoryProfileComponent implements OnInit {
   }
 
   public confirmDeleteAccount(): void {
+    if (this.isDeleteSubmitting()) {
+      return;
+    }
+
     this.isDeleteDialogOpen.set(false);
     this.performDeleteAccount();
   }

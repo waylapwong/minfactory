@@ -70,7 +70,7 @@
       </p>
       <div class="flex flex-col gap-2 sm:flex-row">
         <min-button [color]="Color.Gray" (clicked)="cancelDeleteAccount()">Abbrechen</min-button>
-        <min-button [color]="Color.Red" (clicked)="confirmDeleteAccount()">Unwiderruflich löschen</min-button>
+        <min-button [color]="Color.Red" [isDisabled]="isDeleteSubmitting()" (clicked)="confirmDeleteAccount()">Unwiderruflich löschen</min-button>
       </div>
     </div>
   </min-dialog>

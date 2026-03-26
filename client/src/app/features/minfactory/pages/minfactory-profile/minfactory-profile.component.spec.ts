@@ -211,6 +211,13 @@ describe('MinFactoryProfileComponent', () => {
       expect(component.isDeleteSubmitting()).toBeTrue();
     });
 
+    it('should not call deleteAccount when already submitting', async () => {
+      component.confirmDeleteAccount();
+      component.confirmDeleteAccount();
+
+      expect(MINFACTORY_AUTHENTICATION_SERVICE_MOCK.deleteAccount).toHaveBeenCalledTimes(1);
+    });
+
     it('should show snackbar and reset submitting state when delete fails', async () => {
       const errorMessage = 'Löschen fehlgeschlagen.';
       MINFACTORY_AUTHENTICATION_SERVICE_MOCK.deleteAccount.and.returnValue(Promise.reject(new Error(errorMessage)));
