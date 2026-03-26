@@ -118,6 +118,7 @@ export class MinFactoryProfileComponent implements OnInit {
 
     try {
       await this.authenticationService.deleteAccount();
+      this.isDeleteSubmitting.set(false);
       this.routingService.navigateToHomePage();
     } catch (error) {
       this.isDeleteSubmitting.set(false);

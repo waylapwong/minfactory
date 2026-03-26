@@ -194,6 +194,7 @@ describe('MinFactoryProfileComponent', () => {
       await settleDeleteAccount();
 
       expect(MINFACTORY_AUTHENTICATION_SERVICE_MOCK.deleteAccount).toHaveBeenCalled();
+      expect(component.isDeleteSubmitting()).toBeFalse();
       expect(ROUTING_SERVICE_MOCK.navigateToHomePage).toHaveBeenCalled();
     });
 
