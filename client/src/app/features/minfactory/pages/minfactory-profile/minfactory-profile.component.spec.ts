@@ -41,6 +41,8 @@ describe('MinFactoryProfileComponent', () => {
         email: 'user@example.com',
       });
     });
+    MINFACTORY_AUTHENTICATION_SERVICE_MOCK.deleteAccount.calls.reset();
+    MINFACTORY_AUTHENTICATION_SERVICE_MOCK.deleteAccount.and.resolveTo();
     MINFACTORY_AUTHENTICATION_SERVICE_MOCK.logoutUser.calls.reset();
     MINFACTORY_AUTHENTICATION_SERVICE_MOCK.logoutUser.and.resolveTo();
     ROUTING_SERVICE_MOCK.navigateToLogin.calls.reset();
@@ -155,6 +157,78 @@ describe('MinFactoryProfileComponent', () => {
 
       expect(component.isSnackbarOpen()).toBeFalse();
       expect(component.snackbarMessage()).toBe('');
+    });
+  });
+
+  describe('deleteAccount', () => {
+    const settleDeleteAccount = async (): Promise<void> => {
+      const deletePromise: Promise<unknown> | undefined =
+        MINFACTORY_AUTHENTICATION_SERVICE_MOCK.deleteAccount.calls.mostRecent()?.returnValue as
+          | Promise<unknown>
+          | undefined;
+
+      try {
+        await deletePromise;
+      } catch {
+        // Intentionally ignored for tests that assert failure behavior.
+      }
+
+      await flushMicrotasks();
+    };
+
+    it('should open delete dialog when openDeleteDialog is called', () => {
+      component.openDeleteDialog();
+
+      expect(component.isDeleteDialogOpen()).toBeTrue();
+    });
+
+    it('should close delete dialog when cancelDeleteAccount is called', () => {
+      component.openDeleteDialog();
+      component.cancelDeleteAccount();
+
+      expect(component.isDeleteDialogOpen()).toBeFalse();
+    });
+
+    it('should delete account and navigate to home page on success', async () => {
+      component.confirmDeleteAccount();
+      await settleDeleteAccount();
+
+      expect(MINFACTORY_AUTHENTICATION_SERVICE_MOCK.deleteAccount).toHaveBeenCalled();
+      expect(component.isDeleteSubmitting()).toBeFalse();
+      expect(ROUTING_SERVICE_MOCK.navigateToHomePage).toHaveBeenCalled();
+    });
+
+    it('should close dialog before deleting account', () => {
+      component.openDeleteDialog();
+      component.confirmDeleteAccount();
+
+      expect(component.isDeleteDialogOpen()).toBeFalse();
+    });
+
+    it('should set isDeleteSubmitting while deletion is in progress', () => {
+      component.confirmDeleteAccount();
+
+      expect(component.isDeleteSubmitting()).toBeTrue();
+    });
+
+    it('should not call deleteAccount when already submitting', async () => {
+      component.confirmDeleteAccount();
+      component.confirmDeleteAccount();
+
+      expect(MINFACTORY_AUTHENTICATION_SERVICE_MOCK.deleteAccount).toHaveBeenCalledTimes(1);
+    });
+
+    it('should show snackbar and reset submitting state when delete fails', async () => {
+      const errorMessage = 'Löschen fehlgeschlagen.';
+      MINFACTORY_AUTHENTICATION_SERVICE_MOCK.deleteAccount.and.returnValue(Promise.reject(new Error(errorMessage)));
+
+      component.confirmDeleteAccount();
+      await settleDeleteAccount();
+
+      expect(component.isDeleteSubmitting()).toBeFalse();
+      expect(component.isSnackbarOpen()).toBeTrue();
+      expect(component.snackbarMessage()).toBe(errorMessage);
+      expect(ROUTING_SERVICE_MOCK.navigateToHomePage).not.toHaveBeenCalled();
     });
   });
 });

@@ -16,6 +16,11 @@ export class MinFactoryAuthenticationService {
     private readonly userRepository: MinFactoryUserRepository,
   ) {}
 
+  public async deleteAccount(): Promise<void> {
+    await this.userRepository.delete();
+    await this.authenticationService.signOut();
+  }
+
   public async loginUser(email: string, password: string): Promise<MinFactoryUser> {
     await this.authenticationService.loginWithEmailAndPassword(email, password);
     const userDto = await this.userRepository.get();

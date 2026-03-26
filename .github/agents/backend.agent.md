@@ -38,7 +38,7 @@ Das Backend ist in 3 Schichten organisiert.
 - Commands sind WebSocket Nachrichten, die das Backend empfängt
 - Events sind WebSocket Nachrichten, die das Backend versendet
 
-### 3.2 GeschäftsApplication Schichtlogikschicht
+### 3.2 Application Schicht
 
 - Schicht kümmert sich um die fachliche Logik
 - Application Services sind NestJS Services

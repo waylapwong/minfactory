@@ -1,6 +1,7 @@
 import { MinFactoryUser } from '../models/domains/minfactory-user';
 
 export const MINFACTORY_AUTHENTICATION_SERVICE_MOCK = {
+  deleteAccount: jasmine.createSpy('deleteAccount').and.resolveTo(),
   loginUser: jasmine
     .createSpy('loginUser')
     .and.callFake(

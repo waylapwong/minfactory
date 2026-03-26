@@ -3,6 +3,7 @@ import { Component, OnInit, WritableSignal, signal } from '@angular/core';
 import { RoutingService } from '../../../../core/routing/routing.service';
 import { ButtonComponent } from '../../../../shared/components/button/button.component';
 import { CardComponent } from '../../../../shared/components/card/card.component';
+import { DialogComponent } from '../../../../shared/components/dialog/dialog.component';
 import { H1Component } from '../../../../shared/components/h1/h1.component';
 import { LogoComponent } from '../../../../shared/components/logo/logo.component';
 import { SnackbarComponent } from '../../../../shared/components/snackbar/snackbar.component';
@@ -15,11 +16,13 @@ import { MinFactoryUserService } from '../../services/minfactory-user.service';
   templateUrl: './minfactory-profile.component.html',
   styleUrl: './minfactory-profile.component.scss',
   host: { class: 'block h-full w-full' },
-  imports: [CardComponent, H1Component, ButtonComponent, SnackbarComponent, LogoComponent],
+  imports: [CardComponent, H1Component, ButtonComponent, SnackbarComponent, LogoComponent, DialogComponent],
 })
 export class MinFactoryProfileComponent implements OnInit {
   public readonly Color: typeof Color = Color;
   public readonly errorMessage: WritableSignal<string> = signal('');
+  public readonly isDeleteDialogOpen: WritableSignal<boolean> = signal(false);
+  public readonly isDeleteSubmitting: WritableSignal<boolean> = signal(false);
   public readonly isError: WritableSignal<boolean> = signal(false);
   public readonly isLoading: WritableSignal<boolean> = signal(true);
   public readonly isLogoutSubmitting: WritableSignal<boolean> = signal(false);
@@ -36,9 +39,22 @@ export class MinFactoryProfileComponent implements OnInit {
     this.reloadProfile();
   }
 
+  public cancelDeleteAccount(): void {
+    this.isDeleteDialogOpen.set(false);
+  }
+
   public closeSnackbar(): void {
     this.isSnackbarOpen.set(false);
     this.snackbarMessage.set('');
+  }
+
+  public confirmDeleteAccount(): void {
+    if (this.isDeleteSubmitting()) {
+      return;
+    }
+
+    this.isDeleteDialogOpen.set(false);
+    this.performDeleteAccount();
   }
 
   public logout(): void {
@@ -54,6 +70,10 @@ export class MinFactoryProfileComponent implements OnInit {
 
   public navigateToApps(): void {
     this.routingService.navigateToApps();
+  }
+
+  public openDeleteDialog(): void {
+    this.isDeleteDialogOpen.set(true);
   }
 
   public reloadProfile(): void {
@@ -93,6 +113,23 @@ export class MinFactoryProfileComponent implements OnInit {
       );
     } finally {
       this.isLoading.set(false);
+    }
+  }
+
+  private async performDeleteAccount(): Promise<void> {
+    this.isDeleteSubmitting.set(true);
+    this.closeSnackbar();
+
+    try {
+      await this.authenticationService.deleteAccount();
+      this.isDeleteSubmitting.set(false);
+      this.routingService.navigateToHomePage();
+    } catch (error) {
+      this.isDeleteSubmitting.set(false);
+      const errorMessage =
+        error instanceof Error ? error.message : 'Account konnte nicht gelöscht werden. Bitte versuche es erneut.';
+      this.snackbarMessage.set(errorMessage);
+      this.isSnackbarOpen.set(true);
     }
   }
 
