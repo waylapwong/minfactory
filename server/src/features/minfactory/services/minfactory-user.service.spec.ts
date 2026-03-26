@@ -189,10 +189,10 @@ describe('MinFactoryUserService', () => {
     it('should delete Firebase user before DB user', async () => {
       MINFACTORY_USER_REPOSITORY_MOCK.findByFirebaseUid.mockResolvedValue(existingEntity);
       const callOrder: string[] = [];
-      AUTHENTICATION_SERVICE_MOCK.deleteUser.mockImplementation(async () => {
+      AUTHENTICATION_SERVICE_MOCK.deleteUser.mockImplementation(() => {
         callOrder.push('firebase');
       });
-      MINFACTORY_USER_REPOSITORY_MOCK.deleteByFirebaseUid.mockImplementation(async () => {
+      MINFACTORY_USER_REPOSITORY_MOCK.deleteByFirebaseUid.mockImplementation(() => {
         callOrder.push('db');
       });
 
