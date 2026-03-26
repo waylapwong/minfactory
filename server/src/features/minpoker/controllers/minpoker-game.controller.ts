@@ -4,8 +4,10 @@ import { MinPokerCreateGameDto } from '../models/dtos/minpoker-create-game.dto';
 import { MinPokerGameDto } from '../models/dtos/minpoker-game.dto';
 import { MinPokerGameService } from '../services/minpoker-game.service';
 import { FirebaseUser } from 'src/core/authentication/decorators/firebase-user.decorator';
+import { Roles } from 'src/core/authentication/decorators/roles.decorator';
 import { AuthenticationGuard } from 'src/core/authentication/guards/authentication.guard';
 import type { FirebaseUserDto } from 'src/core/authentication/models/firebase-user.dto';
+import { RolesGuard } from 'src/features/minfactory/guards/roles.guard';
 import { API_200 } from 'src/shared/decorators/api-200.decorator';
 import { API_201 } from 'src/shared/decorators/api-201.decorator';
 import { API_204 } from 'src/shared/decorators/api-204.decorator';
@@ -16,15 +18,17 @@ import { API_404 } from 'src/shared/decorators/api-404.decorator';
 import { API_500 } from 'src/shared/decorators/api-500.decorator';
 import { API_Param_ID } from 'src/shared/decorators/api-param-id.decorator';
 import { MinApp } from 'src/shared/enums/minapp.enum';
+import { MinFactoryRole } from 'src/shared/enums/minfactory-role.enum';
 
 @Controller('minpoker/games')
 @ApiTags(MinApp.MinPoker)
+@UseGuards(AuthenticationGuard, RolesGuard)
+@Roles(MinFactoryRole.Admin)
 export class MinPokerGameController {
   constructor(private readonly gameService: MinPokerGameService) {}
 
   @Delete(':id')
   @HttpCode(204)
-  @UseGuards(AuthenticationGuard)
   @ApiOperation({ operationId: 'deleteMinPokerGame' })
   @API_Param_ID()
   @API_204()
@@ -42,10 +46,10 @@ export class MinPokerGameController {
 
   @Get()
   @HttpCode(200)
-  @UseGuards(AuthenticationGuard)
   @ApiOperation({ operationId: 'getAllMinPokerGames' })
   @API_200({ isArray: true, type: MinPokerGameDto })
   @API_401()
+  @API_403()
   @API_500()
   public async getAll(@FirebaseUser() firebaseUser: FirebaseUserDto): Promise<MinPokerGameDto[]> {
     return await this.gameService.getAllGames(firebaseUser);
@@ -53,11 +57,11 @@ export class MinPokerGameController {
 
   @Post()
   @HttpCode(201)
-  @UseGuards(AuthenticationGuard)
   @ApiOperation({ operationId: 'createMinPokerGame' })
   @API_201({ type: MinPokerGameDto })
   @API_400()
   @API_401()
+  @API_403()
   @API_500()
   public async create(
     @Body() dto: MinPokerCreateGameDto,

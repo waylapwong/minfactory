@@ -421,9 +421,14 @@
           "email": {
             "type": "string",
             "example": "user@example.com"
+          },
+          "role": {
+            "type": "string",
+            "enum": ["admin", "user"],
+            "example": "user"
           }
         },
-        "required": ["createdAt", "email"]
+        "required": ["createdAt", "email", "role"]
       },
       "MinRpsGameDto": {
         "type": "object",

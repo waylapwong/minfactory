@@ -6,6 +6,8 @@ import { AuthenticationGuard } from 'src/core/authentication/guards/authenticati
 import { AuthenticationService } from 'src/core/authentication/services/authentication.service';
 import { AUTHENTICATION_GUARD_MOCK } from 'src/core/mocks/authentication.guard.mock';
 import { AUTHENTICATION_SERVICE_MOCK } from 'src/core/mocks/authentication.service.mock';
+import { ROLES_GUARD_MOCK } from 'src/core/mocks/roles.guard.mock';
+import { RolesGuard } from 'src/features/minfactory/guards/roles.guard';
 import { MINPOKER_GAME_SERVICE_MOCK } from 'src/features/minpoker/mocks/minpoker-game.service.mock';
 import { MinPokerGameService } from 'src/features/minpoker/services/minpoker-game.service';
 
@@ -55,7 +57,10 @@ describe('MinPokerGameController', () => {
         { provide: AuthenticationService, useValue: AUTHENTICATION_SERVICE_MOCK },
         { provide: MinPokerGameService, useValue: MINPOKER_GAME_SERVICE_MOCK },
       ],
-    }).compile();
+    })
+      .overrideGuard(RolesGuard)
+      .useValue(ROLES_GUARD_MOCK)
+      .compile();
 
     controller = module.get<MinPokerGameController>(MinPokerGameController);
   });
