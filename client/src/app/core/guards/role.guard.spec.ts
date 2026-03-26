@@ -47,6 +47,32 @@ describe('roleGuard', () => {
     expect(result).toBeTrue();
   });
 
+  it('should allow route when user has the required User role', async () => {
+    MINFACTORY_USER_SERVICE_MOCK.setProfile({
+      createdAt: '19.03.2026, 11:00',
+      email: 'user@example.com',
+      role: MinFactoryRole.User,
+    });
+    const route = { data: { role: MinFactoryRole.User } } as unknown as ActivatedRouteSnapshot;
+
+    const result = await TestBed.runInInjectionContext(() => roleGuard(route, {} as never));
+
+    expect(result).toBeTrue();
+  });
+
+  it('should allow route when Admin user accesses a User-only route (hierarchy)', async () => {
+    MINFACTORY_USER_SERVICE_MOCK.setProfile({
+      createdAt: '19.03.2026, 11:00',
+      email: 'admin@example.com',
+      role: MinFactoryRole.Admin,
+    });
+    const route = { data: { role: MinFactoryRole.User } } as unknown as ActivatedRouteSnapshot;
+
+    const result = await TestBed.runInInjectionContext(() => roleGuard(route, {} as never));
+
+    expect(result).toBeTrue();
+  });
+
   it('should redirect to root when user has User role but Admin is required', async () => {
     MINFACTORY_USER_SERVICE_MOCK.setProfile({
       createdAt: '19.03.2026, 11:00',

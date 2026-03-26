@@ -63,6 +63,28 @@ describe('RolesGuard', () => {
     expect(MINFACTORY_USER_REPOSITORY_MOCK.findByFirebaseUid).toHaveBeenCalledWith('firebase-uid-123');
   });
 
+  it('should allow access when user has required User role', async () => {
+    reflector.getAllAndOverride.mockReturnValue([MinFactoryRole.User]);
+    MINFACTORY_USER_REPOSITORY_MOCK.findByFirebaseUid.mockResolvedValue({
+      role: MinFactoryRole.User,
+    });
+
+    const result = await guard.canActivate(createExecutionContext());
+
+    expect(result).toBe(true);
+  });
+
+  it('should allow access when Admin user accesses a User-only route (hierarchy)', async () => {
+    reflector.getAllAndOverride.mockReturnValue([MinFactoryRole.User]);
+    MINFACTORY_USER_REPOSITORY_MOCK.findByFirebaseUid.mockResolvedValue({
+      role: MinFactoryRole.Admin,
+    });
+
+    const result = await guard.canActivate(createExecutionContext());
+
+    expect(result).toBe(true);
+  });
+
   it('should throw ForbiddenException when user has User role but Admin is required', async () => {
     reflector.getAllAndOverride.mockReturnValue([MinFactoryRole.Admin]);
     MINFACTORY_USER_REPOSITORY_MOCK.findByFirebaseUid.mockResolvedValue({

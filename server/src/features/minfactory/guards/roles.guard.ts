@@ -3,7 +3,7 @@ import { Reflector } from '@nestjs/core';
 import { Request } from 'express';
 import { ROLES_KEY } from 'src/core/authentication/decorators/roles.decorator';
 import { AuthenticatedRequest } from 'src/core/authentication/models/authenticated-request';
-import { MinFactoryRole } from 'src/shared/enums/minfactory-role.enum';
+import { MinFactoryRole, hasRequiredRole } from 'src/shared/enums/minfactory-role.enum';
 import { MinFactoryUserEntity } from '../models/entities/minfactory-user.entity';
 import { MinFactoryUserRepository } from '../repositories/minfactory-user.repository';
 
@@ -35,7 +35,7 @@ export class RolesGuard implements CanActivate {
       throw new ForbiddenException('Insufficient permissions');
     }
 
-    if (!requiredRoles.includes(user.role)) {
+    if (!requiredRoles.some((role) => hasRequiredRole(user.role, role))) {
       throw new ForbiddenException('Insufficient permissions');
     }
 
