@@ -30,7 +30,7 @@ describe('MinFactoryUserController', () => {
     jest.clearAllMocks();
   });
 
-  describe('deleteMe', () => {
+  describe('deleteMe()', () => {
     const user: FirebaseUserDto = {
       firebaseUid: 'firebase-uid-123',
       email: 'user@example.com',
@@ -51,7 +51,7 @@ describe('MinFactoryUserController', () => {
     });
   });
 
-  describe('create', () => {
+  describe('create()', () => {
     const user: FirebaseUserDto = {
       firebaseUid: 'firebase-uid-123',
       email: 'user@example.com',

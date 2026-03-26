@@ -117,7 +117,7 @@ describe('MinFactoryUserService', () => {
     });
   });
 
-  describe('getMe', () => {
+  describe('getMe()', () => {
     const user: FirebaseUserDto = {
       firebaseUid: 'firebase-uid-123',
       email: 'user@example.com',
@@ -154,7 +154,7 @@ describe('MinFactoryUserService', () => {
     });
   });
 
-  describe('deleteMe', () => {
+  describe('deleteMe()', () => {
     const user: FirebaseUserDto = {
       firebaseUid: 'firebase-uid-123',
       email: 'user@example.com',
