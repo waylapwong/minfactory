@@ -107,6 +107,26 @@
       }
     },
     "/minfactory/users/me": {
+      "delete": {
+        "operationId": "deleteMinFactoryUserMe",
+        "parameters": [],
+        "responses": {
+          "204": {
+            "description": "Deleted"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "summary": "",
+        "tags": ["minFactory"]
+      },
       "get": {
         "operationId": "getMinFactoryUserMe",
         "parameters": [],

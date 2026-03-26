@@ -30,7 +30,28 @@ describe('MinFactoryUserController', () => {
     jest.clearAllMocks();
   });
 
-  describe('create', () => {
+  describe('deleteMe()', () => {
+    const user: FirebaseUserDto = {
+      firebaseUid: 'firebase-uid-123',
+      email: 'user@example.com',
+    };
+
+    it('should call deleteMe on service with the given user', async () => {
+      MINFACTORY_USER_SERVICE_MOCK.deleteMe.mockResolvedValue(undefined);
+
+      await userController.deleteMe(user);
+
+      expect(MINFACTORY_USER_SERVICE_MOCK.deleteMe).toHaveBeenCalledWith(user);
+    });
+
+    it('should propagate NotFoundException from service', async () => {
+      MINFACTORY_USER_SERVICE_MOCK.deleteMe.mockRejectedValue(new NotFoundException());
+
+      await expect(userController.deleteMe(user)).rejects.toThrow(NotFoundException);
+    });
+  });
+
+  describe('create()', () => {
     const user: FirebaseUserDto = {
       firebaseUid: 'firebase-uid-123',
       email: 'user@example.com',

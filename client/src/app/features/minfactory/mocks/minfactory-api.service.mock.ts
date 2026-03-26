@@ -9,5 +9,6 @@ const defaultUserDto: MinFactoryUserDto = {
 
 export const MINFACTORY_API_SERVICE_MOCK = {
   createMinFactoryUser: jasmine.createSpy('createMinFactoryUser').and.returnValue(of(defaultUserDto)),
+  deleteMinFactoryUserMe: jasmine.createSpy('deleteMinFactoryUserMe').and.returnValue(of(undefined)),
   getMinFactoryUserMe: jasmine.createSpy('getMinFactoryUserMe').and.returnValue(of(defaultUserDto)),
 };

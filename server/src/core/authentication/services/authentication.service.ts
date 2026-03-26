@@ -22,6 +22,10 @@ export class AuthenticationService {
           });
   }
 
+  public async deleteUser(uid: string): Promise<void> {
+    await this.app.auth().deleteUser(uid);
+  }
+
   public async verifyIdToken(token: string): Promise<admin.auth.DecodedIdToken> {
     return await this.app.auth().verifyIdToken(token);
   }

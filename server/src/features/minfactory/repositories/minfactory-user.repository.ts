@@ -31,6 +31,11 @@ export class MinFactoryUserRepository {
     return entity;
   }
 
+  public async deleteByFirebaseUid(firebaseUid: string): Promise<void> {
+    const entity: MinFactoryUserEntity = await this.findByFirebaseUid(firebaseUid);
+    await this.repository.remove(entity);
+  }
+
   public async save(entity: MinFactoryUserEntity): Promise<MinFactoryUserEntity> {
     return await this.repository.save(entity);
   }
