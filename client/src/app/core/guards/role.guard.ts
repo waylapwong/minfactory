@@ -15,7 +15,11 @@ export const roleGuard: CanActivateFn = async (route): Promise<boolean | UrlTree
   }
 
   if (!userService.profile()) {
-    await userService.loadProfile();
+    try {
+      await userService.loadProfile();
+    } catch {
+      return router.createUrlTree([AppPath.Root]);
+    }
   }
 
   const userRole = userService.profile()?.role;
