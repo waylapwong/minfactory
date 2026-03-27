@@ -5,6 +5,7 @@
     "node": "24.14.0"
   },
   "scripts": {
+    "all": "npm run format:all && npm run lint:ci && npm run test:ci && npm run build",
     "build": "npm run clean && nest build",
     "clean": "rimraf dist",
     "format": "onchange \"**/*\" -- prettier --write --ignore-unknown {{changed}}",

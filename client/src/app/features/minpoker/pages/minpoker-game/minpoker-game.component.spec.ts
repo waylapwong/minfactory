@@ -6,6 +6,7 @@ import { RoutingService } from '../../../../core/routing/routing.service';
 import { Color } from '../../../../shared/enums/color.enum';
 import {
   MINPOKER_MULTIPLAYER_GAME_SIGNAL,
+  MINPOKER_MULTIPLAYER_PLAYER_ID_SIGNAL,
   MINPOKER_MULTIPLAYER_SERVICE_MOCK,
 } from '../../mocks/minpoker-multiplayer.service.mock';
 import { MinPokerGameSeatViewModel, MinPokerGameViewModel } from '../../models/viewmodels/minpoker-game.viewmodel';
@@ -25,6 +26,7 @@ describe('MinPokerGameComponent', () => {
     ACTIVATED_ROUTE_MOCK.snapshot.paramMap.get.and.returnValue('game-id-1');
 
     MINPOKER_MULTIPLAYER_GAME_SIGNAL.set(new MinPokerGameViewModel());
+    MINPOKER_MULTIPLAYER_PLAYER_ID_SIGNAL.set('');
 
     MINPOKER_MULTIPLAYER_SERVICE_MOCK.connect.calls.reset();
     MINPOKER_MULTIPLAYER_SERVICE_MOCK.disconnect.calls.reset();
@@ -150,6 +152,37 @@ describe('MinPokerGameComponent', () => {
     });
   });
 
+  describe('table perspective', () => {
+    it('should show observer top and bottom seat order as 1-2-3 and 6-5-4', () => {
+      const vm = new MinPokerGameViewModel();
+      vm.isObserver = true;
+      vm.seats = new Array(6).fill(null);
+      MINPOKER_MULTIPLAYER_GAME_SIGNAL.set(vm);
+      fixture.detectChanges();
+
+      expect(component.topSeats().map((seat) => seat.seatIndex)).toEqual([0, 1, 2]);
+      expect(component.bottomObserverSeats().map((seat) => seat.seatIndex)).toEqual([5, 4, 3]);
+    });
+
+    it('should rotate top seats around hero seat in player view', () => {
+      const heroSeat = new MinPokerGameSeatViewModel();
+      heroSeat.id = 'hero-id';
+      heroSeat.name = 'Hero';
+      heroSeat.avatar = 'man-1.svg';
+      heroSeat.seat = 3;
+
+      const vm = new MinPokerGameViewModel();
+      vm.isObserver = false;
+      vm.seats = new Array(6).fill(null);
+      vm.seats[3] = heroSeat;
+      MINPOKER_MULTIPLAYER_GAME_SIGNAL.set(vm);
+      MINPOKER_MULTIPLAYER_PLAYER_ID_SIGNAL.set('hero-id');
+      fixture.detectChanges();
+
+      expect(component.topSeats().map((seat) => seat.seatIndex)).toEqual([4, 5, 0, 1, 2]);
+    });
+  });
+
   describe('openSeatDialog()', () => {
     it('should open seat dialog for an empty seat', async () => {
       const vm = new MinPokerGameViewModel();
@@ -190,6 +223,19 @@ describe('MinPokerGameComponent', () => {
 
       component.openSeatDialog(vm.seats.length);
       await fixture.whenStable();
+      expect(component.isSeatDialogOpen()).toBeFalse();
+    });
+
+    it('should not open seat dialog when user is not observer', async () => {
+      const vm = new MinPokerGameViewModel();
+      vm.isObserver = false;
+      vm.seats = new Array(6).fill(null);
+      MINPOKER_MULTIPLAYER_GAME_SIGNAL.set(vm);
+      fixture.detectChanges();
+
+      component.openSeatDialog(2);
+      await fixture.whenStable();
+
       expect(component.isSeatDialogOpen()).toBeFalse();
     });
   });

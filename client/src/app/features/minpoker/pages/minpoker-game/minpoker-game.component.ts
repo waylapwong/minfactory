@@ -41,8 +41,37 @@ export class MinPokerGameComponent implements OnInit, OnDestroy, CanLeaveGame {
   }));
   public readonly communityCards: readonly string[] = ['?', '?', '?', '?', '?'];
   public readonly handCards: readonly string[] = ['?', '?'];
+  public readonly isObserver: Signal<boolean> = computed(() => this.multiplayerService.game().isObserver);
   public readonly opponents: Signal<(MinPokerGameSeatViewModel | null)[]> = computed(
     () => this.multiplayerService.game().seats,
+  );
+  public readonly heroSeat: Signal<MinPokerGameSeatViewModel | null> = computed(() => {
+    const heroId: string = this.multiplayerService.playerId();
+    if (!heroId) {
+      return null;
+    }
+    return this.opponents().find((seat) => seat?.id === heroId) ?? null;
+  });
+  public readonly topSeats: Signal<MinPokerDisplaySeatViewModel[]> = computed(() => {
+    if (this.isObserver()) {
+      return this.mapSeatsByOrder([0, 1, 2]);
+    }
+
+    const heroSeat: MinPokerGameSeatViewModel | null = this.heroSeat();
+    const seatCount: number = this.getSeatCount();
+    if (!heroSeat || seatCount <= 1) {
+      return this.mapSeatsByOrder([0, 1, 2, 3, 4]);
+    }
+
+    const topSeatOrder: number[] = [];
+    for (let offset = 1; offset < seatCount; offset++) {
+      topSeatOrder.push((heroSeat.seat + offset) % seatCount);
+    }
+
+    return this.mapSeatsByOrder(topSeatOrder);
+  });
+  public readonly bottomObserverSeats: Signal<MinPokerDisplaySeatViewModel[]> = computed(() =>
+    this.mapSeatsByOrder([5, 4, 3]),
   );
 
   private readonly cachedBetAmount: WritableSignal<number> = signal(2);
@@ -130,7 +159,11 @@ export class MinPokerGameComponent implements OnInit, OnDestroy, CanLeaveGame {
   public onRaise(): void {}
 
   public openSeatDialog(seatIndex: number): void {
-    if (seatIndex < 0 || seatIndex >= this.opponents().length || this.opponents()[seatIndex]) {
+    if (!this.isObserver()) {
+      return;
+    }
+
+    if (seatIndex < 0 || seatIndex >= this.getSeatCount() || this.opponents()[seatIndex]) {
       return;
     }
     this.seatFormGroup = this.createSeatFormGroup();
@@ -168,6 +201,23 @@ export class MinPokerGameComponent implements OnInit, OnDestroy, CanLeaveGame {
       .map((value) => value.charAt(0).toUpperCase() + value.slice(1))
       .join(' ');
   }
+
+  private getSeatCount(): number {
+    const game = this.multiplayerService.game();
+    return Math.max(6, game.tableSize, game.seats.length);
+  }
+
+  private mapSeatsByOrder(order: readonly number[]): MinPokerDisplaySeatViewModel[] {
+    return order.map((seatIndex: number) => ({
+      player: this.opponents()[seatIndex] ?? null,
+      seatIndex,
+    }));
+  }
+}
+
+interface MinPokerDisplaySeatViewModel {
+  player: MinPokerGameSeatViewModel | null;
+  seatIndex: number;
 }
 
 const AVATAR_FILE_NAMES: readonly string[] = [
