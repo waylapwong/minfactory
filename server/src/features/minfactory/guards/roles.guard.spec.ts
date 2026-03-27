@@ -103,16 +103,13 @@ describe('RolesGuard', () => {
     const context = createExecutionContext();
     await guard.canActivate(context);
 
-    expect(reflector.getAllAndOverride).toHaveBeenCalledWith(ROLES_KEY, [
-      context.getHandler(),
-      context.getClass(),
-    ]);
+    expect(reflector.getAllAndOverride).toHaveBeenCalledWith(ROLES_KEY, [context.getHandler(), context.getClass()]);
   });
 
-  it('should throw ForbiddenException when user is not found in database', async () => {
+  it('should propagate repository error when user lookup fails', async () => {
     reflector.getAllAndOverride.mockReturnValue([MinFactoryRole.Admin]);
     MINFACTORY_USER_REPOSITORY_MOCK.findByFirebaseUid.mockRejectedValue(new NotFoundException());
 
-    await expect(guard.canActivate(createExecutionContext())).rejects.toThrow(ForbiddenException);
+    await expect(guard.canActivate(createExecutionContext())).rejects.toThrow(NotFoundException);
   });
 });

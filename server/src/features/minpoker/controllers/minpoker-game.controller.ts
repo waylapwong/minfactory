@@ -46,6 +46,7 @@ export class MinPokerGameController {
   @API_200({ isArray: true, type: MinPokerGameDto })
   @API_401()
   @API_403()
+  @API_404()
   @API_500()
   public async getAll(@FirebaseUser() firebaseUser: FirebaseUserDto): Promise<MinPokerGameDto[]> {
     return await this.gameService.getAllGames(firebaseUser);
@@ -58,6 +59,7 @@ export class MinPokerGameController {
   @API_400()
   @API_401()
   @API_403()
+  @API_404()
   @API_500()
   public async create(
     @Body() dto: MinPokerCreateGameDto,

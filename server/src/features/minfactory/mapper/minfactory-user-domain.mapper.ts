@@ -16,8 +16,12 @@ export class MinFactoryUserDomainMapper {
   public static domainToEntity(domain: MinFactoryUser): MinFactoryUserEntity {
     const entity: MinFactoryUserEntity = new MinFactoryUserEntity();
 
+    if (domain.createdAt.getTime() !== 0) {
+      entity.createdAt = domain.createdAt;
+    }
     entity.firebaseUid = domain.firebaseUid;
     entity.email = domain.email;
+    entity.role = domain.role;
 
     return entity;
   }

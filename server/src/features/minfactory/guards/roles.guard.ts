@@ -1,11 +1,11 @@
 import { CanActivate, ExecutionContext, ForbiddenException, Injectable } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { Request } from 'express';
+import { MinFactoryUserEntity } from '../models/entities/minfactory-user.entity';
+import { MinFactoryUserRepository } from '../repositories/minfactory-user.repository';
 import { ROLES_KEY } from 'src/core/authentication/decorators/roles.decorator';
 import { AuthenticatedRequest } from 'src/core/authentication/models/authenticated-request';
 import { MinFactoryRole, hasRequiredRole } from 'src/shared/enums/minfactory-role.enum';
-import { MinFactoryUserEntity } from '../models/entities/minfactory-user.entity';
-import { MinFactoryUserRepository } from '../repositories/minfactory-user.repository';
 
 @Injectable()
 export class RolesGuard implements CanActivate {
@@ -25,13 +25,16 @@ export class RolesGuard implements CanActivate {
     }
 
     const request: Request = context.switchToHttp().getRequest<Request>();
-    const { firebaseUid } = (request as AuthenticatedRequest).firebaseUser;
+    const firebaseUser = (request as AuthenticatedRequest).firebaseUser;
 
-    let user: MinFactoryUserEntity;
+    if (!firebaseUser?.firebaseUid) {
+      throw new ForbiddenException('Authentication required');
+    }
 
-    try {
-      user = await this.userRepository.findByFirebaseUid(firebaseUid);
-    } catch {
+    const firebaseUid = firebaseUser.firebaseUid;
+    const user: MinFactoryUserEntity = await this.userRepository.findByFirebaseUid(firebaseUid);
+
+    if (!user) {
       throw new ForbiddenException('Insufficient permissions');
     }
 
