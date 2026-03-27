@@ -80,6 +80,7 @@ export class MinFactoryProfileComponent implements OnInit {
     // Logout
     try {
       await this.authenticationService.logoutUser();
+      this.logoutRequestState.set(RequestState.Success);
       this.routingService.navigateToHomePage();
     } catch {
       this.logoutRequestState.set(RequestState.Error);

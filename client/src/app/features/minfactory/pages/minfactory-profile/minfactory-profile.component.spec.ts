@@ -92,7 +92,9 @@ describe('MinFactoryProfileComponent', () => {
     await fixture.whenStable();
 
     expect(component.profileRequestState()).toBe(RequestState.Error);
-    expect(component.profileRequestError()).toBe('Accountdaten konnten nicht geladen werden. Bitte versuche es erneut.');
+    expect(component.profileRequestError()).toBe(
+      'Accountdaten konnten nicht geladen werden. Bitte versuche es erneut.',
+    );
     expect(MINFACTORY_USER_SERVICE_MOCK.clearUserCache).toHaveBeenCalled();
   });
 

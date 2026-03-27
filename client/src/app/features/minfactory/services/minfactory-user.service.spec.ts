@@ -1,7 +1,7 @@
 import { provideZonelessChangeDetection } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
-import { MinFactoryUserRepository } from '../repositories/minfactory-user.repository';
 import { MINFACTORY_USER_REPOSITORY_MOCK } from '../mocks/minfactory-user.repository.mock';
+import { MinFactoryUserRepository } from '../repositories/minfactory-user.repository';
 import { MinFactoryUserService } from './minfactory-user.service';
 
 describe('MinFactoryUserService', () => {
@@ -56,7 +56,7 @@ describe('MinFactoryUserService', () => {
     });
   });
 
-  describe('clearProfileCache()', () => {
+  describe('clearUserCache()', () => {
     it('should reset cached profile to null', async () => {
       await service.loadProfile();
 

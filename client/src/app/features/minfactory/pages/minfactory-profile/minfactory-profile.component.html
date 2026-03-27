@@ -27,15 +27,15 @@
           </div>
         </dl>
       }
+      <!-- ERROR STATES -->
       @if (profileRequestState() === RequestState.Error) {
-        <!-- ERROR STATE -->
         <div class="rounded-lg border-2 border-red-300 bg-red-100 p-2 text-red-700" aria-live="polite">
-          @if (profileRequestState() === RequestState.Error) {
-            <p>{{ profileRequestError() }}</p>
-          }
-          @if (logoutRequestState() === RequestState.Error) {
-            <p>{{ logoutRequestError() }}</p>
-          }
+          <p>{{ profileRequestError() }}</p>
+        </div>
+      }
+      @if (logoutRequestState() === RequestState.Error) {
+        <div class="rounded-lg border-2 border-red-300 bg-red-100 p-2 text-red-700" aria-live="polite">
+          <p>{{ logoutRequestError() }}</p>
         </div>
       }
     </div>
@@ -80,6 +80,13 @@
         Möchtest du deinen Account wirklich unwiderruflich löschen? <br />
         Diese Aktion kann nicht rückgängig gemacht werden.
       </p>
+      <!-- ERROR STATE -->
+      @if (deleteRequestState() === RequestState.Error) {
+        <div class="rounded-lg border-2 border-red-300 bg-red-100 p-2 text-red-700" aria-live="polite">
+          <p>{{ deleteRequestError() }}</p>
+        </div>
+      }
+      <!-- BUTTONS -->
       <div class="flex flex-col gap-2 sm:flex-row sm:justify-between">
         <min-button
           [color]="Color.Red"
