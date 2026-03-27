@@ -2,8 +2,8 @@ import { Routes } from '@angular/router';
 import { authenticationGuard } from './core/guards/authentication.guard';
 import { featureFlagGuard } from './core/guards/feature-flag.guard';
 import { roleGuard } from './core/guards/role.guard';
-import { MinFactoryRole } from './shared/enums/minfactory-role.enum';
 import { AppName } from './shared/enums/app-name.enum';
+import { MinFactoryRole } from './shared/enums/minfactory-role.enum';
 
 export enum AppPath {
   MinPoker = 'minpoker',
