@@ -1,0 +1,8 @@
+{
+  "name": "minfactory",
+  "private": true,
+  "scripts": {
+    "client:all": "npm --prefix client run all",
+    "server:all": "npm --prefix server run all"
+  }
+}
