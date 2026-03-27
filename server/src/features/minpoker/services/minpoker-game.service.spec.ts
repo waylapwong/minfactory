@@ -44,7 +44,10 @@ describe('MinPokerGameService', () => {
       savedEntity.smallBlind = 1;
       savedEntity.tableSize = 6;
 
-      MINFACTORY_USER_REPOSITORY_MOCK.findByFirebaseUid.mockResolvedValue({ id: 'creator-1', role: MinFactoryRole.User });
+      MINFACTORY_USER_REPOSITORY_MOCK.findByFirebaseUid.mockResolvedValue({
+        id: 'creator-1',
+        role: MinFactoryRole.User,
+      });
       MINPOKER_GAME_REPOSITORY_MOCK.save.mockResolvedValue(savedEntity);
 
       const result = await service.createGame(createDto, firebaseUser);
@@ -70,7 +73,10 @@ describe('MinPokerGameService', () => {
         Object.assign(new MinPokerGameEntity(), { id: '2', name: 'Table 2', createdAt: new Date() }),
       ];
 
-      MINFACTORY_USER_REPOSITORY_MOCK.findByFirebaseUid.mockResolvedValue({ id: 'creator-1', role: MinFactoryRole.User });
+      MINFACTORY_USER_REPOSITORY_MOCK.findByFirebaseUid.mockResolvedValue({
+        id: 'creator-1',
+        role: MinFactoryRole.User,
+      });
       MINPOKER_GAME_REPOSITORY_MOCK.findAllByCreator.mockResolvedValue(entities);
 
       const result = await service.getAllGames(firebaseUser);
@@ -90,7 +96,10 @@ describe('MinPokerGameService', () => {
         Object.assign(new MinPokerGameEntity(), { id: '3', name: 'Table 3', createdAt: new Date() }),
       ];
 
-      MINFACTORY_USER_REPOSITORY_MOCK.findByFirebaseUid.mockResolvedValue({ id: 'admin-1', role: MinFactoryRole.Admin });
+      MINFACTORY_USER_REPOSITORY_MOCK.findByFirebaseUid.mockResolvedValue({
+        id: 'admin-1',
+        role: MinFactoryRole.Admin,
+      });
       MINPOKER_GAME_REPOSITORY_MOCK.findAll.mockResolvedValue(entities);
 
       const result = await service.getAllGames(firebaseUser);
