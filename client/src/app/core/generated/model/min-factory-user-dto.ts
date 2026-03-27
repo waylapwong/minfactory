@@ -14,5 +14,14 @@
 export interface MinFactoryUserDto { 
     createdAt: string;
     email: string;
+    role: MinFactoryUserDto.RoleEnum;
 }
+export namespace MinFactoryUserDto {
+    export type RoleEnum = 'admin' | 'user';
+    export const RoleEnum = {
+        Admin: 'admin' as RoleEnum,
+        User: 'user' as RoleEnum
+    };
+}
+
 

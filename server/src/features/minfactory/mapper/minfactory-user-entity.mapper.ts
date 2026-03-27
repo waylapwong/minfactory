@@ -8,6 +8,7 @@ export class MinFactoryUserEntityMapper {
     domain.id = entity.id;
     domain.firebaseUid = entity.firebaseUid;
     domain.email = entity.email;
+    domain.role = entity.role;
     domain.createdAt = entity.createdAt;
 
     return domain;

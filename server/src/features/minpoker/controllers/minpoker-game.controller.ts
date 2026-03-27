@@ -19,12 +19,12 @@ import { MinApp } from 'src/shared/enums/minapp.enum';
 
 @Controller('minpoker/games')
 @ApiTags(MinApp.MinPoker)
+@UseGuards(AuthenticationGuard)
 export class MinPokerGameController {
   constructor(private readonly gameService: MinPokerGameService) {}
 
   @Delete(':id')
   @HttpCode(204)
-  @UseGuards(AuthenticationGuard)
   @ApiOperation({ operationId: 'deleteMinPokerGame' })
   @API_Param_ID()
   @API_204()
@@ -42,10 +42,11 @@ export class MinPokerGameController {
 
   @Get()
   @HttpCode(200)
-  @UseGuards(AuthenticationGuard)
   @ApiOperation({ operationId: 'getAllMinPokerGames' })
   @API_200({ isArray: true, type: MinPokerGameDto })
   @API_401()
+  @API_403()
+  @API_404()
   @API_500()
   public async getAll(@FirebaseUser() firebaseUser: FirebaseUserDto): Promise<MinPokerGameDto[]> {
     return await this.gameService.getAllGames(firebaseUser);
@@ -53,11 +54,12 @@ export class MinPokerGameController {
 
   @Post()
   @HttpCode(201)
-  @UseGuards(AuthenticationGuard)
   @ApiOperation({ operationId: 'createMinPokerGame' })
   @API_201({ type: MinPokerGameDto })
   @API_400()
   @API_401()
+  @API_403()
+  @API_404()
   @API_500()
   public async create(
     @Body() dto: MinPokerCreateGameDto,
