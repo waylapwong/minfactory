@@ -22,7 +22,7 @@ export const APP_ROUTES: Routes = [
   {
     path: AppPath.MinPoker,
     title: AppName.MinPoker,
-    canActivate: [featureFlagGuard, authenticationGuard, roleGuard],
+    canActivate: [authenticationGuard, roleGuard, featureFlagGuard],
     data: { feature: 'minpoker', role: MinFactoryRole.Admin },
     loadChildren: () => import('./features/minpoker/minpoker.routes').then((m) => m.MINPOKER_ROUTES),
     loadComponent: () => import('./features/minpoker/minpoker.component').then((m) => m.MinPokerComponent),

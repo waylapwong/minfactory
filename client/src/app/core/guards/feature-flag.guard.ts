@@ -2,6 +2,7 @@ import { inject } from '@angular/core';
 import { CanActivateFn, Router, UrlTree } from '@angular/router';
 import { ENVIRONMENT } from '../../../environments/environment';
 import { AppPath } from '../../app.routes';
+import { MinFactoryRole } from '../../shared/enums/minfactory-role.enum';
 
 function isFeatureEnabled(feature: string): boolean {
   const featureFlags: Record<string, boolean> = {
@@ -19,5 +20,14 @@ export const featureFlagGuard: CanActivateFn = (route): boolean | UrlTree => {
     return true;
   }
 
-  return isFeatureEnabled(feature) ? true : router.createUrlTree([AppPath.Root]);
+  if (isFeatureEnabled(feature)) {
+    return true;
+  }
+
+  // Admin role bypasses the feature flag restriction
+  if (route.data?.['role'] === MinFactoryRole.Admin) {
+    return true;
+  }
+
+  return router.createUrlTree([AppPath.Root]);
 };
