@@ -14,7 +14,7 @@ export const roleGuard: CanActivateFn = async (route): Promise<boolean | UrlTree
     return true;
   }
 
-  if (!userService.profile()) {
+  if (!userService.userProfile()) {
     try {
       await userService.loadProfile();
     } catch {
@@ -22,7 +22,7 @@ export const roleGuard: CanActivateFn = async (route): Promise<boolean | UrlTree
     }
   }
 
-  const userRole = userService.profile()?.role;
+  const userRole = userService.userProfile()?.role;
 
   if (userRole && hasRequiredRole(userRole, requiredRole)) {
     return true;

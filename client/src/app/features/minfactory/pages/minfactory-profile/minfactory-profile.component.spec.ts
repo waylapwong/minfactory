@@ -32,8 +32,8 @@ describe('MinFactoryProfileComponent', () => {
 
   beforeEach(async () => {
     MINFACTORY_USER_SERVICE_MOCK.setProfile.calls.reset();
-    MINFACTORY_USER_SERVICE_MOCK.clearProfileCache.calls.reset();
-    MINFACTORY_USER_SERVICE_MOCK.clearProfileCache();
+    MINFACTORY_USER_SERVICE_MOCK.clearUserCache.calls.reset();
+    MINFACTORY_USER_SERVICE_MOCK.clearUserCache();
     MINFACTORY_USER_SERVICE_MOCK.loadProfile.calls.reset();
     MINFACTORY_USER_SERVICE_MOCK.loadProfile.and.callFake(async (): Promise<void> => {
       MINFACTORY_USER_SERVICE_MOCK.setProfile({
@@ -93,7 +93,7 @@ describe('MinFactoryProfileComponent', () => {
 
     expect(component.isError()).toBeTrue();
     expect(component.errorMessage()).toBe('Server down');
-    expect(MINFACTORY_USER_SERVICE_MOCK.clearProfileCache).toHaveBeenCalled();
+    expect(MINFACTORY_USER_SERVICE_MOCK.clearUserCache).toHaveBeenCalled();
   });
 
   it('should navigate to apps', () => {
