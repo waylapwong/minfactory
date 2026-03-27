@@ -1,10 +1,11 @@
 import { provideZonelessChangeDetection } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { RoutingService } from '../../../../core/routing/routing.service';
 import { ROUTING_SERVICE_MOCK } from '../../../../core/mocks/routing.service.mock';
-import { MinFactoryAuthenticationService } from '../../services/minfactory-authentication.service';
+import { RoutingService } from '../../../../core/routing/routing.service';
+import { RequestState } from '../../../../shared/enums/request-state.enum';
 import { MINFACTORY_AUTHENTICATION_SERVICE_MOCK } from '../../mocks/minfactory-authentication.service.mock';
 import { MINFACTORY_USER_SERVICE_MOCK } from '../../mocks/minfactory-user.service.mock';
+import { MinFactoryAuthenticationService } from '../../services/minfactory-authentication.service';
 import { MinFactoryUserService } from '../../services/minfactory-user.service';
 import { MinFactoryProfileComponent } from './minfactory-profile.component';
 
@@ -32,8 +33,8 @@ describe('MinFactoryProfileComponent', () => {
 
   beforeEach(async () => {
     MINFACTORY_USER_SERVICE_MOCK.setProfile.calls.reset();
-    MINFACTORY_USER_SERVICE_MOCK.clearProfileCache.calls.reset();
-    MINFACTORY_USER_SERVICE_MOCK.clearProfileCache();
+    MINFACTORY_USER_SERVICE_MOCK.clearUserCache.calls.reset();
+    MINFACTORY_USER_SERVICE_MOCK.clearUserCache();
     MINFACTORY_USER_SERVICE_MOCK.loadProfile.calls.reset();
     MINFACTORY_USER_SERVICE_MOCK.loadProfile.and.callFake(async (): Promise<void> => {
       MINFACTORY_USER_SERVICE_MOCK.setProfile({
@@ -72,8 +73,7 @@ describe('MinFactoryProfileComponent', () => {
     await fixture.whenStable();
 
     expect(MINFACTORY_USER_SERVICE_MOCK.loadProfile).toHaveBeenCalled();
-    expect(component.isLoading()).toBeFalse();
-    expect(component.isError()).toBeFalse();
+    expect(component.profileRequestState()).toBe(RequestState.Success);
   });
 
   it('should navigate to login when profile loading fails with unauthorized error', async () => {
@@ -85,21 +85,17 @@ describe('MinFactoryProfileComponent', () => {
     expect(ROUTING_SERVICE_MOCK.navigateToLogin).toHaveBeenCalled();
   });
 
-  it('should expose error state when profile loading fails', async () => {
+  it('should set profile error request state when profile loading fails', async () => {
     MINFACTORY_USER_SERVICE_MOCK.loadProfile.and.returnValue(Promise.reject(new Error('Server down')));
 
     fixture.detectChanges();
     await fixture.whenStable();
 
-    expect(component.isError()).toBeTrue();
-    expect(component.errorMessage()).toBe('Server down');
-    expect(MINFACTORY_USER_SERVICE_MOCK.clearProfileCache).toHaveBeenCalled();
-  });
-
-  it('should navigate to apps', () => {
-    component.navigateToApps();
-
-    expect(ROUTING_SERVICE_MOCK.navigateToApps).toHaveBeenCalled();
+    expect(component.profileRequestState()).toBe(RequestState.Error);
+    expect(component.profileRequestError()).toBe(
+      'Accountdaten konnten nicht geladen werden. Bitte versuche es erneut.',
+    );
+    expect(MINFACTORY_USER_SERVICE_MOCK.clearUserCache).toHaveBeenCalled();
   });
 
   it('should reload profile when reloadProfile is called', async () => {
@@ -122,10 +118,10 @@ describe('MinFactoryProfileComponent', () => {
       expect(ROUTING_SERVICE_MOCK.navigateToHomePage).toHaveBeenCalled();
     });
 
-    it('should set isLogoutSubmitting while logout is in progress', () => {
+    it('should set logout request state to loading while logout is in progress', () => {
       component.logout();
 
-      expect(component.isLogoutSubmitting()).toBeTrue();
+      expect(component.logoutRequestState()).toBe(RequestState.Loading);
     });
 
     it('should not call logoutUser when already submitting', () => {
@@ -135,32 +131,19 @@ describe('MinFactoryProfileComponent', () => {
       expect(MINFACTORY_AUTHENTICATION_SERVICE_MOCK.logoutUser).toHaveBeenCalledTimes(1);
     });
 
-    it('should show snackbar and reset submitting state when logout fails', async () => {
+    it('should set error state when logout fails', async () => {
       const errorMessage = 'Logout fehlgeschlagen.';
       MINFACTORY_AUTHENTICATION_SERVICE_MOCK.logoutUser.and.returnValue(Promise.reject(new Error(errorMessage)));
 
       component.logout();
       await settleLogout();
 
-      expect(component.isLogoutSubmitting()).toBeFalse();
-      expect(component.isSnackbarOpen()).toBeTrue();
-      expect(component.snackbarMessage()).toBe(errorMessage);
+      expect(component.logoutRequestState()).toBe(RequestState.Error);
       expect(ROUTING_SERVICE_MOCK.navigateToHomePage).not.toHaveBeenCalled();
-    });
-
-    it('should close snackbar when closeSnackbar is called', async () => {
-      MINFACTORY_AUTHENTICATION_SERVICE_MOCK.logoutUser.and.returnValue(Promise.reject(new Error('error')));
-      component.logout();
-      await settleLogout();
-
-      component.closeSnackbar();
-
-      expect(component.isSnackbarOpen()).toBeFalse();
-      expect(component.snackbarMessage()).toBe('');
     });
   });
 
-  describe('deleteAccount', () => {
+  describe('deleteAccount()', () => {
     const settleDeleteAccount = async (): Promise<void> => {
       const deletePromise: Promise<unknown> | undefined =
         MINFACTORY_AUTHENTICATION_SERVICE_MOCK.deleteAccount.calls.mostRecent()?.returnValue as
@@ -182,52 +165,51 @@ describe('MinFactoryProfileComponent', () => {
       expect(component.isDeleteDialogOpen()).toBeTrue();
     });
 
-    it('should close delete dialog when cancelDeleteAccount is called', () => {
+    it('should close delete dialog when closeDeleteDialog is called', () => {
       component.openDeleteDialog();
-      component.cancelDeleteAccount();
+      component.closeDeleteDialog();
 
       expect(component.isDeleteDialogOpen()).toBeFalse();
     });
 
     it('should delete account and navigate to home page on success', async () => {
-      component.confirmDeleteAccount();
+      component.deleteAccount();
       await settleDeleteAccount();
 
       expect(MINFACTORY_AUTHENTICATION_SERVICE_MOCK.deleteAccount).toHaveBeenCalled();
-      expect(component.isDeleteSubmitting()).toBeFalse();
+      expect(component.deleteRequestState()).toBe(RequestState.Success);
       expect(ROUTING_SERVICE_MOCK.navigateToHomePage).toHaveBeenCalled();
     });
 
-    it('should close dialog before deleting account', () => {
+    it('should close dialog after successful account deletion', async () => {
       component.openDeleteDialog();
-      component.confirmDeleteAccount();
+      component.deleteAccount();
+      await settleDeleteAccount();
 
       expect(component.isDeleteDialogOpen()).toBeFalse();
     });
 
-    it('should set isDeleteSubmitting while deletion is in progress', () => {
-      component.confirmDeleteAccount();
+    it('should set delete request state to loading while deletion is in progress', () => {
+      component.deleteAccount();
 
-      expect(component.isDeleteSubmitting()).toBeTrue();
+      expect(component.deleteRequestState()).toBe(RequestState.Loading);
     });
 
-    it('should not call deleteAccount when already submitting', async () => {
-      component.confirmDeleteAccount();
-      component.confirmDeleteAccount();
+    it('should call authentication delete only once when already deleting', async () => {
+      component.deleteAccount();
+      component.deleteAccount();
 
       expect(MINFACTORY_AUTHENTICATION_SERVICE_MOCK.deleteAccount).toHaveBeenCalledTimes(1);
     });
 
-    it('should show snackbar and reset submitting state when delete fails', async () => {
+    it('should set delete request state to error when deletion fails', async () => {
       const errorMessage = 'Löschen fehlgeschlagen.';
       MINFACTORY_AUTHENTICATION_SERVICE_MOCK.deleteAccount.and.returnValue(Promise.reject(new Error(errorMessage)));
 
-      component.confirmDeleteAccount();
+      component.deleteAccount();
       await settleDeleteAccount();
 
-      expect(component.isDeleteSubmitting()).toBeFalse();
-      expect(component.isSnackbarOpen()).toBeTrue();
-      expect(component.snackbarMessage()).toBe(errorMessage);
+      expect(component.deleteRequestState()).toBe(RequestState.Error);
       expect(ROUTING_SERVICE_MOCK.navigateToHomePage).not.toHaveBeenCalled();
     });
   });

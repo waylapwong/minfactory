@@ -22,7 +22,7 @@ describe('roleGuard', () => {
     router = TestBed.inject(Router);
 
     MINFACTORY_USER_SERVICE_MOCK.loadProfile.calls.reset();
-    MINFACTORY_USER_SERVICE_MOCK.clearProfileCache.calls.reset();
+    MINFACTORY_USER_SERVICE_MOCK.clearUserCache.calls.reset();
     MINFACTORY_USER_SERVICE_MOCK.setProfile(null);
   });
 

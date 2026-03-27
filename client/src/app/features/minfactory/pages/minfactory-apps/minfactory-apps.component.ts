@@ -19,7 +19,7 @@ import { MinFactoryUserService } from '../../services/minfactory-user.service';
 export class MinFactoryAppsComponent {
   public readonly Color: typeof Color = Color;
   public readonly isMinPokerAccessible: Signal<boolean> = computed(
-    () => ENVIRONMENT.FEATURE_FLAGS.MINPOKER || this.userService.profile()?.role === MinFactoryRole.Admin,
+    () => ENVIRONMENT.FEATURE_FLAGS.MINPOKER || this.userService.profileViewModel()?.role === MinFactoryRole.Admin,
   );
 
   public selectedTab: WritableSignal<number> = signal(1);

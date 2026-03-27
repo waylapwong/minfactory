@@ -1,7 +1,7 @@
 import { provideZonelessChangeDetection } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
-import { MinFactoryUserRepository } from '../repositories/minfactory-user.repository';
 import { MINFACTORY_USER_REPOSITORY_MOCK } from '../mocks/minfactory-user.repository.mock';
+import { MinFactoryUserRepository } from '../repositories/minfactory-user.repository';
 import { MinFactoryUserService } from './minfactory-user.service';
 
 describe('MinFactoryUserService', () => {
@@ -30,7 +30,7 @@ describe('MinFactoryUserService', () => {
   });
 
   it('should expose null profile initially', () => {
-    expect(service.profile()).toBeNull();
+    expect(service.profileViewModel()).toBeNull();
   });
 
   describe('loadProfile()', () => {
@@ -45,8 +45,8 @@ describe('MinFactoryUserService', () => {
       await service.loadProfile();
 
       expect(MINFACTORY_USER_REPOSITORY_MOCK.get).toHaveBeenCalled();
-      expect(service.profile()?.email).toBe('user@example.com');
-      expect((service.profile()?.createdAt ?? '').length).toBeGreaterThan(0);
+      expect(service.profileViewModel()?.email).toBe('user@example.com');
+      expect((service.profileViewModel()?.createdAt ?? '').length).toBeGreaterThan(0);
     });
 
     it('should throw error when repository fails', async () => {
@@ -56,13 +56,13 @@ describe('MinFactoryUserService', () => {
     });
   });
 
-  describe('clearProfileCache()', () => {
+  describe('clearUserCache()', () => {
     it('should reset cached profile to null', async () => {
       await service.loadProfile();
 
-      service.clearProfileCache();
+      service.clearUserCache();
 
-      expect(service.profile()).toBeNull();
+      expect(service.profileViewModel()).toBeNull();
     });
   });
 });
