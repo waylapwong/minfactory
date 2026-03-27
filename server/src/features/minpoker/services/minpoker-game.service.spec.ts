@@ -6,6 +6,7 @@ import { MinPokerGameRepository } from '../repositories/minpoker-game.repository
 import { MinPokerGameService } from './minpoker-game.service';
 import { MINFACTORY_USER_REPOSITORY_MOCK } from 'src/features/minfactory/mocks/minfactory-user.repository.mock';
 import { MinFactoryUserRepository } from 'src/features/minfactory/repositories/minfactory-user.repository';
+import { MinFactoryRole } from 'src/shared/enums/minfactory-role.enum';
 
 describe('MinPokerGameService', () => {
   let service: MinPokerGameService;
@@ -43,7 +44,7 @@ describe('MinPokerGameService', () => {
       savedEntity.smallBlind = 1;
       savedEntity.tableSize = 6;
 
-      MINFACTORY_USER_REPOSITORY_MOCK.findByFirebaseUid.mockResolvedValue({ id: 'creator-1' });
+      MINFACTORY_USER_REPOSITORY_MOCK.findByFirebaseUid.mockResolvedValue({ id: 'creator-1', role: MinFactoryRole.User });
       MINPOKER_GAME_REPOSITORY_MOCK.save.mockResolvedValue(savedEntity);
 
       const result = await service.createGame(createDto, firebaseUser);
@@ -62,14 +63,14 @@ describe('MinPokerGameService', () => {
   });
 
   describe('getAllGames()', () => {
-    it('should return all games', async () => {
+    it('should return only creator games for User role', async () => {
       const firebaseUser = { firebaseUid: 'fb-creator-1' } as any;
       const entities = [
         Object.assign(new MinPokerGameEntity(), { id: '1', name: 'Table 1', createdAt: new Date() }),
         Object.assign(new MinPokerGameEntity(), { id: '2', name: 'Table 2', createdAt: new Date() }),
       ];
 
-      MINFACTORY_USER_REPOSITORY_MOCK.findByFirebaseUid.mockResolvedValue({ id: 'creator-1' });
+      MINFACTORY_USER_REPOSITORY_MOCK.findByFirebaseUid.mockResolvedValue({ id: 'creator-1', role: MinFactoryRole.User });
       MINPOKER_GAME_REPOSITORY_MOCK.findAllByCreator.mockResolvedValue(entities);
 
       const result = await service.getAllGames(firebaseUser);
@@ -78,13 +79,33 @@ describe('MinPokerGameService', () => {
       expect(result[0].name).toBe('Table 1');
       expect(MINFACTORY_USER_REPOSITORY_MOCK.findByFirebaseUid).toHaveBeenCalledWith('fb-creator-1');
       expect(MINPOKER_GAME_REPOSITORY_MOCK.findAllByCreator).toHaveBeenCalledWith('creator-1');
+      expect(MINPOKER_GAME_REPOSITORY_MOCK.findAll).not.toHaveBeenCalled();
+    });
+
+    it('should return all games for Admin role', async () => {
+      const firebaseUser = { firebaseUid: 'fb-admin-1' } as any;
+      const entities = [
+        Object.assign(new MinPokerGameEntity(), { id: '1', name: 'Table 1', createdAt: new Date() }),
+        Object.assign(new MinPokerGameEntity(), { id: '2', name: 'Table 2', createdAt: new Date() }),
+        Object.assign(new MinPokerGameEntity(), { id: '3', name: 'Table 3', createdAt: new Date() }),
+      ];
+
+      MINFACTORY_USER_REPOSITORY_MOCK.findByFirebaseUid.mockResolvedValue({ id: 'admin-1', role: MinFactoryRole.Admin });
+      MINPOKER_GAME_REPOSITORY_MOCK.findAll.mockResolvedValue(entities);
+
+      const result = await service.getAllGames(firebaseUser);
+
+      expect(result).toHaveLength(3);
+      expect(MINFACTORY_USER_REPOSITORY_MOCK.findByFirebaseUid).toHaveBeenCalledWith('fb-admin-1');
+      expect(MINPOKER_GAME_REPOSITORY_MOCK.findAll).toHaveBeenCalled();
+      expect(MINPOKER_GAME_REPOSITORY_MOCK.findAllByCreator).not.toHaveBeenCalled();
     });
   });
 
   describe('deleteGame()', () => {
     it('should delete a game by id when user is the creator', async () => {
       const firebaseUser = { firebaseUid: 'fb-creator-1' } as any;
-      const userEntity = { id: 'creator-1' };
+      const userEntity = { id: 'creator-1', role: MinFactoryRole.User };
       const gameEntity = Object.assign(new MinPokerGameEntity(), {
         id: 'game-id',
         name: 'Test Table',
@@ -104,7 +125,7 @@ describe('MinPokerGameService', () => {
 
     it('should throw ForbiddenException when user is not the creator', async () => {
       const firebaseUser = { firebaseUid: 'fb-user-2' } as any;
-      const userEntity = { id: 'user-2' };
+      const userEntity = { id: 'user-2', role: MinFactoryRole.User };
       const creatorEntity = { id: 'creator-1' };
       const gameEntity = Object.assign(new MinPokerGameEntity(), {
         id: 'game-id',
@@ -122,6 +143,27 @@ describe('MinPokerGameService', () => {
       expect(MINFACTORY_USER_REPOSITORY_MOCK.findByFirebaseUid).toHaveBeenCalledWith('fb-user-2');
       expect(MINPOKER_GAME_REPOSITORY_MOCK.findOne).toHaveBeenCalledWith('game-id');
       expect(MINPOKER_GAME_REPOSITORY_MOCK.delete).not.toHaveBeenCalled();
+    });
+
+    it('should allow Admin to delete any game regardless of ownership', async () => {
+      const firebaseUser = { firebaseUid: 'fb-admin-1' } as any;
+      const adminEntity = { id: 'admin-1', role: MinFactoryRole.Admin };
+      const creatorEntity = { id: 'creator-1' };
+      const gameEntity = Object.assign(new MinPokerGameEntity(), {
+        id: 'game-id',
+        name: 'Test Table',
+        creator: creatorEntity,
+      });
+
+      MINFACTORY_USER_REPOSITORY_MOCK.findByFirebaseUid.mockResolvedValue(adminEntity);
+      MINPOKER_GAME_REPOSITORY_MOCK.findOne.mockResolvedValue(gameEntity);
+      MINPOKER_GAME_REPOSITORY_MOCK.delete.mockResolvedValue(undefined);
+
+      await service.deleteGame('game-id', firebaseUser);
+
+      expect(MINFACTORY_USER_REPOSITORY_MOCK.findByFirebaseUid).toHaveBeenCalledWith('fb-admin-1');
+      expect(MINPOKER_GAME_REPOSITORY_MOCK.findOne).toHaveBeenCalledWith('game-id');
+      expect(MINPOKER_GAME_REPOSITORY_MOCK.delete).toHaveBeenCalledWith('game-id');
     });
   });
 });
