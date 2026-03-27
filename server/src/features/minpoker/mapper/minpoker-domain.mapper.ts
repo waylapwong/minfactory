@@ -1,6 +1,7 @@
 import { MinPokerGame } from '../models/domains/minpoker-game';
 import { MinPokerGameDto } from '../models/dtos/minpoker-game.dto';
 import { MinPokerGameEntity } from '../models/entities/minpoker-game.entity';
+import { MinPokerUpdatedEvent } from '../models/events/minpoker-updated.event';
 import { MinFactoryUserEntity } from 'src/features/minfactory/models/entities/minfactory-user.entity';
 
 export class MinPokerDomainMapper {
@@ -11,12 +12,33 @@ export class MinPokerDomainMapper {
     dto.createdAt = domain.createdAt;
     dto.id = domain.id;
     dto.name = domain.name;
-    dto.observerCount = 0;
-    dto.playerCount = domain.players ? domain.players.filter((p) => p && p.id !== '').length : 0;
+    dto.observerCount = domain.observers?.size ?? 0;
+    dto.playerCount = domain.getPlayerCount();
     dto.smallBlind = domain.smallBlind;
     dto.tableSize = domain.tableSize;
 
     return dto;
+  }
+
+  public static domainToUpdatedEvent(domain: MinPokerGame): MinPokerUpdatedEvent {
+    const event: MinPokerUpdatedEvent = new MinPokerUpdatedEvent();
+
+    event.bigBlind = domain.bigBlind;
+    event.matchId = domain.id;
+    event.name = domain.name;
+    event.observerIds = [...domain.observers.keys()];
+    event.players = domain.players
+      .filter((player): player is NonNullable<typeof player> => player !== null)
+      .map((player) => ({
+        avatar: player.avatar,
+        id: player.id,
+        name: player.name,
+        seat: player.seat,
+      }));
+    event.smallBlind = domain.smallBlind;
+    event.tableSize = domain.tableSize;
+
+    return event;
   }
 
   public static domainToEntity(domain: MinPokerGame): MinPokerGameEntity {

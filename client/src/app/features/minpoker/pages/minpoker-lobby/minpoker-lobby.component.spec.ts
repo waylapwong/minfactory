@@ -149,4 +149,14 @@ describe('MinPokerLobbyComponent', () => {
     expect(component.isError()).toBeTrue();
     expect(component.errorMessage()).toBe('Spiele konnten nicht geladen werden. Bitte versuche es erneut.');
   });
+
+  describe('navigateToGame()', () => {
+    it('should call routingService.navigateToMinPokerGame with the game id', () => {
+      ROUTING_SERVICE_MOCK.navigateToMinPokerGame.calls.reset();
+
+      component.navigateToGame('some-game-id');
+
+      expect(ROUTING_SERVICE_MOCK.navigateToMinPokerGame).toHaveBeenCalledWith('some-game-id');
+    });
+  });
 });

@@ -3,6 +3,8 @@ export const MINPOKER_SOCKET_MOCK = {
   data: {},
   disconnect: jest.fn(),
   emit: jest.fn(),
+  join: jest.fn(),
+  leave: jest.fn(),
   handshake: {
     auth: {},
     headers: {

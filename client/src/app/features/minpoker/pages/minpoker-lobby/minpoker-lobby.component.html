@@ -44,7 +44,7 @@
       </div>
     } @else {
       @for (game of games(); track $index) {
-        <min-card-button>
+        <min-card-button (clicked)="navigateToGame(game.id)">
           <div class="flex flex-row justify-between">
             <min-h2 class="grow text-left break-all">{{ game.name }}</min-h2>
             <min-button [color]="Color.Red" (clicked)="openDeleteDialog(game.id, $event)">

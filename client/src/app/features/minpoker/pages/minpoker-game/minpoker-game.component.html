@@ -23,17 +23,14 @@
   </div>
   <!-- VILLAIN SIDE -->
   <div class="grid grid-cols-5 gap-2">
-    @for (opponent of opponents.slice(0, 5); track opponent?.name ?? $index) {
+    @for (opponent of opponents().slice(0, 5); track opponent?.name ?? $index) {
       @if (opponent) {
         <!-- VILLAIN CARD -->
         <div
-          class="flex flex-col items-center justify-center rounded-lg border-2 border-black p-1 font-bold shadow-2xl transition-colors"
-          [class.bg-blue-300]="opponent.isActive"
-          [class.bg-white]="!opponent.isActive"
+          class="flex flex-col items-center justify-center rounded-lg border-2 border-black bg-white p-1 font-bold shadow-2xl transition-colors"
         >
           <img [src]="getAvatarPath(opponent.avatar)" [alt]="opponent.name" />
           <span class="w-full truncate">{{ opponent.name }}</span>
-          <span class="w-full truncate text-xs text-gray-500">{{ opponent.chips | number }}</span>
         </div>
       } @else {
         <!-- EMPTY SEAT -->
@@ -53,22 +50,14 @@
   <div class="my-4 flex flex-col items-center rounded-4xl border-8 bg-green-700 p-2">
     <!-- VILLAIN BET SIZES -->
     <div class="grid w-full grid-cols-5 gap-2 text-sm font-bold">
-      @for (opponent of opponents.slice(0, 5); track opponent?.name ?? $index) {
-        <div>
-          @if (opponent && opponent.betAmount) {
-            {{ opponent.betAmount | number }}
-          }
-        </div>
+      @for (opponent of opponents().slice(0, 5); track opponent?.name ?? $index) {
+        <div></div>
       }
     </div>
     <!-- VILLAIN DEALER BUTTON  -->
     <div class="grid w-full grid-cols-5 gap-2 text-sm font-bold">
-      @for (opponent of opponents.slice(0, 5); track opponent?.name ?? $index) {
-        <div class="flex flex-row justify-center">
-          @if (opponent?.role === 'D') {
-            <span class="h-6 w-6 rounded-full border-2 border-black bg-white">D</span>
-          }
-        </div>
+      @for (opponent of opponents().slice(0, 5); track opponent?.name ?? $index) {
+        <div></div>
       }
     </div>
     <!-- COMMUNITY CARDS -->

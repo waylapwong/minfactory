@@ -84,6 +84,10 @@ export class MinPokerLobbyComponent implements OnInit {
     }
   }
 
+  public navigateToGame(id: string): void {
+    this.routingService.navigateToMinPokerGame(id);
+  }
+
   public openDeleteDialog(id: string, event: MouseEvent): void {
     event.stopPropagation();
     this.gameIdToDelete = id;

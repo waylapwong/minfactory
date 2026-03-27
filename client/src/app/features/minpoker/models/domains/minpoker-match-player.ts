@@ -1,10 +1,10 @@
-export class MinPokerPlayer {
+export class MinPokerMatchPlayer {
   public avatar: string = '';
   public id: string = '';
   public name: string = '';
   public seat: number = -1;
 
-  constructor(init?: Partial<MinPokerPlayer>) {
+  constructor(init?: Partial<MinPokerMatchPlayer>) {
     if (init) {
       Object.assign(this, init);
     }
