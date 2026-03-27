@@ -85,14 +85,14 @@ describe('MinFactoryProfileComponent', () => {
     expect(ROUTING_SERVICE_MOCK.navigateToLogin).toHaveBeenCalled();
   });
 
-  it('should expose error state when profile loading fails', async () => {
+  it('should set profile error request state when profile loading fails', async () => {
     MINFACTORY_USER_SERVICE_MOCK.loadProfile.and.returnValue(Promise.reject(new Error('Server down')));
 
     fixture.detectChanges();
     await fixture.whenStable();
 
     expect(component.profileRequestState()).toBe(RequestState.Error);
-    expect(component.errorMessage()).toBe('Server down');
+    expect(component.profileRequestError()).toBe('Accountdaten konnten nicht geladen werden. Bitte versuche es erneut.');
     expect(MINFACTORY_USER_SERVICE_MOCK.clearUserCache).toHaveBeenCalled();
   });
 
@@ -116,7 +116,7 @@ describe('MinFactoryProfileComponent', () => {
       expect(ROUTING_SERVICE_MOCK.navigateToHomePage).toHaveBeenCalled();
     });
 
-    it('should set isLogoutSubmitting while logout is in progress', () => {
+    it('should set logout request state to loading while logout is in progress', () => {
       component.logout();
 
       expect(component.logoutRequestState()).toBe(RequestState.Loading);
@@ -141,7 +141,7 @@ describe('MinFactoryProfileComponent', () => {
     });
   });
 
-  describe('deleteAccount', () => {
+  describe('deleteAccount()', () => {
     const settleDeleteAccount = async (): Promise<void> => {
       const deletePromise: Promise<unknown> | undefined =
         MINFACTORY_AUTHENTICATION_SERVICE_MOCK.deleteAccount.calls.mostRecent()?.returnValue as
@@ -163,7 +163,7 @@ describe('MinFactoryProfileComponent', () => {
       expect(component.isDeleteDialogOpen()).toBeTrue();
     });
 
-    it('should close delete dialog when cancelDeleteAccount is called', () => {
+    it('should close delete dialog when closeDeleteDialog is called', () => {
       component.openDeleteDialog();
       component.closeDeleteDialog();
 
@@ -175,38 +175,39 @@ describe('MinFactoryProfileComponent', () => {
       await settleDeleteAccount();
 
       expect(MINFACTORY_AUTHENTICATION_SERVICE_MOCK.deleteAccount).toHaveBeenCalled();
-      expect(component.isDeleteSubmitting()).toBeFalse();
+      expect(component.deleteRequestState()).toBe(RequestState.Success);
       expect(ROUTING_SERVICE_MOCK.navigateToHomePage).toHaveBeenCalled();
     });
 
-    it('should close dialog before deleting account', () => {
+    it('should close dialog after successful account deletion', async () => {
       component.openDeleteDialog();
       component.deleteAccount();
+      await settleDeleteAccount();
 
       expect(component.isDeleteDialogOpen()).toBeFalse();
     });
 
-    it('should set isDeleteSubmitting while deletion is in progress', () => {
+    it('should set delete request state to loading while deletion is in progress', () => {
       component.deleteAccount();
 
-      expect(component.isDeleteSubmitting()).toBeTrue();
+      expect(component.deleteRequestState()).toBe(RequestState.Loading);
     });
 
-    it('should not call deleteAccount when already submitting', async () => {
+    it('should call authentication delete only once when already deleting', async () => {
       component.deleteAccount();
       component.deleteAccount();
 
       expect(MINFACTORY_AUTHENTICATION_SERVICE_MOCK.deleteAccount).toHaveBeenCalledTimes(1);
     });
 
-    it('should reset submitting state when delete fails', async () => {
+    it('should set delete request state to error when deletion fails', async () => {
       const errorMessage = 'Löschen fehlgeschlagen.';
       MINFACTORY_AUTHENTICATION_SERVICE_MOCK.deleteAccount.and.returnValue(Promise.reject(new Error(errorMessage)));
 
       component.deleteAccount();
       await settleDeleteAccount();
 
-      expect(component.isDeleteSubmitting()).toBeFalse();
+      expect(component.deleteRequestState()).toBe(RequestState.Error);
       expect(ROUTING_SERVICE_MOCK.navigateToHomePage).not.toHaveBeenCalled();
     });
   });
