@@ -1,4 +1,4 @@
-export class MinPokerMatchSeatPayload {
+export class MinPokerMatchSeatCommand {
   public avatar!: string;
   public matchId!: string;
   public playerId!: string;

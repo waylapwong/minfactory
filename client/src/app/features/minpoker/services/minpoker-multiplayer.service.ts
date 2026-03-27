@@ -1,13 +1,13 @@
 import { Injectable, Signal, WritableSignal, computed, signal } from '@angular/core';
 import { MinPokerDomainMapper } from '../mapper/minpoker-domain.mapper';
-import { MinPokerPayloadMapper } from '../mapper/minpoker-payload.mapper';
+import { MinPokerEventMapper } from '../mapper/minpoker-event.mapper';
 import { MinPokerMatch } from '../models/domains/minpoker-match';
+import { MinPokerMatchJoinCommand } from '../models/commands/minpoker-match-join.command';
+import { MinPokerMatchSeatCommand } from '../models/commands/minpoker-match-seat.command';
 import { MinPokerMatchCommand } from '../models/enums/minpoker-match-command.enum';
 import { MinPokerMatchEvent } from '../models/enums/minpoker-match-event.enum';
-import { MinPokerMatchConnectedPayload } from '../models/payloads/minpoker-match-connected.payload';
-import { MinPokerMatchJoinPayload } from '../models/payloads/minpoker-match-join.payload';
-import { MinPokerMatchSeatPayload } from '../models/payloads/minpoker-match-seat.payload';
-import { MinPokerMatchUpdatedPayload } from '../models/payloads/minpoker-match-updated.payload';
+import { MinPokerMatchConnectedEvent } from '../models/events/minpoker-match-connected.event';
+import { MinPokerMatchUpdatedEvent } from '../models/events/minpoker-match-updated.event';
 import { MinPokerGameViewModel } from '../models/viewmodels/minpoker-game.viewmodel';
 import { MinPokerSocketRepository } from '../repositories/minpoker-socket.repository';
 
@@ -44,7 +44,7 @@ export class MinPokerMultiplayerService {
   }
 
   public seatGame(playerName: string, avatar: string, seat: number): void {
-    const command: MinPokerMatchSeatPayload = new MinPokerMatchSeatPayload();
+    const command: MinPokerMatchSeatCommand = new MinPokerMatchSeatCommand();
     command.matchId = this.cachedMatch().id;
     command.playerId = this.cachedPlayerId();
     command.playerName = playerName;
@@ -55,22 +55,22 @@ export class MinPokerMultiplayerService {
   }
 
   private joinGame(): void {
-    const command: MinPokerMatchJoinPayload = new MinPokerMatchJoinPayload();
+    const command: MinPokerMatchJoinCommand = new MinPokerMatchJoinCommand();
     command.matchId = this.cachedMatch().id;
     command.playerId = this.cachedPlayerId();
     this.socketRepository.emit(MinPokerMatchCommand.Join, command);
     console.warn(`Sending Command: ${MinPokerMatchCommand.Join}`, command);
   }
 
-  private readonly onMatchConnectedEvent = (event: MinPokerMatchConnectedPayload): void => {
+  private readonly onMatchConnectedEvent = (event: MinPokerMatchConnectedEvent): void => {
     console.warn('Receiving Event: Connected', event);
     this.cachedPlayerId.set(event.playerId);
     this.joinGame();
   };
 
-  private readonly onMatchUpdatedEvent = (event: MinPokerMatchUpdatedPayload): void => {
+  private readonly onMatchUpdatedEvent = (event: MinPokerMatchUpdatedEvent): void => {
     console.warn('Receiving Event: Updated', event);
-    this.cachedMatch.set(MinPokerPayloadMapper.matchUpdatedPayloadToDomain(event));
+    this.cachedMatch.set(MinPokerEventMapper.matchUpdatedEventToDomain(event));
   };
 
   private subscribeToEvents(): void {

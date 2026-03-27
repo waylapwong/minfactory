@@ -1,16 +1,16 @@
-export interface MinPokerMatchUpdatedPlayerPayload {
+export interface MinPokerMatchUpdatedPlayerEvent {
   avatar: string;
   id: string;
   name: string;
   seat: number;
 }
 
-export class MinPokerMatchUpdatedPayload {
+export class MinPokerMatchUpdatedEvent {
   public bigBlind!: number;
   public matchId!: string;
   public name!: string;
   public observerIds!: string[];
-  public players!: MinPokerMatchUpdatedPlayerPayload[];
+  public players!: MinPokerMatchUpdatedPlayerEvent[];
   public smallBlind!: number;
   public tableSize!: number;
 }

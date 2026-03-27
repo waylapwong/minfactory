@@ -1,10 +1,10 @@
-import { MinPokerMatchUpdatedPayload } from '../models/payloads/minpoker-match-updated.payload';
-import { MinPokerPayloadMapper } from './minpoker-payload.mapper';
+import { MinPokerMatchUpdatedEvent } from '../models/events/minpoker-match-updated.event';
+import { MinPokerEventMapper } from './minpoker-event.mapper';
 
-describe('MinPokerPayloadMapper', () => {
-  describe('matchUpdatedPayloadToDomain()', () => {
-    it('should map payload fields to domain', () => {
-      const payload: MinPokerMatchUpdatedPayload = {
+describe('MinPokerEventMapper', () => {
+  describe('matchUpdatedEventToDomain()', () => {
+    it('should map event fields to domain', () => {
+      const event: MinPokerMatchUpdatedEvent = {
         bigBlind: 20,
         matchId: 'match-1',
         name: 'Evening Table',
@@ -14,7 +14,7 @@ describe('MinPokerPayloadMapper', () => {
         tableSize: 6,
       };
 
-      const domain = MinPokerPayloadMapper.matchUpdatedPayloadToDomain(payload);
+      const domain = MinPokerEventMapper.matchUpdatedEventToDomain(event);
 
       expect(domain.bigBlind).toBe(20);
       expect(domain.id).toBe('match-1');
@@ -25,7 +25,7 @@ describe('MinPokerPayloadMapper', () => {
     });
 
     it('should create a players array of tableSize length filled with null', () => {
-      const payload: MinPokerMatchUpdatedPayload = {
+      const event: MinPokerMatchUpdatedEvent = {
         bigBlind: 20,
         matchId: 'match-1',
         name: 'Table',
@@ -35,14 +35,14 @@ describe('MinPokerPayloadMapper', () => {
         tableSize: 4,
       };
 
-      const domain = MinPokerPayloadMapper.matchUpdatedPayloadToDomain(payload);
+      const domain = MinPokerEventMapper.matchUpdatedEventToDomain(event);
 
       expect(domain.players.length).toBe(4);
       expect(domain.players.every((p) => p === null)).toBeTrue();
     });
 
     it('should place players at the correct seat index', () => {
-      const payload: MinPokerMatchUpdatedPayload = {
+      const event: MinPokerMatchUpdatedEvent = {
         bigBlind: 20,
         matchId: 'match-1',
         name: 'Table',
@@ -55,7 +55,7 @@ describe('MinPokerPayloadMapper', () => {
         tableSize: 6,
       };
 
-      const domain = MinPokerPayloadMapper.matchUpdatedPayloadToDomain(payload);
+      const domain = MinPokerEventMapper.matchUpdatedEventToDomain(event);
 
       expect(domain.players[0]).toEqual(jasmine.objectContaining({ id: 'p1', name: 'Alice', seat: 0 }));
       expect(domain.players[1]).toBeNull();
@@ -67,7 +67,7 @@ describe('MinPokerPayloadMapper', () => {
 
     it('should create a copy of observerIds array', () => {
       const observerIds = ['obs-1'];
-      const payload: MinPokerMatchUpdatedPayload = {
+      const event: MinPokerMatchUpdatedEvent = {
         bigBlind: 0,
         matchId: '',
         name: '',
@@ -77,7 +77,7 @@ describe('MinPokerPayloadMapper', () => {
         tableSize: 2,
       };
 
-      const domain = MinPokerPayloadMapper.matchUpdatedPayloadToDomain(payload);
+      const domain = MinPokerEventMapper.matchUpdatedEventToDomain(event);
       observerIds.push('obs-2');
 
       expect(domain.observerIds).toEqual(['obs-1']);

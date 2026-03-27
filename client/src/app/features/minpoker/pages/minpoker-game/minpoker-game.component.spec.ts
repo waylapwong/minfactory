@@ -4,7 +4,10 @@ import { ActivatedRoute } from '@angular/router';
 import { ROUTING_SERVICE_MOCK } from '../../../../core/mocks/routing.service.mock';
 import { RoutingService } from '../../../../core/routing/routing.service';
 import { Color } from '../../../../shared/enums/color.enum';
-import { MINPOKER_MULTIPLAYER_GAME_SIGNAL, MINPOKER_MULTIPLAYER_SERVICE_MOCK } from '../../mocks/minpoker-multiplayer.service.mock';
+import {
+  MINPOKER_MULTIPLAYER_GAME_SIGNAL,
+  MINPOKER_MULTIPLAYER_SERVICE_MOCK,
+} from '../../mocks/minpoker-multiplayer.service.mock';
 import { MinPokerGameSeatViewModel, MinPokerGameViewModel } from '../../models/viewmodels/minpoker-game.viewmodel';
 import { MinPokerMultiplayerService } from '../../services/minpoker-multiplayer.service';
 import { MinPokerGameComponent } from './minpoker-game.component';

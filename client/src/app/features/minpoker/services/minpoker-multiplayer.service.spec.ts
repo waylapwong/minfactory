@@ -3,10 +3,10 @@ import { TestBed } from '@angular/core/testing';
 import { MINPOKER_SOCKET_REPOSITORY_MOCK } from '../mocks/minpoker-socket.repository.mock';
 import { MinPokerMatchCommand } from '../models/enums/minpoker-match-command.enum';
 import { MinPokerMatchEvent } from '../models/enums/minpoker-match-event.enum';
-import { MinPokerMatchConnectedPayload } from '../models/payloads/minpoker-match-connected.payload';
-import { MinPokerMatchJoinPayload } from '../models/payloads/minpoker-match-join.payload';
-import { MinPokerMatchSeatPayload } from '../models/payloads/minpoker-match-seat.payload';
-import { MinPokerMatchUpdatedPayload } from '../models/payloads/minpoker-match-updated.payload';
+import { MinPokerMatchConnectedEvent } from '../models/events/minpoker-match-connected.event';
+import { MinPokerMatchJoinCommand } from '../models/commands/minpoker-match-join.command';
+import { MinPokerMatchSeatCommand } from '../models/commands/minpoker-match-seat.command';
+import { MinPokerMatchUpdatedEvent } from '../models/events/minpoker-match-updated.event';
 import { MinPokerSocketRepository } from '../repositories/minpoker-socket.repository';
 import { MinPokerMultiplayerService } from './minpoker-multiplayer.service';
 
@@ -105,27 +105,27 @@ describe('MinPokerMultiplayerService', () => {
       expect(MINPOKER_SOCKET_REPOSITORY_MOCK.emit).toHaveBeenCalledWith(MinPokerMatchCommand.Seat, jasmine.any(Object));
     });
 
-    it('should emit Seat command as MinPokerMatchSeatPayload with correct values', () => {
+    it('should emit Seat command as MinPokerMatchSeatCommand with correct values', () => {
       service.setGameId('match-42');
 
-      const connectedPayload: MinPokerMatchConnectedPayload = { playerId: 'player-1' };
+      const connectedEvent: MinPokerMatchConnectedEvent = { playerId: 'player-1' };
       service.connect();
       const connectedCb = MINPOKER_SOCKET_REPOSITORY_MOCK.on.calls
         .all()
-        .find((c) => c.args[0] === MinPokerMatchEvent.Connected)!.args[1] as (p: MinPokerMatchConnectedPayload) => void;
-      connectedCb(connectedPayload);
+        .find((c) => c.args[0] === MinPokerMatchEvent.Connected)!.args[1] as (p: MinPokerMatchConnectedEvent) => void;
+      connectedCb(connectedEvent);
       MINPOKER_SOCKET_REPOSITORY_MOCK.emit.calls.reset();
 
       service.seatGame('Chris', 'man-1.svg', 2);
 
       const emitArgs = MINPOKER_SOCKET_REPOSITORY_MOCK.emit.calls.mostRecent().args;
       expect(emitArgs[0]).toBe(MinPokerMatchCommand.Seat);
-      expect(emitArgs[1]).toBeInstanceOf(MinPokerMatchSeatPayload);
-      expect((emitArgs[1] as MinPokerMatchSeatPayload).playerName).toBe('Chris');
-      expect((emitArgs[1] as MinPokerMatchSeatPayload).avatar).toBe('man-1.svg');
-      expect((emitArgs[1] as MinPokerMatchSeatPayload).seat).toBe(2);
-      expect((emitArgs[1] as MinPokerMatchSeatPayload).matchId).toBe('match-42');
-      expect((emitArgs[1] as MinPokerMatchSeatPayload).playerId).toBe('player-1');
+      expect(emitArgs[1]).toBeInstanceOf(MinPokerMatchSeatCommand);
+      expect((emitArgs[1] as MinPokerMatchSeatCommand).playerName).toBe('Chris');
+      expect((emitArgs[1] as MinPokerMatchSeatCommand).avatar).toBe('man-1.svg');
+      expect((emitArgs[1] as MinPokerMatchSeatCommand).seat).toBe(2);
+      expect((emitArgs[1] as MinPokerMatchSeatCommand).matchId).toBe('match-42');
+      expect((emitArgs[1] as MinPokerMatchSeatCommand).playerId).toBe('player-1');
     });
   });
 
@@ -143,7 +143,7 @@ describe('MinPokerMultiplayerService', () => {
     });
 
     it('should update seats when match updated event fires', () => {
-      const updatedPayload: MinPokerMatchUpdatedPayload = {
+      const updatedEvent: MinPokerMatchUpdatedEvent = {
         bigBlind: 20,
         matchId: 'game-1',
         name: 'Test Table',
@@ -156,8 +156,8 @@ describe('MinPokerMultiplayerService', () => {
       service.connect();
       const updatedCb = MINPOKER_SOCKET_REPOSITORY_MOCK.on.calls
         .all()
-        .find((c) => c.args[0] === MinPokerMatchEvent.Updated)!.args[1] as (p: MinPokerMatchUpdatedPayload) => void;
-      updatedCb(updatedPayload);
+        .find((c) => c.args[0] === MinPokerMatchEvent.Updated)!.args[1] as (p: MinPokerMatchUpdatedEvent) => void;
+      updatedCb(updatedEvent);
 
       expect(service.game().gameId).toBe('game-1');
       expect(service.game().seats[0]).toEqual(
@@ -173,13 +173,13 @@ describe('MinPokerMultiplayerService', () => {
     });
 
     it('should update when connected event fires', () => {
-      const connectedPayload: MinPokerMatchConnectedPayload = { playerId: 'player-123' };
+      const connectedEvent: MinPokerMatchConnectedEvent = { playerId: 'player-123' };
 
       service.connect();
       const connectedCb = MINPOKER_SOCKET_REPOSITORY_MOCK.on.calls
         .all()
-        .find((c) => c.args[0] === MinPokerMatchEvent.Connected)!.args[1] as (p: MinPokerMatchConnectedPayload) => void;
-      connectedCb(connectedPayload);
+        .find((c) => c.args[0] === MinPokerMatchEvent.Connected)!.args[1] as (p: MinPokerMatchConnectedEvent) => void;
+      connectedCb(connectedEvent);
 
       expect(service.playerId()).toBe('player-123');
     });
@@ -187,21 +187,21 @@ describe('MinPokerMultiplayerService', () => {
 
   describe('onMatchConnectedEvent', () => {
     it('should set playerId and emit Join command', () => {
-      const connectedPayload: MinPokerMatchConnectedPayload = { playerId: 'player-42' };
+      const connectedEvent: MinPokerMatchConnectedEvent = { playerId: 'player-42' };
       service.setGameId('game-99');
 
       service.connect();
       const connectedCb = MINPOKER_SOCKET_REPOSITORY_MOCK.on.calls
         .all()
-        .find((c) => c.args[0] === MinPokerMatchEvent.Connected)!.args[1] as (p: MinPokerMatchConnectedPayload) => void;
-      connectedCb(connectedPayload);
+        .find((c) => c.args[0] === MinPokerMatchEvent.Connected)!.args[1] as (p: MinPokerMatchConnectedEvent) => void;
+      connectedCb(connectedEvent);
 
       expect(service.playerId()).toBe('player-42');
       const emitArgs = MINPOKER_SOCKET_REPOSITORY_MOCK.emit.calls.mostRecent().args;
       expect(emitArgs[0]).toBe(MinPokerMatchCommand.Join);
-      expect(emitArgs[1]).toBeInstanceOf(MinPokerMatchJoinPayload);
-      expect((emitArgs[1] as MinPokerMatchJoinPayload).playerId).toBe('player-42');
-      expect((emitArgs[1] as MinPokerMatchJoinPayload).matchId).toBe('game-99');
+      expect(emitArgs[1]).toBeInstanceOf(MinPokerMatchJoinCommand);
+      expect((emitArgs[1] as MinPokerMatchJoinCommand).playerId).toBe('player-42');
+      expect((emitArgs[1] as MinPokerMatchJoinCommand).matchId).toBe('game-99');
     });
   });
 });
