@@ -1,10 +1,11 @@
 import { provideZonelessChangeDetection } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { RoutingService } from '../../../../core/routing/routing.service';
 import { ROUTING_SERVICE_MOCK } from '../../../../core/mocks/routing.service.mock';
-import { MinFactoryAuthenticationService } from '../../services/minfactory-authentication.service';
+import { RoutingService } from '../../../../core/routing/routing.service';
+import { RequestState } from '../../../../shared/enums/request-state.enum';
 import { MINFACTORY_AUTHENTICATION_SERVICE_MOCK } from '../../mocks/minfactory-authentication.service.mock';
 import { MINFACTORY_USER_SERVICE_MOCK } from '../../mocks/minfactory-user.service.mock';
+import { MinFactoryAuthenticationService } from '../../services/minfactory-authentication.service';
 import { MinFactoryUserService } from '../../services/minfactory-user.service';
 import { MinFactoryProfileComponent } from './minfactory-profile.component';
 
@@ -72,8 +73,7 @@ describe('MinFactoryProfileComponent', () => {
     await fixture.whenStable();
 
     expect(MINFACTORY_USER_SERVICE_MOCK.loadProfile).toHaveBeenCalled();
-    expect(component.isLoading()).toBeFalse();
-    expect(component.isError()).toBeFalse();
+    expect(component.profileRequestState()).toBe(RequestState.Success);
   });
 
   it('should navigate to login when profile loading fails with unauthorized error', async () => {
@@ -91,15 +91,9 @@ describe('MinFactoryProfileComponent', () => {
     fixture.detectChanges();
     await fixture.whenStable();
 
-    expect(component.isError()).toBeTrue();
+    expect(component.profileRequestState()).toBe(RequestState.Error);
     expect(component.errorMessage()).toBe('Server down');
     expect(MINFACTORY_USER_SERVICE_MOCK.clearUserCache).toHaveBeenCalled();
-  });
-
-  it('should navigate to apps', () => {
-    component.navigateToApps();
-
-    expect(ROUTING_SERVICE_MOCK.navigateToApps).toHaveBeenCalled();
   });
 
   it('should reload profile when reloadProfile is called', async () => {
@@ -125,7 +119,7 @@ describe('MinFactoryProfileComponent', () => {
     it('should set isLogoutSubmitting while logout is in progress', () => {
       component.logout();
 
-      expect(component.isLogoutSubmitting()).toBeTrue();
+      expect(component.logoutRequestState()).toBe(RequestState.Loading);
     });
 
     it('should not call logoutUser when already submitting', () => {
@@ -135,28 +129,15 @@ describe('MinFactoryProfileComponent', () => {
       expect(MINFACTORY_AUTHENTICATION_SERVICE_MOCK.logoutUser).toHaveBeenCalledTimes(1);
     });
 
-    it('should show snackbar and reset submitting state when logout fails', async () => {
+    it('should set error state when logout fails', async () => {
       const errorMessage = 'Logout fehlgeschlagen.';
       MINFACTORY_AUTHENTICATION_SERVICE_MOCK.logoutUser.and.returnValue(Promise.reject(new Error(errorMessage)));
 
       component.logout();
       await settleLogout();
 
-      expect(component.isLogoutSubmitting()).toBeFalse();
-      expect(component.isSnackbarOpen()).toBeTrue();
-      expect(component.snackbarMessage()).toBe(errorMessage);
+      expect(component.logoutRequestState()).toBe(RequestState.Error);
       expect(ROUTING_SERVICE_MOCK.navigateToHomePage).not.toHaveBeenCalled();
-    });
-
-    it('should close snackbar when closeSnackbar is called', async () => {
-      MINFACTORY_AUTHENTICATION_SERVICE_MOCK.logoutUser.and.returnValue(Promise.reject(new Error('error')));
-      component.logout();
-      await settleLogout();
-
-      component.closeSnackbar();
-
-      expect(component.isSnackbarOpen()).toBeFalse();
-      expect(component.snackbarMessage()).toBe('');
     });
   });
 
@@ -184,13 +165,13 @@ describe('MinFactoryProfileComponent', () => {
 
     it('should close delete dialog when cancelDeleteAccount is called', () => {
       component.openDeleteDialog();
-      component.cancelDeleteAccount();
+      component.closeDeleteDialog();
 
       expect(component.isDeleteDialogOpen()).toBeFalse();
     });
 
     it('should delete account and navigate to home page on success', async () => {
-      component.confirmDeleteAccount();
+      component.deleteAccount();
       await settleDeleteAccount();
 
       expect(MINFACTORY_AUTHENTICATION_SERVICE_MOCK.deleteAccount).toHaveBeenCalled();
@@ -200,34 +181,32 @@ describe('MinFactoryProfileComponent', () => {
 
     it('should close dialog before deleting account', () => {
       component.openDeleteDialog();
-      component.confirmDeleteAccount();
+      component.deleteAccount();
 
       expect(component.isDeleteDialogOpen()).toBeFalse();
     });
 
     it('should set isDeleteSubmitting while deletion is in progress', () => {
-      component.confirmDeleteAccount();
+      component.deleteAccount();
 
       expect(component.isDeleteSubmitting()).toBeTrue();
     });
 
     it('should not call deleteAccount when already submitting', async () => {
-      component.confirmDeleteAccount();
-      component.confirmDeleteAccount();
+      component.deleteAccount();
+      component.deleteAccount();
 
       expect(MINFACTORY_AUTHENTICATION_SERVICE_MOCK.deleteAccount).toHaveBeenCalledTimes(1);
     });
 
-    it('should show snackbar and reset submitting state when delete fails', async () => {
+    it('should reset submitting state when delete fails', async () => {
       const errorMessage = 'Löschen fehlgeschlagen.';
       MINFACTORY_AUTHENTICATION_SERVICE_MOCK.deleteAccount.and.returnValue(Promise.reject(new Error(errorMessage)));
 
-      component.confirmDeleteAccount();
+      component.deleteAccount();
       await settleDeleteAccount();
 
       expect(component.isDeleteSubmitting()).toBeFalse();
-      expect(component.isSnackbarOpen()).toBeTrue();
-      expect(component.snackbarMessage()).toBe(errorMessage);
       expect(ROUTING_SERVICE_MOCK.navigateToHomePage).not.toHaveBeenCalled();
     });
   });

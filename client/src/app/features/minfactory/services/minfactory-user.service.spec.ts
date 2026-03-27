@@ -30,7 +30,7 @@ describe('MinFactoryUserService', () => {
   });
 
   it('should expose null profile initially', () => {
-    expect(service.userProfile()).toBeNull();
+    expect(service.profileViewModel()).toBeNull();
   });
 
   describe('loadProfile()', () => {
@@ -45,8 +45,8 @@ describe('MinFactoryUserService', () => {
       await service.loadProfile();
 
       expect(MINFACTORY_USER_REPOSITORY_MOCK.get).toHaveBeenCalled();
-      expect(service.userProfile()?.email).toBe('user@example.com');
-      expect((service.userProfile()?.createdAt ?? '').length).toBeGreaterThan(0);
+      expect(service.profileViewModel()?.email).toBe('user@example.com');
+      expect((service.profileViewModel()?.createdAt ?? '').length).toBeGreaterThan(0);
     });
 
     it('should throw error when repository fails', async () => {
@@ -62,7 +62,7 @@ describe('MinFactoryUserService', () => {
 
       service.clearUserCache();
 
-      expect(service.userProfile()).toBeNull();
+      expect(service.profileViewModel()).toBeNull();
     });
   });
 });

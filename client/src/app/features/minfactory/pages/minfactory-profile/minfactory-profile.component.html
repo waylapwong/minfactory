@@ -1,11 +1,11 @@
-<div class="flex flex-col gap-4">
+<div class="flex flex-col gap-2">
   <!-- CARD: ACCOUNT DATA -->
   <min-card>
     <min-h2>Accountdaten</min-h2>
     <div class="flex flex-col">
       @if (profileRequestState() === RequestState.Success || profileRequestState() === RequestState.Loading) {
         <!-- ACCOUNT DATA -->
-        @let userProfile = userService.userProfile();
+        @let userProfile = userService.profileViewModel();
         <dl class="flex flex-col gap-2">
           <!-- EMAIL -->
           <div>
@@ -30,13 +30,18 @@
       @if (profileRequestState() === RequestState.Error) {
         <!-- ERROR STATE -->
         <div class="rounded-lg border-2 border-red-300 bg-red-100 p-2 text-red-700" aria-live="polite">
-          <p>{{ errorMessage() }}</p>
+          @if (profileRequestState() === RequestState.Error) {
+            <p>{{ profileRequestError() }}</p>
+          }
+          @if (logoutRequestState() === RequestState.Error) {
+            <p>{{ logoutRequestError() }}</p>
+          }
         </div>
       }
     </div>
     <!-- BUTTONS -->
     <div class="mt-4 flex flex-col gap-2 sm:flex-row">
-      @if (profileRequestState() === RequestState.Success) {
+      @if (profileRequestState() === RequestState.Success || logoutRequestState() === RequestState.Error) {
         <!-- BUTTON: LOGOUT -->
         <min-button
           [color]="Color.Gray"
@@ -47,7 +52,7 @@
         </min-button>
       }
       @if (profileRequestState() === RequestState.Error) {
-        <!-- BUTTON: RETRY -->
+        <!-- BUTTON: RETRY LOAD ACCOUNT DATA -->
         <min-button [color]="Color.Gray" (clicked)="reloadProfile()"> Erneut versuchen </min-button>
       }
     </div>
@@ -63,24 +68,27 @@
       </p>
       <!-- BUTTON: DELETE ACCOUNT -->
       <div class="mt-4 flex flex-col gap-2 sm:flex-row">
-        <min-button [color]="Color.Red" [isDisabled]="isDeleteSubmitting()" (clicked)="openDeleteDialog()">
-          {{ isDeleteSubmitting() ? 'Wird gelöscht...' : 'Account löschen' }}
-        </min-button>
+        <min-button [color]="Color.Red" (clicked)="openDeleteDialog()"> Account löschen </min-button>
       </div>
     </min-card>
   }
 
   <!-- DIALOG: DELETE ACCOUNT -->
-  <min-dialog [isOpen]="isDeleteDialogOpen()" title="Account löschen" (closed)="cancelDeleteAccount()">
+  <min-dialog [isOpen]="isDeleteDialogOpen()" title="Account löschen" (closed)="closeDeleteDialog()">
     <div class="flex flex-col gap-4">
-      <p class="text-red-500">
-        Möchtest du deinen Account wirklich unwiderruflich löschen? Diese Aktion kann nicht rückgängig gemacht werden.
+      <p>
+        Möchtest du deinen Account wirklich unwiderruflich löschen? <br />
+        Diese Aktion kann nicht rückgängig gemacht werden.
       </p>
       <div class="flex flex-col gap-2 sm:flex-row sm:justify-between">
-        <min-button [color]="Color.Red" [isDisabled]="isDeleteSubmitting()" (clicked)="confirmDeleteAccount()">
+        <min-button
+          [color]="Color.Red"
+          [isDisabled]="deleteRequestState() === RequestState.Loading"
+          (clicked)="deleteAccount()"
+        >
           Unwiderruflich löschen
         </min-button>
-        <min-button [color]="Color.Gray" (clicked)="cancelDeleteAccount()">Abbrechen</min-button>
+        <min-button [color]="Color.Gray" (clicked)="closeDeleteDialog()">Abbrechen</min-button>
       </div>
     </div>
   </min-dialog>

@@ -5,7 +5,7 @@ import { MinFactoryProfileViewModel } from '../models/viewmodels/minfactory-prof
 const cachedProfile: WritableSignal<MinFactoryProfileViewModel | null> = signal(null);
 
 export const MINFACTORY_USER_SERVICE_MOCK = {
-  userProfile: computed((): MinFactoryProfileViewModel | null => cachedProfile()),
+  profileViewModel: computed((): MinFactoryProfileViewModel | null => cachedProfile()),
   setProfile: jasmine
     .createSpy('setProfile')
     .and.callFake((profile: MinFactoryProfileViewModel | null) => cachedProfile.set(profile)),

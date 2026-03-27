@@ -10,7 +10,7 @@ import { MinFactoryUserRepository } from '../repositories/minfactory-user.reposi
   providedIn: 'root',
 })
 export class MinFactoryUserService {
-  public readonly userProfile: Signal<MinFactoryProfileViewModel | null> = computed(() => {
+  public readonly profileViewModel: Signal<MinFactoryProfileViewModel | null> = computed(() => {
     const user: MinFactoryUser | null = this.cachedUser();
     return user ? MinFactoryViewmodelMapper.domainToProfileViewModel(user) : null;
   });
