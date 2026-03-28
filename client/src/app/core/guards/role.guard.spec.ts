@@ -1,10 +1,10 @@
 import { provideZonelessChangeDetection } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { ActivatedRouteSnapshot, Router, UrlTree, provideRouter } from '@angular/router';
-import { MinFactoryRole } from '../../shared/enums/minfactory-role.enum';
-import { MinFactoryUserService } from '../../features/minfactory/services/minfactory-user.service';
-import { MINFACTORY_USER_SERVICE_MOCK } from '../../features/minfactory/mocks/minfactory-user.service.mock';
 import { AppPath } from '../../app.routes';
+import { MINFACTORY_USER_SERVICE_MOCK } from '../../features/minfactory/mocks/minfactory-user.service.mock';
+import { MinFactoryUserService } from '../../features/minfactory/services/minfactory-user.service';
+import { MinFactoryRole } from '../../shared/enums/minfactory-role.enum';
 import { roleGuard } from './role.guard';
 
 describe('roleGuard', () => {
@@ -21,6 +21,7 @@ describe('roleGuard', () => {
 
     router = TestBed.inject(Router);
 
+    MINFACTORY_USER_SERVICE_MOCK.ensureProfileLoaded.calls.reset();
     MINFACTORY_USER_SERVICE_MOCK.loadProfile.calls.reset();
     MINFACTORY_USER_SERVICE_MOCK.clearUserCache.calls.reset();
     MINFACTORY_USER_SERVICE_MOCK.setProfile(null);
@@ -93,7 +94,7 @@ describe('roleGuard', () => {
 
     const result = await TestBed.runInInjectionContext(() => roleGuard(route, {} as never));
 
-    expect(MINFACTORY_USER_SERVICE_MOCK.loadProfile).toHaveBeenCalled();
+    expect(MINFACTORY_USER_SERVICE_MOCK.ensureProfileLoaded).toHaveBeenCalled();
     expect(result instanceof UrlTree).toBeTrue();
   });
 
@@ -107,6 +108,6 @@ describe('roleGuard', () => {
 
     await TestBed.runInInjectionContext(() => roleGuard(route, {} as never));
 
-    expect(MINFACTORY_USER_SERVICE_MOCK.loadProfile).not.toHaveBeenCalled();
+    expect(MINFACTORY_USER_SERVICE_MOCK.ensureProfileLoaded).toHaveBeenCalled();
   });
 });

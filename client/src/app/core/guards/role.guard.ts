@@ -1,8 +1,8 @@
 import { inject } from '@angular/core';
 import { CanActivateFn, Router, UrlTree } from '@angular/router';
-import { MinFactoryRole, hasRequiredRole } from '../../shared/enums/minfactory-role.enum';
 import { AppPath } from '../../app.routes';
 import { MinFactoryUserService } from '../../features/minfactory/services/minfactory-user.service';
+import { MinFactoryRole, hasRequiredRole } from '../../shared/enums/minfactory-role.enum';
 
 export const roleGuard: CanActivateFn = async (route): Promise<boolean | UrlTree> => {
   const userService = inject(MinFactoryUserService);
@@ -14,12 +14,10 @@ export const roleGuard: CanActivateFn = async (route): Promise<boolean | UrlTree
     return true;
   }
 
-  if (!userService.profileViewModel()) {
-    try {
-      await userService.loadProfile();
-    } catch {
-      return router.createUrlTree([AppPath.Root]);
-    }
+  try {
+    await userService.ensureProfileLoaded();
+  } catch {
+    return router.createUrlTree([AppPath.Root]);
   }
 
   const userRole = userService.profileViewModel()?.role;

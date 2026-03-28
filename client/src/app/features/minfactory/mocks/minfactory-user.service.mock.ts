@@ -19,4 +19,10 @@ export const MINFACTORY_USER_SERVICE_MOCK = {
   clearUserCache: jasmine.createSpy('clearUserCache').and.callFake(() => {
     MINFACTORY_USER_SERVICE_MOCK.setProfile(null);
   }),
+  ensureProfileLoaded: jasmine.createSpy('ensureProfileLoaded').and.callFake(async (): Promise<void> => {
+    if (cachedProfile()) {
+      return;
+    }
+    await MINFACTORY_USER_SERVICE_MOCK.loadProfile();
+  }),
 };

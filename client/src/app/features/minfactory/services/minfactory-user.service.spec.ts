@@ -65,4 +65,22 @@ describe('MinFactoryUserService', () => {
       expect(service.profileViewModel()).toBeNull();
     });
   });
+
+  describe('ensureProfileLoaded()', () => {
+    it('should load profile when cache is empty', async () => {
+      await service.ensureProfileLoaded();
+
+      expect(MINFACTORY_USER_REPOSITORY_MOCK.get).toHaveBeenCalledTimes(1);
+      expect(service.profileViewModel()).not.toBeNull();
+    });
+
+    it('should not reload profile when cache already exists', async () => {
+      await service.loadProfile();
+      MINFACTORY_USER_REPOSITORY_MOCK.get.calls.reset();
+
+      await service.ensureProfileLoaded();
+
+      expect(MINFACTORY_USER_REPOSITORY_MOCK.get).not.toHaveBeenCalled();
+    });
+  });
 });

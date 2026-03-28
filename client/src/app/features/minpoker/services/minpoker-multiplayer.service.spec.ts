@@ -210,7 +210,10 @@ describe('MinPokerMultiplayerService', () => {
     it('should emit Leave command', () => {
       service.leaveGame();
 
-      expect(MINPOKER_SOCKET_REPOSITORY_MOCK.emit).toHaveBeenCalledWith(MinPokerMatchCommand.Leave, jasmine.any(Object));
+      expect(MINPOKER_SOCKET_REPOSITORY_MOCK.emit).toHaveBeenCalledWith(
+        MinPokerMatchCommand.Leave,
+        jasmine.any(Object),
+      );
     });
 
     it('should emit Leave command as MinPokerMatchLeaveCommand with correct matchId and playerId', () => {
