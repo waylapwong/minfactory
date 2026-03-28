@@ -35,7 +35,7 @@
   <!-- CONTENT TAB GAMES -->
   @if (selectedTab() === 1) {
     <!-- MINPOKER -->
-    <min-card-button [disabled]="!isMinPokerEnabled" (clicked)="routingService.navigateToMinPoker()">
+    <min-card-button [disabled]="!isMinPokerAccessible()" (clicked)="routingService.navigateToMinPoker()">
       <div class="flex flex-row items-start justify-between">
         <min-h2><min-logo>Poker</min-logo></min-h2>
         <min-badge [color]="Color.Yellow">soon</min-badge>

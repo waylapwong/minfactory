@@ -4,6 +4,7 @@ import { of } from 'rxjs';
 const defaultUserDto: MinFactoryUserDto = {
   createdAt: '2026-03-19T10:00:00.000Z',
   email: 'user@example.com',
+  role: MinFactoryUserDto.RoleEnum.User,
 };
 
 export const MINFACTORY_API_SERVICE_MOCK = {

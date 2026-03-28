@@ -10,6 +10,7 @@ export class MinFactoryViewmodelMapper {
       timeStyle: 'short',
     }).format(domain.createdAt);
     viewModel.email = domain.email;
+    viewModel.role = domain.role;
 
     return viewModel;
   }

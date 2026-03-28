@@ -31,6 +31,7 @@ describe('MinFactoryUserRepository', () => {
       const userDto: MinFactoryUserDto = {
         createdAt: '2026-03-19T10:00:00.000Z',
         email: 'user@example.com',
+        role: MinFactoryUserDto.RoleEnum.User,
       };
       MINFACTORY_API_SERVICE_MOCK.createMinFactoryUser.and.returnValue(of(userDto) as any);
 
