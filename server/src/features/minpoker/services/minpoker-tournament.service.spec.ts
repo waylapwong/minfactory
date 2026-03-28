@@ -4,8 +4,10 @@ import { MINPOKER_MATCH_REPOSITORY_MOCK } from '../mocks/minpoker-match.reposito
 import { MINPOKER_PLAYER_ID_REPOSITORY_MOCK } from '../mocks/minpoker-player-id.repository.mock';
 import { MINPOKER_ROOM_SYSTEM_MOCK } from '../mocks/minpoker-room.system.mock';
 import { MinPokerJoinCommand } from '../models/commands/minpoker-join.command';
+import { MinPokerLeaveCommand } from '../models/commands/minpoker-leave.command';
 import { MinPokerSeatCommand } from '../models/commands/minpoker-seat.command';
 import { MinPokerGame } from '../models/domains/minpoker-game';
+import { MinPokerPlayer } from '../models/domains/minpoker-player';
 import { MinPokerGameEntity } from '../models/entities/minpoker-game.entity';
 import { MinPokerGameRepository } from '../repositories/minpoker-game.repository';
 import { MinPokerMatchRepository } from '../repositories/minpoker-match.repository';
@@ -97,6 +99,58 @@ describe('MinpokerTournamentService', () => {
         expect.objectContaining({ avatar: 'woman-1.svg', id: 'player-1', name: 'Alice', seat: 3 }),
       ]);
       expect(result.observerIds).toEqual([]);
+    });
+  });
+
+  describe('leaveMatch', () => {
+    it('should remove observer from match and return updated event', () => {
+      const socket = { id: 'socket-1', leave: jest.fn() } as any;
+      const match = new MinPokerGame({ id: 'match-1', name: 'Table 1' });
+      match.addObserver('observer-1');
+      match.addObserver('observer-2');
+      const command: MinPokerLeaveCommand = { matchId: 'match-1', playerId: 'observer-1' };
+
+      MINPOKER_MATCH_REPOSITORY_MOCK.findOne.mockReturnValue(match);
+
+      const result = service.leaveMatch(socket, command);
+
+      expect(result?.observerIds).toEqual(['observer-2']);
+      expect(MINPOKER_MATCH_REPOSITORY_MOCK.save).toHaveBeenCalled();
+      expect(MINPOKER_MATCH_REPOSITORY_MOCK.delete).not.toHaveBeenCalled();
+      expect(MINPOKER_ROOM_SYSTEM_MOCK.removePlayerFromRoom).toHaveBeenCalledWith(socket, 'match-1');
+    });
+
+    it('should remove seated player from match and return updated event', () => {
+      const socket = { id: 'socket-1', leave: jest.fn() } as any;
+      const match = new MinPokerGame({ id: 'match-1', name: 'Table 1' });
+      match.addObserver('observer-1');
+      match.seatPlayer(new MinPokerPlayer({ avatar: 'man-1.svg', id: 'player-1', name: 'Alice' }), 0);
+      const command: MinPokerLeaveCommand = { matchId: 'match-1', playerId: 'player-1' };
+
+      MINPOKER_MATCH_REPOSITORY_MOCK.findOne.mockReturnValue(match);
+
+      const result = service.leaveMatch(socket, command);
+
+      expect(result?.players).toEqual([]);
+      expect(result?.observerIds).toEqual(['observer-1']);
+      expect(MINPOKER_MATCH_REPOSITORY_MOCK.save).toHaveBeenCalled();
+      expect(MINPOKER_ROOM_SYSTEM_MOCK.removePlayerFromRoom).toHaveBeenCalledWith(socket, 'match-1');
+    });
+
+    it('should delete match and return null when last participant leaves', () => {
+      const socket = { id: 'socket-1', leave: jest.fn() } as any;
+      const match = new MinPokerGame({ id: 'match-1', name: 'Table 1' });
+      match.addObserver('observer-1');
+      const command: MinPokerLeaveCommand = { matchId: 'match-1', playerId: 'observer-1' };
+
+      MINPOKER_MATCH_REPOSITORY_MOCK.findOne.mockReturnValue(match);
+
+      const result = service.leaveMatch(socket, command);
+
+      expect(result).toBeNull();
+      expect(MINPOKER_MATCH_REPOSITORY_MOCK.delete).toHaveBeenCalledWith('match-1');
+      expect(MINPOKER_MATCH_REPOSITORY_MOCK.save).not.toHaveBeenCalledWith(match);
+      expect(MINPOKER_ROOM_SYSTEM_MOCK.removePlayerFromRoom).toHaveBeenCalledWith(socket, 'match-1');
     });
   });
 

@@ -5,6 +5,7 @@ import { MinPokerMatchCommand } from '../models/enums/minpoker-match-command.enu
 import { MinPokerMatchEvent } from '../models/enums/minpoker-match-event.enum';
 import { MinPokerMatchConnectedEvent } from '../models/events/minpoker-match-connected.event';
 import { MinPokerMatchJoinCommand } from '../models/commands/minpoker-match-join.command';
+import { MinPokerMatchLeaveCommand } from '../models/commands/minpoker-match-leave.command';
 import { MinPokerMatchSeatCommand } from '../models/commands/minpoker-match-seat.command';
 import { MinPokerMatchUpdatedEvent } from '../models/events/minpoker-match-updated.event';
 import { MinPokerSocketRepository } from '../repositories/minpoker-socket.repository';
@@ -202,6 +203,34 @@ describe('MinPokerMultiplayerService', () => {
       expect(emitArgs[1]).toBeInstanceOf(MinPokerMatchJoinCommand);
       expect((emitArgs[1] as MinPokerMatchJoinCommand).playerId).toBe('player-42');
       expect((emitArgs[1] as MinPokerMatchJoinCommand).matchId).toBe('game-99');
+    });
+  });
+
+  describe('leaveGame()', () => {
+    it('should emit Leave command', () => {
+      service.leaveGame();
+
+      expect(MINPOKER_SOCKET_REPOSITORY_MOCK.emit).toHaveBeenCalledWith(MinPokerMatchCommand.Leave, jasmine.any(Object));
+    });
+
+    it('should emit Leave command as MinPokerMatchLeaveCommand with correct matchId and playerId', () => {
+      service.setGameId('match-42');
+
+      const connectedEvent: MinPokerMatchConnectedEvent = { playerId: 'player-1' };
+      service.connect();
+      const connectedCb = MINPOKER_SOCKET_REPOSITORY_MOCK.on.calls
+        .all()
+        .find((c) => c.args[0] === MinPokerMatchEvent.Connected)!.args[1] as (p: MinPokerMatchConnectedEvent) => void;
+      connectedCb(connectedEvent);
+      MINPOKER_SOCKET_REPOSITORY_MOCK.emit.calls.reset();
+
+      service.leaveGame();
+
+      const emitArgs = MINPOKER_SOCKET_REPOSITORY_MOCK.emit.calls.mostRecent().args;
+      expect(emitArgs[0]).toBe(MinPokerMatchCommand.Leave);
+      expect(emitArgs[1]).toBeInstanceOf(MinPokerMatchLeaveCommand);
+      expect((emitArgs[1] as MinPokerMatchLeaveCommand).matchId).toBe('match-42');
+      expect((emitArgs[1] as MinPokerMatchLeaveCommand).playerId).toBe('player-1');
     });
   });
 });

@@ -4,6 +4,7 @@ import { MINPOKER_SERVER_MOCK, MINPOKER_SERVER_TO_EMIT_MOCK } from '../mocks/min
 import { MINPOKER_SOCKET_MOCK } from '../mocks/minpoker-socket.mock';
 import { MINPOKER_TOURNAMENT_SERVICE_MOCK } from '../mocks/minpoker-tournament.service.mock';
 import { MinPokerJoinCommand } from '../models/commands/minpoker-join.command';
+import { MinPokerLeaveCommand } from '../models/commands/minpoker-leave.command';
 import { MinPokerSeatCommand } from '../models/commands/minpoker-seat.command';
 import { MinPokerEvent } from '../models/enums/minpoker-event.enum';
 import { MinPokerTournamentService } from '../services/minpoker-tournament.service';
@@ -65,6 +66,30 @@ describe('MinpokerGateway', () => {
       expect(MINPOKER_TOURNAMENT_SERVICE_MOCK.joinMatch).toHaveBeenCalledWith(mockSocket, command);
       expect(mockServer.to).toHaveBeenCalledWith('match-1');
       expect(MINPOKER_SERVER_TO_EMIT_MOCK).toHaveBeenCalledWith(MinPokerEvent.Updated, { matchId: 'match-1' });
+    });
+  });
+
+  describe('handleLeaveCommand', () => {
+    it('should handle leave command and broadcast updated event to room', () => {
+      const command: MinPokerLeaveCommand = { matchId: 'match-1', playerId: 'user-1' };
+      MINPOKER_TOURNAMENT_SERVICE_MOCK.leaveMatch.mockReturnValue({ matchId: 'match-1' });
+
+      gateway.handleLeaveCommand(mockSocket, command);
+
+      expect(MINPOKER_TOURNAMENT_SERVICE_MOCK.leaveMatch).toHaveBeenCalledWith(mockSocket, command);
+      expect(mockServer.to).toHaveBeenCalledWith('match-1');
+      expect(MINPOKER_SERVER_TO_EMIT_MOCK).toHaveBeenCalledWith(MinPokerEvent.Updated, { matchId: 'match-1' });
+    });
+
+    it('should not broadcast when match was deleted after last participant left', () => {
+      const command: MinPokerLeaveCommand = { matchId: 'match-1', playerId: 'user-1' };
+      MINPOKER_TOURNAMENT_SERVICE_MOCK.leaveMatch.mockReturnValue(null);
+
+      gateway.handleLeaveCommand(mockSocket, command);
+
+      expect(MINPOKER_TOURNAMENT_SERVICE_MOCK.leaveMatch).toHaveBeenCalledWith(mockSocket, command);
+      expect(mockServer.to).not.toHaveBeenCalled();
+      expect(MINPOKER_SERVER_TO_EMIT_MOCK).not.toHaveBeenCalled();
     });
   });
 

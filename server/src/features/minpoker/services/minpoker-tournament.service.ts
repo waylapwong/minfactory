@@ -4,6 +4,7 @@ import { Socket } from 'socket.io';
 import { MinPokerDomainMapper } from '../mapper/minpoker-domain.mapper';
 import { MinPokerEntityMapper } from '../mapper/minpoker-entity.mapper';
 import { MinPokerJoinCommand } from '../models/commands/minpoker-join.command';
+import { MinPokerLeaveCommand } from '../models/commands/minpoker-leave.command';
 import { MinPokerSeatCommand } from '../models/commands/minpoker-seat.command';
 import { MinPokerGame } from '../models/domains/minpoker-game';
 import { MinPokerPlayer } from '../models/domains/minpoker-player';
@@ -71,6 +72,24 @@ export class MinPokerTournamentService {
     match.addObserver(command.playerId);
     const updatedMatch: MinPokerGame = this.matchRepository.save(match);
     return MinPokerDomainMapper.domainToUpdatedEvent(updatedMatch);
+  }
+
+  public leaveMatch(client: Socket, command: MinPokerLeaveCommand): MinPokerUpdatedEvent | null {
+    const match: MinPokerGame | null = this.matchRepository.findOne(command.matchId);
+    let updatedEvent: MinPokerUpdatedEvent | null = null;
+
+    if (match) {
+      match.removePlayer(command.playerId);
+      if (match.hasParticipants()) {
+        this.matchRepository.save(match);
+        updatedEvent = MinPokerDomainMapper.domainToUpdatedEvent(match);
+      } else {
+        this.matchRepository.delete(match.id);
+      }
+    }
+
+    this.roomSystem.removePlayerFromRoom(client, command.matchId);
+    return updatedEvent;
   }
 
   public async seatPlayer(command: MinPokerSeatCommand): Promise<MinPokerUpdatedEvent> {

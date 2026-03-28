@@ -3,6 +3,7 @@ import { MinPokerDomainMapper } from '../mapper/minpoker-domain.mapper';
 import { MinPokerEventMapper } from '../mapper/minpoker-event.mapper';
 import { MinPokerMatch } from '../models/domains/minpoker-match';
 import { MinPokerMatchJoinCommand } from '../models/commands/minpoker-match-join.command';
+import { MinPokerMatchLeaveCommand } from '../models/commands/minpoker-match-leave.command';
 import { MinPokerMatchSeatCommand } from '../models/commands/minpoker-match-seat.command';
 import { MinPokerMatchCommand } from '../models/enums/minpoker-match-command.enum';
 import { MinPokerMatchEvent } from '../models/enums/minpoker-match-event.enum';
@@ -52,6 +53,14 @@ export class MinPokerMultiplayerService {
     command.seat = seat;
     this.socketRepository.emit(MinPokerMatchCommand.Seat, command);
     console.warn(`Sending Command: ${MinPokerMatchCommand.Seat}`, command);
+  }
+
+  public leaveGame(): void {
+    const command: MinPokerMatchLeaveCommand = new MinPokerMatchLeaveCommand();
+    command.matchId = this.cachedMatch().id;
+    command.playerId = this.cachedPlayerId();
+    this.socketRepository.emit(MinPokerMatchCommand.Leave, command);
+    console.warn(`Sending Command: ${MinPokerMatchCommand.Leave}`, command);
   }
 
   private joinGame(): void {

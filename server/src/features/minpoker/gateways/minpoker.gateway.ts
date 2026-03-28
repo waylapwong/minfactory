@@ -1,14 +1,7 @@
-import {
-  ConnectedSocket,
-  MessageBody,
-  OnGatewayConnection,
-  OnGatewayDisconnect,
-  SubscribeMessage,
-  WebSocketGateway,
-  WebSocketServer,
-} from '@nestjs/websockets';
+import { ConnectedSocket, MessageBody, OnGatewayConnection, OnGatewayDisconnect, SubscribeMessage, WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 import { MinPokerJoinCommand } from '../models/commands/minpoker-join.command';
+import { MinPokerLeaveCommand } from '../models/commands/minpoker-leave.command';
 import { MinPokerSeatCommand } from '../models/commands/minpoker-seat.command';
 import { MinPokerCommand } from '../models/enums/minpoker-command.enum';
 import { MinPokerEvent } from '../models/enums/minpoker-event.enum';
@@ -36,6 +29,15 @@ export class MinPokerGateway implements OnGatewayConnection, OnGatewayDisconnect
     console.warn(`Receiving Command: ${MinPokerCommand.Join}`, command);
     const event: MinPokerUpdatedEvent = await this.tournamentService.joinMatch(client, command);
     this.sendMatchUpdatedEvent(event);
+  }
+
+  @SubscribeMessage(MinPokerCommand.Leave)
+  public handleLeaveCommand(@ConnectedSocket() client: Socket, @MessageBody() command: MinPokerLeaveCommand): void {
+    console.warn(`Receiving Command: ${MinPokerCommand.Leave}`, command);
+    const event: MinPokerUpdatedEvent | null = this.tournamentService.leaveMatch(client, command);
+    if (event) {
+      this.sendMatchUpdatedEvent(event);
+    }
   }
 
   @SubscribeMessage(MinPokerCommand.Seat)

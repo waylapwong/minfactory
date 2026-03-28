@@ -2,7 +2,11 @@
   "name": "minfactory",
   "private": true,
   "scripts": {
-    "client:all": "npm --prefix client run all",
-    "server:all": "npm --prefix server run all"
+    "all:client": "npm --prefix client run all",
+    "all:server": "npm --prefix server run all",
+    "format:client": "npm --prefix client run format",
+    "format:server": "npm --prefix server run format",
+    "start:client": "npm --prefix client run start",
+    "start:server": "npm --prefix server run start"
   }
 }

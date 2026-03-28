@@ -30,6 +30,7 @@ describe('MinPokerGameComponent', () => {
 
     MINPOKER_MULTIPLAYER_SERVICE_MOCK.connect.calls.reset();
     MINPOKER_MULTIPLAYER_SERVICE_MOCK.disconnect.calls.reset();
+    MINPOKER_MULTIPLAYER_SERVICE_MOCK.leaveGame.calls.reset();
     MINPOKER_MULTIPLAYER_SERVICE_MOCK.seatGame.calls.reset();
     MINPOKER_MULTIPLAYER_SERVICE_MOCK.setGameId.calls.reset();
 
@@ -139,6 +140,16 @@ describe('MinPokerGameComponent', () => {
   });
 
   describe('ngOnDestroy()', () => {
+    it('should call leaveGame before disconnect', () => {
+      const callOrder: string[] = [];
+      MINPOKER_MULTIPLAYER_SERVICE_MOCK.leaveGame.and.callFake(() => callOrder.push('leaveGame'));
+      MINPOKER_MULTIPLAYER_SERVICE_MOCK.disconnect.and.callFake(() => callOrder.push('disconnect'));
+
+      component.ngOnDestroy();
+
+      expect(callOrder).toEqual(['leaveGame', 'disconnect']);
+    });
+
     it('should disconnect the multiplayer service', () => {
       component.ngOnDestroy();
 

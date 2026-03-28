@@ -113,6 +113,7 @@ export class MinPokerGameComponent implements OnInit, OnDestroy, CanLeaveGame {
   }
 
   public ngOnDestroy(): void {
+    this.multiplayerService.leaveGame();
     this.multiplayerService.disconnect();
     this.leaveConfirmationResolver?.(false);
     this.leaveConfirmationResolver = null;
