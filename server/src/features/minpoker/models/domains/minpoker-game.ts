@@ -32,9 +32,7 @@ export class MinPokerGame {
   }
 
   public dealHands(deck: MinPokerDeck): void {
-    const seatedPlayers: MinPokerPlayer[] = this.players.filter(
-      (player): player is MinPokerPlayer => player !== null,
-    );
+    const seatedPlayers: MinPokerPlayer[] = this.players.filter((player): player is MinPokerPlayer => player !== null);
     for (const player of seatedPlayers) {
       player.hand = deck.deal(2);
     }

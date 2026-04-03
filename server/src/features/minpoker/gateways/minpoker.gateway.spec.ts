@@ -136,9 +136,7 @@ describe('MinpokerGateway', () => {
         updatedEvent: { matchId: 'match-1' },
         hands,
       });
-      MINPOKER_PLAYER_ID_REPOSITORY_MOCK.findByPlayerId
-        .mockReturnValueOnce('socket-1')
-        .mockReturnValueOnce('socket-2');
+      MINPOKER_PLAYER_ID_REPOSITORY_MOCK.findByPlayerId.mockReturnValueOnce('socket-1').mockReturnValueOnce('socket-2');
 
       await gateway.handleSeatCommand(mockSocket, command);
 
