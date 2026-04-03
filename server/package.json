@@ -5,6 +5,7 @@
     "node": "24.14.0"
   },
   "scripts": {
+    "all": "npm run format:all && npm run lint:ci && npm run test:ci && npm run build",
     "build": "npm run clean && nest build",
     "clean": "rimraf dist",
     "format": "onchange \"**/*\" -- prettier --write --ignore-unknown {{changed}}",
@@ -13,8 +14,8 @@
     "lint:ci": "eslint \"{src,apps,libs,test}/**/*.ts\"",
     "start": "nest start --watch",
     "start:prod": "node dist/src/main.js",
-    "test": "jest --config ./jest.config.json --colors --coverage --runInBand --watchAll",
-    "test:ci": "jest --config ./jest.config.json --ci --colors --runInBand",
+    "test": "jest --config ./jest.config.json --colors --coverage --watchAll",
+    "test:ci": "jest --config ./jest.config.json --ci --colors",
     "test:e2e": "jest --config ./test/jest-e2e.json"
   },
   "dependencies": {

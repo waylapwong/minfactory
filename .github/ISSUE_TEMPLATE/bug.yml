@@ -16,7 +16,7 @@ body:
     attributes:
       label: Reproduktionsschritte
       value: |
-        - [ ] _____
+        - _____
     validations:
       required: true
 

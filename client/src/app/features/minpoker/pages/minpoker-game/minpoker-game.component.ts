@@ -1,6 +1,7 @@
 import { DecimalPipe } from '@angular/common';
-import { Component, OnDestroy, Signal, WritableSignal, computed, signal } from '@angular/core';
+import { Component, OnDestroy, OnInit, Signal, WritableSignal, computed, signal } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { ActivatedRoute } from '@angular/router';
 import { RoutingService } from '../../../../core/routing/routing.service';
 import { ButtonComponent } from '../../../../shared/components/button/button.component';
 import { DialogComponent } from '../../../../shared/components/dialog/dialog.component';
@@ -11,16 +12,8 @@ import { SelectComponent, SelectOption } from '../../../../shared/components/sel
 import { SliderComponent } from '../../../../shared/components/slider/slider.component';
 import { Color } from '../../../../shared/enums/color.enum';
 import { CanLeaveGame } from '../../../../shared/guards/leave-game.guard';
-
-interface Opponent {
-  avatar: string;
-  betAmount?: number;
-  chips: number;
-  isActive?: boolean;
-  lastAction?: string;
-  name: string;
-  role?: string;
-}
+import { MinPokerGameSeatViewModel } from '../../models/viewmodels/minpoker-game.viewmodel';
+import { MinPokerMultiplayerService } from '../../services/minpoker-multiplayer.service';
 
 @Component({
   selector: 'minpoker-game',
@@ -39,7 +32,7 @@ interface Opponent {
     LogoComponent,
   ],
 })
-export class MinPokerGameComponent implements OnDestroy, CanLeaveGame {
+export class MinPokerGameComponent implements OnInit, OnDestroy, CanLeaveGame {
   public readonly Color: typeof Color = Color;
   public readonly avatarOptions: readonly SelectOption[] = AVATAR_FILE_NAMES.map((avatarFileName) => ({
     imageSrc: this.getAvatarPath(avatarFileName),
@@ -48,14 +41,38 @@ export class MinPokerGameComponent implements OnDestroy, CanLeaveGame {
   }));
   public readonly communityCards: readonly string[] = ['?', '?', '?', '?', '?'];
   public readonly handCards: readonly string[] = ['?', '?'];
-  public readonly opponents: (Opponent | null)[] = [
-    { avatar: 'woman-1.svg', role: 'D', name: 'Alex', chips: 160, lastAction: 'Call', betAmount: 40 },
-    { avatar: 'man-2.svg', name: 'Mia', chips: 80, lastAction: 'Raise', betAmount: 120 },
-    { avatar: 'man-3.svg', name: 'Noah', chips: 200, isActive: true, lastAction: 'Denkt nach' },
-    { avatar: 'woman-4.svg', name: 'Emma', chips: 200, lastAction: 'Fold' },
-    null,
-    { avatar: 'man-1.svg', name: 'Way-Lap', chips: 1030, lastAction: 'Call', betAmount: 120 },
-  ];
+  public readonly isObserver: Signal<boolean> = computed(() => this.multiplayerService.game().isObserver);
+  public readonly opponents: Signal<(MinPokerGameSeatViewModel | null)[]> = computed(
+    () => this.multiplayerService.game().seats,
+  );
+  public readonly heroSeat: Signal<MinPokerGameSeatViewModel | null> = computed(() => {
+    const heroId: string = this.multiplayerService.playerId();
+    if (!heroId) {
+      return null;
+    }
+    return this.opponents().find((seat) => seat?.id === heroId) ?? null;
+  });
+  public readonly topSeats: Signal<MinPokerDisplaySeatViewModel[]> = computed(() => {
+    if (this.isObserver()) {
+      return this.mapSeatsByOrder([0, 1, 2]);
+    }
+
+    const heroSeat: MinPokerGameSeatViewModel | null = this.heroSeat();
+    const seatCount: number = this.getSeatCount();
+    if (!heroSeat || seatCount <= 1) {
+      return this.mapSeatsByOrder([0, 1, 2, 3, 4]);
+    }
+
+    const topSeatOrder: number[] = [];
+    for (let offset = 1; offset < seatCount; offset++) {
+      topSeatOrder.push((heroSeat.seat + offset) % seatCount);
+    }
+
+    return this.mapSeatsByOrder(topSeatOrder);
+  });
+  public readonly bottomObserverSeats: Signal<MinPokerDisplaySeatViewModel[]> = computed(() =>
+    this.mapSeatsByOrder([5, 4, 3]),
+  );
 
   private readonly cachedBetAmount: WritableSignal<number> = signal(2);
   private readonly cachedCallAmount: WritableSignal<number> = signal(120);
@@ -73,7 +90,9 @@ export class MinPokerGameComponent implements OnDestroy, CanLeaveGame {
   private leaveConfirmationResolver: ((value: boolean) => void) | null = null;
 
   constructor(
+    private readonly activatedRoute: ActivatedRoute,
     private readonly formBuilder: FormBuilder,
+    private readonly multiplayerService: MinPokerMultiplayerService,
     public readonly routingService: RoutingService,
   ) {
     this.seatFormGroup = this.createSeatFormGroup();
@@ -87,7 +106,15 @@ export class MinPokerGameComponent implements OnDestroy, CanLeaveGame {
     return this.seatFormGroup.get('name') as FormControl<string>;
   }
 
+  public ngOnInit(): void {
+    const id: string = this.activatedRoute.snapshot.paramMap.get('id') ?? '';
+    this.multiplayerService.setGameId(id);
+    this.multiplayerService.connect();
+  }
+
   public ngOnDestroy(): void {
+    this.multiplayerService.leaveGame();
+    this.multiplayerService.disconnect();
     this.leaveConfirmationResolver?.(false);
     this.leaveConfirmationResolver = null;
   }
@@ -133,7 +160,11 @@ export class MinPokerGameComponent implements OnDestroy, CanLeaveGame {
   public onRaise(): void {}
 
   public openSeatDialog(seatIndex: number): void {
-    if (seatIndex < 0 || seatIndex >= this.opponents.length || this.opponents[seatIndex]) {
+    if (!this.isObserver()) {
+      return;
+    }
+
+    if (seatIndex < 0 || seatIndex >= this.getSeatCount() || this.opponents()[seatIndex]) {
       return;
     }
     this.seatFormGroup = this.createSeatFormGroup();
@@ -149,14 +180,7 @@ export class MinPokerGameComponent implements OnDestroy, CanLeaveGame {
     if (!playerName) {
       return;
     }
-
-    this.opponents[this.selectedSeatIndex()] = {
-      avatar: this.seatAvatar.value,
-      chips: DEFAULT_SEAT_CHIPS,
-      lastAction: 'Sitzt',
-      name: playerName,
-    };
-
+    this.multiplayerService.seatGame(playerName, this.seatAvatar.value, this.selectedSeatIndex());
     this.closeSeatDialog();
   }
 
@@ -178,6 +202,23 @@ export class MinPokerGameComponent implements OnDestroy, CanLeaveGame {
       .map((value) => value.charAt(0).toUpperCase() + value.slice(1))
       .join(' ');
   }
+
+  private getSeatCount(): number {
+    const game = this.multiplayerService.game();
+    return Math.max(6, game.tableSize, game.seats.length);
+  }
+
+  private mapSeatsByOrder(order: readonly number[]): MinPokerDisplaySeatViewModel[] {
+    return order.map((seatIndex: number) => ({
+      player: this.opponents()[seatIndex] ?? null,
+      seatIndex,
+    }));
+  }
+}
+
+interface MinPokerDisplaySeatViewModel {
+  player: MinPokerGameSeatViewModel | null;
+  seatIndex: number;
 }
 
 const AVATAR_FILE_NAMES: readonly string[] = [
@@ -191,4 +232,3 @@ const AVATAR_FILE_NAMES: readonly string[] = [
   'woman-4.svg',
   'woman-5.svg',
 ];
-const DEFAULT_SEAT_CHIPS = 1000;

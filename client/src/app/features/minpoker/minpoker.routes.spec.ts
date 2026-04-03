@@ -1,8 +1,8 @@
 import { leaveGameGuard } from '../../shared/guards/leave-game.guard';
+import { MINPOKER_ROUTES, MinPokerPath } from './minpoker.routes';
 import { MinPokerGameComponent } from './pages/minpoker-game/minpoker-game.component';
 import { MinPokerHomeComponent } from './pages/minpoker-home/minpoker-home.component';
 import { MinPokerLobbyComponent } from './pages/minpoker-lobby/minpoker-lobby.component';
-import { MINPOKER_ROUTES, MinPokerPath } from './minpoker.routes';
 
 describe('MINPOKER_ROUTES', () => {
   it('should expose the expected enum paths', () => {
@@ -23,7 +23,7 @@ describe('MINPOKER_ROUTES', () => {
     const route = MINPOKER_ROUTES[1];
     const component = await route.loadComponent?.();
 
-    expect(route.path).toBe(MinPokerPath.Game);
+    expect(route.path).toBe(`${MinPokerPath.Game}/:id`);
     expect(route.canDeactivate).toEqual([leaveGameGuard]);
     expect(component).toBe(MinPokerGameComponent);
   });
