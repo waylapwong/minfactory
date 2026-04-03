@@ -1,4 +1,4 @@
-<div class="flex h-full flex-col text-center">
+<div class="flex h-full flex-col text-center font-bold">
   <div class="flex flex-row justify-between">
     <!-- SHARE BUTTON -->
     <min-button
@@ -21,13 +21,14 @@
       <img src="assets/svgs/minrps/exit.svg" alt="Spiel verlassen" class="h-4 w-4" />
     </min-button>
   </div>
+
   <!-- TOP SIDE -->
   <div class="grid gap-2" [class.grid-cols-3]="isObserver()" [class.grid-cols-5]="!isObserver()">
     @for (seat of topSeats(); track seat.player?.id ?? seat.seatIndex) {
       @if (seat.player) {
         <!-- VILLAIN CARD -->
         <div
-          class="flex flex-col items-center justify-center rounded-lg border-2 border-black bg-white p-1 font-bold shadow-2xl transition-colors"
+          class="flex flex-col items-center justify-center rounded-lg border-2 border-black bg-white p-1 shadow-2xl transition-colors"
         >
           <img [src]="getAvatarPath(seat.player.avatar)" [alt]="seat.player.name" />
           <span class="w-full truncate">{{ seat.player.name }}</span>
@@ -37,14 +38,18 @@
           <!-- EMPTY SEAT -->
           <button
             type="button"
-            class="flex min-h-16 cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-gray-500 bg-white font-bold text-gray-500 transition-colors hover:bg-gray-300"
+            class="flex min-h-16 cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-gray-500 bg-white text-gray-500 transition-colors hover:bg-gray-300"
             (click)="openSeatDialog(seat.seatIndex)"
             aria-label="Platz nehmen"
           >
             <img src="assets/svgs/minpoker/add-gray.svg" alt="" class="h-8 w-8" />
           </button>
         } @else {
-          <div class="flex min-h-16 rounded-lg border-2 border-dashed border-gray-500 bg-white"></div>
+          <div
+            class="flex min-h-16 items-center justify-center rounded-lg border-2 border-dashed border-gray-500 bg-white text-gray-500"
+          >
+            Empty
+          </div>
         }
       }
     }
@@ -53,21 +58,13 @@
   <!-- BOARD -->
   <div class="my-4 flex flex-col items-center rounded-4xl border-8 bg-green-700 p-2">
     <!-- VILLAIN BET SIZES -->
-    <div
-      class="grid w-full gap-2 text-sm font-bold"
-      [class.grid-cols-3]="isObserver()"
-      [class.grid-cols-5]="!isObserver()"
-    >
+    <div class="grid w-full gap-2 text-sm" [class.grid-cols-3]="isObserver()" [class.grid-cols-5]="!isObserver()">
       @for (seat of topSeats(); track seat.player?.id ?? seat.seatIndex) {
         <div></div>
       }
     </div>
     <!-- VILLAIN DEALER BUTTON  -->
-    <div
-      class="grid w-full gap-2 text-sm font-bold"
-      [class.grid-cols-3]="isObserver()"
-      [class.grid-cols-5]="!isObserver()"
-    >
+    <div class="grid w-full gap-2 text-sm" [class.grid-cols-3]="isObserver()" [class.grid-cols-5]="!isObserver()">
       @for (seat of topSeats(); track seat.player?.id ?? seat.seatIndex) {
         <div></div>
       }
@@ -76,14 +73,14 @@
     <div class="my-1 flex w-full flex-row justify-center gap-1">
       @for (card of communityCards; track $index) {
         <div
-          class="flex h-21 w-15 items-center justify-center rounded-lg border-4 border-black bg-gray-300 font-mono text-4xl font-bold"
+          class="flex h-21 w-15 items-center justify-center rounded-lg border-4 border-black bg-gray-300 font-mono text-4xl"
         >
           <min-logo class="text-xs">Poker</min-logo>
         </div>
       }
     </div>
     <!-- POT -->
-    <div class="grid w-full grid-cols-5 gap-2 text-sm font-bold">
+    <div class="grid w-full grid-cols-5 gap-2 text-sm">
       <!-- POT -->
       <div class="col-start-3 col-end-4">
         Pot: <span class="tabular-nums">{{ potAmount() | number }}</span>
@@ -97,15 +94,16 @@
       @for (seat of bottomObserverSeats(); track seat.player?.id ?? seat.seatIndex) {
         @if (seat.player) {
           <div
-            class="flex flex-col items-center justify-center rounded-lg border-2 border-black bg-white p-1 font-bold shadow-2xl transition-colors"
+            class="flex flex-col items-center justify-center rounded-lg border-2 border-black bg-white p-1 shadow-2xl transition-colors"
           >
             <img [src]="getAvatarPath(seat.player.avatar)" [alt]="seat.player.name" />
             <span class="w-full truncate">{{ seat.player.name }}</span>
+            <span class="w-full truncate text-xs text-gray-500">{{ 1100 | number }}</span>
           </div>
         } @else {
           <button
             type="button"
-            class="flex min-h-16 cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-gray-500 bg-white font-bold text-gray-500 transition-colors hover:bg-gray-300"
+            class="flex min-h-16 cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-gray-500 bg-white text-gray-500 transition-colors hover:bg-gray-300"
             (click)="openSeatDialog(seat.seatIndex)"
             aria-label="Platz nehmen"
           >
@@ -122,7 +120,7 @@
         <div class="col-start-2 col-end-5 flex flex-row justify-center gap-1">
           @for (card of handCards; track $index) {
             <div
-              class="flex h-21 w-15 flex-col justify-center rounded-lg border-4 border-black bg-white font-mono text-4xl font-bold shadow-2xl"
+              class="flex h-21 w-15 flex-col justify-center rounded-lg border-4 border-black bg-white font-mono text-4xl shadow-2xl"
             >
               <span class="h-8">A</span>
               <span>&spades;</span>
@@ -131,7 +129,7 @@
         </div>
         <!-- HERO CARD -->
         <div
-          class="col-start-5 col-end-6 flex flex-col items-center justify-center rounded-lg border-2 border-black bg-white p-1 font-bold shadow-2xl transition-colors"
+          class="col-start-5 col-end-6 flex flex-col items-center justify-center rounded-lg border-2 border-black bg-white p-1 shadow-2xl transition-colors"
           [class.bg-blue-300]="false"
         >
           @if (heroSeat()) {
