@@ -100,7 +100,38 @@ describe('MinPokerMultiplayerService', () => {
   });
 
   describe('seatGame()', () => {
+    it('should not emit Seat command when playerId is missing', () => {
+      service.setGameId('match-42');
+
+      service.seatGame('Chris', 'man-1.svg', 2);
+
+      expect(MINPOKER_SOCKET_REPOSITORY_MOCK.emit).not.toHaveBeenCalled();
+    });
+
+    it('should not emit Seat command when matchId is missing', () => {
+      const connectedEvent: MinPokerMatchConnectedEvent = { playerId: 'player-1' };
+      service.connect();
+      const connectedCb = MINPOKER_SOCKET_REPOSITORY_MOCK.on.calls
+        .all()
+        .find((c) => c.args[0] === MinPokerMatchEvent.Connected)!.args[1] as (p: MinPokerMatchConnectedEvent) => void;
+      connectedCb(connectedEvent);
+      MINPOKER_SOCKET_REPOSITORY_MOCK.emit.calls.reset();
+
+      service.seatGame('Chris', 'man-1.svg', 2);
+
+      expect(MINPOKER_SOCKET_REPOSITORY_MOCK.emit).not.toHaveBeenCalled();
+    });
+
     it('should emit Seat command', () => {
+      service.setGameId('match-42');
+      const connectedEvent: MinPokerMatchConnectedEvent = { playerId: 'player-1' };
+      service.connect();
+      const connectedCb = MINPOKER_SOCKET_REPOSITORY_MOCK.on.calls
+        .all()
+        .find((c) => c.args[0] === MinPokerMatchEvent.Connected)!.args[1] as (p: MinPokerMatchConnectedEvent) => void;
+      connectedCb(connectedEvent);
+      MINPOKER_SOCKET_REPOSITORY_MOCK.emit.calls.reset();
+
       service.seatGame('Chris', 'man-1.svg', 2);
 
       expect(MINPOKER_SOCKET_REPOSITORY_MOCK.emit).toHaveBeenCalledWith(MinPokerMatchCommand.Seat, jasmine.any(Object));

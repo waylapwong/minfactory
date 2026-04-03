@@ -49,9 +49,12 @@ export class MinPokerGateway implements OnGatewayConnection, OnGatewayDisconnect
   }
 
   @SubscribeMessage(MinPokerCommand.Seat)
-  public async handleSeatCommand(@MessageBody() command: MinPokerSeatCommand): Promise<void> {
+  public async handleSeatCommand(
+    @ConnectedSocket() client: Socket,
+    @MessageBody() command: MinPokerSeatCommand,
+  ): Promise<void> {
     console.warn(`Receiving Command: ${MinPokerCommand.Seat}`, command);
-    const event: MinPokerUpdatedEvent = await this.tournamentService.seatPlayer(command);
+    const event: MinPokerUpdatedEvent = await this.tournamentService.seatPlayer(client, command);
     this.sendMatchUpdatedEvent(event);
   }
 

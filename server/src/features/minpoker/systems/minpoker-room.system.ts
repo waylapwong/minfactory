@@ -35,4 +35,14 @@ export class MinPokerRoomSystem {
       this.rooms.delete(roomName);
     }
   }
+
+  public removePlayerFromAllRooms(client: Socket): void {
+    for (const [roomName, clientIds] of this.rooms.entries()) {
+      if (!clientIds.has(client.id)) {
+        continue;
+      }
+
+      this.removePlayerFromRoom(client, roomName);
+    }
+  }
 }

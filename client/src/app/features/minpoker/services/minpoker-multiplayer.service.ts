@@ -45,6 +45,10 @@ export class MinPokerMultiplayerService {
   }
 
   public seatGame(playerName: string, avatar: string, seat: number): void {
+    if (!this.cachedMatch().id || !this.cachedPlayerId()) {
+      return;
+    }
+
     const command: MinPokerMatchSeatCommand = new MinPokerMatchSeatCommand();
     command.matchId = this.cachedMatch().id;
     command.playerId = this.cachedPlayerId();

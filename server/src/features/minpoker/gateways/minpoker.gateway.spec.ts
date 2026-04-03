@@ -106,9 +106,9 @@ describe('MinpokerGateway', () => {
         matchId: 'match-1',
       });
 
-      await gateway.handleSeatCommand(command);
+      await gateway.handleSeatCommand(mockSocket, command);
 
-      expect(MINPOKER_TOURNAMENT_SERVICE_MOCK.seatPlayer).toHaveBeenCalledWith(command);
+      expect(MINPOKER_TOURNAMENT_SERVICE_MOCK.seatPlayer).toHaveBeenCalledWith(mockSocket, command);
       expect(mockServer.to).toHaveBeenCalledWith('match-1');
       expect(MINPOKER_SERVER_TO_EMIT_MOCK).toHaveBeenCalledWith(MinPokerEvent.Updated, { matchId: 'match-1' });
     });
