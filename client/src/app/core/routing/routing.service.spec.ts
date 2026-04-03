@@ -3,6 +3,7 @@ import { TestBed } from '@angular/core/testing';
 import { Router } from '@angular/router';
 import { AppPath } from '../../app.routes';
 import { MinFactoryPath } from '../../features/minfactory/minfactory.routes';
+import { MinPokerPath } from '../../features/minpoker/minpoker.routes';
 import { MinRpsPath } from '../../features/minrps/minrps.routes';
 import { ROUTER_MOCK } from '../mocks/router.mock';
 import { RoutingService } from './routing.service';
@@ -61,6 +62,13 @@ describe('RoutingService', () => {
     it('should navigate to minPoker', () => {
       service.navigateToMinPoker();
       expect(ROUTER_MOCK.navigate).toHaveBeenCalledWith([AppPath.MinPoker]);
+    });
+  });
+
+  describe('navigateToMinPokerGame()', () => {
+    it('should navigate to minPoker game with id', () => {
+      service.navigateToMinPokerGame('game-123');
+      expect(ROUTER_MOCK.navigate).toHaveBeenCalledWith([AppPath.MinPoker, MinPokerPath.Game, 'game-123']);
     });
   });
 

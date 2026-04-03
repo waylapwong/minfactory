@@ -13,7 +13,7 @@ export const MINPOKER_ROUTES: Routes = [
     loadComponent: () => import('./pages/minpoker-home/minpoker-home.component').then((m) => m.MinPokerHomeComponent),
   },
   {
-    path: MinPokerPath.Game,
+    path: `${MinPokerPath.Game}/:id`,
     canDeactivate: [leaveGameGuard],
     loadComponent: () => import('./pages/minpoker-game/minpoker-game.component').then((m) => m.MinPokerGameComponent),
   },

@@ -1,18 +1,47 @@
 import { provideZonelessChangeDetection } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ActivatedRoute } from '@angular/router';
 import { ROUTING_SERVICE_MOCK } from '../../../../core/mocks/routing.service.mock';
 import { RoutingService } from '../../../../core/routing/routing.service';
 import { Color } from '../../../../shared/enums/color.enum';
+import {
+  MINPOKER_MULTIPLAYER_GAME_SIGNAL,
+  MINPOKER_MULTIPLAYER_PLAYER_ID_SIGNAL,
+  MINPOKER_MULTIPLAYER_SERVICE_MOCK,
+} from '../../mocks/minpoker-multiplayer.service.mock';
+import { MinPokerGameSeatViewModel, MinPokerGameViewModel } from '../../models/viewmodels/minpoker-game.viewmodel';
+import { MinPokerMultiplayerService } from '../../services/minpoker-multiplayer.service';
 import { MinPokerGameComponent } from './minpoker-game.component';
+
+const ACTIVATED_ROUTE_MOCK = {
+  snapshot: { paramMap: { get: jasmine.createSpy('get').and.returnValue('game-id-1') } },
+};
 
 describe('MinPokerGameComponent', () => {
   let component: MinPokerGameComponent;
   let fixture: ComponentFixture<MinPokerGameComponent>;
 
   beforeEach(async () => {
+    ACTIVATED_ROUTE_MOCK.snapshot.paramMap.get.calls.reset();
+    ACTIVATED_ROUTE_MOCK.snapshot.paramMap.get.and.returnValue('game-id-1');
+
+    MINPOKER_MULTIPLAYER_GAME_SIGNAL.set(new MinPokerGameViewModel());
+    MINPOKER_MULTIPLAYER_PLAYER_ID_SIGNAL.set('');
+
+    MINPOKER_MULTIPLAYER_SERVICE_MOCK.connect.calls.reset();
+    MINPOKER_MULTIPLAYER_SERVICE_MOCK.disconnect.calls.reset();
+    MINPOKER_MULTIPLAYER_SERVICE_MOCK.leaveGame.calls.reset();
+    MINPOKER_MULTIPLAYER_SERVICE_MOCK.seatGame.calls.reset();
+    MINPOKER_MULTIPLAYER_SERVICE_MOCK.setGameId.calls.reset();
+
     await TestBed.configureTestingModule({
       imports: [MinPokerGameComponent],
-      providers: [provideZonelessChangeDetection(), { provide: RoutingService, useValue: ROUTING_SERVICE_MOCK }],
+      providers: [
+        provideZonelessChangeDetection(),
+        { provide: ActivatedRoute, useValue: ACTIVATED_ROUTE_MOCK },
+        { provide: MinPokerMultiplayerService, useValue: MINPOKER_MULTIPLAYER_SERVICE_MOCK },
+        { provide: RoutingService, useValue: ROUTING_SERVICE_MOCK },
+      ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(MinPokerGameComponent);
@@ -35,82 +64,6 @@ describe('MinPokerGameComponent', () => {
     expect(rootContainer.classList.contains('flex')).toBe(true);
     expect(rootContainer.classList.contains('h-full')).toBe(true);
     expect(rootContainer.classList.contains('flex-col')).toBe(true);
-  });
-
-  it('should have 6 opponents', () => {
-    expect(component.opponents.length).toBe(6);
-  });
-
-  it('should include bet amounts for opponents with actions', () => {
-    expect(component.opponents[0]).toEqual(
-      jasmine.objectContaining({ name: 'Alex', lastAction: 'Call', betAmount: 40 }),
-    );
-    expect(component.opponents[1]).toEqual(
-      jasmine.objectContaining({ name: 'Mia', lastAction: 'Raise', betAmount: 120 }),
-    );
-    expect(component.opponents[4]).toBeNull();
-  });
-
-  it('should open seat dialog only for empty seats', () => {
-    component.openSeatDialog(4);
-    expect(component.isSeatDialogOpen()).toBe(true);
-    expect(component.selectedSeatIndex()).toBe(4);
-
-    component.closeSeatDialog();
-    component.openSeatDialog(0);
-    expect(component.isSeatDialogOpen()).toBe(false);
-  });
-
-  it('should ignore invalid seat indexes when opening seat dialog', () => {
-    component.openSeatDialog(-1);
-    expect(component.isSeatDialogOpen()).toBeFalse();
-    expect(component.selectedSeatIndex()).toBe(-1);
-
-    component.openSeatDialog(component.opponents.length);
-    expect(component.isSeatDialogOpen()).toBeFalse();
-    expect(component.selectedSeatIndex()).toBe(-1);
-  });
-
-  it('should seat player on empty position', () => {
-    component.openSeatDialog(4);
-    component.seatName.setValue('Chris');
-    component.seatAvatar.setValue('man-4.svg');
-
-    component.seatGame();
-
-    expect(component.opponents[4]).toEqual(
-      jasmine.objectContaining({ name: 'Chris', avatar: 'man-4.svg', chips: 1000, lastAction: 'Sitzt' }),
-    );
-    expect(component.isSeatDialogOpen()).toBe(false);
-  });
-
-  it('should not seat player when form is invalid', () => {
-    component.openSeatDialog(4);
-
-    component.seatGame();
-
-    expect(component.opponents[4]).toBeNull();
-    expect(component.isSeatDialogOpen()).toBeTrue();
-  });
-
-  it('should not seat player when no seat is selected', () => {
-    component.seatName.setValue('Chris');
-    component.seatAvatar.setValue('man-4.svg');
-
-    component.seatGame();
-
-    expect(component.opponents[4]).toBeNull();
-  });
-
-  it('should not seat player when trimmed name is empty', () => {
-    component.openSeatDialog(4);
-    component.seatName.setValue('   ');
-    component.seatAvatar.setValue('man-4.svg');
-
-    component.seatGame();
-
-    expect(component.opponents[4]).toBeNull();
-    expect(component.isSeatDialogOpen()).toBeTrue();
   });
 
   it('should render community cards', () => {
@@ -137,6 +90,7 @@ describe('MinPokerGameComponent', () => {
 
   it('should update betAmount on onBetChange', () => {
     component.onBetChange(300);
+
     expect(component.betAmount()).toBe(300);
   });
 
@@ -155,27 +109,7 @@ describe('MinPokerGameComponent', () => {
     expect(component.getAvatarPath('woman-3.svg')).toBe('assets/svgs/minpoker/avatars/woman-3.svg');
   });
 
-  it('should call clipboard API when sharing the game url', async () => {
-    const clipboardSpy = jasmine.createSpy('writeText').and.resolveTo();
-    const originalClipboard = navigator.clipboard;
-
-    Object.defineProperty(navigator, 'clipboard', {
-      configurable: true,
-      value: { writeText: clipboardSpy },
-    });
-
-    component.shareGameUrl();
-    await Promise.resolve();
-
-    expect(clipboardSpy).toHaveBeenCalledWith(globalThis.location.href);
-
-    Object.defineProperty(navigator, 'clipboard', {
-      configurable: true,
-      value: originalClipboard,
-    });
-  });
-
-  it('should allow calling action handlers', () => {
+  it('should allow calling action handlers without errors', () => {
     expect(() => {
       component.onCall();
       component.onFold();
@@ -190,17 +124,202 @@ describe('MinPokerGameComponent', () => {
 
     it('should update heroBetAmount when betAmount changes', () => {
       component.onBetChange(250);
+
       expect(component.heroBetAmount()).toBe(250);
     });
   });
 
-  describe('active player display', () => {
-    it('should have opponent with isActive flag', () => {
-      expect(component.opponents[2]).toEqual(jasmine.objectContaining({ isActive: true, name: 'Noah' }));
+  describe('ngOnInit()', () => {
+    it('should set game id from route params', () => {
+      expect(MINPOKER_MULTIPLAYER_SERVICE_MOCK.setGameId).toHaveBeenCalledWith('game-id-1');
     });
 
-    it('should have dealer button role for an opponent', () => {
-      expect(component.opponents[0]).toEqual(jasmine.objectContaining({ role: 'D', name: 'Alex' }));
+    it('should connect the multiplayer service', () => {
+      expect(MINPOKER_MULTIPLAYER_SERVICE_MOCK.connect).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  describe('ngOnDestroy()', () => {
+    it('should call leaveGame before disconnect', () => {
+      const callOrder: string[] = [];
+      MINPOKER_MULTIPLAYER_SERVICE_MOCK.leaveGame.and.callFake(() => callOrder.push('leaveGame'));
+      MINPOKER_MULTIPLAYER_SERVICE_MOCK.disconnect.and.callFake(() => callOrder.push('disconnect'));
+
+      component.ngOnDestroy();
+
+      expect(callOrder).toEqual(['leaveGame', 'disconnect']);
+    });
+
+    it('should disconnect the multiplayer service', () => {
+      component.ngOnDestroy();
+
+      expect(MINPOKER_MULTIPLAYER_SERVICE_MOCK.disconnect).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  describe('opponents signal', () => {
+    it('should reflect the seats from the multiplayer service game', () => {
+      expect(component.opponents()).toBe(MINPOKER_MULTIPLAYER_SERVICE_MOCK.game().seats);
+    });
+  });
+
+  describe('table perspective', () => {
+    it('should show observer top and bottom seat order as 1-2-3 and 6-5-4', () => {
+      const vm = new MinPokerGameViewModel();
+      vm.isObserver = true;
+      vm.seats = new Array(6).fill(null);
+      MINPOKER_MULTIPLAYER_GAME_SIGNAL.set(vm);
+      fixture.detectChanges();
+
+      expect(component.topSeats().map((seat) => seat.seatIndex)).toEqual([0, 1, 2]);
+      expect(component.bottomObserverSeats().map((seat) => seat.seatIndex)).toEqual([5, 4, 3]);
+    });
+
+    it('should rotate top seats around hero seat in player view', () => {
+      const heroSeat = new MinPokerGameSeatViewModel();
+      heroSeat.id = 'hero-id';
+      heroSeat.name = 'Hero';
+      heroSeat.avatar = 'man-1.svg';
+      heroSeat.seat = 3;
+
+      const vm = new MinPokerGameViewModel();
+      vm.isObserver = false;
+      vm.seats = new Array(6).fill(null);
+      vm.seats[3] = heroSeat;
+      MINPOKER_MULTIPLAYER_GAME_SIGNAL.set(vm);
+      MINPOKER_MULTIPLAYER_PLAYER_ID_SIGNAL.set('hero-id');
+      fixture.detectChanges();
+
+      expect(component.topSeats().map((seat) => seat.seatIndex)).toEqual([4, 5, 0, 1, 2]);
+    });
+  });
+
+  describe('openSeatDialog()', () => {
+    it('should open seat dialog for an empty seat', async () => {
+      const vm = new MinPokerGameViewModel();
+      vm.seats = new Array(6).fill(null);
+      MINPOKER_MULTIPLAYER_GAME_SIGNAL.set(vm);
+      fixture.detectChanges();
+
+      component.openSeatDialog(2);
+      await fixture.whenStable();
+
+      expect(component.isSeatDialogOpen()).toBeTrue();
+      expect(component.selectedSeatIndex()).toBe(2);
+    });
+
+    it('should not open seat dialog for an occupied seat', async () => {
+      const seat = new MinPokerGameSeatViewModel();
+      seat.id = 'p1';
+      const vm = new MinPokerGameViewModel();
+      vm.seats = [seat, null, null, null, null, null];
+      MINPOKER_MULTIPLAYER_GAME_SIGNAL.set(vm);
+      fixture.detectChanges();
+
+      component.openSeatDialog(0);
+      await fixture.whenStable();
+
+      expect(component.isSeatDialogOpen()).toBeFalse();
+    });
+
+    it('should not open seat dialog for invalid index', async () => {
+      const vm = new MinPokerGameViewModel();
+      vm.seats = new Array(6).fill(null);
+      MINPOKER_MULTIPLAYER_GAME_SIGNAL.set(vm);
+      fixture.detectChanges();
+
+      component.openSeatDialog(-1);
+      await fixture.whenStable();
+      expect(component.isSeatDialogOpen()).toBeFalse();
+
+      component.openSeatDialog(vm.seats.length);
+      await fixture.whenStable();
+      expect(component.isSeatDialogOpen()).toBeFalse();
+    });
+
+    it('should not open seat dialog when user is not observer', async () => {
+      const vm = new MinPokerGameViewModel();
+      vm.isObserver = false;
+      vm.seats = new Array(6).fill(null);
+      MINPOKER_MULTIPLAYER_GAME_SIGNAL.set(vm);
+      fixture.detectChanges();
+
+      component.openSeatDialog(2);
+      await fixture.whenStable();
+
+      expect(component.isSeatDialogOpen()).toBeFalse();
+    });
+  });
+
+  describe('closeSeatDialog()', () => {
+    it('should close seat dialog and reset selected seat', async () => {
+      const vm = new MinPokerGameViewModel();
+      vm.seats = new Array(6).fill(null);
+      MINPOKER_MULTIPLAYER_GAME_SIGNAL.set(vm);
+      fixture.detectChanges();
+      component.openSeatDialog(3);
+      await fixture.whenStable();
+
+      component.closeSeatDialog();
+
+      expect(component.isSeatDialogOpen()).toBeFalse();
+      expect(component.selectedSeatIndex()).toBe(-1);
+    });
+  });
+
+  describe('seatGame()', () => {
+    beforeEach(async () => {
+      const vm = new MinPokerGameViewModel();
+      vm.seats = new Array(6).fill(null);
+      MINPOKER_MULTIPLAYER_GAME_SIGNAL.set(vm);
+      fixture.detectChanges();
+      component.openSeatDialog(2);
+      await fixture.whenStable();
+    });
+
+    it('should call multiplayerService.seatGame with correct arguments', () => {
+      component.seatName.setValue('Chris');
+      component.seatAvatar.setValue('man-4.svg');
+
+      component.seatGame();
+
+      expect(MINPOKER_MULTIPLAYER_SERVICE_MOCK.seatGame).toHaveBeenCalledWith('Chris', 'man-4.svg', 2);
+    });
+
+    it('should close the seat dialog after seating', () => {
+      component.seatName.setValue('Chris');
+      component.seatAvatar.setValue('man-4.svg');
+
+      component.seatGame();
+
+      expect(component.isSeatDialogOpen()).toBeFalse();
+    });
+
+    it('should not call seatGame when form is invalid', () => {
+      component.seatGame();
+
+      expect(MINPOKER_MULTIPLAYER_SERVICE_MOCK.seatGame).not.toHaveBeenCalled();
+      expect(component.isSeatDialogOpen()).toBeTrue();
+    });
+
+    it('should not call seatGame when no seat is selected', () => {
+      component.closeSeatDialog();
+      component.seatName.setValue('Chris');
+      component.seatAvatar.setValue('man-4.svg');
+
+      component.seatGame();
+
+      expect(MINPOKER_MULTIPLAYER_SERVICE_MOCK.seatGame).not.toHaveBeenCalled();
+    });
+
+    it('should not call seatGame when trimmed name is empty', () => {
+      component.seatName.setValue('   ');
+      component.seatAvatar.setValue('man-4.svg');
+
+      component.seatGame();
+
+      expect(MINPOKER_MULTIPLAYER_SERVICE_MOCK.seatGame).not.toHaveBeenCalled();
+      expect(component.isSeatDialogOpen()).toBeTrue();
     });
   });
 
@@ -211,11 +330,17 @@ describe('MinPokerGameComponent', () => {
 
     it('should open leave dialog on canDeactivate()', () => {
       void component.canDeactivate();
-      expect(component.isLeaveDialogOpen()).toBe(true);
+
+      expect(component.isLeaveDialogOpen()).toBeTrue();
     });
 
-    it('should close an open seat dialog when canDeactivate is called', () => {
+    it('should close an open seat dialog when canDeactivate is called', async () => {
+      const vm = new MinPokerGameViewModel();
+      vm.seats = new Array(6).fill(null);
+      MINPOKER_MULTIPLAYER_GAME_SIGNAL.set(vm);
+      fixture.detectChanges();
       component.openSeatDialog(4);
+      await fixture.whenStable();
 
       void component.canDeactivate();
 
@@ -226,6 +351,7 @@ describe('MinPokerGameComponent', () => {
     it('should close leave dialog on cancelLeave()', () => {
       component.isLeaveDialogOpen.set(true);
       component.cancelLeave();
+
       expect(component.isLeaveDialogOpen()).toBe(false);
     });
 
@@ -262,6 +388,28 @@ describe('MinPokerGameComponent', () => {
       component.confirmLeave();
 
       await expectAsync(secondPromise).toBeResolvedTo(true);
+    });
+  });
+
+  describe('shareGameUrl()', () => {
+    it('should call clipboard API', async () => {
+      const clipboardSpy = jasmine.createSpy('writeText').and.resolveTo();
+      const originalClipboard = navigator.clipboard;
+
+      Object.defineProperty(navigator, 'clipboard', {
+        configurable: true,
+        value: { writeText: clipboardSpy },
+      });
+
+      component.shareGameUrl();
+      await Promise.resolve();
+
+      expect(clipboardSpy).toHaveBeenCalledWith(globalThis.location.href);
+
+      Object.defineProperty(navigator, 'clipboard', {
+        configurable: true,
+        value: originalClipboard,
+      });
     });
   });
 });

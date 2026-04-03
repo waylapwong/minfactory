@@ -7,6 +7,12 @@ import { MinRpsMatchPlayPayload } from '../models/payloads/minrps-match-play.pay
 import { MinRpsMatchSeatPayload } from '../models/payloads/minrps-match-seat.payload';
 import { MinRpsMultiplayerService } from '../services/minrps-multiplayer.service';
 import { MINRPS_MULTIPLAYER_SERVICE_MOCK } from '../mocks/minrps-multiplayer.service.mock';
+import {
+  MINRPS_SERVER_MOCK,
+  MINRPS_SERVER_TO_EXCEPT_EMIT_MOCK,
+  MINRPS_SERVER_TO_EXCEPT_MOCK,
+} from '../mocks/minrps-server.mock';
+import { MINRPS_SOCKET_MOCK } from '../mocks/minrps-socket.mock';
 import { MinRpsGateway } from './minrps.gateway';
 
 describe('MinRpsGateway', () => {
@@ -27,19 +33,8 @@ describe('MinRpsGateway', () => {
 
     gateway = module.get<MinRpsGateway>(MinRpsGateway);
 
-    mockSocket = {
-      id: 'test-socket',
-      emit: jest.fn(),
-      join: jest.fn(),
-      leave: jest.fn(),
-    } as any;
-
-    mockServer = {
-      to: jest.fn().mockReturnValue({
-        emit: jest.fn(),
-        except: jest.fn().mockReturnValue({ emit: jest.fn() }),
-      }),
-    } as any;
+    mockSocket = MINRPS_SOCKET_MOCK as any;
+    mockServer = MINRPS_SERVER_MOCK as any;
 
     gateway.server = mockServer;
   });
@@ -120,10 +115,6 @@ describe('MinRpsGateway', () => {
       };
       MINRPS_MULTIPLAYER_SERVICE_MOCK.playMatch.mockReturnValue(mockEvent as any);
 
-      const mockOpponentEmit = jest.fn();
-      const mockExcept = jest.fn().mockReturnValue({ emit: mockOpponentEmit });
-      mockServer.to = jest.fn().mockReturnValue({ except: mockExcept, emit: jest.fn() });
-
       gateway.handlePlayCommand(mockSocket, playPayload);
 
       expect(MINRPS_MULTIPLAYER_SERVICE_MOCK.playMatch).toHaveBeenCalledWith(playPayload);
@@ -131,9 +122,9 @@ describe('MinRpsGateway', () => {
       expect(mockSocket.emit).toHaveBeenCalled();
       // Opponent notification goes to the room, excluding the playing client
       expect(mockServer.to).toHaveBeenCalledWith('match-1');
-      expect(mockExcept).toHaveBeenCalledWith('test-socket');
+      expect(MINRPS_SERVER_TO_EXCEPT_MOCK).toHaveBeenCalledWith('test-socket');
       // Opponent notification: player1's move is hidden (masked to None), hasSelectedMove stays true
-      expect(mockOpponentEmit).toHaveBeenCalledWith(
+      expect(MINRPS_SERVER_TO_EXCEPT_EMIT_MOCK).toHaveBeenCalledWith(
         expect.any(String),
         expect.objectContaining({
           matchId: 'match-1',
