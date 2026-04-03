@@ -49,6 +49,12 @@ describe('PlayingCardComponent', () => {
       fixture.componentRef.setInput('card', '?');
       expect(component.rank()).toBe('');
     });
+
+    it('should return empty string for invalid card input', () => {
+      fixture.componentRef.setInput('card', 'A?');
+      expect(component.rank()).toBe('A');
+      expect(component.suit()).toBe('');
+    });
   });
 
   describe('suit()', () => {
@@ -84,9 +90,9 @@ describe('PlayingCardComponent', () => {
       expect(component.isRed()).toBe(true);
     });
 
-    it('should be true for diamonds', () => {
+    it('should be false for diamonds', () => {
       fixture.componentRef.setInput('card', 'Kd');
-      expect(component.isRed()).toBe(true);
+      expect(component.isRed()).toBe(false);
     });
 
     it('should be false for spades', () => {
@@ -97,6 +103,47 @@ describe('PlayingCardComponent', () => {
     it('should be false for clubs', () => {
       fixture.componentRef.setInput('card', 'Tc');
       expect(component.isRed()).toBe(false);
+    });
+
+    it('should be false for face-down card', () => {
+      fixture.componentRef.setInput('card', '?');
+      expect(component.isRed()).toBe(false);
+    });
+  });
+
+  describe('isBlue()', () => {
+    it('should be true for diamonds', () => {
+      fixture.componentRef.setInput('card', 'Kd');
+      expect(component.isBlue()).toBe(true);
+    });
+
+    it('should be false for hearts', () => {
+      fixture.componentRef.setInput('card', 'Ah');
+      expect(component.isBlue()).toBe(false);
+    });
+  });
+
+  describe('isGreen()', () => {
+    it('should be true for clubs', () => {
+      fixture.componentRef.setInput('card', 'Tc');
+      expect(component.isGreen()).toBe(true);
+    });
+
+    it('should be false for spades', () => {
+      fixture.componentRef.setInput('card', '2s');
+      expect(component.isGreen()).toBe(false);
+    });
+  });
+
+  describe('isBlack()', () => {
+    it('should be true for spades', () => {
+      fixture.componentRef.setInput('card', '2s');
+      expect(component.isBlack()).toBe(true);
+    });
+
+    it('should be false for clubs', () => {
+      fixture.componentRef.setInput('card', 'Tc');
+      expect(component.isBlack()).toBe(false);
     });
   });
 });

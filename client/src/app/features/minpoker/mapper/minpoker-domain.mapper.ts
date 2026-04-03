@@ -14,7 +14,9 @@ export class MinPokerDomainMapper {
     viewModel.hand = [...domain.hand];
     viewModel.isObserver = domain.observerIds.includes(heroId) || !domain.players.some((p) => p?.id === heroId);
     viewModel.seats = domain.players.map((player: MinPokerMatchPlayer | null): MinPokerGameSeatViewModel | null =>
-      player ? { avatar: player.avatar, id: player.id, name: player.name, seat: player.seat, stack: player.stack } : null,
+      player
+        ? { avatar: player.avatar, id: player.id, name: player.name, seat: player.seat, stack: player.stack }
+        : null,
     );
     viewModel.smallBlind = domain.smallBlind;
     viewModel.tableSize = domain.tableSize;
