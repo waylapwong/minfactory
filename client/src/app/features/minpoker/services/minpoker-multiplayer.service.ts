@@ -8,6 +8,7 @@ import { MinPokerMatchSeatCommand } from '../models/commands/minpoker-match-seat
 import { MinPokerMatchCommand } from '../models/enums/minpoker-match-command.enum';
 import { MinPokerMatchEvent } from '../models/enums/minpoker-match-event.enum';
 import { MinPokerMatchConnectedEvent } from '../models/events/minpoker-match-connected.event';
+import { MinPokerMatchHandDealtEvent } from '../models/events/minpoker-match-hand-dealt.event';
 import { MinPokerMatchUpdatedEvent } from '../models/events/minpoker-match-updated.event';
 import { MinPokerGameViewModel } from '../models/viewmodels/minpoker-game.viewmodel';
 import { MinPokerSocketRepository } from '../repositories/minpoker-socket.repository';
@@ -81,9 +82,18 @@ export class MinPokerMultiplayerService {
     this.joinGame();
   };
 
+  private readonly onMatchHandDealtEvent = (event: MinPokerMatchHandDealtEvent): void => {
+    console.warn('Receiving Event: HandDealt', event);
+    const newMatch: MinPokerMatch = new MinPokerMatch(this.cachedMatch());
+    newMatch.hand = [...event.hand];
+    this.cachedMatch.set(newMatch);
+  };
+
   private readonly onMatchUpdatedEvent = (event: MinPokerMatchUpdatedEvent): void => {
     console.warn('Receiving Event: Updated', event);
-    this.cachedMatch.set(MinPokerEventMapper.matchUpdatedEventToDomain(event));
+    const updatedMatch: MinPokerMatch = MinPokerEventMapper.matchUpdatedEventToDomain(event);
+    updatedMatch.hand = this.cachedMatch().hand;
+    this.cachedMatch.set(updatedMatch);
   };
 
   private subscribeToEvents(): void {
@@ -91,6 +101,7 @@ export class MinPokerMultiplayerService {
       return;
     }
     this.socketRepository.on(MinPokerMatchEvent.Connected, this.onMatchConnectedEvent);
+    this.socketRepository.on(MinPokerMatchEvent.HandDealt, this.onMatchHandDealtEvent);
     this.socketRepository.on(MinPokerMatchEvent.Updated, this.onMatchUpdatedEvent);
     this.isSubscribed = true;
   }
@@ -100,6 +111,7 @@ export class MinPokerMultiplayerService {
       return;
     }
     this.socketRepository.off(MinPokerMatchEvent.Connected, this.onMatchConnectedEvent);
+    this.socketRepository.off(MinPokerMatchEvent.HandDealt, this.onMatchHandDealtEvent);
     this.socketRepository.off(MinPokerMatchEvent.Updated, this.onMatchUpdatedEvent);
     this.isSubscribed = false;
   }

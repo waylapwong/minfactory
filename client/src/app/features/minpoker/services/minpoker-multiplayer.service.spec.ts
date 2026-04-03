@@ -4,6 +4,7 @@ import { MINPOKER_SOCKET_REPOSITORY_MOCK } from '../mocks/minpoker-socket.reposi
 import { MinPokerMatchCommand } from '../models/enums/minpoker-match-command.enum';
 import { MinPokerMatchEvent } from '../models/enums/minpoker-match-event.enum';
 import { MinPokerMatchConnectedEvent } from '../models/events/minpoker-match-connected.event';
+import { MinPokerMatchHandDealtEvent } from '../models/events/minpoker-match-hand-dealt.event';
 import { MinPokerMatchJoinCommand } from '../models/commands/minpoker-match-join.command';
 import { MinPokerMatchLeaveCommand } from '../models/commands/minpoker-match-leave.command';
 import { MinPokerMatchSeatCommand } from '../models/commands/minpoker-match-seat.command';
@@ -41,11 +42,15 @@ describe('MinPokerMultiplayerService', () => {
       expect(MINPOKER_SOCKET_REPOSITORY_MOCK.connect).toHaveBeenCalledTimes(1);
     });
 
-    it('should subscribe to Connected and Updated events', () => {
+    it('should subscribe to Connected, HandDealt and Updated events', () => {
       service.connect();
 
       expect(MINPOKER_SOCKET_REPOSITORY_MOCK.on).toHaveBeenCalledWith(
         MinPokerMatchEvent.Connected,
+        jasmine.any(Function),
+      );
+      expect(MINPOKER_SOCKET_REPOSITORY_MOCK.on).toHaveBeenCalledWith(
+        MinPokerMatchEvent.HandDealt,
         jasmine.any(Function),
       );
       expect(MINPOKER_SOCKET_REPOSITORY_MOCK.on).toHaveBeenCalledWith(
@@ -59,7 +64,7 @@ describe('MinPokerMultiplayerService', () => {
       service.connect();
       service.connect();
 
-      expect(MINPOKER_SOCKET_REPOSITORY_MOCK.on).toHaveBeenCalledTimes(2);
+      expect(MINPOKER_SOCKET_REPOSITORY_MOCK.on).toHaveBeenCalledTimes(3);
     });
   });
 
@@ -79,6 +84,10 @@ describe('MinPokerMultiplayerService', () => {
         jasmine.any(Function),
       );
       expect(MINPOKER_SOCKET_REPOSITORY_MOCK.off).toHaveBeenCalledWith(
+        MinPokerMatchEvent.HandDealt,
+        jasmine.any(Function),
+      );
+      expect(MINPOKER_SOCKET_REPOSITORY_MOCK.off).toHaveBeenCalledWith(
         MinPokerMatchEvent.Updated,
         jasmine.any(Function),
       );
@@ -95,7 +104,7 @@ describe('MinPokerMultiplayerService', () => {
       service.disconnect();
       service.disconnect();
 
-      expect(MINPOKER_SOCKET_REPOSITORY_MOCK.off).toHaveBeenCalledTimes(2);
+      expect(MINPOKER_SOCKET_REPOSITORY_MOCK.off).toHaveBeenCalledTimes(3);
     });
   });
 
@@ -180,7 +189,7 @@ describe('MinPokerMultiplayerService', () => {
         matchId: 'game-1',
         name: 'Test Table',
         observerIds: [],
-        players: [{ avatar: 'man-1.svg', id: 'player-1', name: 'Chris', seat: 0 }],
+        players: [{ avatar: 'man-1.svg', id: 'player-1', name: 'Chris', seat: 0, stack: 200 }],
         smallBlind: 10,
         tableSize: 6,
       };
@@ -193,9 +202,53 @@ describe('MinPokerMultiplayerService', () => {
 
       expect(service.game().gameId).toBe('game-1');
       expect(service.game().seats[0]).toEqual(
-        jasmine.objectContaining({ name: 'Chris', avatar: 'man-1.svg', seat: 0 }),
+        jasmine.objectContaining({ name: 'Chris', avatar: 'man-1.svg', seat: 0, stack: 200 }),
       );
       expect(service.game().seats[1]).toBeNull();
+    });
+
+    it('should preserve hand when match updated event fires', () => {
+      const handDealtEvent: MinPokerMatchHandDealtEvent = { hand: ['Ah', 'Ks'] };
+      const updatedEvent: MinPokerMatchUpdatedEvent = {
+        bigBlind: 20,
+        matchId: 'game-1',
+        name: 'Test Table',
+        observerIds: [],
+        players: [{ avatar: 'man-1.svg', id: 'player-1', name: 'Chris', seat: 0, stack: 200 }],
+        smallBlind: 10,
+        tableSize: 6,
+      };
+
+      service.connect();
+      const handDealtCb = MINPOKER_SOCKET_REPOSITORY_MOCK.on.calls
+        .all()
+        .find((c) => c.args[0] === MinPokerMatchEvent.HandDealt)!.args[1] as (p: MinPokerMatchHandDealtEvent) => void;
+      const updatedCb = MINPOKER_SOCKET_REPOSITORY_MOCK.on.calls
+        .all()
+        .find((c) => c.args[0] === MinPokerMatchEvent.Updated)!.args[1] as (p: MinPokerMatchUpdatedEvent) => void;
+
+      handDealtCb(handDealtEvent);
+      updatedCb(updatedEvent);
+
+      expect(service.game().hand).toEqual(['Ah', 'Ks']);
+    });
+  });
+
+  describe('onMatchHandDealtEvent', () => {
+    it('should update the hand in the game view model', () => {
+      const handDealtEvent: MinPokerMatchHandDealtEvent = { hand: ['Ah', 'Ks'] };
+
+      service.connect();
+      const handDealtCb = MINPOKER_SOCKET_REPOSITORY_MOCK.on.calls
+        .all()
+        .find((c) => c.args[0] === MinPokerMatchEvent.HandDealt)!.args[1] as (p: MinPokerMatchHandDealtEvent) => void;
+      handDealtCb(handDealtEvent);
+
+      expect(service.game().hand).toEqual(['Ah', 'Ks']);
+    });
+
+    it('should return empty hand initially', () => {
+      expect(service.game().hand).toEqual([]);
     });
   });
 

@@ -48,8 +48,8 @@ describe('MinPokerEventMapper', () => {
         name: 'Table',
         observerIds: [],
         players: [
-          { avatar: 'man-1.svg', id: 'p1', name: 'Alice', seat: 0 },
-          { avatar: 'woman-2.svg', id: 'p2', name: 'Bob', seat: 3 },
+          { avatar: 'man-1.svg', id: 'p1', name: 'Alice', seat: 0, stack: 200 },
+          { avatar: 'woman-2.svg', id: 'p2', name: 'Bob', seat: 3, stack: 150 },
         ],
         smallBlind: 10,
         tableSize: 6,
@@ -57,10 +57,10 @@ describe('MinPokerEventMapper', () => {
 
       const domain = MinPokerEventMapper.matchUpdatedEventToDomain(event);
 
-      expect(domain.players[0]).toEqual(jasmine.objectContaining({ id: 'p1', name: 'Alice', seat: 0 }));
+      expect(domain.players[0]).toEqual(jasmine.objectContaining({ id: 'p1', name: 'Alice', seat: 0, stack: 200 }));
       expect(domain.players[1]).toBeNull();
       expect(domain.players[2]).toBeNull();
-      expect(domain.players[3]).toEqual(jasmine.objectContaining({ id: 'p2', name: 'Bob', seat: 3 }));
+      expect(domain.players[3]).toEqual(jasmine.objectContaining({ id: 'p2', name: 'Bob', seat: 3, stack: 150 }));
       expect(domain.players[4]).toBeNull();
       expect(domain.players[5]).toBeNull();
     });

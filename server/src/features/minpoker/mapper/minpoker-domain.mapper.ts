@@ -1,6 +1,7 @@
 import { MinPokerGame } from '../models/domains/minpoker-game';
 import { MinPokerGameDto } from '../models/dtos/minpoker-game.dto';
 import { MinPokerGameEntity } from '../models/entities/minpoker-game.entity';
+import { MinPokerHandDealtEvent } from '../models/events/minpoker-hand-dealt.event';
 import { MinPokerUpdatedEvent } from '../models/events/minpoker-updated.event';
 import { MinFactoryUserEntity } from 'src/features/minfactory/models/entities/minfactory-user.entity';
 
@@ -34,10 +35,17 @@ export class MinPokerDomainMapper {
         id: player.id,
         name: player.name,
         seat: player.seat,
+        stack: player.stack,
       }));
     event.smallBlind = domain.smallBlind;
     event.tableSize = domain.tableSize;
 
+    return event;
+  }
+
+  public static domainToHandDealtEvent(hand: string[]): MinPokerHandDealtEvent {
+    const event: MinPokerHandDealtEvent = new MinPokerHandDealtEvent();
+    event.hand = [...hand];
     return event;
   }
 

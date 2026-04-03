@@ -6,19 +6,28 @@ import { MinPokerEntityMapper } from '../mapper/minpoker-entity.mapper';
 import { MinPokerJoinCommand } from '../models/commands/minpoker-join.command';
 import { MinPokerLeaveCommand } from '../models/commands/minpoker-leave.command';
 import { MinPokerSeatCommand } from '../models/commands/minpoker-seat.command';
+import { MinPokerDeck } from '../models/domains/minpoker-deck';
 import { MinPokerGame } from '../models/domains/minpoker-game';
 import { MinPokerPlayer } from '../models/domains/minpoker-player';
 import { MinPokerConnectedEvent } from '../models/events/minpoker-connected.event';
 import { MinPokerDisconnectedEvent } from '../models/events/minpoker-disconnected.event';
+import { MinPokerHandDealtEvent } from '../models/events/minpoker-hand-dealt.event';
 import { MinPokerUpdatedEvent } from '../models/events/minpoker-updated.event';
+import { MinPokerDeckRepository } from '../repositories/minpoker-deck.repository';
 import { MinPokerGameRepository } from '../repositories/minpoker-game.repository';
 import { MinPokerMatchRepository } from '../repositories/minpoker-match.repository';
 import { MinPokerPlayerIdRepository } from '../repositories/minpoker-player-id.repository';
 import { MinPokerRoomSystem } from '../systems/minpoker-room.system';
 
+export interface MinPokerSeatResult {
+  updatedEvent: MinPokerUpdatedEvent;
+  hands: Map<string, MinPokerHandDealtEvent> | null;
+}
+
 @Injectable()
 export class MinPokerTournamentService {
   constructor(
+    private readonly deckRepository: MinPokerDeckRepository,
     private readonly gameRepository: MinPokerGameRepository,
     private readonly matchRepository: MinPokerMatchRepository,
     private readonly playerIdRepository: MinPokerPlayerIdRepository,
@@ -58,6 +67,7 @@ export class MinPokerTournamentService {
           updatedEvent = MinPokerDomainMapper.domainToUpdatedEvent(match);
         } else {
           this.matchRepository.delete(match.id);
+          this.deckRepository.delete(match.id);
         }
       }
       this.roomSystem.removePlayerFromRoom(client, matchId);
@@ -91,6 +101,7 @@ export class MinPokerTournamentService {
         updatedEvent = MinPokerDomainMapper.domainToUpdatedEvent(match);
       } else {
         this.matchRepository.delete(match.id);
+        this.deckRepository.delete(match.id);
       }
     }
 
@@ -98,7 +109,7 @@ export class MinPokerTournamentService {
     return updatedEvent;
   }
 
-  public async seatPlayer(client: Socket, command: MinPokerSeatCommand): Promise<MinPokerUpdatedEvent> {
+  public async seatPlayer(client: Socket, command: MinPokerSeatCommand): Promise<MinPokerSeatResult> {
     const playerId: string = this.resolvePlayerId(client, command.playerId);
     const match: MinPokerGame = await this.findOrCreateMatch(command.matchId);
     const player: MinPokerPlayer = new MinPokerPlayer({
@@ -108,8 +119,31 @@ export class MinPokerTournamentService {
     });
 
     match.seatPlayer(player, command.seat);
+
+    let hands: Map<string, MinPokerHandDealtEvent> | null = null;
+    if (match.canStartRound()) {
+      const deck: MinPokerDeck = new MinPokerDeck();
+      deck.shuffle();
+      this.deckRepository.save(match.id, deck);
+      match.dealHands(deck);
+      hands = this.buildHandDealtEvents(match);
+    }
+
     const updatedMatch: MinPokerGame = this.matchRepository.save(match);
-    return MinPokerDomainMapper.domainToUpdatedEvent(updatedMatch);
+    return {
+      updatedEvent: MinPokerDomainMapper.domainToUpdatedEvent(updatedMatch),
+      hands,
+    };
+  }
+
+  private buildHandDealtEvents(match: MinPokerGame): Map<string, MinPokerHandDealtEvent> {
+    const hands: Map<string, MinPokerHandDealtEvent> = new Map<string, MinPokerHandDealtEvent>();
+    for (const player of match.players) {
+      if (player && player.hand.length > 0) {
+        hands.set(player.id, MinPokerDomainMapper.domainToHandDealtEvent(player.hand));
+      }
+    }
+    return hands;
   }
 
   private async findOrCreateMatch(matchId: string): Promise<MinPokerGame> {

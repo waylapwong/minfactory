@@ -12,6 +12,15 @@ export class MinPokerPlayerIdRepository {
     return this.players.get(socketId) ?? null;
   }
 
+  public findByPlayerId(playerId: string): string | null {
+    for (const [socketId, id] of this.players) {
+      if (id === playerId) {
+        return socketId;
+      }
+    }
+    return null;
+  }
+
   public save(socketId: string, playerId: string): void {
     this.players.set(socketId, playerId);
   }

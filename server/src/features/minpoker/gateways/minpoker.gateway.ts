@@ -15,8 +15,10 @@ import { MinPokerCommand } from '../models/enums/minpoker-command.enum';
 import { MinPokerEvent } from '../models/enums/minpoker-event.enum';
 import { MinPokerConnectedEvent } from '../models/events/minpoker-connected.event';
 import { MinPokerDisconnectedEvent } from '../models/events/minpoker-disconnected.event';
+import { MinPokerHandDealtEvent } from '../models/events/minpoker-hand-dealt.event';
 import { MinPokerUpdatedEvent } from '../models/events/minpoker-updated.event';
-import { MinPokerTournamentService } from '../services/minpoker-tournament.service';
+import { MinPokerPlayerIdRepository } from '../repositories/minpoker-player-id.repository';
+import { MinPokerSeatResult, MinPokerTournamentService } from '../services/minpoker-tournament.service';
 import { Namespace } from 'src/shared/enums/namespace.enum';
 
 @WebSocketGateway({
@@ -27,7 +29,10 @@ export class MinPokerGateway implements OnGatewayConnection, OnGatewayDisconnect
   @WebSocketServer()
   public server: Server;
 
-  constructor(private readonly tournamentService: MinPokerTournamentService) {}
+  constructor(
+    private readonly playerIdRepository: MinPokerPlayerIdRepository,
+    private readonly tournamentService: MinPokerTournamentService,
+  ) {}
 
   @SubscribeMessage(MinPokerCommand.Join)
   public async handleJoinCommand(
@@ -54,8 +59,14 @@ export class MinPokerGateway implements OnGatewayConnection, OnGatewayDisconnect
     @MessageBody() command: MinPokerSeatCommand,
   ): Promise<void> {
     console.warn(`Receiving Command: ${MinPokerCommand.Seat}`, command);
-    const event: MinPokerUpdatedEvent = await this.tournamentService.seatPlayer(client, command);
-    this.sendMatchUpdatedEvent(event);
+    const result: MinPokerSeatResult = await this.tournamentService.seatPlayer(client, command);
+    this.sendMatchUpdatedEvent(result.updatedEvent);
+
+    if (result.hands) {
+      for (const [playerId, handEvent] of result.hands) {
+        this.sendHandDealtEvent(playerId, handEvent);
+      }
+    }
   }
 
   public handleConnection(client: Socket): void {
@@ -90,6 +101,14 @@ export class MinPokerGateway implements OnGatewayConnection, OnGatewayDisconnect
       this.server.emit(MinPokerEvent.MatchDisconnected, payload);
     }
     console.warn(`Sending Event: ${MinPokerEvent.MatchDisconnected}`, payload);
+  }
+
+  private sendHandDealtEvent(playerId: string, payload: MinPokerHandDealtEvent): void {
+    const socketId: string | null = this.playerIdRepository.findByPlayerId(playerId);
+    if (socketId) {
+      this.server.to(socketId).emit(MinPokerEvent.HandDealt, payload);
+      console.warn(`Sending Event: ${MinPokerEvent.HandDealt} to ${playerId}`, payload);
+    }
   }
 
   private sendMatchUpdatedEvent(payload: MinPokerUpdatedEvent): void {

@@ -8,6 +8,7 @@ export class MinPokerUpdatedEvent {
     id: string;
     name: string;
     seat: number;
+    stack: number;
   }>;
   public smallBlind: number;
   public tableSize: number;

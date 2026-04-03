@@ -1,4 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { MINPOKER_DECK_REPOSITORY_MOCK } from '../mocks/minpoker-deck.repository.mock';
 import { MINPOKER_GAME_REPOSITORY_MOCK } from '../mocks/minpoker-game.repository.mock';
 import { MINPOKER_MATCH_REPOSITORY_MOCK } from '../mocks/minpoker-match.repository.mock';
 import { MINPOKER_PLAYER_ID_REPOSITORY_MOCK } from '../mocks/minpoker-player-id.repository.mock';
@@ -9,6 +10,7 @@ import { MinPokerSeatCommand } from '../models/commands/minpoker-seat.command';
 import { MinPokerGame } from '../models/domains/minpoker-game';
 import { MinPokerPlayer } from '../models/domains/minpoker-player';
 import { MinPokerGameEntity } from '../models/entities/minpoker-game.entity';
+import { MinPokerDeckRepository } from '../repositories/minpoker-deck.repository';
 import { MinPokerGameRepository } from '../repositories/minpoker-game.repository';
 import { MinPokerMatchRepository } from '../repositories/minpoker-match.repository';
 import { MinPokerPlayerIdRepository } from '../repositories/minpoker-player-id.repository';
@@ -26,6 +28,7 @@ describe('MinpokerTournamentService', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         MinPokerTournamentService,
+        { provide: MinPokerDeckRepository, useValue: MINPOKER_DECK_REPOSITORY_MOCK },
         { provide: MinPokerGameRepository, useValue: MINPOKER_GAME_REPOSITORY_MOCK },
         { provide: MinPokerMatchRepository, useValue: MINPOKER_MATCH_REPOSITORY_MOCK },
         { provide: MinPokerPlayerIdRepository, useValue: MINPOKER_PLAYER_ID_REPOSITORY_MOCK },
@@ -90,7 +93,7 @@ describe('MinpokerTournamentService', () => {
   });
 
   describe('seatPlayer', () => {
-    it('should seat observer on selected free seat', async () => {
+    it('should seat observer on selected free seat and return updated event', async () => {
       const socket = { data: { playerId: 'player-1' }, id: 'socket-1' } as any;
       const match = new MinPokerGame({ id: 'match-1', name: 'Table 1' });
       match.addObserver('player-1');
@@ -107,11 +110,60 @@ describe('MinpokerTournamentService', () => {
 
       const result = await service.seatPlayer(socket, command);
 
-      expect(result.matchId).toBe('match-1');
-      expect(result.players).toEqual([
+      expect(result.updatedEvent.matchId).toBe('match-1');
+      expect(result.updatedEvent.players).toEqual([
         expect.objectContaining({ avatar: 'woman-1.svg', id: 'player-1', name: 'Alice', seat: 3 }),
       ]);
-      expect(result.observerIds).toEqual([]);
+      expect(result.updatedEvent.observerIds).toEqual([]);
+      expect(result.hands).toBeNull();
+    });
+
+    it('should deal hands to all players when 2 or more are seated', async () => {
+      const socket = { data: { playerId: 'player-2' }, id: 'socket-2' } as any;
+      const match = new MinPokerGame({ id: 'match-1', name: 'Table 1' });
+      match.seatPlayer(new MinPokerPlayer({ avatar: 'man-1.svg', id: 'player-1', name: 'Alice' }), 0);
+      match.addObserver('player-2');
+      const command: MinPokerSeatCommand = {
+        avatar: 'woman-2.svg',
+        matchId: 'match-1',
+        playerId: 'player-2',
+        playerName: 'Bob',
+        seat: 1,
+      };
+
+      MINPOKER_MATCH_REPOSITORY_MOCK.findOne.mockReturnValue(match);
+      MINPOKER_PLAYER_ID_REPOSITORY_MOCK.findOne.mockReturnValue('player-2');
+      MINPOKER_DECK_REPOSITORY_MOCK.save.mockImplementation((_id: string, deck: any) => deck);
+
+      const result = await service.seatPlayer(socket, command);
+
+      expect(result.hands).not.toBeNull();
+      expect(result.hands?.has('player-1')).toBe(true);
+      expect(result.hands?.has('player-2')).toBe(true);
+      expect(result.hands?.get('player-1')?.hand).toHaveLength(2);
+      expect(result.hands?.get('player-2')?.hand).toHaveLength(2);
+      expect(MINPOKER_DECK_REPOSITORY_MOCK.save).toHaveBeenCalledWith('match-1', expect.any(Object));
+    });
+
+    it('should not deal hands when only 1 player is seated', async () => {
+      const socket = { data: { playerId: 'player-1' }, id: 'socket-1' } as any;
+      const match = new MinPokerGame({ id: 'match-1', name: 'Table 1' });
+      match.addObserver('player-1');
+      const command: MinPokerSeatCommand = {
+        avatar: 'woman-1.svg',
+        matchId: 'match-1',
+        playerId: 'player-1',
+        playerName: 'Alice',
+        seat: 0,
+      };
+
+      MINPOKER_MATCH_REPOSITORY_MOCK.findOne.mockReturnValue(match);
+      MINPOKER_PLAYER_ID_REPOSITORY_MOCK.findOne.mockReturnValue('player-1');
+
+      const result = await service.seatPlayer(socket, command);
+
+      expect(result.hands).toBeNull();
+      expect(MINPOKER_DECK_REPOSITORY_MOCK.save).not.toHaveBeenCalled();
     });
 
     it('should reject seat when payload playerId does not match socket playerId', async () => {

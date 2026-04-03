@@ -23,6 +23,7 @@ export class MinPokerEventMapper {
         id: player.id,
         name: player.name,
         seat: player.seat,
+        stack: player.stack,
       });
     });
 
