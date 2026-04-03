@@ -71,9 +71,8 @@ describe('MinPokerGameComponent', () => {
     expect(component.communityCards).toEqual(['?', '?', '?', '?', '?']);
   });
 
-  it('should render hand cards', () => {
-    expect(component.handCards.length).toBe(2);
-    expect(component.handCards).toEqual(['?', '?']);
+  it('should render initial hand as empty', () => {
+    expect(component.hand()).toEqual([]);
   });
 
   it('should have initial betAmount of 2', () => {

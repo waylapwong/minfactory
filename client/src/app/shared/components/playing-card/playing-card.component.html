@@ -1,0 +1,18 @@
+@if (isFaceDown()) {
+  <div
+    class="flex h-21 w-15 items-center justify-center rounded-lg border-4 border-black bg-gray-300 font-mono text-4xl"
+  >
+    <min-logo class="text-xs">Poker</min-logo>
+  </div>
+} @else {
+  <div
+    class="flex h-21 w-15 flex-col justify-center rounded-lg border-4 border-black bg-white font-mono text-4xl shadow-2xl"
+    [class.text-red-500]="isRed()"
+    [class.text-blue-500]="isBlue()"
+    [class.text-green-500]="isGreen()"
+    [class.text-black]="!isRed() && !isBlue() && !isGreen()"
+  >
+    <span class="h-8">{{ rank() }}</span>
+    <span>{{ suit() }}</span>
+  </div>
+}

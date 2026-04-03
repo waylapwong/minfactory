@@ -1,3 +1,4 @@
+import { MinPokerDeck } from './minpoker-deck';
 import { MinPokerPlayer } from './minpoker-player';
 import { GameRuleException } from 'src/shared/exceptions/game-rule.exception';
 
@@ -24,6 +25,17 @@ export class MinPokerGame {
     }
 
     this.observers.set(observerId, new MinPokerPlayer({ id: observerId }));
+  }
+
+  public canStartRound(): boolean {
+    return this.getPlayerCount() >= 2;
+  }
+
+  public dealHands(deck: MinPokerDeck): void {
+    const seatedPlayers: MinPokerPlayer[] = this.players.filter((player): player is MinPokerPlayer => player !== null);
+    for (const player of seatedPlayers) {
+      player.hand = deck.deal(2);
+    }
   }
 
   public getPlayerCount(): number {

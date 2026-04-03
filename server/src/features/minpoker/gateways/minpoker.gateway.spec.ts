@@ -1,5 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { Server, Socket } from 'socket.io';
+import { MINPOKER_PLAYER_ID_REPOSITORY_MOCK } from '../mocks/minpoker-player-id.repository.mock';
 import { MINPOKER_SERVER_MOCK, MINPOKER_SERVER_TO_EMIT_MOCK } from '../mocks/minpoker-server.mock';
 import { MINPOKER_SOCKET_MOCK } from '../mocks/minpoker-socket.mock';
 import { MINPOKER_TOURNAMENT_SERVICE_MOCK } from '../mocks/minpoker-tournament.service.mock';
@@ -7,6 +8,7 @@ import { MinPokerJoinCommand } from '../models/commands/minpoker-join.command';
 import { MinPokerLeaveCommand } from '../models/commands/minpoker-leave.command';
 import { MinPokerSeatCommand } from '../models/commands/minpoker-seat.command';
 import { MinPokerEvent } from '../models/enums/minpoker-event.enum';
+import { MinPokerPlayerIdRepository } from '../repositories/minpoker-player-id.repository';
 import { MinPokerTournamentService } from '../services/minpoker-tournament.service';
 import { MinPokerGateway } from './minpoker.gateway';
 
@@ -24,6 +26,10 @@ describe('MinpokerGateway', () => {
         {
           provide: MinPokerTournamentService,
           useValue: MINPOKER_TOURNAMENT_SERVICE_MOCK,
+        },
+        {
+          provide: MinPokerPlayerIdRepository,
+          useValue: MINPOKER_PLAYER_ID_REPOSITORY_MOCK,
         },
       ],
     }).compile();
@@ -103,7 +109,8 @@ describe('MinpokerGateway', () => {
         seat: 2,
       };
       MINPOKER_TOURNAMENT_SERVICE_MOCK.seatPlayer.mockResolvedValue({
-        matchId: 'match-1',
+        updatedEvent: { matchId: 'match-1' },
+        hands: null,
       });
 
       await gateway.handleSeatCommand(mockSocket, command);
@@ -111,6 +118,52 @@ describe('MinpokerGateway', () => {
       expect(MINPOKER_TOURNAMENT_SERVICE_MOCK.seatPlayer).toHaveBeenCalledWith(mockSocket, command);
       expect(mockServer.to).toHaveBeenCalledWith('match-1');
       expect(MINPOKER_SERVER_TO_EMIT_MOCK).toHaveBeenCalledWith(MinPokerEvent.Updated, { matchId: 'match-1' });
+    });
+
+    it('should send HandDealt events to each player when a round starts', async () => {
+      const command: MinPokerSeatCommand = {
+        avatar: 'woman-1.svg',
+        matchId: 'match-1',
+        playerId: 'user-1',
+        playerName: 'Alice',
+        seat: 0,
+      };
+      const hands: Map<string, { hand: string[] }> = new Map([
+        ['player-1', { hand: ['Ah', 'Ks'] }],
+        ['player-2', { hand: ['2d', '9c'] }],
+      ]);
+      MINPOKER_TOURNAMENT_SERVICE_MOCK.seatPlayer.mockResolvedValue({
+        updatedEvent: { matchId: 'match-1' },
+        hands,
+      });
+      MINPOKER_PLAYER_ID_REPOSITORY_MOCK.findByPlayerId.mockReturnValueOnce('socket-1').mockReturnValueOnce('socket-2');
+
+      await gateway.handleSeatCommand(mockSocket, command);
+
+      expect(mockServer.to).toHaveBeenCalledWith('socket-1');
+      expect(mockServer.to).toHaveBeenCalledWith('socket-2');
+      expect(MINPOKER_SERVER_TO_EMIT_MOCK).toHaveBeenCalledWith(MinPokerEvent.HandDealt, { hand: ['Ah', 'Ks'] });
+      expect(MINPOKER_SERVER_TO_EMIT_MOCK).toHaveBeenCalledWith(MinPokerEvent.HandDealt, { hand: ['2d', '9c'] });
+    });
+
+    it('should not send HandDealt events when no round starts', async () => {
+      const command: MinPokerSeatCommand = {
+        avatar: 'woman-1.svg',
+        matchId: 'match-1',
+        playerId: 'user-1',
+        playerName: 'Alice',
+        seat: 0,
+      };
+      MINPOKER_TOURNAMENT_SERVICE_MOCK.seatPlayer.mockResolvedValue({
+        updatedEvent: { matchId: 'match-1' },
+        hands: null,
+      });
+
+      await gateway.handleSeatCommand(mockSocket, command);
+
+      expect(MINPOKER_PLAYER_ID_REPOSITORY_MOCK.findByPlayerId).not.toHaveBeenCalled();
+      expect(MINPOKER_SERVER_TO_EMIT_MOCK).toHaveBeenCalledWith(MinPokerEvent.Updated, { matchId: 'match-1' });
+      expect(MINPOKER_SERVER_TO_EMIT_MOCK).not.toHaveBeenCalledWith(MinPokerEvent.HandDealt, expect.anything());
     });
   });
 

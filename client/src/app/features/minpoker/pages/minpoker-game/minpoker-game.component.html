@@ -72,11 +72,7 @@
     <!-- COMMUNITY CARDS -->
     <div class="my-1 flex w-full flex-row justify-center gap-1">
       @for (card of communityCards; track $index) {
-        <div
-          class="flex h-21 w-15 items-center justify-center rounded-lg border-4 border-black bg-gray-300 font-mono text-4xl"
-        >
-          <min-logo class="text-xs">Poker</min-logo>
-        </div>
+        <min-playing-card card="?" />
       }
     </div>
     <!-- POT -->
@@ -98,7 +94,7 @@
           >
             <img [src]="getAvatarPath(seat.player.avatar)" [alt]="seat.player.name" />
             <span class="w-full truncate">{{ seat.player.name }}</span>
-            <span class="w-full truncate text-xs text-gray-500">{{ 1100 | number }}</span>
+            <span class="w-full truncate text-xs text-gray-500">{{ seat.player.stack | number }}</span>
           </div>
         } @else {
           <button
@@ -118,13 +114,13 @@
       <div class="grid grid-cols-5 items-center justify-center gap-2">
         <!-- HERO HAND -->
         <div class="col-start-2 col-end-5 flex flex-row justify-center gap-1">
-          @for (card of handCards; track $index) {
-            <div
-              class="flex h-21 w-15 flex-col justify-center rounded-lg border-4 border-black bg-white font-mono text-4xl shadow-2xl"
-            >
-              <span class="h-8">A</span>
-              <span>&spades;</span>
-            </div>
+          @if (hand().length > 0) {
+            @for (card of hand(); track $index) {
+              <min-playing-card [card]="card" />
+            }
+          } @else {
+            <min-playing-card card="?" />
+            <min-playing-card card="?" />
           }
         </div>
         <!-- HERO CARD -->
@@ -135,11 +131,11 @@
           @if (heroSeat()) {
             <img [src]="getAvatarPath(heroSeat()!.avatar)" [alt]="heroSeat()!.name" />
             <span class="w-full truncate">{{ heroSeat()!.name }}</span>
+            <span class="w-full truncate text-xs text-gray-500">{{ heroSeat()!.stack | number }}</span>
           } @else {
             <img src="assets/svgs/minpoker/add-gray.svg" alt="" class="h-8 w-8" />
             <span class="w-full truncate">Dein Platz</span>
           }
-          <span class="w-full truncate text-xs text-gray-500">{{ 1100 | number }}</span>
         </div>
       </div>
       <!-- ACTION BUTTONS -->
