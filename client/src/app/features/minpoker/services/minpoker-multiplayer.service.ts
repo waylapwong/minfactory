@@ -1,10 +1,10 @@
 import { Injectable, Signal, WritableSignal, computed, signal } from '@angular/core';
 import { MinPokerDomainMapper } from '../mapper/minpoker-domain.mapper';
 import { MinPokerEventMapper } from '../mapper/minpoker-event.mapper';
-import { MinPokerMatch } from '../models/domains/minpoker-match';
 import { MinPokerMatchJoinCommand } from '../models/commands/minpoker-match-join.command';
 import { MinPokerMatchLeaveCommand } from '../models/commands/minpoker-match-leave.command';
 import { MinPokerMatchSeatCommand } from '../models/commands/minpoker-match-seat.command';
+import { MinPokerMatch } from '../models/domains/minpoker-match';
 import { MinPokerMatchCommand } from '../models/enums/minpoker-match-command.enum';
 import { MinPokerMatchEvent } from '../models/enums/minpoker-match-event.enum';
 import { MinPokerMatchConnectedEvent } from '../models/events/minpoker-match-connected.event';
@@ -39,10 +39,12 @@ export class MinPokerMultiplayerService {
     this.socketRepository.disconnect();
   }
 
-  public setGameId(id: string): void {
-    const newMatch: MinPokerMatch = new MinPokerMatch(this.cachedMatch());
-    newMatch.id = id;
-    this.cachedMatch.set(newMatch);
+  public leaveGame(): void {
+    const command: MinPokerMatchLeaveCommand = new MinPokerMatchLeaveCommand();
+    command.matchId = this.cachedMatch().id;
+    command.playerId = this.cachedPlayerId();
+    this.socketRepository.emit(MinPokerMatchCommand.Leave, command);
+    console.warn(`Sending Command: ${MinPokerMatchCommand.Leave}`, command);
   }
 
   public seatGame(playerName: string, avatar: string, seat: number): void {
@@ -60,12 +62,10 @@ export class MinPokerMultiplayerService {
     console.warn(`Sending Command: ${MinPokerMatchCommand.Seat}`, command);
   }
 
-  public leaveGame(): void {
-    const command: MinPokerMatchLeaveCommand = new MinPokerMatchLeaveCommand();
-    command.matchId = this.cachedMatch().id;
-    command.playerId = this.cachedPlayerId();
-    this.socketRepository.emit(MinPokerMatchCommand.Leave, command);
-    console.warn(`Sending Command: ${MinPokerMatchCommand.Leave}`, command);
+  public setGameId(id: string): void {
+    const newMatch: MinPokerMatch = new MinPokerMatch(this.cachedMatch());
+    newMatch.id = id;
+    this.cachedMatch.set(newMatch);
   }
 
   private joinGame(): void {

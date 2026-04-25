@@ -27,7 +27,7 @@ import { Namespace } from 'src/shared/enums/namespace.enum';
 })
 export class MinPokerGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer()
-  public server: Server;
+  public server!: Server;
 
   constructor(
     private readonly playerIdRepository: MinPokerPlayerIdRepository,
