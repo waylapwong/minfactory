@@ -6,6 +6,7 @@ export class MinFactoryUserDomainMapper {
   public static domainToDto(domain: MinFactoryUser): MinFactoryUserDto {
     const dto: MinFactoryUserDto = new MinFactoryUserDto();
 
+    dto.id = domain.id;
     dto.email = domain.email;
     dto.role = domain.role;
     dto.createdAt = domain.createdAt;

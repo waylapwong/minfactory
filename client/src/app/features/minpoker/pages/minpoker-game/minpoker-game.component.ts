@@ -42,6 +42,7 @@ export class MinPokerGameComponent implements OnInit, OnDestroy, CanLeaveGame {
   public readonly communityCards: readonly string[] = ['?', '?', '?', '?', '?'];
   public readonly hand: Signal<string[]> = computed(() => this.multiplayerService.game().hand);
   public readonly isObserver: Signal<boolean> = computed(() => this.multiplayerService.game().isObserver);
+  public readonly isRoundActive: Signal<boolean> = computed(() => this.hand().length > 0);
   public readonly opponents: Signal<(MinPokerGameSeatViewModel | null)[]> = computed(
     () => this.multiplayerService.game().seats,
   );
