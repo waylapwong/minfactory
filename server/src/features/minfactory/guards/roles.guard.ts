@@ -3,9 +3,9 @@ import { Reflector } from '@nestjs/core';
 import { Request } from 'express';
 import { MinFactoryUserEntity } from '../models/entities/minfactory-user.entity';
 import { MinFactoryUserRepository } from '../repositories/minfactory-user.repository';
-import { ROLES_KEY } from 'src/core/authentication/decorators/roles.decorator';
-import { AuthenticatedRequest } from 'src/core/authentication/models/authenticated-request';
-import { MinFactoryRole, hasRequiredRole } from 'src/shared/enums/minfactory-role.enum';
+import { ROLES_KEY } from '../../../core/authentication/decorators/roles.decorator';
+import { AuthenticatedRequest } from '../../../core/authentication/models/authenticated-request';
+import { MinFactoryRole, hasRequiredRole } from '../../../shared/enums/minfactory-role.enum';
 
 @Injectable()
 export class RolesGuard implements CanActivate {

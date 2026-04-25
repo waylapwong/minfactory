@@ -1,6 +1,7 @@
 {
   "compilerOptions": {
     "outDir": "./out-tsc/app",
+    "rootDir": "./src",
     "types": []
   },
   "exclude": ["src/**/*.mock.ts", "src/**/*.spec.ts"],

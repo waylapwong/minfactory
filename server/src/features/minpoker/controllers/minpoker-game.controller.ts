@@ -3,19 +3,19 @@ import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { MinPokerCreateGameDto } from '../models/dtos/minpoker-create-game.dto';
 import { MinPokerGameDto } from '../models/dtos/minpoker-game.dto';
 import { MinPokerGameService } from '../services/minpoker-game.service';
-import { FirebaseUser } from 'src/core/authentication/decorators/firebase-user.decorator';
-import { AuthenticationGuard } from 'src/core/authentication/guards/authentication.guard';
-import type { FirebaseUserDto } from 'src/core/authentication/models/firebase-user.dto';
-import { API_200 } from 'src/shared/decorators/api-200.decorator';
-import { API_201 } from 'src/shared/decorators/api-201.decorator';
-import { API_204 } from 'src/shared/decorators/api-204.decorator';
-import { API_400 } from 'src/shared/decorators/api-400.decorator';
-import { API_401 } from 'src/shared/decorators/api-401.decorator';
-import { API_403 } from 'src/shared/decorators/api-403.decorator';
-import { API_404 } from 'src/shared/decorators/api-404.decorator';
-import { API_500 } from 'src/shared/decorators/api-500.decorator';
-import { API_Param_ID } from 'src/shared/decorators/api-param-id.decorator';
-import { MinApp } from 'src/shared/enums/minapp.enum';
+import { FirebaseUser } from '../../../core/authentication/decorators/firebase-user.decorator';
+import { AuthenticationGuard } from '../../../core/authentication/guards/authentication.guard';
+import type { FirebaseUserDto } from '../../../core/authentication/models/firebase-user.dto';
+import { API_200 } from '../../../shared/decorators/api-200.decorator';
+import { API_201 } from '../../../shared/decorators/api-201.decorator';
+import { API_204 } from '../../../shared/decorators/api-204.decorator';
+import { API_400 } from '../../../shared/decorators/api-400.decorator';
+import { API_401 } from '../../../shared/decorators/api-401.decorator';
+import { API_403 } from '../../../shared/decorators/api-403.decorator';
+import { API_404 } from '../../../shared/decorators/api-404.decorator';
+import { API_500 } from '../../../shared/decorators/api-500.decorator';
+import { API_Param_ID } from '../../../shared/decorators/api-param-id.decorator';
+import { MinApp } from '../../../shared/enums/minapp.enum';
 
 @Controller('minpoker/games')
 @ApiTags(MinApp.MinPoker)

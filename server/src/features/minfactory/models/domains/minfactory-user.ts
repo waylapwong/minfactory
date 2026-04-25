@@ -1,4 +1,4 @@
-import { MinFactoryRole } from 'src/shared/enums/minfactory-role.enum';
+import { MinFactoryRole } from '../../../../shared/enums/minfactory-role.enum';
 
 export class MinFactoryUser {
   public createdAt: Date = new Date();

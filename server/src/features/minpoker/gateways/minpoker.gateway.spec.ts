@@ -1,8 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { Server, Socket } from 'socket.io';
-import { AuthenticationService } from 'src/core/authentication/services/authentication.service';
-import { AUTHENTICATION_SERVICE_MOCK } from 'src/core/mocks/authentication.service.mock';
-import { MinFactoryUserRepository } from 'src/features/minfactory/repositories/minfactory-user.repository';
+import { AuthenticationService } from '../../../core/authentication/services/authentication.service';
+import { AUTHENTICATION_SERVICE_MOCK } from '../../../core/mocks/authentication.service.mock';
+import { MinFactoryUserRepository } from '../../minfactory/repositories/minfactory-user.repository';
 import { MINFACTORY_USER_REPOSITORY_MOCK } from '../mocks/minfactory-user.repository.mock';
 import { MINPOKER_PLAYER_ID_REPOSITORY_MOCK } from '../mocks/minpoker-player-id.repository.mock';
 import { MINPOKER_SERVER_MOCK, MINPOKER_SERVER_TO_EMIT_MOCK } from '../mocks/minpoker-server.mock';

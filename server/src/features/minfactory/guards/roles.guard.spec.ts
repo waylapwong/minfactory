@@ -1,7 +1,7 @@
 import { ExecutionContext, ForbiddenException, NotFoundException } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
-import { ROLES_KEY } from 'src/core/authentication/decorators/roles.decorator';
-import { MinFactoryRole } from 'src/shared/enums/minfactory-role.enum';
+import { ROLES_KEY } from '../../../core/authentication/decorators/roles.decorator';
+import { MinFactoryRole } from '../../../shared/enums/minfactory-role.enum';
 import { MinFactoryUserRepository } from '../repositories/minfactory-user.repository';
 import { MINFACTORY_USER_REPOSITORY_MOCK } from '../mocks/minfactory-user.repository.mock';
 import { RolesGuard } from './roles.guard';

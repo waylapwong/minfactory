@@ -6,8 +6,8 @@ import { MinFactoryUser } from '../models/domains/minfactory-user';
 import { MinFactoryUserDto } from '../models/dtos/minfactory-user.dto';
 import { MinFactoryUserEntity } from '../models/entities/minfactory-user.entity';
 import { MinFactoryUserRepository } from '../repositories/minfactory-user.repository';
-import { FirebaseUserDto } from 'src/core/authentication/models/firebase-user.dto';
-import { AuthenticationService } from 'src/core/authentication/services/authentication.service';
+import { FirebaseUserDto } from '../../../core/authentication/models/firebase-user.dto';
+import { AuthenticationService } from '../../../core/authentication/services/authentication.service';
 
 @Injectable()
 export class MinFactoryUserService {

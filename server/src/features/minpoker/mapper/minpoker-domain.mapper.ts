@@ -3,7 +3,7 @@ import { MinPokerGameDto } from '../models/dtos/minpoker-game.dto';
 import { MinPokerGameEntity } from '../models/entities/minpoker-game.entity';
 import { MinPokerHandDealtEvent } from '../models/events/minpoker-hand-dealt.event';
 import { MinPokerUpdatedEvent } from '../models/events/minpoker-updated.event';
-import { MinFactoryUserEntity } from 'src/features/minfactory/models/entities/minfactory-user.entity';
+import { MinFactoryUserEntity } from '../../minfactory/models/entities/minfactory-user.entity';
 
 export class MinPokerDomainMapper {
   public static domainToDto(domain: MinPokerGame): MinPokerGameDto {

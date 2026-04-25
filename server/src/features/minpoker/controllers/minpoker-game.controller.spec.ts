@@ -2,12 +2,12 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { MinPokerCreateGameDto } from '../models/dtos/minpoker-create-game.dto';
 import { MinPokerGameDto } from '../models/dtos/minpoker-game.dto';
 import { MinPokerGameController } from './minpoker-game.controller';
-import { AuthenticationGuard } from 'src/core/authentication/guards/authentication.guard';
-import { AuthenticationService } from 'src/core/authentication/services/authentication.service';
-import { AUTHENTICATION_GUARD_MOCK } from 'src/core/mocks/authentication.guard.mock';
-import { AUTHENTICATION_SERVICE_MOCK } from 'src/core/mocks/authentication.service.mock';
-import { MINPOKER_GAME_SERVICE_MOCK } from 'src/features/minpoker/mocks/minpoker-game.service.mock';
-import { MinPokerGameService } from 'src/features/minpoker/services/minpoker-game.service';
+import { AuthenticationGuard } from '../../../core/authentication/guards/authentication.guard';
+import { AuthenticationService } from '../../../core/authentication/services/authentication.service';
+import { AUTHENTICATION_GUARD_MOCK } from '../../../core/mocks/authentication.guard.mock';
+import { AUTHENTICATION_SERVICE_MOCK } from '../../../core/mocks/authentication.service.mock';
+import { MINPOKER_GAME_SERVICE_MOCK } from '../mocks/minpoker-game.service.mock';
+import { MinPokerGameService } from '../services/minpoker-game.service';
 
 describe('MinPokerGameController', () => {
   let controller: MinPokerGameController;

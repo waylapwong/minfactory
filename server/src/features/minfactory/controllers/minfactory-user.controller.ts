@@ -2,17 +2,17 @@ import { Controller, Delete, Get, HttpCode, Post, UseGuards } from '@nestjs/comm
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { MinFactoryUserDto } from '../models/dtos/minfactory-user.dto';
 import { MinFactoryUserService } from '../services/minfactory-user.service';
-import { FirebaseUser } from 'src/core/authentication/decorators/firebase-user.decorator';
-import { AuthenticationGuard } from 'src/core/authentication/guards/authentication.guard';
-import type { FirebaseUserDto } from 'src/core/authentication/models/firebase-user.dto';
-import { API_200 } from 'src/shared/decorators/api-200.decorator';
-import { API_201 } from 'src/shared/decorators/api-201.decorator';
-import { API_204 } from 'src/shared/decorators/api-204.decorator';
-import { API_401 } from 'src/shared/decorators/api-401.decorator';
-import { API_404 } from 'src/shared/decorators/api-404.decorator';
-import { API_409 } from 'src/shared/decorators/api-409.decorator';
-import { API_500 } from 'src/shared/decorators/api-500.decorator';
-import { MinApp } from 'src/shared/enums/minapp.enum';
+import { FirebaseUser } from '../../../core/authentication/decorators/firebase-user.decorator';
+import { AuthenticationGuard } from '../../../core/authentication/guards/authentication.guard';
+import type { FirebaseUserDto } from '../../../core/authentication/models/firebase-user.dto';
+import { API_200 } from '../../../shared/decorators/api-200.decorator';
+import { API_201 } from '../../../shared/decorators/api-201.decorator';
+import { API_204 } from '../../../shared/decorators/api-204.decorator';
+import { API_401 } from '../../../shared/decorators/api-401.decorator';
+import { API_404 } from '../../../shared/decorators/api-404.decorator';
+import { API_409 } from '../../../shared/decorators/api-409.decorator';
+import { API_500 } from '../../../shared/decorators/api-500.decorator';
+import { MinApp } from '../../../shared/enums/minapp.enum';
 
 @Controller('minfactory/users')
 @ApiTags(MinApp.MinFactory)

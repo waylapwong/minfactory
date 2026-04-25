@@ -8,8 +8,8 @@ import {
   WebSocketServer,
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
-import { AuthenticationService } from 'src/core/authentication/services/authentication.service';
-import { MinFactoryUserRepository } from 'src/features/minfactory/repositories/minfactory-user.repository';
+import { AuthenticationService } from '../../../core/authentication/services/authentication.service';
+import { MinFactoryUserRepository } from '../../minfactory/repositories/minfactory-user.repository';
 import { MinPokerJoinCommand } from '../models/commands/minpoker-join.command';
 import { MinPokerLeaveCommand } from '../models/commands/minpoker-leave.command';
 import { MinPokerSeatCommand } from '../models/commands/minpoker-seat.command';
@@ -21,7 +21,7 @@ import { MinPokerHandDealtEvent } from '../models/events/minpoker-hand-dealt.eve
 import { MinPokerUpdatedEvent } from '../models/events/minpoker-updated.event';
 import { MinPokerPlayerIdRepository } from '../repositories/minpoker-player-id.repository';
 import { MinPokerSeatResult, MinPokerTournamentService } from '../services/minpoker-tournament.service';
-import { Namespace } from 'src/shared/enums/namespace.enum';
+import { Namespace } from '../../../shared/enums/namespace.enum';
 
 @WebSocketGateway({
   cors: { origin: '*' },

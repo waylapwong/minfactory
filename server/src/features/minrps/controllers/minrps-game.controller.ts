@@ -3,14 +3,14 @@ import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { MinRpsCreateGameDto } from '../models/dtos/minrps-create-game.dto';
 import { MinRpsGameDto } from '../models/dtos/minrps-game.dto';
 import { MinRpsGameService } from '../services/minrps-game.service';
-import { API_200 } from 'src/shared/decorators/api-200.decorator';
-import { API_201 } from 'src/shared/decorators/api-201.decorator';
-import { API_204 } from 'src/shared/decorators/api-204.decorator';
-import { API_400 } from 'src/shared/decorators/api-400.decorator';
-import { API_404 } from 'src/shared/decorators/api-404.decorator';
-import { API_500 } from 'src/shared/decorators/api-500.decorator';
-import { API_Param_ID } from 'src/shared/decorators/api-param-id.decorator';
-import { MinApp } from 'src/shared/enums/minapp.enum';
+import { API_200 } from '../../../shared/decorators/api-200.decorator';
+import { API_201 } from '../../../shared/decorators/api-201.decorator';
+import { API_204 } from '../../../shared/decorators/api-204.decorator';
+import { API_400 } from '../../../shared/decorators/api-400.decorator';
+import { API_404 } from '../../../shared/decorators/api-404.decorator';
+import { API_500 } from '../../../shared/decorators/api-500.decorator';
+import { API_Param_ID } from '../../../shared/decorators/api-param-id.decorator';
+import { MinApp } from '../../../shared/enums/minapp.enum';
 
 @Controller('minrps/games')
 @ApiTags(MinApp.MinRps)

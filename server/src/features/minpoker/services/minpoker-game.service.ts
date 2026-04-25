@@ -7,10 +7,10 @@ import { MinPokerCreateGameDto } from '../models/dtos/minpoker-create-game.dto';
 import { MinPokerGameDto } from '../models/dtos/minpoker-game.dto';
 import { MinPokerGameEntity } from '../models/entities/minpoker-game.entity';
 import { MinPokerGameRepository } from '../repositories/minpoker-game.repository';
-import { FirebaseUserDto } from 'src/core/authentication/models/firebase-user.dto';
-import { MinFactoryUserEntity } from 'src/features/minfactory/models/entities/minfactory-user.entity';
-import { MinFactoryUserRepository } from 'src/features/minfactory/repositories/minfactory-user.repository';
-import { MinFactoryRole } from 'src/shared/enums/minfactory-role.enum';
+import { FirebaseUserDto } from '../../../core/authentication/models/firebase-user.dto';
+import { MinFactoryUserEntity } from '../../minfactory/models/entities/minfactory-user.entity';
+import { MinFactoryUserRepository } from '../../minfactory/repositories/minfactory-user.repository';
+import { MinFactoryRole } from '../../../shared/enums/minfactory-role.enum';
 
 @Injectable()
 export class MinPokerGameService {
