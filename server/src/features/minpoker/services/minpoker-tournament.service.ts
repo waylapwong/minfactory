@@ -1,5 +1,4 @@
 import { ForbiddenException, Injectable } from '@nestjs/common';
-import { randomUUID } from 'node:crypto';
 import { Socket } from 'socket.io';
 import { MinPokerDomainMapper } from '../mapper/minpoker-domain.mapper';
 import { MinPokerEntityMapper } from '../mapper/minpoker-entity.mapper';
@@ -34,11 +33,11 @@ export class MinPokerTournamentService {
     private readonly roomSystem: MinPokerRoomSystem,
   ) {}
 
-  public handleConnection(client: Socket): MinPokerConnectedEvent {
+  public handleConnection(client: Socket, userId: string): MinPokerConnectedEvent {
     const event: MinPokerConnectedEvent = new MinPokerConnectedEvent();
-    event.playerId = randomUUID();
-    client.data.playerId = event.playerId;
-    this.playerIdRepository.save(client.id, event.playerId);
+    event.playerId = userId;
+    client.data.playerId = userId;
+    this.playerIdRepository.save(client.id, userId);
     return event;
   }
 
@@ -57,26 +56,9 @@ export class MinPokerTournamentService {
     event.playerId = playerId;
     event.matchId = matchId;
 
-    let updatedEvent: MinPokerUpdatedEvent | null = null;
-    if (matchId) {
-      const match: MinPokerGame | null = this.matchRepository.findOne(matchId);
-      if (match) {
-        match.removePlayer(playerId);
-        if (match.hasParticipants()) {
-          this.matchRepository.save(match);
-          updatedEvent = MinPokerDomainMapper.domainToUpdatedEvent(match);
-        } else {
-          this.matchRepository.delete(match.id);
-          this.deckRepository.delete(match.id);
-        }
-      }
-      this.roomSystem.removePlayerFromRoom(client, matchId);
-    }
-
     this.roomSystem.removePlayerFromAllRooms(client);
-
     this.playerIdRepository.delete(client.id);
-    return { disconnectedEvent: event, updatedEvent };
+    return { disconnectedEvent: event, updatedEvent: null };
   }
 
   public async joinMatch(client: Socket, command: MinPokerJoinCommand): Promise<MinPokerUpdatedEvent> {

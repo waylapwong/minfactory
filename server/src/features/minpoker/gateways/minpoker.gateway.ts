@@ -8,6 +8,8 @@ import {
   WebSocketServer,
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
+import { AuthenticationService } from 'src/core/authentication/services/authentication.service';
+import { MinFactoryUserRepository } from 'src/features/minfactory/repositories/minfactory-user.repository';
 import { MinPokerJoinCommand } from '../models/commands/minpoker-join.command';
 import { MinPokerLeaveCommand } from '../models/commands/minpoker-leave.command';
 import { MinPokerSeatCommand } from '../models/commands/minpoker-seat.command';
@@ -32,6 +34,8 @@ export class MinPokerGateway implements OnGatewayConnection, OnGatewayDisconnect
   constructor(
     private readonly playerIdRepository: MinPokerPlayerIdRepository,
     private readonly tournamentService: MinPokerTournamentService,
+    private readonly authenticationService: AuthenticationService,
+    private readonly userRepository: MinFactoryUserRepository,
   ) {}
 
   @SubscribeMessage(MinPokerCommand.Join)
@@ -69,10 +73,22 @@ export class MinPokerGateway implements OnGatewayConnection, OnGatewayDisconnect
     }
   }
 
-  public handleConnection(client: Socket): void {
+  public async handleConnection(client: Socket): Promise<void> {
     console.warn('Receiving Command: Connect');
-    const event: MinPokerConnectedEvent = this.tournamentService.handleConnection(client);
-    this.sendClientEvent(client, MinPokerEvent.MatchConnected, event);
+    try {
+      const token: string | undefined = client.handshake.auth?.token;
+      if (!token) {
+        client.disconnect();
+        return;
+      }
+      const decodedToken = await this.authenticationService.verifyIdToken(token);
+      const user = await this.userRepository.findByFirebaseUid(decodedToken.uid);
+      const event: MinPokerConnectedEvent = this.tournamentService.handleConnection(client, user.id);
+      this.sendClientEvent(client, MinPokerEvent.MatchConnected, event);
+    } catch (error) {
+      console.error('MinPoker connection authentication failed', error);
+      client.disconnect();
+    }
   }
 
   public handleDisconnect(client: Socket): void {

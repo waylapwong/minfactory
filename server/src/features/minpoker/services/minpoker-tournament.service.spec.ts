@@ -45,14 +45,14 @@ describe('MinpokerTournamentService', () => {
   });
 
   describe('handleConnection', () => {
-    it('should create player id and register it for socket', () => {
+    it('should register user id as player id for socket', () => {
       const socket = { data: {}, id: 'socket-1' } as any;
 
-      const result = service.handleConnection(socket);
+      const result = service.handleConnection(socket, 'user-1');
 
-      expect(result.playerId).toEqual(expect.any(String));
-      expect(socket.data.playerId).toBe(result.playerId);
-      expect(MINPOKER_PLAYER_ID_REPOSITORY_MOCK.save).toHaveBeenCalledWith('socket-1', result.playerId);
+      expect(result.playerId).toBe('user-1');
+      expect(socket.data.playerId).toBe('user-1');
+      expect(MINPOKER_PLAYER_ID_REPOSITORY_MOCK.save).toHaveBeenCalledWith('socket-1', 'user-1');
     });
   });
 
@@ -246,25 +246,19 @@ describe('MinpokerTournamentService', () => {
   });
 
   describe('handleDisconnect', () => {
-    it('should remove player from active match and return updated event', () => {
+    it('should return disconnected event and keep player in match on disconnect', () => {
       const socket = { id: 'socket-1', leave: jest.fn() } as any;
-      const match = new MinPokerGame({ id: 'match-1', name: 'Table 1' });
-      match.addObserver('observer-1');
-      match.seatPlayer({ avatar: 'man-1.svg', id: 'player-1', name: 'Alice', seat: -1 } as any, 0);
 
       MINPOKER_PLAYER_ID_REPOSITORY_MOCK.findOne.mockReturnValue('player-1');
       MINPOKER_ROOM_SYSTEM_MOCK.getPlayerRoomName.mockReturnValue('match-1');
-      MINPOKER_MATCH_REPOSITORY_MOCK.findOne.mockReturnValue(match);
 
       const result = service.handleDisconnect(socket);
 
       expect(result?.disconnectedEvent).toEqual(expect.objectContaining({ matchId: 'match-1', playerId: 'player-1' }));
-      expect(result?.updatedEvent?.matchId).toBe('match-1');
-      expect(result?.updatedEvent?.players).toEqual([]);
-      expect(result?.updatedEvent?.observerIds).toEqual(['observer-1']);
-      expect(MINPOKER_ROOM_SYSTEM_MOCK.removePlayerFromRoom).toHaveBeenCalledWith(socket, 'match-1');
+      expect(result?.updatedEvent).toBeNull();
       expect(MINPOKER_ROOM_SYSTEM_MOCK.removePlayerFromAllRooms).toHaveBeenCalledWith(socket);
       expect(MINPOKER_PLAYER_ID_REPOSITORY_MOCK.delete).toHaveBeenCalledWith('socket-1');
+      expect(MINPOKER_MATCH_REPOSITORY_MOCK.findOne).not.toHaveBeenCalled();
     });
 
     it('should cleanup rooms and return null when disconnected socket has no player id', () => {

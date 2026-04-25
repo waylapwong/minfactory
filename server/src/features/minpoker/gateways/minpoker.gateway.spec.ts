@@ -1,5 +1,9 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { Server, Socket } from 'socket.io';
+import { AuthenticationService } from 'src/core/authentication/services/authentication.service';
+import { AUTHENTICATION_SERVICE_MOCK } from 'src/core/mocks/authentication.service.mock';
+import { MinFactoryUserRepository } from 'src/features/minfactory/repositories/minfactory-user.repository';
+import { MINFACTORY_USER_REPOSITORY_MOCK } from '../mocks/minfactory-user.repository.mock';
 import { MINPOKER_PLAYER_ID_REPOSITORY_MOCK } from '../mocks/minpoker-player-id.repository.mock';
 import { MINPOKER_SERVER_MOCK, MINPOKER_SERVER_TO_EMIT_MOCK } from '../mocks/minpoker-server.mock';
 import { MINPOKER_SOCKET_MOCK } from '../mocks/minpoker-socket.mock';
@@ -31,6 +35,14 @@ describe('MinpokerGateway', () => {
           provide: MinPokerPlayerIdRepository,
           useValue: MINPOKER_PLAYER_ID_REPOSITORY_MOCK,
         },
+        {
+          provide: AuthenticationService,
+          useValue: AUTHENTICATION_SERVICE_MOCK,
+        },
+        {
+          provide: MinFactoryUserRepository,
+          useValue: MINFACTORY_USER_REPOSITORY_MOCK,
+        },
       ],
     }).compile();
 
@@ -39,6 +51,7 @@ describe('MinpokerGateway', () => {
     mockServer = MINPOKER_SERVER_MOCK as any;
 
     mockSocket.data = {};
+    mockSocket.handshake.auth = {};
 
     gateway.server = mockServer;
   });
@@ -48,15 +61,37 @@ describe('MinpokerGateway', () => {
   });
 
   describe('handleConnection', () => {
-    it('should emit connected event for connected socket', () => {
-      MINPOKER_TOURNAMENT_SERVICE_MOCK.handleConnection.mockReturnValue({
-        playerId: 'user-1',
-      });
+    it('should emit connected event for authenticated socket', async () => {
+      mockSocket.handshake.auth = { token: 'valid-token' };
+      AUTHENTICATION_SERVICE_MOCK.verifyIdToken.mockResolvedValue({ uid: 'firebase-uid' });
+      MINFACTORY_USER_REPOSITORY_MOCK.findByFirebaseUid.mockResolvedValue({ id: 'user-1' });
+      MINPOKER_TOURNAMENT_SERVICE_MOCK.handleConnection.mockReturnValue({ playerId: 'user-1' });
 
-      gateway.handleConnection(mockSocket);
+      await gateway.handleConnection(mockSocket);
 
-      expect(MINPOKER_TOURNAMENT_SERVICE_MOCK.handleConnection).toHaveBeenCalledWith(mockSocket);
+      expect(AUTHENTICATION_SERVICE_MOCK.verifyIdToken).toHaveBeenCalledWith('valid-token');
+      expect(MINFACTORY_USER_REPOSITORY_MOCK.findByFirebaseUid).toHaveBeenCalledWith('firebase-uid');
+      expect(MINPOKER_TOURNAMENT_SERVICE_MOCK.handleConnection).toHaveBeenCalledWith(mockSocket, 'user-1');
       expect(mockSocket.emit).toHaveBeenCalledWith(MinPokerEvent.MatchConnected, { playerId: 'user-1' });
+    });
+
+    it('should disconnect socket when no token is provided', async () => {
+      mockSocket.handshake.auth = {};
+
+      await gateway.handleConnection(mockSocket);
+
+      expect(mockSocket.disconnect).toHaveBeenCalled();
+      expect(MINPOKER_TOURNAMENT_SERVICE_MOCK.handleConnection).not.toHaveBeenCalled();
+    });
+
+    it('should disconnect socket when authentication fails', async () => {
+      mockSocket.handshake.auth = { token: 'invalid-token' };
+      AUTHENTICATION_SERVICE_MOCK.verifyIdToken.mockRejectedValue(new Error('Invalid token'));
+
+      await gateway.handleConnection(mockSocket);
+
+      expect(mockSocket.disconnect).toHaveBeenCalled();
+      expect(MINPOKER_TOURNAMENT_SERVICE_MOCK.handleConnection).not.toHaveBeenCalled();
     });
   });
 

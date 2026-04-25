@@ -1,4 +1,5 @@
 import { Injectable, Signal, WritableSignal, computed, signal } from '@angular/core';
+import { AuthenticationService } from '../../../core/authentication/authentication.service';
 import { MinPokerDomainMapper } from '../mapper/minpoker-domain.mapper';
 import { MinPokerEventMapper } from '../mapper/minpoker-event.mapper';
 import { MinPokerMatchJoinCommand } from '../models/commands/minpoker-match-join.command';
@@ -27,9 +28,14 @@ export class MinPokerMultiplayerService {
 
   private isSubscribed: boolean = false;
 
-  constructor(private readonly socketRepository: MinPokerSocketRepository) {}
+  constructor(
+    private readonly socketRepository: MinPokerSocketRepository,
+    private readonly authenticationService: AuthenticationService,
+  ) {}
 
-  public connect(): void {
+  public async connect(): Promise<void> {
+    const token: string | null = await this.authenticationService.getIdToken();
+    this.socketRepository.ioSocket.auth = { token };
     this.socketRepository.connect();
     this.subscribeToEvents();
   }
