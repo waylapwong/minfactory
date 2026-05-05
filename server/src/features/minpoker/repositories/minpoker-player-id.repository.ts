@@ -2,14 +2,13 @@ import { Injectable } from '@nestjs/common';
 
 @Injectable()
 export class MinPokerPlayerIdRepository {
+  /**
+   * SOCKET ID -> PLAYER ID
+   */
   private readonly players: Map<string, string> = new Map<string, string>();
 
   public delete(socketId: string): void {
     this.players.delete(socketId);
-  }
-
-  public findOne(socketId: string): string | null {
-    return this.players.get(socketId) ?? null;
   }
 
   public findByPlayerId(playerId: string): string | null {
@@ -19,6 +18,10 @@ export class MinPokerPlayerIdRepository {
       }
     }
     return null;
+  }
+
+  public findOne(socketId: string): string | null {
+    return this.players.get(socketId) ?? null;
   }
 
   public save(socketId: string, playerId: string): void {

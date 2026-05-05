@@ -3,6 +3,9 @@ import { Socket } from 'socket.io';
 
 @Injectable()
 export class MinPokerRoomSystem {
+  /**
+   * ROOM NAME -> CLIENT SOCKET IDS
+   */
   private readonly rooms: Map<string, Set<string>> = new Map<string, Set<string>>();
 
   public addPlayerToRoom(clientSocket: Socket, roomName: string): void {

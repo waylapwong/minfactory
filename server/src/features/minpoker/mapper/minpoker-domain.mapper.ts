@@ -1,9 +1,9 @@
+import { MinFactoryUserEntity } from '../../minfactory/models/entities/minfactory-user.entity';
 import { MinPokerGame } from '../models/domains/minpoker-game';
 import { MinPokerGameDto } from '../models/dtos/minpoker-game.dto';
 import { MinPokerGameEntity } from '../models/entities/minpoker-game.entity';
 import { MinPokerHandDealtEvent } from '../models/events/minpoker-hand-dealt.event';
 import { MinPokerUpdatedEvent } from '../models/events/minpoker-updated.event';
-import { MinFactoryUserEntity } from '../../minfactory/models/entities/minfactory-user.entity';
 
 export class MinPokerDomainMapper {
   public static domainToDto(domain: MinPokerGame): MinPokerGameDto {
@@ -19,34 +19,6 @@ export class MinPokerDomainMapper {
     dto.tableSize = domain.tableSize;
 
     return dto;
-  }
-
-  public static domainToUpdatedEvent(domain: MinPokerGame): MinPokerUpdatedEvent {
-    const event: MinPokerUpdatedEvent = new MinPokerUpdatedEvent();
-
-    event.bigBlind = domain.bigBlind;
-    event.matchId = domain.id;
-    event.name = domain.name;
-    event.observerIds = [...domain.observers.keys()];
-    event.players = domain.players
-      .filter((player): player is NonNullable<typeof player> => player !== null)
-      .map((player) => ({
-        avatar: player.avatar,
-        id: player.id,
-        name: player.name,
-        seat: player.seat,
-        stack: player.stack,
-      }));
-    event.smallBlind = domain.smallBlind;
-    event.tableSize = domain.tableSize;
-
-    return event;
-  }
-
-  public static domainToHandDealtEvent(hand: string[]): MinPokerHandDealtEvent {
-    const event: MinPokerHandDealtEvent = new MinPokerHandDealtEvent();
-    event.hand = [...hand];
-    return event;
   }
 
   public static domainToEntity(domain: MinPokerGame): MinPokerGameEntity {
@@ -69,5 +41,33 @@ export class MinPokerDomainMapper {
     entity.tableSize = domain.tableSize;
 
     return entity;
+  }
+
+  public static domainToHandDealtEvent(hand: string[]): MinPokerHandDealtEvent {
+    const event: MinPokerHandDealtEvent = new MinPokerHandDealtEvent();
+    event.hand = [...hand];
+    return event;
+  }
+
+  public static toUpdatedEvent(domain: MinPokerGame): MinPokerUpdatedEvent {
+    const event: MinPokerUpdatedEvent = new MinPokerUpdatedEvent();
+
+    event.bigBlind = domain.bigBlind;
+    event.matchId = domain.id;
+    event.name = domain.name;
+    event.observerIds = [...domain.observers.keys()];
+    event.players = domain.players
+      .filter((player): player is NonNullable<typeof player> => player !== null)
+      .map((player) => ({
+        avatar: player.avatar,
+        id: player.id,
+        name: player.name,
+        seat: player.seat,
+        stack: player.stack,
+      }));
+    event.smallBlind = domain.smallBlind;
+    event.tableSize = domain.tableSize;
+
+    return event;
   }
 }

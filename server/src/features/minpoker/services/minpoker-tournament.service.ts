@@ -10,6 +10,7 @@ import { MinPokerSeatCommand } from '../models/commands/minpoker-seat.command';
 import { MinPokerDeck } from '../models/domains/minpoker-deck';
 import { MinPokerGame } from '../models/domains/minpoker-game';
 import { MinPokerPlayer } from '../models/domains/minpoker-player';
+import { MinPokerGameEntity } from '../models/entities/minpoker-game.entity';
 import { MinPokerConnectedEvent } from '../models/events/minpoker-connected.event';
 import { MinPokerDisconnectedEvent } from '../models/events/minpoker-disconnected.event';
 import { MinPokerHandDealtEvent } from '../models/events/minpoker-hand-dealt.event';
@@ -19,7 +20,6 @@ import { MinPokerGameRepository } from '../repositories/minpoker-game.repository
 import { MinPokerMatchRepository } from '../repositories/minpoker-match.repository';
 import { MinPokerPlayerIdRepository } from '../repositories/minpoker-player-id.repository';
 import { MinPokerRoomSystem } from '../systems/minpoker-room.system';
-import { MinPokerGameEntity } from '../models/entities/minpoker-game.entity';
 
 export interface MinPokerSeatResult {
   hands: Map<string, MinPokerHandDealtEvent> | null;
@@ -73,12 +73,12 @@ export class MinPokerTournamentService {
   }
 
   public async handleJoinCommand(clientSocket: Socket, command: MinPokerJoinCommand): Promise<MinPokerUpdatedEvent> {
+    // REMOVE SOCKET FROM ALL PREVIOUS ROOMS
+    this.roomSystem.removePlayerFromAllRooms(clientSocket);
+    // ADD SOCKET TO MATCH ROOM
+    this.roomSystem.addPlayerToRoom(clientSocket, command.matchId);
     // GET PLAYER ID
     const playerId: string = this.resolvePlayerId(clientSocket, command.playerId);
-    // REMOVE PLAYER FROM ALL REVIOUS ROOMS
-    this.roomSystem.removePlayerFromAllRooms(clientSocket);
-    // ADD PLAYER TO MATCH ROOM
-    this.roomSystem.addPlayerToRoom(clientSocket, command.matchId);
     // GET MATCH
     const match: MinPokerGame = await this.findOrCreateMatch(command.matchId);
     // UPDATE MATCH
@@ -86,40 +86,48 @@ export class MinPokerTournamentService {
     // SAVE MATCH
     const updatedMatch: MinPokerGame = this.matchRepository.save(match);
     // RETURN EVENT
-    return MinPokerDomainMapper.domainToUpdatedEvent(updatedMatch);
+    return MinPokerDomainMapper.toUpdatedEvent(updatedMatch);
   }
 
-  public handleLeaveCommand(client: Socket, command: MinPokerLeaveCommand): MinPokerUpdatedEvent | null {
-    const playerId: string = this.resolvePlayerId(client, command.playerId);
+  public handleLeaveCommand(clientSocket: Socket, command: MinPokerLeaveCommand): MinPokerUpdatedEvent | null {
+    // GET PLAYER ID
+    const playerId: string = this.resolvePlayerId(clientSocket, command.playerId);
+    // GET MATCH
     const match: MinPokerGame | null = this.matchRepository.findOne(command.matchId);
+    // BUILD EVENT
     let updatedEvent: MinPokerUpdatedEvent | null = null;
-
+    // REMOVE PLAYER
     if (match) {
       match.removePlayer(playerId);
       if (match.hasParticipants()) {
-        this.matchRepository.save(match);
-        updatedEvent = MinPokerDomainMapper.domainToUpdatedEvent(match);
+        // IF ANY PLAYERS LEFT: UPDATE MATCH
+        const updatedMatch: MinPokerGame = this.matchRepository.save(match);
+        updatedEvent = MinPokerDomainMapper.toUpdatedEvent(updatedMatch);
       } else {
+        // ELSE: DELETE MATCH
         this.matchRepository.delete(match.id);
         this.deckRepository.delete(match.id);
       }
     }
-
-    this.roomSystem.removePlayerFromRoom(client, command.matchId);
+    // REMOVE SOCKET FROM ROOM
+    this.roomSystem.removePlayerFromRoom(clientSocket, command.matchId);
+    // RETURN EVENT
     return updatedEvent;
   }
 
-  public async handleSeatCommand(client: Socket, command: MinPokerSeatCommand): Promise<MinPokerSeatResult> {
-    const playerId: string = this.resolvePlayerId(client, command.playerId);
-    const match: MinPokerGame = await this.findOrCreateMatch(command.matchId);
+  public async handleSeatCommand(clientSocket: Socket, command: MinPokerSeatCommand): Promise<MinPokerSeatResult> {
+    // BUILD PLAYER
+    const playerId: string = this.resolvePlayerId(clientSocket, command.playerId);
     const player: MinPokerPlayer = new MinPokerPlayer({
       avatar: command.avatar,
       id: playerId,
       name: command.playerName,
     });
-
+    // GET MATCH
+    const match: MinPokerGame = await this.findOrCreateMatch(command.matchId);
+    // UPDATE MATCH
     match.seatPlayer(player, command.seat);
-
+    // DEAL HANDS, IF MINUM PLAYERS REACHED
     let hands: Map<string, MinPokerHandDealtEvent> | null = null;
     if (match.canStartRound()) {
       const deck: MinPokerDeck = new MinPokerDeck();
@@ -128,10 +136,11 @@ export class MinPokerTournamentService {
       match.dealHands(deck);
       hands = this.buildHandDealtEvents(match);
     }
-
+    // SAVE MATCH
     const updatedMatch: MinPokerGame = this.matchRepository.save(match);
+    // RETURN EVENT
     return {
-      updatedEvent: MinPokerDomainMapper.domainToUpdatedEvent(updatedMatch),
+      updatedEvent: MinPokerDomainMapper.toUpdatedEvent(updatedMatch),
       hands,
     };
   }

@@ -1,3 +1,3 @@
 export class MinPokerHandDealtEvent {
-  public hand: string[];
+  public hand!: string[];
 }

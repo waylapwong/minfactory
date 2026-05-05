@@ -3,6 +3,9 @@ import { MinPokerDeck } from '../models/domains/minpoker-deck';
 
 @Injectable()
 export class MinPokerDeckRepository {
+  /**
+   * MATCH ID -> DECK
+   */
   private readonly decks: Map<string, MinPokerDeck> = new Map<string, MinPokerDeck>();
 
   public delete(matchId: string): void {

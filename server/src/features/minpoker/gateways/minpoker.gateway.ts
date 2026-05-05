@@ -45,9 +45,9 @@ export class MinPokerGateway implements OnGatewayConnection, OnGatewayDisconnect
   }
 
   @SubscribeMessage(MinPokerCommand.Leave)
-  public async handleLeaveCommand(@ConnectedSocket() clientSocket: Socket, @MessageBody() command: MinPokerLeaveCommand): Promise<void> {
+  public handleLeaveCommand(@ConnectedSocket() clientSocket: Socket, @MessageBody() command: MinPokerLeaveCommand): void {
     console.log(`Incoming Command: ${MinPokerCommand.Leave}`, command);
-    const event: MinPokerUpdatedEvent | null = await this.tournamentService.handleLeaveCommand(clientSocket, command);
+    const event: MinPokerUpdatedEvent | null = this.tournamentService.handleLeaveCommand(clientSocket, command);
     if (event) {
       this.sendMatchUpdatedEvent(event);
     }
@@ -60,8 +60,8 @@ export class MinPokerGateway implements OnGatewayConnection, OnGatewayDisconnect
     this.sendMatchUpdatedEvent(result.updatedEvent);
 
     if (result.hands) {
-      for (const [playerId, handEvent] of result.hands) {
-        this.sendHandDealtEvent(playerId, handEvent);
+      for (const [playerId, hand] of result.hands) {
+        this.sendHandDealtEvent(playerId, hand);
       }
     }
   }
