@@ -195,8 +195,8 @@ describe('MinpokerGateway', () => {
   describe('handleDisconnect()', () => {
     it('should emit disconnected event to match room', () => {
       MINPOKER_TOURNAMENT_SERVICE_MOCK.handleDisconnectCommand.mockReturnValue({
-        matchId: 'match-1',
-        playerId: 'user-1',
+        disconnectedEvent: { matchId: 'match-1', playerId: 'user-1' },
+        updatedEvent: null,
       });
 
       gateway.handleDisconnect(mockSocket);
@@ -207,6 +207,22 @@ describe('MinpokerGateway', () => {
         matchId: 'match-1',
         playerId: 'user-1',
       });
+    });
+
+    it('should broadcast updated event to room when match still has participants', () => {
+      MINPOKER_TOURNAMENT_SERVICE_MOCK.handleDisconnectCommand.mockReturnValue({
+        disconnectedEvent: { matchId: 'match-1', playerId: 'user-1' },
+        updatedEvent: { matchId: 'match-1' },
+      });
+
+      gateway.handleDisconnect(mockSocket);
+
+      expect(MINPOKER_SERVER_TO_EMIT_MOCK).toHaveBeenCalledWith(
+        MinPokerEvent.MatchDisconnected,
+        expect.objectContaining({ playerId: 'user-1' }),
+      );
+      expect(mockServer.to).toHaveBeenCalledWith('match-1');
+      expect(MINPOKER_SERVER_TO_EMIT_MOCK).toHaveBeenCalledWith(MinPokerEvent.Updated, { matchId: 'match-1' });
     });
 
     it('should skip disconnect handling when service returns no result', () => {

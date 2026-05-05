@@ -35,6 +35,9 @@ export class MinPokerMultiplayerService {
 
   public async connect(): Promise<void> {
     const token: string | null = await this.authenticationService.getIdToken();
+    if (!token) {
+      throw new Error('Authentication token is not available');
+    }
     this.socketRepository.ioSocket.auth = { token };
     this.socketRepository.connect();
     this.subscribeToEvents();
@@ -69,7 +72,10 @@ export class MinPokerMultiplayerService {
   }
 
   public setGameId(id: string): void {
-    const newMatch: MinPokerMatch = new MinPokerMatch(this.cachedMatch());
+    if (this.cachedMatch().id === id) {
+      return;
+    }
+    const newMatch: MinPokerMatch = new MinPokerMatch();
     newMatch.id = id;
     this.cachedMatch.set(newMatch);
   }
@@ -98,7 +104,9 @@ export class MinPokerMultiplayerService {
   private readonly onMatchUpdatedEvent = (event: MinPokerMatchUpdatedEvent): void => {
     console.warn('Receiving Event: Updated', event);
     const updatedMatch: MinPokerMatch = MinPokerEventMapper.matchUpdatedEventToDomain(event);
-    updatedMatch.hand = this.cachedMatch().hand;
+    if (event.matchId === this.cachedMatch().id) {
+      updatedMatch.hand = this.cachedMatch().hand;
+    }
     this.cachedMatch.set(updatedMatch);
   };
 

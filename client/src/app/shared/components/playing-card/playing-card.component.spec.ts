@@ -50,7 +50,7 @@ describe('PlayingCardComponent', () => {
       expect(component.rank()).toBe('');
     });
 
-    it('should return empty string for invalid card input', () => {
+    it('should return rank and empty suit for card with unknown suit character', () => {
       fixture.componentRef.setInput('card', 'A?');
       expect(component.rank()).toBe('A');
       expect(component.suit()).toBe('');

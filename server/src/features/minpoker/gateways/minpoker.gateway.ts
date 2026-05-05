@@ -20,7 +20,7 @@ import { MinPokerDisconnectedEvent } from '../models/events/minpoker-disconnecte
 import { MinPokerHandDealtEvent } from '../models/events/minpoker-hand-dealt.event';
 import { MinPokerUpdatedEvent } from '../models/events/minpoker-updated.event';
 import { MinPokerPlayerIdRepository } from '../repositories/minpoker-player-id.repository';
-import { MinPokerSeatResult, MinPokerTournamentService } from '../services/minpoker-tournament.service';
+import { MinPokerDisconnectResult, MinPokerSeatResult, MinPokerTournamentService } from '../services/minpoker-tournament.service';
 import { DecodedIdToken } from 'firebase-admin/auth';
 
 @WebSocketGateway({
@@ -86,12 +86,15 @@ export class MinPokerGateway implements OnGatewayConnection, OnGatewayDisconnect
 
   public handleDisconnect(clientSocket: Socket): void {
     console.log('Incoming Command: Disconnect');
-    const event: MinPokerDisconnectedEvent | null = this.tournamentService.handleDisconnectCommand(clientSocket);
-    if (!event) {
+    const result: MinPokerDisconnectResult | null = this.tournamentService.handleDisconnectCommand(clientSocket);
+    if (!result) {
       console.log('No playerId on disconnected socket', { socketId: clientSocket.id });
       return;
     }
-    this.sendDisconnectedEvent(event);
+    this.sendDisconnectedEvent(result.disconnectedEvent);
+    if (result.updatedEvent) {
+      this.sendMatchUpdatedEvent(result.updatedEvent);
+    }
   }
 
   private sendClientEvent(clientSocket: Socket, eventName: MinPokerEvent, event: any): void {

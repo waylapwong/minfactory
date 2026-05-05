@@ -24,6 +24,7 @@ describe('MinPokerMultiplayerService', () => {
     MINPOKER_SOCKET_REPOSITORY_MOCK.off.calls.reset();
     MINPOKER_SOCKET_REPOSITORY_MOCK.emit.calls.reset();
     AUTHENTICATION_SERVICE_MOCK.getIdToken.calls.reset();
+    AUTHENTICATION_SERVICE_MOCK.getIdToken.and.returnValue(Promise.resolve('fake-token'));
 
     TestBed.configureTestingModule({
       providers: [
@@ -44,6 +45,13 @@ describe('MinPokerMultiplayerService', () => {
       await service.connect();
 
       expect(MINPOKER_SOCKET_REPOSITORY_MOCK.connect).toHaveBeenCalledTimes(1);
+    });
+
+    it('should throw when authentication token is not available', async () => {
+      AUTHENTICATION_SERVICE_MOCK.getIdToken.and.returnValue(Promise.resolve(null));
+
+      await expectAsync(service.connect()).toBeRejectedWithError('Authentication token is not available');
+      expect(MINPOKER_SOCKET_REPOSITORY_MOCK.connect).not.toHaveBeenCalled();
     });
 
     it('should subscribe to Connected, HandDealt and Updated events', async () => {
@@ -159,6 +167,31 @@ describe('MinPokerMultiplayerService', () => {
 
       expect(service.game().gameId).toBe('new-game-id');
     });
+
+    it('should clear the hand when switching to a different match', async () => {
+      service.setGameId('game-1');
+      await service.connect();
+      const handDealtCb = MINPOKER_SOCKET_REPOSITORY_MOCK.on.calls.all().find((c) => c.args[0] === MinPokerMatchEvent.HandDealt)!
+        .args[1] as (p: MinPokerMatchHandDealtEvent) => void;
+      handDealtCb({ hand: ['Ah', 'Ks'] });
+      expect(service.game().hand).toEqual(['Ah', 'Ks']);
+
+      service.setGameId('game-2');
+
+      expect(service.game().hand).toEqual([]);
+    });
+
+    it('should not reset match when same game id is set again', async () => {
+      service.setGameId('game-1');
+      await service.connect();
+      const handDealtCb = MINPOKER_SOCKET_REPOSITORY_MOCK.on.calls.all().find((c) => c.args[0] === MinPokerMatchEvent.HandDealt)!
+        .args[1] as (p: MinPokerMatchHandDealtEvent) => void;
+      handDealtCb({ hand: ['Ah', 'Ks'] });
+
+      service.setGameId('game-1');
+
+      expect(service.game().hand).toEqual(['Ah', 'Ks']);
+    });
   });
 
   describe('game signal', () => {
@@ -200,6 +233,7 @@ describe('MinPokerMultiplayerService', () => {
         tableSize: 6,
       };
 
+      service.setGameId('game-1');
       await service.connect();
       const handDealtCb = MINPOKER_SOCKET_REPOSITORY_MOCK.on.calls.all().find((c) => c.args[0] === MinPokerMatchEvent.HandDealt)!
         .args[1] as (p: MinPokerMatchHandDealtEvent) => void;
@@ -211,6 +245,32 @@ describe('MinPokerMultiplayerService', () => {
       updatedCb(updatedEvent);
 
       expect(service.game().hand).toEqual(['Ah', 'Ks']);
+    });
+
+    it('should not preserve hand when updated event is for a different match', async () => {
+      const handDealtEvent: MinPokerMatchHandDealtEvent = { hand: ['Ah', 'Ks'] };
+      const updatedEventOtherMatch: MinPokerMatchUpdatedEvent = {
+        bigBlind: 20,
+        matchId: 'game-2',
+        name: 'Other Table',
+        observerIds: [],
+        players: [],
+        smallBlind: 10,
+        tableSize: 6,
+      };
+
+      service.setGameId('game-1');
+      await service.connect();
+      const handDealtCb = MINPOKER_SOCKET_REPOSITORY_MOCK.on.calls.all().find((c) => c.args[0] === MinPokerMatchEvent.HandDealt)!
+        .args[1] as (p: MinPokerMatchHandDealtEvent) => void;
+      const updatedCb = MINPOKER_SOCKET_REPOSITORY_MOCK.on.calls.all().find((c) => c.args[0] === MinPokerMatchEvent.Updated)!.args[1] as (
+        p: MinPokerMatchUpdatedEvent,
+      ) => void;
+
+      handDealtCb(handDealtEvent);
+      updatedCb(updatedEventOtherMatch);
+
+      expect(service.game().hand).toEqual([]);
     });
   });
 
