@@ -3,11 +3,11 @@ import { MinFactoryRole } from '../../../../shared/enums/minfactory-role.enum';
 
 export class MinFactoryUserDto {
   @ApiProperty({ example: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890' })
-  public id: string;
+  public id!: string;
   @ApiProperty({ example: '2025-10-21T18:45:30.000Z' })
-  public createdAt: Date;
+  public createdAt!: Date;
   @ApiProperty({ example: 'user@example.com' })
-  public email: string;
+  public email!: string;
   @ApiProperty({ enum: MinFactoryRole, example: MinFactoryRole.User })
-  public role: MinFactoryRole;
+  public role!: MinFactoryRole;
 }

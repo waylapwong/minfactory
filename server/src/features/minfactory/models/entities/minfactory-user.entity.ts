@@ -4,13 +4,13 @@ import { MinFactoryRole } from '../../../../shared/enums/minfactory-role.enum';
 @Entity({ name: 'minfactory_users' })
 export class MinFactoryUserEntity {
   @Column({ unique: true })
-  public email: string;
+  public email!: string;
   @Column({ unique: true })
-  public firebaseUid: string;
+  public firebaseUid!: string;
   @Column({ default: MinFactoryRole.User })
-  public role: MinFactoryRole;
+  public role!: MinFactoryRole;
   @CreateDateColumn()
-  public createdAt: Date;
+  public createdAt!: Date;
   @PrimaryGeneratedColumn('uuid')
-  public id: string;
+  public id!: string;
 }
