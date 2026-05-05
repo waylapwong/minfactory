@@ -2,8 +2,6 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { Server, Socket } from 'socket.io';
 import { AuthenticationService } from '../../../core/authentication/services/authentication.service';
 import { AUTHENTICATION_SERVICE_MOCK } from '../../../core/mocks/authentication.service.mock';
-import { MinFactoryUserRepository } from '../../minfactory/repositories/minfactory-user.repository';
-import { MINFACTORY_USER_REPOSITORY_MOCK } from '../mocks/minfactory-user.repository.mock';
 import { MINPOKER_PLAYER_ID_REPOSITORY_MOCK } from '../mocks/minpoker-player-id.repository.mock';
 import { MINPOKER_SERVER_MOCK, MINPOKER_SERVER_TO_EMIT_MOCK } from '../mocks/minpoker-server.mock';
 import { MINPOKER_SOCKET_MOCK } from '../mocks/minpoker-socket.mock';
@@ -39,10 +37,6 @@ describe('MinpokerGateway', () => {
           provide: AuthenticationService,
           useValue: AUTHENTICATION_SERVICE_MOCK,
         },
-        {
-          provide: MinFactoryUserRepository,
-          useValue: MINFACTORY_USER_REPOSITORY_MOCK,
-        },
       ],
     }).compile();
 
@@ -60,21 +54,17 @@ describe('MinpokerGateway', () => {
     expect(gateway).toBeDefined();
   });
 
-  describe('handleConnection', () => {
+  describe('handleConnection()', () => {
     it('should emit connected event for authenticated socket', async () => {
       mockSocket.handshake.auth = { token: 'valid-token' };
-      AUTHENTICATION_SERVICE_MOCK.verifyIdToken.mockResolvedValue({ uid: 'firebase-uid' });
-      MINFACTORY_USER_REPOSITORY_MOCK.findByFirebaseUid.mockResolvedValue({ id: 'user-1' });
-      MINPOKER_TOURNAMENT_SERVICE_MOCK.handleConnection.mockReturnValue({ playerId: 'user-1' });
+      AUTHENTICATION_SERVICE_MOCK.verifyFirebaseIdToken.mockResolvedValue({ uid: 'firebase-uid' });
+      MINPOKER_TOURNAMENT_SERVICE_MOCK.handleConnectionCommand.mockResolvedValue({ playerId: 'user-1' });
 
       await gateway.handleConnection(mockSocket);
 
-      expect(AUTHENTICATION_SERVICE_MOCK.verifyIdToken).toHaveBeenCalledWith('valid-token');
-      expect(MINFACTORY_USER_REPOSITORY_MOCK.findByFirebaseUid).toHaveBeenCalledWith('firebase-uid');
-      expect(MINPOKER_TOURNAMENT_SERVICE_MOCK.handleConnection).toHaveBeenCalledWith(mockSocket, 'user-1');
-      expect(mockSocket.emit).toHaveBeenCalledWith(MinPokerEvent.MatchConnected, {
-        playerId: 'user-1',
-      });
+      expect(AUTHENTICATION_SERVICE_MOCK.verifyFirebaseIdToken).toHaveBeenCalledWith('valid-token');
+      expect(MINPOKER_TOURNAMENT_SERVICE_MOCK.handleConnectionCommand).toHaveBeenCalledWith(mockSocket, 'firebase-uid');
+      expect(mockSocket.emit).toHaveBeenCalledWith(MinPokerEvent.MatchConnected, { playerId: 'user-1' });
     });
 
     it('should disconnect socket when no token is provided', async () => {
@@ -83,64 +73,58 @@ describe('MinpokerGateway', () => {
       await gateway.handleConnection(mockSocket);
 
       expect(mockSocket.disconnect).toHaveBeenCalled();
-      expect(MINPOKER_TOURNAMENT_SERVICE_MOCK.handleConnection).not.toHaveBeenCalled();
+      expect(MINPOKER_TOURNAMENT_SERVICE_MOCK.handleConnectionCommand).not.toHaveBeenCalled();
     });
 
     it('should disconnect socket when authentication fails', async () => {
       mockSocket.handshake.auth = { token: 'invalid-token' };
-      AUTHENTICATION_SERVICE_MOCK.verifyIdToken.mockRejectedValue(new Error('Invalid token'));
+      AUTHENTICATION_SERVICE_MOCK.verifyFirebaseIdToken.mockRejectedValue(new Error('Invalid token'));
 
       await gateway.handleConnection(mockSocket);
 
       expect(mockSocket.disconnect).toHaveBeenCalled();
-      expect(MINPOKER_TOURNAMENT_SERVICE_MOCK.handleConnection).not.toHaveBeenCalled();
+      expect(MINPOKER_TOURNAMENT_SERVICE_MOCK.handleConnectionCommand).not.toHaveBeenCalled();
     });
   });
 
-  describe('handleJoinCommand', () => {
+  describe('handleJoinCommand()', () => {
     it('should handle join command and broadcast updated event to room', async () => {
       const command: MinPokerJoinCommand = { matchId: 'match-1', playerId: 'user-1' };
-      MINPOKER_TOURNAMENT_SERVICE_MOCK.joinMatch.mockResolvedValue({
-        matchId: 'match-1',
-      });
+      MINPOKER_TOURNAMENT_SERVICE_MOCK.handleJoinCommand.mockResolvedValue({ matchId: 'match-1' });
 
       await gateway.handleJoinCommand(mockSocket, command);
 
-      expect(MINPOKER_TOURNAMENT_SERVICE_MOCK.joinMatch).toHaveBeenCalledWith(mockSocket, command);
+      expect(MINPOKER_TOURNAMENT_SERVICE_MOCK.handleJoinCommand).toHaveBeenCalledWith(mockSocket, command);
       expect(mockServer.to).toHaveBeenCalledWith('match-1');
-      expect(MINPOKER_SERVER_TO_EMIT_MOCK).toHaveBeenCalledWith(MinPokerEvent.Updated, {
-        matchId: 'match-1',
-      });
+      expect(MINPOKER_SERVER_TO_EMIT_MOCK).toHaveBeenCalledWith(MinPokerEvent.Updated, { matchId: 'match-1' });
     });
   });
 
-  describe('handleLeaveCommand', () => {
+  describe('handleLeaveCommand()', () => {
     it('should handle leave command and broadcast updated event to room', () => {
       const command: MinPokerLeaveCommand = { matchId: 'match-1', playerId: 'user-1' };
-      MINPOKER_TOURNAMENT_SERVICE_MOCK.leaveMatch.mockReturnValue({ matchId: 'match-1' });
+      MINPOKER_TOURNAMENT_SERVICE_MOCK.handleLeaveCommand.mockReturnValue({ matchId: 'match-1' });
 
       gateway.handleLeaveCommand(mockSocket, command);
 
-      expect(MINPOKER_TOURNAMENT_SERVICE_MOCK.leaveMatch).toHaveBeenCalledWith(mockSocket, command);
+      expect(MINPOKER_TOURNAMENT_SERVICE_MOCK.handleLeaveCommand).toHaveBeenCalledWith(mockSocket, command);
       expect(mockServer.to).toHaveBeenCalledWith('match-1');
-      expect(MINPOKER_SERVER_TO_EMIT_MOCK).toHaveBeenCalledWith(MinPokerEvent.Updated, {
-        matchId: 'match-1',
-      });
+      expect(MINPOKER_SERVER_TO_EMIT_MOCK).toHaveBeenCalledWith(MinPokerEvent.Updated, { matchId: 'match-1' });
     });
 
     it('should not broadcast when match was deleted after last participant left', () => {
       const command: MinPokerLeaveCommand = { matchId: 'match-1', playerId: 'user-1' };
-      MINPOKER_TOURNAMENT_SERVICE_MOCK.leaveMatch.mockReturnValue(null);
+      MINPOKER_TOURNAMENT_SERVICE_MOCK.handleLeaveCommand.mockReturnValue(null);
 
       gateway.handleLeaveCommand(mockSocket, command);
 
-      expect(MINPOKER_TOURNAMENT_SERVICE_MOCK.leaveMatch).toHaveBeenCalledWith(mockSocket, command);
+      expect(MINPOKER_TOURNAMENT_SERVICE_MOCK.handleLeaveCommand).toHaveBeenCalledWith(mockSocket, command);
       expect(mockServer.to).not.toHaveBeenCalled();
       expect(MINPOKER_SERVER_TO_EMIT_MOCK).not.toHaveBeenCalled();
     });
   });
 
-  describe('handleSeatCommand', () => {
+  describe('handleSeatCommand()', () => {
     it('should handle seat command and broadcast updated event to room', async () => {
       const command: MinPokerSeatCommand = {
         avatar: 'woman-1.svg',
@@ -149,18 +133,16 @@ describe('MinpokerGateway', () => {
         playerName: 'Alice',
         seat: 2,
       };
-      MINPOKER_TOURNAMENT_SERVICE_MOCK.seatPlayer.mockResolvedValue({
+      MINPOKER_TOURNAMENT_SERVICE_MOCK.handleSeatCommand.mockResolvedValue({
         updatedEvent: { matchId: 'match-1' },
         hands: null,
       });
 
       await gateway.handleSeatCommand(mockSocket, command);
 
-      expect(MINPOKER_TOURNAMENT_SERVICE_MOCK.seatPlayer).toHaveBeenCalledWith(mockSocket, command);
+      expect(MINPOKER_TOURNAMENT_SERVICE_MOCK.handleSeatCommand).toHaveBeenCalledWith(mockSocket, command);
       expect(mockServer.to).toHaveBeenCalledWith('match-1');
-      expect(MINPOKER_SERVER_TO_EMIT_MOCK).toHaveBeenCalledWith(MinPokerEvent.Updated, {
-        matchId: 'match-1',
-      });
+      expect(MINPOKER_SERVER_TO_EMIT_MOCK).toHaveBeenCalledWith(MinPokerEvent.Updated, { matchId: 'match-1' });
     });
 
     it('should send HandDealt events to each player when a round starts', async () => {
@@ -175,7 +157,7 @@ describe('MinpokerGateway', () => {
         ['player-1', { hand: ['Ah', 'Ks'] }],
         ['player-2', { hand: ['2d', '9c'] }],
       ]);
-      MINPOKER_TOURNAMENT_SERVICE_MOCK.seatPlayer.mockResolvedValue({
+      MINPOKER_TOURNAMENT_SERVICE_MOCK.handleSeatCommand.mockResolvedValue({
         updatedEvent: { matchId: 'match-1' },
         hands,
       });
@@ -185,12 +167,8 @@ describe('MinpokerGateway', () => {
 
       expect(mockServer.to).toHaveBeenCalledWith('socket-1');
       expect(mockServer.to).toHaveBeenCalledWith('socket-2');
-      expect(MINPOKER_SERVER_TO_EMIT_MOCK).toHaveBeenCalledWith(MinPokerEvent.HandDealt, {
-        hand: ['Ah', 'Ks'],
-      });
-      expect(MINPOKER_SERVER_TO_EMIT_MOCK).toHaveBeenCalledWith(MinPokerEvent.HandDealt, {
-        hand: ['2d', '9c'],
-      });
+      expect(MINPOKER_SERVER_TO_EMIT_MOCK).toHaveBeenCalledWith(MinPokerEvent.HandDealt, { hand: ['Ah', 'Ks'] });
+      expect(MINPOKER_SERVER_TO_EMIT_MOCK).toHaveBeenCalledWith(MinPokerEvent.HandDealt, { hand: ['2d', '9c'] });
     });
 
     it('should not send HandDealt events when no round starts', async () => {
@@ -201,7 +179,7 @@ describe('MinpokerGateway', () => {
         playerName: 'Alice',
         seat: 0,
       };
-      MINPOKER_TOURNAMENT_SERVICE_MOCK.seatPlayer.mockResolvedValue({
+      MINPOKER_TOURNAMENT_SERVICE_MOCK.handleSeatCommand.mockResolvedValue({
         updatedEvent: { matchId: 'match-1' },
         hands: null,
       });
@@ -209,39 +187,34 @@ describe('MinpokerGateway', () => {
       await gateway.handleSeatCommand(mockSocket, command);
 
       expect(MINPOKER_PLAYER_ID_REPOSITORY_MOCK.findByPlayerId).not.toHaveBeenCalled();
-      expect(MINPOKER_SERVER_TO_EMIT_MOCK).toHaveBeenCalledWith(MinPokerEvent.Updated, {
-        matchId: 'match-1',
-      });
+      expect(MINPOKER_SERVER_TO_EMIT_MOCK).toHaveBeenCalledWith(MinPokerEvent.Updated, { matchId: 'match-1' });
       expect(MINPOKER_SERVER_TO_EMIT_MOCK).not.toHaveBeenCalledWith(MinPokerEvent.HandDealt, expect.anything());
     });
   });
 
-  describe('handleDisconnect', () => {
-    it('should emit disconnected and updated events for socket with active match', () => {
-      MINPOKER_TOURNAMENT_SERVICE_MOCK.handleDisconnect.mockReturnValue({
-        disconnectedEvent: { matchId: 'match-1', playerId: 'user-1' },
-        updatedEvent: { matchId: 'match-1' },
+  describe('handleDisconnect()', () => {
+    it('should emit disconnected event to match room', () => {
+      MINPOKER_TOURNAMENT_SERVICE_MOCK.handleDisconnectCommand.mockReturnValue({
+        matchId: 'match-1',
+        playerId: 'user-1',
       });
 
       gateway.handleDisconnect(mockSocket);
 
-      expect(MINPOKER_TOURNAMENT_SERVICE_MOCK.handleDisconnect).toHaveBeenCalledWith(mockSocket);
+      expect(MINPOKER_TOURNAMENT_SERVICE_MOCK.handleDisconnectCommand).toHaveBeenCalledWith(mockSocket);
       expect(mockServer.to).toHaveBeenCalledWith('match-1');
       expect(MINPOKER_SERVER_TO_EMIT_MOCK).toHaveBeenCalledWith(MinPokerEvent.MatchDisconnected, {
         matchId: 'match-1',
         playerId: 'user-1',
       });
-      expect(MINPOKER_SERVER_TO_EMIT_MOCK).toHaveBeenCalledWith(MinPokerEvent.Updated, {
-        matchId: 'match-1',
-      });
     });
 
     it('should skip disconnect handling when service returns no result', () => {
-      MINPOKER_TOURNAMENT_SERVICE_MOCK.handleDisconnect.mockReturnValue(null);
+      MINPOKER_TOURNAMENT_SERVICE_MOCK.handleDisconnectCommand.mockReturnValue(null);
 
       gateway.handleDisconnect(mockSocket);
 
-      expect(MINPOKER_TOURNAMENT_SERVICE_MOCK.handleDisconnect).toHaveBeenCalledWith(mockSocket);
+      expect(MINPOKER_TOURNAMENT_SERVICE_MOCK.handleDisconnectCommand).toHaveBeenCalledWith(mockSocket);
       expect(mockServer.emit).not.toHaveBeenCalled();
       expect(MINPOKER_SERVER_TO_EMIT_MOCK).not.toHaveBeenCalled();
     });

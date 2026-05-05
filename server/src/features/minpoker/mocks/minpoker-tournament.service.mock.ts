@@ -1,7 +1,7 @@
 export const MINPOKER_TOURNAMENT_SERVICE_MOCK = {
-  handleConnection: jest.fn(),
-  handleDisconnect: jest.fn(),
-  joinMatch: jest.fn(),
-  leaveMatch: jest.fn(),
-  seatPlayer: jest.fn(),
+  handleConnectionCommand: jest.fn(),
+  handleDisconnectCommand: jest.fn(),
+  handleJoinCommand: jest.fn(),
+  handleLeaveCommand: jest.fn(),
+  handleSeatCommand: jest.fn(),
 };
