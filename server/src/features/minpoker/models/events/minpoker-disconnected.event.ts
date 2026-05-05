@@ -1,4 +1,4 @@
 export class MinPokerDisconnectedEvent {
   public matchId: string | null = null;
-  public playerId: string;
+  public playerId!: string;
 }

@@ -26,8 +26,8 @@ export class AuthenticationService {
     await this.app.auth().deleteUser(uid);
   }
 
-  public async verifyIdToken(token: string): Promise<admin.auth.DecodedIdToken> {
-    return await this.app.auth().verifyIdToken(token);
+  public async verifyFirebaseIdToken(firebaseIdToken: string): Promise<admin.auth.DecodedIdToken> {
+    return await this.app.auth().verifyIdToken(firebaseIdToken);
   }
 
   private getRequiredEnvironmentVariable(name: string): string {

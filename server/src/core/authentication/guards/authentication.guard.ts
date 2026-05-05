@@ -16,7 +16,7 @@ export class AuthenticationGuard implements CanActivate {
     let email: string;
 
     try {
-      const decodedToken: DecodedIdToken = await this.authenticationService.verifyIdToken(token);
+      const decodedToken: DecodedIdToken = await this.authenticationService.verifyFirebaseIdToken(token);
       firebaseUid = decodedToken.uid;
       email = decodedToken.email ?? '';
     } catch {

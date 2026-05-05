@@ -1,5 +1,7 @@
 import { ForbiddenException, Injectable } from '@nestjs/common';
 import { Socket } from 'socket.io';
+import { MinFactoryUserEntity } from '../../minfactory/models/entities/minfactory-user.entity';
+import { MinFactoryUserRepository } from '../../minfactory/repositories/minfactory-user.repository';
 import { MinPokerDomainMapper } from '../mapper/minpoker-domain.mapper';
 import { MinPokerEntityMapper } from '../mapper/minpoker-entity.mapper';
 import { MinPokerJoinCommand } from '../models/commands/minpoker-join.command';
@@ -31,41 +33,48 @@ export class MinPokerTournamentService {
     private readonly matchRepository: MinPokerMatchRepository,
     private readonly playerIdRepository: MinPokerPlayerIdRepository,
     private readonly roomSystem: MinPokerRoomSystem,
+    private readonly userRepository: MinFactoryUserRepository,
   ) {}
 
-  public handleConnection(client: Socket, userId: string): MinPokerConnectedEvent {
+  public async handleConnection(clientSocket: Socket, firebaseUid: string): Promise<MinPokerConnectedEvent> {
+    // GET USER ID
+    const userEntity: MinFactoryUserEntity = await this.userRepository.findByFirebaseUid(firebaseUid);
+    const userId: string = userEntity.id;
+    // BIND SOCKET ID TO USER ID
+    clientSocket.data.playerId = userId;
+    // SAVE SOCKET ID <-> USER ID MAPPING
+    this.playerIdRepository.save(clientSocket.id, userId);
+    // BUILD EVENT
     const event: MinPokerConnectedEvent = new MinPokerConnectedEvent();
     event.playerId = userId;
-    client.data.playerId = userId;
-    this.playerIdRepository.save(client.id, userId);
+    // RETURN EVENT
     return event;
   }
 
-  public handleDisconnect(client: Socket): {
-    disconnectedEvent: MinPokerDisconnectedEvent;
-    updatedEvent: MinPokerUpdatedEvent | null;
-  } | null {
-    const playerId: string | null = this.playerIdRepository.findOne(client.id) ?? client.data?.playerId ?? null;
-    const matchId: string | null = this.roomSystem.getPlayerRoomName(client);
-
+  public handleDisconnect(clientSocket: Socket): MinPokerDisconnectedEvent | null {
+    // GET PLAYER ID & MATCH ID
+    const playerId: string | null = this.playerIdRepository.findOne(clientSocket.id) ?? clientSocket.data?.playerId ?? null;
+    const matchId: string | null = this.roomSystem.getPlayerRoomName(clientSocket);
+    // REMOVE CLIENT SOCKET FROM ALL ROOMS,
+    this.roomSystem.removePlayerFromAllRooms(clientSocket);
+    // RETURN NULL, IF PLAYER ID NOT FOUND
     if (!playerId) {
-      this.roomSystem.removePlayerFromAllRooms(client);
       return null;
     }
-
+    // DELETE SOCKET ID <-> USER ID MAPPING
+    this.playerIdRepository.delete(clientSocket.id);
+    // BUILD EVENT
     const event: MinPokerDisconnectedEvent = new MinPokerDisconnectedEvent();
     event.playerId = playerId;
     event.matchId = matchId;
-
-    this.roomSystem.removePlayerFromAllRooms(client);
-    this.playerIdRepository.delete(client.id);
-    return { disconnectedEvent: event, updatedEvent: null };
+    // RETURN EVENT
+    return event;
   }
 
-  public async joinMatch(client: Socket, command: MinPokerJoinCommand): Promise<MinPokerUpdatedEvent> {
-    const playerId: string = this.resolvePlayerId(client, command.playerId);
-    this.roomSystem.removePlayerFromAllRooms(client);
-    this.roomSystem.addPlayerToRoom(client, command.matchId);
+  public async joinMatch(clientSocket: Socket, command: MinPokerJoinCommand): Promise<MinPokerUpdatedEvent> {
+    const playerId: string = this.resolvePlayerId(clientSocket, command.playerId);
+    this.roomSystem.removePlayerFromAllRooms(clientSocket);
+    this.roomSystem.addPlayerToRoom(clientSocket, command.matchId);
     const match: MinPokerGame = await this.findOrCreateMatch(command.matchId);
     match.addObserver(playerId);
     const updatedMatch: MinPokerGame = this.matchRepository.save(match);
