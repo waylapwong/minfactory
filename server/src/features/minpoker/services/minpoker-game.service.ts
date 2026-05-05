@@ -29,7 +29,7 @@ export class MinPokerGameService {
     // Save to DB
     const savedEntity: MinPokerGameEntity = await this.gameRepository.save(entity);
     // Map to DTO
-    const savedDomain: MinPokerGame = MinPokerEntityMapper.entityToDomain(savedEntity);
+    const savedDomain: MinPokerGame = MinPokerEntityMapper.toDomain(savedEntity);
     const savedDto: MinPokerGameDto = MinPokerDomainMapper.domainToDto(savedDomain);
     return savedDto;
   }
@@ -54,7 +54,7 @@ export class MinPokerGameService {
         ? await this.gameRepository.findAll()
         : await this.gameRepository.findAllByCreator(userEntity.id);
     // Map to DTOs
-    const domains: MinPokerGame[] = entities.map(MinPokerEntityMapper.entityToDomain);
+    const domains: MinPokerGame[] = entities.map(MinPokerEntityMapper.toDomain);
     const dtos: MinPokerGameDto[] = domains.map(MinPokerDomainMapper.domainToDto);
     return dtos;
   }

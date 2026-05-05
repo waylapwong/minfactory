@@ -19,6 +19,7 @@ import { MinPokerGameRepository } from '../repositories/minpoker-game.repository
 import { MinPokerMatchRepository } from '../repositories/minpoker-match.repository';
 import { MinPokerPlayerIdRepository } from '../repositories/minpoker-player-id.repository';
 import { MinPokerRoomSystem } from '../systems/minpoker-room.system';
+import { MinPokerGameEntity } from '../models/entities/minpoker-game.entity';
 
 export interface MinPokerSeatResult {
   hands: Map<string, MinPokerHandDealtEvent> | null;
@@ -36,7 +37,7 @@ export class MinPokerTournamentService {
     private readonly userRepository: MinFactoryUserRepository,
   ) {}
 
-  public async handleConnection(clientSocket: Socket, firebaseUid: string): Promise<MinPokerConnectedEvent> {
+  public async handleConnectionCommand(clientSocket: Socket, firebaseUid: string): Promise<MinPokerConnectedEvent> {
     // GET USER ID
     const userEntity: MinFactoryUserEntity = await this.userRepository.findByFirebaseUid(firebaseUid);
     const userId: string = userEntity.id;
@@ -51,7 +52,7 @@ export class MinPokerTournamentService {
     return event;
   }
 
-  public handleDisconnect(clientSocket: Socket): MinPokerDisconnectedEvent | null {
+  public handleDisconnectCommand(clientSocket: Socket): MinPokerDisconnectedEvent | null {
     // GET PLAYER ID & MATCH ID
     const playerId: string | null = this.playerIdRepository.findOne(clientSocket.id) ?? clientSocket.data?.playerId ?? null;
     const matchId: string | null = this.roomSystem.getPlayerRoomName(clientSocket);
@@ -71,17 +72,24 @@ export class MinPokerTournamentService {
     return event;
   }
 
-  public async joinMatch(clientSocket: Socket, command: MinPokerJoinCommand): Promise<MinPokerUpdatedEvent> {
+  public async handleJoinCommand(clientSocket: Socket, command: MinPokerJoinCommand): Promise<MinPokerUpdatedEvent> {
+    // GET PLAYER ID
     const playerId: string = this.resolvePlayerId(clientSocket, command.playerId);
+    // REMOVE PLAYER FROM ALL REVIOUS ROOMS
     this.roomSystem.removePlayerFromAllRooms(clientSocket);
+    // ADD PLAYER TO MATCH ROOM
     this.roomSystem.addPlayerToRoom(clientSocket, command.matchId);
+    // GET MATCH
     const match: MinPokerGame = await this.findOrCreateMatch(command.matchId);
+    // UPDATE MATCH
     match.addObserver(playerId);
+    // SAVE MATCH
     const updatedMatch: MinPokerGame = this.matchRepository.save(match);
+    // RETURN EVENT
     return MinPokerDomainMapper.domainToUpdatedEvent(updatedMatch);
   }
 
-  public leaveMatch(client: Socket, command: MinPokerLeaveCommand): MinPokerUpdatedEvent | null {
+  public handleLeaveCommand(client: Socket, command: MinPokerLeaveCommand): MinPokerUpdatedEvent | null {
     const playerId: string = this.resolvePlayerId(client, command.playerId);
     const match: MinPokerGame | null = this.matchRepository.findOne(command.matchId);
     let updatedEvent: MinPokerUpdatedEvent | null = null;
@@ -101,7 +109,7 @@ export class MinPokerTournamentService {
     return updatedEvent;
   }
 
-  public async seatPlayer(client: Socket, command: MinPokerSeatCommand): Promise<MinPokerSeatResult> {
+  public async handleSeatCommand(client: Socket, command: MinPokerSeatCommand): Promise<MinPokerSeatResult> {
     const playerId: string = this.resolvePlayerId(client, command.playerId);
     const match: MinPokerGame = await this.findOrCreateMatch(command.matchId);
     const player: MinPokerPlayer = new MinPokerPlayer({
@@ -142,24 +150,23 @@ export class MinPokerTournamentService {
     const cachedMatch: MinPokerGame | null = this.matchRepository.findOne(matchId);
     if (cachedMatch) {
       return cachedMatch;
+    } else {
+      const entity: MinPokerGameEntity = await this.gameRepository.findOne(matchId);
+      const match: MinPokerGame = MinPokerEntityMapper.toDomain(entity);
+      if (match.players.length !== match.tableSize) {
+        match.players = Array.from({ length: match.tableSize }, () => null);
+      }
+      return this.matchRepository.save(match);
     }
-
-    const entity = await this.gameRepository.findOne(matchId);
-    const match: MinPokerGame = MinPokerEntityMapper.entityToDomain(entity);
-    if (match.players.length !== match.tableSize) {
-      match.players = Array.from({ length: match.tableSize }, () => null);
-    }
-
-    return this.matchRepository.save(match);
   }
 
-  private resolvePlayerId(client: Socket, payloadPlayerId: string): string {
-    const socketPlayerId: string | null = this.playerIdRepository.findOne(client.id) ?? client.data?.playerId ?? null;
+  private resolvePlayerId(clientSocket: Socket, playerId: string): string {
+    const socketPlayerId: string | null = this.playerIdRepository.findOne(clientSocket.id) ?? clientSocket.data?.playerId ?? null;
     if (!socketPlayerId) {
       throw new ForbiddenException('Socket is not bound to a player');
     }
 
-    if (payloadPlayerId && payloadPlayerId !== socketPlayerId) {
+    if (playerId && playerId !== socketPlayerId) {
       throw new ForbiddenException('Player id mismatch');
     }
 
