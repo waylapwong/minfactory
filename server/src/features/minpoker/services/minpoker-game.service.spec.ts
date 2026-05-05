@@ -4,9 +4,9 @@ import { MinPokerCreateGameDto } from '../models/dtos/minpoker-create-game.dto';
 import { MinPokerGameEntity } from '../models/entities/minpoker-game.entity';
 import { MinPokerGameRepository } from '../repositories/minpoker-game.repository';
 import { MinPokerGameService } from './minpoker-game.service';
-import { MINFACTORY_USER_REPOSITORY_MOCK } from 'src/features/minfactory/mocks/minfactory-user.repository.mock';
-import { MinFactoryUserRepository } from 'src/features/minfactory/repositories/minfactory-user.repository';
-import { MinFactoryRole } from 'src/shared/enums/minfactory-role.enum';
+import { MINFACTORY_USER_REPOSITORY_MOCK } from '../../minfactory/mocks/minfactory-user.repository.mock';
+import { MinFactoryUserRepository } from '../../minfactory/repositories/minfactory-user.repository';
+import { MinFactoryRole } from '../../../shared/enums/minfactory-role.enum';
 
 describe('MinPokerGameService', () => {
   let service: MinPokerGameService;
@@ -69,8 +69,16 @@ describe('MinPokerGameService', () => {
     it('should return only creator games for User role', async () => {
       const firebaseUser = { firebaseUid: 'fb-creator-1' } as any;
       const entities = [
-        Object.assign(new MinPokerGameEntity(), { id: '1', name: 'Table 1', createdAt: new Date() }),
-        Object.assign(new MinPokerGameEntity(), { id: '2', name: 'Table 2', createdAt: new Date() }),
+        Object.assign(new MinPokerGameEntity(), {
+          id: '1',
+          name: 'Table 1',
+          createdAt: new Date(),
+        }),
+        Object.assign(new MinPokerGameEntity(), {
+          id: '2',
+          name: 'Table 2',
+          createdAt: new Date(),
+        }),
       ];
 
       MINFACTORY_USER_REPOSITORY_MOCK.findByFirebaseUid.mockResolvedValue({
@@ -91,9 +99,21 @@ describe('MinPokerGameService', () => {
     it('should return all games for Admin role', async () => {
       const firebaseUser = { firebaseUid: 'fb-admin-1' } as any;
       const entities = [
-        Object.assign(new MinPokerGameEntity(), { id: '1', name: 'Table 1', createdAt: new Date() }),
-        Object.assign(new MinPokerGameEntity(), { id: '2', name: 'Table 2', createdAt: new Date() }),
-        Object.assign(new MinPokerGameEntity(), { id: '3', name: 'Table 3', createdAt: new Date() }),
+        Object.assign(new MinPokerGameEntity(), {
+          id: '1',
+          name: 'Table 1',
+          createdAt: new Date(),
+        }),
+        Object.assign(new MinPokerGameEntity(), {
+          id: '2',
+          name: 'Table 2',
+          createdAt: new Date(),
+        }),
+        Object.assign(new MinPokerGameEntity(), {
+          id: '3',
+          name: 'Table 3',
+          createdAt: new Date(),
+        }),
       ];
 
       MINFACTORY_USER_REPOSITORY_MOCK.findByFirebaseUid.mockResolvedValue({
@@ -145,9 +165,7 @@ describe('MinPokerGameService', () => {
       MINFACTORY_USER_REPOSITORY_MOCK.findByFirebaseUid.mockResolvedValue(userEntity);
       MINPOKER_GAME_REPOSITORY_MOCK.findOne.mockResolvedValue(gameEntity);
 
-      await expect(service.deleteGame('game-id', firebaseUser)).rejects.toThrow(
-        'You are not authorized to delete this game',
-      );
+      await expect(service.deleteGame('game-id', firebaseUser)).rejects.toThrow('You are not authorized to delete this game');
 
       expect(MINFACTORY_USER_REPOSITORY_MOCK.findByFirebaseUid).toHaveBeenCalledWith('fb-user-2');
       expect(MINPOKER_GAME_REPOSITORY_MOCK.findOne).toHaveBeenCalledWith('game-id');

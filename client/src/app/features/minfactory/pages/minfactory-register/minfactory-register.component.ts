@@ -145,8 +145,7 @@ export class MinFactoryRegisterComponent implements OnDestroy {
       }, 800);
     } catch (error) {
       this.isSubmitting.set(false);
-      const errorMessage =
-        error instanceof Error ? error.message : 'Ein Fehler ist aufgetreten. Bitte versuche es erneut.';
+      const errorMessage = error instanceof Error ? error.message : 'Ein Fehler ist aufgetreten. Bitte versuche es erneut.';
       this.snackbarMessage.set(errorMessage);
       this.isSnackbarOpen.set(true);
     }

@@ -5,6 +5,7 @@ export class MinFactoryViewmodelMapper {
   public static domainToProfileViewModel(domain: MinFactoryUser): MinFactoryProfileViewModel {
     const viewModel: MinFactoryProfileViewModel = new MinFactoryProfileViewModel();
 
+    viewModel.id = domain.id;
     viewModel.createdAt = new Intl.DateTimeFormat('de-DE', {
       dateStyle: 'medium',
       timeStyle: 'short',

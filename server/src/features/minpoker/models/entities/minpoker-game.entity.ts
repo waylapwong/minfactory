@@ -1,5 +1,5 @@
 import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
-import { MinFactoryUserEntity } from 'src/features/minfactory/models/entities/minfactory-user.entity';
+import { MinFactoryUserEntity } from '../../../minfactory/models/entities/minfactory-user.entity';
 
 @Entity({ name: 'minpoker_games' })
 export class MinPokerGameEntity {

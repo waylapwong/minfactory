@@ -43,11 +43,7 @@
     <div class="mt-4 flex flex-col gap-2 sm:flex-row">
       @if (profileRequestState() === RequestState.Success || logoutRequestState() === RequestState.Error) {
         <!-- BUTTON: LOGOUT -->
-        <min-button
-          [color]="Color.Gray"
-          [isDisabled]="logoutRequestState() === RequestState.Loading"
-          (clicked)="logout()"
-        >
+        <min-button [color]="Color.Gray" [isDisabled]="logoutRequestState() === RequestState.Loading" (clicked)="logout()">
           {{ logoutRequestState() === RequestState.Loading ? 'Melde ab ...' : 'Abmelden' }}
         </min-button>
       }
@@ -63,8 +59,8 @@
     <min-card>
       <min-h2><span class="text-red-500">Gefahrenzone</span> </min-h2>
       <p class="text-red-500">
-        In diesem Bereich kannst du deinen Account löschen. Bitte sei dir bewusst, dass diese Aktion unwiderruflich ist
-        und alle deine Daten gelöscht werden.
+        In diesem Bereich kannst du deinen Account löschen. Bitte sei dir bewusst, dass diese Aktion unwiderruflich ist und alle deine Daten
+        gelöscht werden.
       </p>
       <!-- BUTTON: DELETE ACCOUNT -->
       <div class="mt-4 flex flex-col gap-2 sm:flex-row">
@@ -88,11 +84,7 @@
       }
       <!-- BUTTONS -->
       <div class="flex flex-col gap-2 sm:flex-row sm:justify-between">
-        <min-button
-          [color]="Color.Red"
-          [isDisabled]="deleteRequestState() === RequestState.Loading"
-          (clicked)="deleteAccount()"
-        >
+        <min-button [color]="Color.Red" [isDisabled]="deleteRequestState() === RequestState.Loading" (clicked)="deleteAccount()">
           Unwiderruflich löschen
         </min-button>
         <min-button [color]="Color.Gray" (clicked)="closeDeleteDialog()">Abbrechen</min-button>

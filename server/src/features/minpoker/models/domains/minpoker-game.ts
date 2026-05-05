@@ -1,5 +1,6 @@
+import { MinPokerDeck } from './minpoker-deck';
 import { MinPokerPlayer } from './minpoker-player';
-import { GameRuleException } from 'src/shared/exceptions/game-rule.exception';
+import { GameRuleException } from '../../../../shared/exceptions/game-rule.exception';
 
 export class MinPokerGame {
   public bigBlind: number = 2;
@@ -24,6 +25,17 @@ export class MinPokerGame {
     }
 
     this.observers.set(observerId, new MinPokerPlayer({ id: observerId }));
+  }
+
+  public canStartRound(): boolean {
+    return this.getPlayerCount() >= 2;
+  }
+
+  public dealHands(deck: MinPokerDeck): void {
+    const seatedPlayers: MinPokerPlayer[] = this.players.filter((player): player is MinPokerPlayer => player !== null);
+    for (const player of seatedPlayers) {
+      player.hand = deck.deal(2);
+    }
   }
 
   public getPlayerCount(): number {
@@ -64,9 +76,7 @@ export class MinPokerGame {
       throw new GameRuleException(`Seat ${seat} is already occupied`);
     }
 
-    const currentSeat: number = this.players.findIndex(
-      (existingPlayer: MinPokerPlayer | null) => existingPlayer?.id === player.id,
-    );
+    const currentSeat: number = this.players.findIndex((existingPlayer: MinPokerPlayer | null) => existingPlayer?.id === player.id);
     if (currentSeat !== -1 && currentSeat !== seat) {
       this.players[currentSeat] = null;
     }

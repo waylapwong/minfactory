@@ -18,14 +18,7 @@ import { MinRpsSingleplayerService } from '../../services/minrps-singleplayer.se
   templateUrl: './minrps-singleplayer.component.html',
   styleUrls: ['./minrps-singleplayer.component.scss'],
   host: { class: 'block h-full' },
-  imports: [
-    ButtonComponent,
-    DialogComponent,
-    DividerComponent,
-    MinRpsMoveComponent,
-    MinRpsCardComponent,
-    MinRpsResultHistoryComponent,
-  ],
+  imports: [ButtonComponent, DialogComponent, DividerComponent, MinRpsMoveComponent, MinRpsCardComponent, MinRpsResultHistoryComponent],
 })
 export class MinRpsSingleplayerComponent implements OnInit, OnDestroy, CanLeaveGame {
   public readonly AppPath: typeof AppPath = AppPath;

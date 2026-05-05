@@ -3,6 +3,7 @@ export interface MinPokerMatchUpdatedPlayerEvent {
   id: string;
   name: string;
   seat: number;
+  stack: number;
 }
 
 export class MinPokerMatchUpdatedEvent {

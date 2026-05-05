@@ -79,13 +79,7 @@
 <min-dialog title="Neues Spiel" [isOpen]="isNewGameDialogOpen()" (closed)="isNewGameDialogOpen.set(false)">
   <div class="flex flex-col gap-4">
     <div>
-      <min-input
-        id="poker-game-name-input"
-        label="Spielname"
-        [formControlInput]="newGameName"
-        [maxLength]="32"
-        [minLength]="2"
-      >
+      <min-input id="poker-game-name-input" label="Spielname" [formControlInput]="newGameName" [maxLength]="32" [minLength]="2">
       </min-input>
       @if (newGameName.invalid && newGameName.touched) {
         @if (newGameName.errors?.['required']) {
@@ -100,9 +94,7 @@
       }
     </div>
     <div class="flex flex-row justify-end">
-      <min-button [color]="Color.Green" [isDisabled]="newGameFormGroup.invalid" (clicked)="createGame()">
-        Spiel erstellen
-      </min-button>
+      <min-button [color]="Color.Green" [isDisabled]="newGameFormGroup.invalid" (clicked)="createGame()"> Spiel erstellen </min-button>
     </div>
   </div>
 </min-dialog>

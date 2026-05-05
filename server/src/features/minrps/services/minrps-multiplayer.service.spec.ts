@@ -115,7 +115,12 @@ describe('MinRpsMultiplayerService', () => {
     });
 
     it('should reset result history when a new player takes a vacated seat', () => {
-      service.seatPlayer({ matchId: 'match-1', playerId: 'player-1', playerName: 'Alice', seat: 1 });
+      service.seatPlayer({
+        matchId: 'match-1',
+        playerId: 'player-1',
+        playerName: 'Alice',
+        seat: 1,
+      });
       service.seatPlayer({ matchId: 'match-1', playerId: 'player-2', playerName: 'Bob', seat: 2 });
 
       // Build up history
@@ -127,7 +132,12 @@ describe('MinRpsMultiplayerService', () => {
       service.leaveMatch(mockSocket, { matchId: 'match-1', playerId: 'player-2' });
 
       // New player takes seat2
-      const result = service.seatPlayer({ matchId: 'match-1', playerId: 'player-3', playerName: 'Charlie', seat: 2 });
+      const result = service.seatPlayer({
+        matchId: 'match-1',
+        playerId: 'player-3',
+        playerName: 'Charlie',
+        seat: 2,
+      });
 
       expect(result.resultHistory).toEqual([]);
     });

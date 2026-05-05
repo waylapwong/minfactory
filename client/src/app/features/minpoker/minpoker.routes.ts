@@ -19,7 +19,6 @@ export const MINPOKER_ROUTES: Routes = [
   },
   {
     path: MinPokerPath.Lobby,
-    loadComponent: () =>
-      import('./pages/minpoker-lobby/minpoker-lobby.component').then((m) => m.MinPokerLobbyComponent),
+    loadComponent: () => import('./pages/minpoker-lobby/minpoker-lobby.component').then((m) => m.MinPokerLobbyComponent),
   },
 ];

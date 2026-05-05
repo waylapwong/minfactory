@@ -4,11 +4,11 @@ import { MinFactoryUserDto } from '../models/dtos/minfactory-user.dto';
 import { MinFactoryUserService } from '../services/minfactory-user.service';
 import { MINFACTORY_USER_SERVICE_MOCK } from '../mocks/minfactory-user.service.mock';
 import { MinFactoryUserController } from './minfactory-user.controller';
-import { AuthenticationGuard } from 'src/core/authentication/guards/authentication.guard';
-import { AUTHENTICATION_GUARD_MOCK } from 'src/core/mocks/authentication.guard.mock';
-import { FirebaseUserDto } from 'src/core/authentication/models/firebase-user.dto';
-import { AuthenticationService } from 'src/core/authentication/services/authentication.service';
-import { AUTHENTICATION_SERVICE_MOCK } from 'src/core/mocks/authentication.service.mock';
+import { AuthenticationGuard } from '../../../core/authentication/guards/authentication.guard';
+import { AUTHENTICATION_GUARD_MOCK } from '../../../core/mocks/authentication.guard.mock';
+import { FirebaseUserDto } from '../../../core/authentication/models/firebase-user.dto';
+import { AuthenticationService } from '../../../core/authentication/services/authentication.service';
+import { AUTHENTICATION_SERVICE_MOCK } from '../../../core/mocks/authentication.service.mock';
 
 describe('MinFactoryUserController', () => {
   let userController: MinFactoryUserController;

@@ -2,6 +2,7 @@ import { MinPokerMatchPlayer } from './minpoker-match-player';
 
 export class MinPokerMatch {
   public bigBlind: number = 0;
+  public hand: string[] = [];
   public id: string = '';
   public name: string = '';
   public observerIds: string[] = [];

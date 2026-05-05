@@ -4,4 +4,5 @@ export const MINPOKER_SOCKET_REPOSITORY_MOCK = {
   emit: jasmine.createSpy('emit'),
   off: jasmine.createSpy('off'),
   on: jasmine.createSpy('on'),
+  ioSocket: { auth: {} as Record<string, unknown> },
 };

@@ -22,9 +22,7 @@ export class MinFactoryProfileComponent implements OnInit {
   public readonly RequestState: typeof RequestState = RequestState;
   public readonly deleteRequestState: WritableSignal<RequestState> = signal(RequestState.Idle);
   public readonly deleteRequestError: Signal<string> = computed(() =>
-    this.deleteRequestState() === RequestState.Error
-      ? 'Account konnte nicht gelöscht werden. Bitte versuche es erneut.'
-      : '',
+    this.deleteRequestState() === RequestState.Error ? 'Account konnte nicht gelöscht werden. Bitte versuche es erneut.' : '',
   );
   public readonly isDeleteDialogOpen: WritableSignal<boolean> = signal(false);
   public readonly logoutRequestState: WritableSignal<RequestState> = signal(RequestState.Idle);
@@ -33,9 +31,7 @@ export class MinFactoryProfileComponent implements OnInit {
   );
   public readonly profileRequestState: WritableSignal<RequestState> = signal(RequestState.Idle);
   public readonly profileRequestError: Signal<string> = computed(() =>
-    this.profileRequestState() === RequestState.Error
-      ? 'Accountdaten konnten nicht geladen werden. Bitte versuche es erneut.'
-      : '',
+    this.profileRequestState() === RequestState.Error ? 'Accountdaten konnten nicht geladen werden. Bitte versuche es erneut.' : '',
   );
 
   constructor(

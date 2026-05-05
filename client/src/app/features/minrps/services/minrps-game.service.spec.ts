@@ -113,11 +113,7 @@ describe('MinRpsGameService', () => {
         observerCount: 0,
         playerCount: 0,
       };
-      MINRPS_GAME_REPOSITORY_MOCK.create.and.returnValues(
-        Promise.resolve(mockDto1),
-        Promise.resolve(mockDto2),
-        Promise.resolve(mockDto3),
-      );
+      MINRPS_GAME_REPOSITORY_MOCK.create.and.returnValues(Promise.resolve(mockDto1), Promise.resolve(mockDto2), Promise.resolve(mockDto3));
       MINRPS_GAME_REPOSITORY_MOCK.delete.and.returnValue(Promise.resolve());
 
       await service.createGame('Test Game 1');

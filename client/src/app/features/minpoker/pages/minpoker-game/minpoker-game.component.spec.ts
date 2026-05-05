@@ -71,9 +71,23 @@ describe('MinPokerGameComponent', () => {
     expect(component.communityCards).toEqual(['?', '?', '?', '?', '?']);
   });
 
-  it('should render hand cards', () => {
-    expect(component.handCards.length).toBe(2);
-    expect(component.handCards).toEqual(['?', '?']);
+  it('should render initial hand as empty', () => {
+    expect(component.hand()).toEqual([]);
+  });
+
+  describe('isRoundActive', () => {
+    it('should be false when hand is empty', () => {
+      expect(component.isRoundActive()).toBeFalse();
+    });
+
+    it('should be true when hand has cards', () => {
+      const vm = new MinPokerGameViewModel();
+      vm.hand = ['Ah', 'Kd'];
+      MINPOKER_MULTIPLAYER_GAME_SIGNAL.set(vm);
+      fixture.detectChanges();
+
+      expect(component.isRoundActive()).toBeTrue();
+    });
   });
 
   it('should have initial betAmount of 2', () => {
