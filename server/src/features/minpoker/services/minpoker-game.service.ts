@@ -19,9 +19,14 @@ export class MinPokerGameService {
     private readonly userRepository: MinFactoryUserRepository,
   ) {}
 
-  public async createGame(dto: MinPokerCreateGameDto, firebaseUser: FirebaseUserDto): Promise<MinPokerGameDto> {
+  public async createGame(
+    dto: MinPokerCreateGameDto,
+    firebaseUser: FirebaseUserDto,
+  ): Promise<MinPokerGameDto> {
     // Find User ID
-    const userEntity: MinFactoryUserEntity = await this.userRepository.findByFirebaseUid(firebaseUser.firebaseUid);
+    const userEntity: MinFactoryUserEntity = await this.userRepository.findByFirebaseUid(
+      firebaseUser.firebaseUid,
+    );
     // Map to Entity
     const domain: MinPokerGame = MinPokerDtoMapper.createDtoToDomain(dto);
     domain.creatorId = userEntity.id;
@@ -36,7 +41,9 @@ export class MinPokerGameService {
 
   public async deleteGame(id: string, firebaseUser: FirebaseUserDto): Promise<void> {
     // Find User ID
-    const userEntity: MinFactoryUserEntity = await this.userRepository.findByFirebaseUid(firebaseUser.firebaseUid);
+    const userEntity: MinFactoryUserEntity = await this.userRepository.findByFirebaseUid(
+      firebaseUser.firebaseUid,
+    );
     // Find Game and verify ownership (Admin can delete any game)
     const gameEntity: MinPokerGameEntity = await this.gameRepository.findOne(id);
     if (userEntity.role !== MinFactoryRole.Admin && gameEntity.creator.id !== userEntity.id) {
@@ -48,7 +55,9 @@ export class MinPokerGameService {
 
   public async getAllGames(firebaseUser: FirebaseUserDto): Promise<MinPokerGameDto[]> {
     // Find User and return all games for Admin, or only creator's games for others
-    const userEntity: MinFactoryUserEntity = await this.userRepository.findByFirebaseUid(firebaseUser.firebaseUid);
+    const userEntity: MinFactoryUserEntity = await this.userRepository.findByFirebaseUid(
+      firebaseUser.firebaseUid,
+    );
     const entities: MinPokerGameEntity[] =
       userEntity.role === MinFactoryRole.Admin
         ? await this.gameRepository.findAll()

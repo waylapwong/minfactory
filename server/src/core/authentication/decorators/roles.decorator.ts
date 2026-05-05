@@ -3,4 +3,5 @@ import { MinFactoryRole } from '../../../shared/enums/minfactory-role.enum';
 
 export const ROLES_KEY = 'roles';
 
-export const Roles = (...roles: MinFactoryRole[]): ReturnType<typeof SetMetadata> => SetMetadata(ROLES_KEY, roles);
+export const Roles = (...roles: MinFactoryRole[]): ReturnType<typeof SetMetadata> =>
+  SetMetadata(ROLES_KEY, roles);

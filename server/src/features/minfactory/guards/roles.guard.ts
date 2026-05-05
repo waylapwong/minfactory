@@ -15,10 +15,9 @@ export class RolesGuard implements CanActivate {
   ) {}
 
   public async canActivate(context: ExecutionContext): Promise<boolean> {
-    const requiredRoles: MinFactoryRole[] | undefined = this.reflector.getAllAndOverride<MinFactoryRole[]>(ROLES_KEY, [
-      context.getHandler(),
-      context.getClass(),
-    ]);
+    const requiredRoles: MinFactoryRole[] | undefined = this.reflector.getAllAndOverride<
+      MinFactoryRole[]
+    >(ROLES_KEY, [context.getHandler(), context.getClass()]);
 
     if (!requiredRoles || requiredRoles.length === 0) {
       return true;

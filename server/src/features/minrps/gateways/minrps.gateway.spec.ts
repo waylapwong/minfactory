@@ -72,7 +72,10 @@ describe('MinRpsGateway', () => {
 
       gateway.handleJoinCommand(mockSocket, joinPayload);
 
-      expect(MINRPS_MULTIPLAYER_SERVICE_MOCK.joinMatch).toHaveBeenCalledWith(mockSocket, joinPayload);
+      expect(MINRPS_MULTIPLAYER_SERVICE_MOCK.joinMatch).toHaveBeenCalledWith(
+        mockSocket,
+        joinPayload,
+      );
       expect(mockServer.to).toHaveBeenCalledWith('match-1');
     });
   });
@@ -88,7 +91,10 @@ describe('MinRpsGateway', () => {
 
       gateway.handleLeaveCommand(mockSocket, leavePayload);
 
-      expect(MINRPS_MULTIPLAYER_SERVICE_MOCK.leaveMatch).toHaveBeenCalledWith(mockSocket, leavePayload);
+      expect(MINRPS_MULTIPLAYER_SERVICE_MOCK.leaveMatch).toHaveBeenCalledWith(
+        mockSocket,
+        leavePayload,
+      );
       expect(mockServer.to).toHaveBeenCalledWith('match-1');
     });
   });

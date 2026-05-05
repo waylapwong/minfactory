@@ -9,6 +9,7 @@ import {
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 import { AuthenticationService } from '../../../core/authentication/services/authentication.service';
+import { Namespace } from '../../../shared/enums/namespace.enum';
 import { MinFactoryUserRepository } from '../../minfactory/repositories/minfactory-user.repository';
 import { MinPokerJoinCommand } from '../models/commands/minpoker-join.command';
 import { MinPokerLeaveCommand } from '../models/commands/minpoker-leave.command';
@@ -20,8 +21,10 @@ import { MinPokerDisconnectedEvent } from '../models/events/minpoker-disconnecte
 import { MinPokerHandDealtEvent } from '../models/events/minpoker-hand-dealt.event';
 import { MinPokerUpdatedEvent } from '../models/events/minpoker-updated.event';
 import { MinPokerPlayerIdRepository } from '../repositories/minpoker-player-id.repository';
-import { MinPokerSeatResult, MinPokerTournamentService } from '../services/minpoker-tournament.service';
-import { Namespace } from '../../../shared/enums/namespace.enum';
+import {
+  MinPokerSeatResult,
+  MinPokerTournamentService,
+} from '../services/minpoker-tournament.service';
 
 @WebSocketGateway({
   cors: { origin: '*' },
@@ -32,9 +35,9 @@ export class MinPokerGateway implements OnGatewayConnection, OnGatewayDisconnect
   public server!: Server;
 
   constructor(
+    private readonly authenticationService: AuthenticationService,
     private readonly playerIdRepository: MinPokerPlayerIdRepository,
     private readonly tournamentService: MinPokerTournamentService,
-    private readonly authenticationService: AuthenticationService,
     private readonly userRepository: MinFactoryUserRepository,
   ) {}
 
@@ -43,14 +46,17 @@ export class MinPokerGateway implements OnGatewayConnection, OnGatewayDisconnect
     @ConnectedSocket() client: Socket,
     @MessageBody() command: MinPokerJoinCommand,
   ): Promise<void> {
-    console.warn(`Receiving Command: ${MinPokerCommand.Join}`, command);
+    console.log(`Receiving Command: ${MinPokerCommand.Join}`, command);
     const event: MinPokerUpdatedEvent = await this.tournamentService.joinMatch(client, command);
     this.sendMatchUpdatedEvent(event);
   }
 
   @SubscribeMessage(MinPokerCommand.Leave)
-  public handleLeaveCommand(@ConnectedSocket() client: Socket, @MessageBody() command: MinPokerLeaveCommand): void {
-    console.warn(`Receiving Command: ${MinPokerCommand.Leave}`, command);
+  public handleLeaveCommand(
+    @ConnectedSocket() client: Socket,
+    @MessageBody() command: MinPokerLeaveCommand,
+  ): void {
+    console.log(`Receiving Command: ${MinPokerCommand.Leave}`, command);
     const event: MinPokerUpdatedEvent | null = this.tournamentService.leaveMatch(client, command);
     if (event) {
       this.sendMatchUpdatedEvent(event);
@@ -62,7 +68,7 @@ export class MinPokerGateway implements OnGatewayConnection, OnGatewayDisconnect
     @ConnectedSocket() client: Socket,
     @MessageBody() command: MinPokerSeatCommand,
   ): Promise<void> {
-    console.warn(`Receiving Command: ${MinPokerCommand.Seat}`, command);
+    console.log(`Receiving Command: ${MinPokerCommand.Seat}`, command);
     const result: MinPokerSeatResult = await this.tournamentService.seatPlayer(client, command);
     this.sendMatchUpdatedEvent(result.updatedEvent);
 
@@ -74,7 +80,7 @@ export class MinPokerGateway implements OnGatewayConnection, OnGatewayDisconnect
   }
 
   public async handleConnection(client: Socket): Promise<void> {
-    console.warn('Receiving Command: Connect');
+    console.log('Receiving Command: Connect');
     try {
       const token: string | undefined = client.handshake.auth?.token;
       if (!token) {
@@ -83,7 +89,10 @@ export class MinPokerGateway implements OnGatewayConnection, OnGatewayDisconnect
       }
       const decodedToken = await this.authenticationService.verifyIdToken(token);
       const user = await this.userRepository.findByFirebaseUid(decodedToken.uid);
-      const event: MinPokerConnectedEvent = this.tournamentService.handleConnection(client, user.id);
+      const event: MinPokerConnectedEvent = this.tournamentService.handleConnection(
+        client,
+        user.id,
+      );
       this.sendClientEvent(client, MinPokerEvent.MatchConnected, event);
     } catch (error) {
       console.error('MinPoker connection authentication failed', error);
@@ -92,10 +101,10 @@ export class MinPokerGateway implements OnGatewayConnection, OnGatewayDisconnect
   }
 
   public handleDisconnect(client: Socket): void {
-    console.warn('Receiving Command: Disconnect');
+    console.log('Receiving Command: Disconnect');
     const result = this.tournamentService.handleDisconnect(client);
     if (!result) {
-      console.warn('No playerId on disconnected socket', { socketId: client.id });
+      console.log('No playerId on disconnected socket', { socketId: client.id });
       return;
     }
 
@@ -107,7 +116,7 @@ export class MinPokerGateway implements OnGatewayConnection, OnGatewayDisconnect
 
   private sendClientEvent(client: Socket, event: MinPokerEvent, payload: any): void {
     client.emit(event, payload);
-    console.warn(`Sending Event: ${event}`, payload);
+    console.log(`Sending Event: ${event}`, payload);
   }
 
   private sendDisconnectedEvent(payload: MinPokerDisconnectedEvent): void {
@@ -116,19 +125,19 @@ export class MinPokerGateway implements OnGatewayConnection, OnGatewayDisconnect
     } else {
       this.server.emit(MinPokerEvent.MatchDisconnected, payload);
     }
-    console.warn(`Sending Event: ${MinPokerEvent.MatchDisconnected}`, payload);
+    console.log(`Sending Event: ${MinPokerEvent.MatchDisconnected}`, payload);
   }
 
   private sendHandDealtEvent(playerId: string, payload: MinPokerHandDealtEvent): void {
     const socketId: string | null = this.playerIdRepository.findByPlayerId(playerId);
     if (socketId) {
       this.server.to(socketId).emit(MinPokerEvent.HandDealt, payload);
-      console.warn(`Sending Event: ${MinPokerEvent.HandDealt} to ${playerId}`, payload);
+      console.log(`Sending Event: ${MinPokerEvent.HandDealt} to ${playerId}`, payload);
     }
   }
 
   private sendMatchUpdatedEvent(payload: MinPokerUpdatedEvent): void {
     this.server.to(payload.matchId).emit(MinPokerEvent.Updated, payload);
-    console.warn(`Sending Event: ${MinPokerEvent.Updated}`, payload);
+    console.log(`Sending Event: ${MinPokerEvent.Updated}`, payload);
   }
 }

@@ -40,7 +40,9 @@ export class MinRpsGameService {
     const domains: MinRpsGame[] = entities
       .map((entity: MinRpsGameEntity) => MinRpsEntityMapper.entityToDomain(entity))
       .map((domain: MinRpsGame) => this.applyMatchState(domain));
-    const dtos: MinRpsGameDto[] = domains.map((domain: MinRpsGame) => MinRpsDomainMapper.domainToDto(domain));
+    const dtos: MinRpsGameDto[] = domains.map((domain: MinRpsGame) =>
+      MinRpsDomainMapper.domainToDto(domain),
+    );
 
     return dtos;
   }

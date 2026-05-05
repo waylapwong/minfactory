@@ -41,8 +41,12 @@ describe('MinFactoryUserService', () => {
     };
 
     it('should create and return user dto on happy path', async () => {
-      MINFACTORY_USER_REPOSITORY_MOCK.findByFirebaseUid.mockRejectedValue(new NotFoundException('User not found'));
-      MINFACTORY_USER_REPOSITORY_MOCK.findByEmail.mockRejectedValue(new NotFoundException('User not found'));
+      MINFACTORY_USER_REPOSITORY_MOCK.findByFirebaseUid.mockRejectedValue(
+        new NotFoundException('User not found'),
+      );
+      MINFACTORY_USER_REPOSITORY_MOCK.findByEmail.mockRejectedValue(
+        new NotFoundException('User not found'),
+      );
       MINFACTORY_USER_REPOSITORY_MOCK.save.mockResolvedValue(savedEntity);
 
       const result = await userService.createUser(user);
@@ -62,20 +66,28 @@ describe('MinFactoryUserService', () => {
     });
 
     it('should throw ConflictException when email already exists for another user', async () => {
-      MINFACTORY_USER_REPOSITORY_MOCK.findByFirebaseUid.mockRejectedValue(new NotFoundException('User not found'));
+      MINFACTORY_USER_REPOSITORY_MOCK.findByFirebaseUid.mockRejectedValue(
+        new NotFoundException('User not found'),
+      );
       MINFACTORY_USER_REPOSITORY_MOCK.findByEmail.mockResolvedValue(savedEntity);
 
       await expect(userService.createUser(user)).rejects.toThrow(ConflictException);
     });
 
     it('should look up existing users with firebase uid and email before saving', async () => {
-      MINFACTORY_USER_REPOSITORY_MOCK.findByFirebaseUid.mockRejectedValue(new NotFoundException('User not found'));
-      MINFACTORY_USER_REPOSITORY_MOCK.findByEmail.mockRejectedValue(new NotFoundException('User not found'));
+      MINFACTORY_USER_REPOSITORY_MOCK.findByFirebaseUid.mockRejectedValue(
+        new NotFoundException('User not found'),
+      );
+      MINFACTORY_USER_REPOSITORY_MOCK.findByEmail.mockRejectedValue(
+        new NotFoundException('User not found'),
+      );
       MINFACTORY_USER_REPOSITORY_MOCK.save.mockResolvedValue(savedEntity);
 
       await userService.createUser(user);
 
-      expect(MINFACTORY_USER_REPOSITORY_MOCK.findByFirebaseUid).toHaveBeenCalledWith(user.firebaseUid);
+      expect(MINFACTORY_USER_REPOSITORY_MOCK.findByFirebaseUid).toHaveBeenCalledWith(
+        user.firebaseUid,
+      );
       expect(MINFACTORY_USER_REPOSITORY_MOCK.findByEmail).toHaveBeenCalledWith(user.email);
     });
 
@@ -83,7 +95,9 @@ describe('MinFactoryUserService', () => {
       MINFACTORY_USER_REPOSITORY_MOCK.findByFirebaseUid
         .mockRejectedValueOnce(new NotFoundException('User not found'))
         .mockResolvedValueOnce(savedEntity);
-      MINFACTORY_USER_REPOSITORY_MOCK.findByEmail.mockRejectedValue(new NotFoundException('User not found'));
+      MINFACTORY_USER_REPOSITORY_MOCK.findByEmail.mockRejectedValue(
+        new NotFoundException('User not found'),
+      );
       MINFACTORY_USER_REPOSITORY_MOCK.save.mockRejectedValue({
         driverError: {
           code: 'ER_DUP_ENTRY',
@@ -144,11 +158,15 @@ describe('MinFactoryUserService', () => {
 
       await userService.getMe(user);
 
-      expect(MINFACTORY_USER_REPOSITORY_MOCK.findByFirebaseUid).toHaveBeenCalledWith(user.firebaseUid);
+      expect(MINFACTORY_USER_REPOSITORY_MOCK.findByFirebaseUid).toHaveBeenCalledWith(
+        user.firebaseUid,
+      );
     });
 
     it('should throw NotFoundException when user is not found', async () => {
-      MINFACTORY_USER_REPOSITORY_MOCK.findByFirebaseUid.mockRejectedValue(new NotFoundException('User not found'));
+      MINFACTORY_USER_REPOSITORY_MOCK.findByFirebaseUid.mockRejectedValue(
+        new NotFoundException('User not found'),
+      );
 
       await expect(userService.getMe(user)).rejects.toThrow(NotFoundException);
     });
@@ -174,13 +192,19 @@ describe('MinFactoryUserService', () => {
 
       await userService.deleteMe(user);
 
-      expect(MINFACTORY_USER_REPOSITORY_MOCK.findByFirebaseUid).toHaveBeenCalledWith(user.firebaseUid);
+      expect(MINFACTORY_USER_REPOSITORY_MOCK.findByFirebaseUid).toHaveBeenCalledWith(
+        user.firebaseUid,
+      );
       expect(AUTHENTICATION_SERVICE_MOCK.deleteUser).toHaveBeenCalledWith(user.firebaseUid);
-      expect(MINFACTORY_USER_REPOSITORY_MOCK.deleteByFirebaseUid).toHaveBeenCalledWith(user.firebaseUid);
+      expect(MINFACTORY_USER_REPOSITORY_MOCK.deleteByFirebaseUid).toHaveBeenCalledWith(
+        user.firebaseUid,
+      );
     });
 
     it('should throw NotFoundException without touching Firebase when user is not found in DB', async () => {
-      MINFACTORY_USER_REPOSITORY_MOCK.findByFirebaseUid.mockRejectedValue(new NotFoundException('User not found'));
+      MINFACTORY_USER_REPOSITORY_MOCK.findByFirebaseUid.mockRejectedValue(
+        new NotFoundException('User not found'),
+      );
 
       await expect(userService.deleteMe(user)).rejects.toThrow(NotFoundException);
       expect(AUTHENTICATION_SERVICE_MOCK.deleteUser).not.toHaveBeenCalled();
@@ -216,7 +240,9 @@ describe('MinFactoryUserService', () => {
 
       await userService.deleteMe(user);
 
-      expect(MINFACTORY_USER_REPOSITORY_MOCK.deleteByFirebaseUid).toHaveBeenCalledWith(user.firebaseUid);
+      expect(MINFACTORY_USER_REPOSITORY_MOCK.deleteByFirebaseUid).toHaveBeenCalledWith(
+        user.firebaseUid,
+      );
     });
   });
 });

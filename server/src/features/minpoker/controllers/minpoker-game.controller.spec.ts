@@ -1,13 +1,13 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { MinPokerCreateGameDto } from '../models/dtos/minpoker-create-game.dto';
-import { MinPokerGameDto } from '../models/dtos/minpoker-game.dto';
-import { MinPokerGameController } from './minpoker-game.controller';
 import { AuthenticationGuard } from '../../../core/authentication/guards/authentication.guard';
 import { AuthenticationService } from '../../../core/authentication/services/authentication.service';
 import { AUTHENTICATION_GUARD_MOCK } from '../../../core/mocks/authentication.guard.mock';
 import { AUTHENTICATION_SERVICE_MOCK } from '../../../core/mocks/authentication.service.mock';
 import { MINPOKER_GAME_SERVICE_MOCK } from '../mocks/minpoker-game.service.mock';
+import { MinPokerCreateGameDto } from '../models/dtos/minpoker-create-game.dto';
+import { MinPokerGameDto } from '../models/dtos/minpoker-game.dto';
 import { MinPokerGameService } from '../services/minpoker-game.service';
+import { MinPokerGameController } from './minpoker-game.controller';
 
 describe('MinPokerGameController', () => {
   let controller: MinPokerGameController;

@@ -36,7 +36,9 @@ export class MinRpsGame {
     if (player1Move === player2Move) {
       return MinRpsResult.Draw;
     } else {
-      return player1Move === this.mapToWinningMove(player2Move) ? MinRpsResult.Player1 : MinRpsResult.Player2;
+      return player1Move === this.mapToWinningMove(player2Move)
+        ? MinRpsResult.Player1
+        : MinRpsResult.Player2;
     }
   }
 

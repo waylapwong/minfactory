@@ -55,7 +55,9 @@ describe('MinRpsGameService', () => {
       expect(result).toBeDefined();
       expect(result.name).toBe('Test Game');
       expect(result.id).toBe('test-id');
-      expect(MINRPS_GAME_REPOSITORY_MOCK.save).toHaveBeenCalledWith(expect.objectContaining({ name: 'Test Game' }));
+      expect(MINRPS_GAME_REPOSITORY_MOCK.save).toHaveBeenCalledWith(
+        expect.objectContaining({ name: 'Test Game' }),
+      );
     });
   });
 

@@ -19,8 +19,8 @@ import { MinPokerPlayerIdRepository } from '../repositories/minpoker-player-id.r
 import { MinPokerRoomSystem } from '../systems/minpoker-room.system';
 
 export interface MinPokerSeatResult {
-  updatedEvent: MinPokerUpdatedEvent;
   hands: Map<string, MinPokerHandDealtEvent> | null;
+  updatedEvent: MinPokerUpdatedEvent;
 }
 
 @Injectable()
@@ -43,8 +43,12 @@ export class MinPokerTournamentService {
 
   public handleDisconnect(
     client: Socket,
-  ): { disconnectedEvent: MinPokerDisconnectedEvent; updatedEvent: MinPokerUpdatedEvent | null } | null {
-    const playerId: string | null = this.playerIdRepository.findOne(client.id) ?? client.data?.playerId ?? null;
+  ): {
+    disconnectedEvent: MinPokerDisconnectedEvent;
+    updatedEvent: MinPokerUpdatedEvent | null;
+  } | null {
+    const playerId: string | null =
+      this.playerIdRepository.findOne(client.id) ?? client.data?.playerId ?? null;
     const matchId: string | null = this.roomSystem.getPlayerRoomName(client);
 
     if (!playerId) {
@@ -61,7 +65,10 @@ export class MinPokerTournamentService {
     return { disconnectedEvent: event, updatedEvent: null };
   }
 
-  public async joinMatch(client: Socket, command: MinPokerJoinCommand): Promise<MinPokerUpdatedEvent> {
+  public async joinMatch(
+    client: Socket,
+    command: MinPokerJoinCommand,
+  ): Promise<MinPokerUpdatedEvent> {
     const playerId: string = this.resolvePlayerId(client, command.playerId);
     this.roomSystem.removePlayerFromAllRooms(client);
     this.roomSystem.addPlayerToRoom(client, command.matchId);
@@ -91,7 +98,10 @@ export class MinPokerTournamentService {
     return updatedEvent;
   }
 
-  public async seatPlayer(client: Socket, command: MinPokerSeatCommand): Promise<MinPokerSeatResult> {
+  public async seatPlayer(
+    client: Socket,
+    command: MinPokerSeatCommand,
+  ): Promise<MinPokerSeatResult> {
     const playerId: string = this.resolvePlayerId(client, command.playerId);
     const match: MinPokerGame = await this.findOrCreateMatch(command.matchId);
     const player: MinPokerPlayer = new MinPokerPlayer({
@@ -144,7 +154,8 @@ export class MinPokerTournamentService {
   }
 
   private resolvePlayerId(client: Socket, payloadPlayerId: string): string {
-    const socketPlayerId: string | null = this.playerIdRepository.findOne(client.id) ?? client.data?.playerId ?? null;
+    const socketPlayerId: string | null =
+      this.playerIdRepository.findOne(client.id) ?? client.data?.playerId ?? null;
     if (!socketPlayerId) {
       throw new ForbiddenException('Socket is not bound to a player');
     }

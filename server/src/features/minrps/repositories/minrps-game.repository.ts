@@ -5,7 +5,9 @@ import { MinRpsGameEntity } from '../models/entities/minrps-game.entity';
 
 @Injectable()
 export class MinRpsGameRepository {
-  constructor(@InjectRepository(MinRpsGameEntity) private readonly repository: Repository<MinRpsGameEntity>) {}
+  constructor(
+    @InjectRepository(MinRpsGameEntity) private readonly repository: Repository<MinRpsGameEntity>,
+  ) {}
 
   public async delete(id: string): Promise<void> {
     const entity: MinRpsGameEntity = await this.findOne(id);

@@ -1,8 +1,15 @@
-import { Body, Controller, Delete, Get, HttpCode, Param, ParseUUIDPipe, Post, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  HttpCode,
+  Param,
+  ParseUUIDPipe,
+  Post,
+  UseGuards,
+} from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
-import { MinPokerCreateGameDto } from '../models/dtos/minpoker-create-game.dto';
-import { MinPokerGameDto } from '../models/dtos/minpoker-game.dto';
-import { MinPokerGameService } from '../services/minpoker-game.service';
 import { FirebaseUser } from '../../../core/authentication/decorators/firebase-user.decorator';
 import { AuthenticationGuard } from '../../../core/authentication/guards/authentication.guard';
 import type { FirebaseUserDto } from '../../../core/authentication/models/firebase-user.dto';
@@ -16,6 +23,9 @@ import { API_404 } from '../../../shared/decorators/api-404.decorator';
 import { API_500 } from '../../../shared/decorators/api-500.decorator';
 import { API_Param_ID } from '../../../shared/decorators/api-param-id.decorator';
 import { MinApp } from '../../../shared/enums/minapp.enum';
+import { MinPokerCreateGameDto } from '../models/dtos/minpoker-create-game.dto';
+import { MinPokerGameDto } from '../models/dtos/minpoker-game.dto';
+import { MinPokerGameService } from '../services/minpoker-game.service';
 
 @Controller('minpoker/games')
 @ApiTags(MinApp.MinPoker)

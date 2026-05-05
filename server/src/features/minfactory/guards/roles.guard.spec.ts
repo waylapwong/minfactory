@@ -28,7 +28,10 @@ describe('RolesGuard', () => {
       getAllAndOverride: jest.fn(),
     } as unknown as jest.Mocked<Reflector>;
 
-    guard = new RolesGuard(reflector, MINFACTORY_USER_REPOSITORY_MOCK as unknown as MinFactoryUserRepository);
+    guard = new RolesGuard(
+      reflector,
+      MINFACTORY_USER_REPOSITORY_MOCK as unknown as MinFactoryUserRepository,
+    );
   });
 
   afterEach(() => {
@@ -60,7 +63,9 @@ describe('RolesGuard', () => {
     const result = await guard.canActivate(createExecutionContext());
 
     expect(result).toBe(true);
-    expect(MINFACTORY_USER_REPOSITORY_MOCK.findByFirebaseUid).toHaveBeenCalledWith('firebase-uid-123');
+    expect(MINFACTORY_USER_REPOSITORY_MOCK.findByFirebaseUid).toHaveBeenCalledWith(
+      'firebase-uid-123',
+    );
   });
 
   it('should allow access when user has required User role', async () => {
@@ -103,7 +108,10 @@ describe('RolesGuard', () => {
     const context = createExecutionContext();
     await guard.canActivate(context);
 
-    expect(reflector.getAllAndOverride).toHaveBeenCalledWith(ROLES_KEY, [context.getHandler(), context.getClass()]);
+    expect(reflector.getAllAndOverride).toHaveBeenCalledWith(ROLES_KEY, [
+      context.getHandler(),
+      context.getClass(),
+    ]);
   });
 
   it('should propagate repository error when user lookup fails', async () => {

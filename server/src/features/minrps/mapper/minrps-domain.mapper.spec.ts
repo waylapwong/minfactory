@@ -122,7 +122,11 @@ describe('MinRpsDomainMapper', () => {
 
       const payload = MinRpsDomainMapper.domainToMatchUpdatedPayload(domain);
 
-      expect(payload.resultHistory).toEqual([MinRpsResult.Player1, MinRpsResult.Draw, MinRpsResult.Player2]);
+      expect(payload.resultHistory).toEqual([
+        MinRpsResult.Player1,
+        MinRpsResult.Draw,
+        MinRpsResult.Player2,
+      ]);
     });
   });
 });
