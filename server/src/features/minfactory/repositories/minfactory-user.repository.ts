@@ -5,7 +5,10 @@ import { MinFactoryUserEntity } from '../models/entities/minfactory-user.entity'
 
 @Injectable()
 export class MinFactoryUserRepository {
-  constructor(@InjectRepository(MinFactoryUserEntity) private readonly repository: Repository<MinFactoryUserEntity>) {}
+  constructor(
+    @InjectRepository(MinFactoryUserEntity)
+    private readonly repository: Repository<MinFactoryUserEntity>,
+  ) {}
 
   public async findByEmail(email: string): Promise<MinFactoryUserEntity> {
     const entity: MinFactoryUserEntity | null = await this.repository.findOne({

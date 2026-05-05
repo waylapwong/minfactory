@@ -49,9 +49,7 @@
   <min-dialog title="Neues Spiel" [isOpen]="isNewGameDialogOpen()" (closed)="isNewGameDialogOpen.set(false)">
     <min-input label="Spielname" [formControlInput]="newGameName" id="game-name-input"></min-input>
     <div class="mt-4 flex flex-row justify-end">
-      <min-button [color]="Color.Blue" [isDisabled]="newGameFormGroup.invalid" (clicked)="createGame()">
-        Spiel erstellen
-      </min-button>
+      <min-button [color]="Color.Blue" [isDisabled]="newGameFormGroup.invalid" (clicked)="createGame()"> Spiel erstellen </min-button>
     </div>
   </min-dialog>
 

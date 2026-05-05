@@ -2,7 +2,7 @@ import { MinPokerGame } from '../models/domains/minpoker-game';
 import { MinPokerGameEntity } from '../models/entities/minpoker-game.entity';
 
 export class MinPokerEntityMapper {
-  public static entityToDomain(entity: MinPokerGameEntity): MinPokerGame {
+  public static toDomain(entity: MinPokerGameEntity): MinPokerGame {
     const domain: MinPokerGame = new MinPokerGame();
 
     domain.bigBlind = entity.bigBlind;

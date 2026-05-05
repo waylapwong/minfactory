@@ -2,7 +2,7 @@ import { MinRpsResult } from '../enums/minrps-game-result.enum';
 import { MinRpsMove } from '../enums/minrps-move.enum';
 import { MinRpsGame } from './minrps-game';
 import { MinRpsPlayer } from './minrps-player';
-import { GameRuleException } from 'src/shared/exceptions/game-rule.exception';
+import { GameRuleException } from '../../../../shared/exceptions/game-rule.exception';
 
 describe('MinRpsGame', () => {
   let game: MinRpsGame;

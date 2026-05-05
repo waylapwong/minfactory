@@ -1,5 +1,5 @@
 import { SetMetadata } from '@nestjs/common';
-import { MinFactoryRole } from 'src/shared/enums/minfactory-role.enum';
+import { MinFactoryRole } from '../../../shared/enums/minfactory-role.enum';
 
 export const ROLES_KEY = 'roles';
 

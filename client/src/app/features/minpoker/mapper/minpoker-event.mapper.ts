@@ -1,9 +1,6 @@
 import { MinPokerMatch } from '../models/domains/minpoker-match';
 import { MinPokerMatchPlayer } from '../models/domains/minpoker-match-player';
-import {
-  MinPokerMatchUpdatedEvent,
-  MinPokerMatchUpdatedPlayerEvent,
-} from '../models/events/minpoker-match-updated.event';
+import { MinPokerMatchUpdatedEvent, MinPokerMatchUpdatedPlayerEvent } from '../models/events/minpoker-match-updated.event';
 
 export class MinPokerEventMapper {
   public static matchUpdatedEventToDomain(event: MinPokerMatchUpdatedEvent): MinPokerMatch {
@@ -23,6 +20,7 @@ export class MinPokerEventMapper {
         id: player.id,
         name: player.name,
         seat: player.seat,
+        stack: player.stack,
       });
     });
 

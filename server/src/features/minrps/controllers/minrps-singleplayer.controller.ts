@@ -3,11 +3,11 @@ import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { MinRpsPlayResultDto } from '../models/dtos/minrps-play-result.dto';
 import { MinRpsPlayDto } from '../models/dtos/minrps-play.dto';
 import { MinRpsSingleplayerService } from '../services/minrps-singleplayer.service';
-import { API_201 } from 'src/shared/decorators/api-201.decorator';
-import { API_400 } from 'src/shared/decorators/api-400.decorator';
-import { API_409 } from 'src/shared/decorators/api-409.decorator';
-import { API_500 } from 'src/shared/decorators/api-500.decorator';
-import { MinApp } from 'src/shared/enums/minapp.enum';
+import { API_201 } from '../../../shared/decorators/api-201.decorator';
+import { API_400 } from '../../../shared/decorators/api-400.decorator';
+import { API_409 } from '../../../shared/decorators/api-409.decorator';
+import { API_500 } from '../../../shared/decorators/api-500.decorator';
+import { MinApp } from '../../../shared/enums/minapp.enum';
 
 @Controller('minrps')
 @ApiTags(MinApp.MinRps)

@@ -7,11 +7,7 @@ import { MinRpsMatchPlayPayload } from '../models/payloads/minrps-match-play.pay
 import { MinRpsMatchSeatPayload } from '../models/payloads/minrps-match-seat.payload';
 import { MinRpsMultiplayerService } from '../services/minrps-multiplayer.service';
 import { MINRPS_MULTIPLAYER_SERVICE_MOCK } from '../mocks/minrps-multiplayer.service.mock';
-import {
-  MINRPS_SERVER_MOCK,
-  MINRPS_SERVER_TO_EXCEPT_EMIT_MOCK,
-  MINRPS_SERVER_TO_EXCEPT_MOCK,
-} from '../mocks/minrps-server.mock';
+import { MINRPS_SERVER_MOCK, MINRPS_SERVER_TO_EXCEPT_EMIT_MOCK, MINRPS_SERVER_TO_EXCEPT_MOCK } from '../mocks/minrps-server.mock';
 import { MINRPS_SOCKET_MOCK } from '../mocks/minrps-socket.mock';
 import { MinRpsGateway } from './minrps.gateway';
 

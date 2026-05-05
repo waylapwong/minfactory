@@ -53,7 +53,9 @@ describe('MinRpsGameRepository', () => {
       const result = await repository.findAll();
 
       expect(result).toBe(entities);
-      expect(MINRPS_GAME_TYPEORM_REPOSITORY_MOCK.find).toHaveBeenCalledWith({ order: { createdAt: 'DESC' } });
+      expect(MINRPS_GAME_TYPEORM_REPOSITORY_MOCK.find).toHaveBeenCalledWith({
+        order: { createdAt: 'DESC' },
+      });
     });
   });
 
@@ -68,16 +70,16 @@ describe('MinRpsGameRepository', () => {
       const result = await repository.findOne('test-id');
 
       expect(result).toBe(entity);
-      expect(MINRPS_GAME_TYPEORM_REPOSITORY_MOCK.findOne).toHaveBeenCalledWith({ where: { id: 'test-id' } });
+      expect(MINRPS_GAME_TYPEORM_REPOSITORY_MOCK.findOne).toHaveBeenCalledWith({
+        where: { id: 'test-id' },
+      });
     });
 
     it('should throw NotFoundException when entity not found', async () => {
       MINRPS_GAME_TYPEORM_REPOSITORY_MOCK.findOne.mockResolvedValue(null);
 
       await expect(repository.findOne('non-existent-id')).rejects.toThrow(NotFoundException);
-      await expect(repository.findOne('non-existent-id')).rejects.toThrow(
-        'minRPS game with ID non-existent-id not found',
-      );
+      await expect(repository.findOne('non-existent-id')).rejects.toThrow('minRPS game with ID non-existent-id not found');
     });
   });
 
@@ -91,7 +93,9 @@ describe('MinRpsGameRepository', () => {
 
       await repository.delete('test-id');
 
-      expect(MINRPS_GAME_TYPEORM_REPOSITORY_MOCK.findOne).toHaveBeenCalledWith({ where: { id: 'test-id' } });
+      expect(MINRPS_GAME_TYPEORM_REPOSITORY_MOCK.findOne).toHaveBeenCalledWith({
+        where: { id: 'test-id' },
+      });
       expect(MINRPS_GAME_TYPEORM_REPOSITORY_MOCK.delete).toHaveBeenCalledWith({ id: 'test-id' });
     });
 

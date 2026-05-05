@@ -24,17 +24,13 @@ describe('MinRpsResultHistoryComponent', () => {
   });
 
   it('should render one rectangle per result', () => {
-    const resultElements: NodeListOf<HTMLElement> = fixture.nativeElement.querySelectorAll(
-      '[data-testid="result-history-item"]',
-    );
+    const resultElements: NodeListOf<HTMLElement> = fixture.nativeElement.querySelectorAll('[data-testid="result-history-item"]');
 
     expect(resultElements.length).toBe(3);
   });
 
   it('should apply the correct color classes', () => {
-    const resultElements: NodeListOf<HTMLElement> = fixture.nativeElement.querySelectorAll(
-      '[data-testid="result-history-item"]',
-    );
+    const resultElements: NodeListOf<HTMLElement> = fixture.nativeElement.querySelectorAll('[data-testid="result-history-item"]');
 
     expect(resultElements[0].className).toContain('bg-green-300');
     expect(resultElements[1].className).toContain('bg-yellow-300');

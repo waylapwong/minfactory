@@ -13,4 +13,7 @@ export class MinPokerSocketRepository extends Socket {
 
 const MINPOKER_SOCKET_CONFIG: SocketIoConfig = {
   url: `${ENVIRONMENT.API_BASE_PATH}/minpoker`,
+  options: {
+    autoConnect: false,
+  },
 };

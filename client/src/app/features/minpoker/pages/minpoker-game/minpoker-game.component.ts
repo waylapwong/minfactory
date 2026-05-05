@@ -7,7 +7,7 @@ import { ButtonComponent } from '../../../../shared/components/button/button.com
 import { DialogComponent } from '../../../../shared/components/dialog/dialog.component';
 import { H2Component } from '../../../../shared/components/h2/h2.component';
 import { InputComponent } from '../../../../shared/components/input/input.component';
-import { LogoComponent } from '../../../../shared/components/logo/logo.component';
+import { PlayingCardComponent } from '../../../../shared/components/playing-card/playing-card.component';
 import { SelectComponent, SelectOption } from '../../../../shared/components/select/select.component';
 import { SliderComponent } from '../../../../shared/components/slider/slider.component';
 import { Color } from '../../../../shared/enums/color.enum';
@@ -26,10 +26,10 @@ import { MinPokerMultiplayerService } from '../../services/minpoker-multiplayer.
     DialogComponent,
     H2Component,
     InputComponent,
+    PlayingCardComponent,
     ReactiveFormsModule,
     SelectComponent,
     SliderComponent,
-    LogoComponent,
   ],
 })
 export class MinPokerGameComponent implements OnInit, OnDestroy, CanLeaveGame {
@@ -40,11 +40,10 @@ export class MinPokerGameComponent implements OnInit, OnDestroy, CanLeaveGame {
     value: avatarFileName,
   }));
   public readonly communityCards: readonly string[] = ['?', '?', '?', '?', '?'];
-  public readonly handCards: readonly string[] = ['?', '?'];
+  public readonly hand: Signal<string[]> = computed(() => this.multiplayerService.game().hand);
   public readonly isObserver: Signal<boolean> = computed(() => this.multiplayerService.game().isObserver);
-  public readonly opponents: Signal<(MinPokerGameSeatViewModel | null)[]> = computed(
-    () => this.multiplayerService.game().seats,
-  );
+  public readonly isRoundActive: Signal<boolean> = computed(() => this.hand().length > 0);
+  public readonly opponents: Signal<(MinPokerGameSeatViewModel | null)[]> = computed(() => this.multiplayerService.game().seats);
   public readonly heroSeat: Signal<MinPokerGameSeatViewModel | null> = computed(() => {
     const heroId: string = this.multiplayerService.playerId();
     if (!heroId) {
@@ -70,9 +69,7 @@ export class MinPokerGameComponent implements OnInit, OnDestroy, CanLeaveGame {
 
     return this.mapSeatsByOrder(topSeatOrder);
   });
-  public readonly bottomObserverSeats: Signal<MinPokerDisplaySeatViewModel[]> = computed(() =>
-    this.mapSeatsByOrder([5, 4, 3]),
-  );
+  public readonly bottomObserverSeats: Signal<MinPokerDisplaySeatViewModel[]> = computed(() => this.mapSeatsByOrder([5, 4, 3]));
 
   private readonly cachedBetAmount: WritableSignal<number> = signal(2);
   private readonly cachedCallAmount: WritableSignal<number> = signal(120);

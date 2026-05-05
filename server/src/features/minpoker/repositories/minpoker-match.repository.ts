@@ -3,6 +3,9 @@ import { MinPokerGame } from '../models/domains/minpoker-game';
 
 @Injectable()
 export class MinPokerMatchRepository {
+  /**
+   * MATCH ID -> MATCH
+   */
   private readonly matches: Map<string, MinPokerGame> = new Map<string, MinPokerGame>();
 
   public delete(id: string): void {

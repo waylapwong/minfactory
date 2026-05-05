@@ -19,18 +19,14 @@ export class MinRpsDomainMapper {
     viewModel.heroMove = hero.move;
     viewModel.heroName = hero.name;
     viewModel.heroIsWinning =
-      (domain.result === MinRpsResult.Player1 && heroIsPlayer1) ||
-      (domain.result === MinRpsResult.Player2 && !heroIsPlayer1);
-    viewModel.resultHistory = domain.resultHistory.map((result: MinRpsResult) =>
-      this.mapResultToHeroPerspective(result, heroIsPlayer1),
-    );
+      (domain.result === MinRpsResult.Player1 && heroIsPlayer1) || (domain.result === MinRpsResult.Player2 && !heroIsPlayer1);
+    viewModel.resultHistory = domain.resultHistory.map((result: MinRpsResult) => this.mapResultToHeroPerspective(result, heroIsPlayer1));
     viewModel.result = domain.result;
     viewModel.villainHasSelectedMove = villain.hasSelectedMove;
     viewModel.villainMove = villain.move;
     viewModel.villainName = villain.name;
     viewModel.villainIsWinning =
-      (domain.result === MinRpsResult.Player1 && !heroIsPlayer1) ||
-      (domain.result === MinRpsResult.Player2 && heroIsPlayer1);
+      (domain.result === MinRpsResult.Player1 && !heroIsPlayer1) || (domain.result === MinRpsResult.Player2 && heroIsPlayer1);
 
     viewModel.isObserver = heroId !== domain.player1.id && heroId !== domain.player2.id && domain.observers.has(heroId);
     viewModel.canTakeHeroSeat = viewModel.isObserver && !domain.player1.id;

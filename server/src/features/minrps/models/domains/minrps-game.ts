@@ -2,7 +2,7 @@ import { randomUUID } from 'node:crypto';
 import { MinRpsResult } from '../enums/minrps-game-result.enum';
 import { MinRpsMove } from '../enums/minrps-move.enum';
 import { MinRpsPlayer } from './minrps-player';
-import { GameRuleException } from 'src/shared/exceptions/game-rule.exception';
+import { GameRuleException } from '../../../../shared/exceptions/game-rule.exception';
 
 export class MinRpsGame {
   private readonly RESULT_HISTORY_LIMIT = 10;

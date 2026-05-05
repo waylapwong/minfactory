@@ -1,6 +1,7 @@
 import { MinFactoryRole } from '../../../../shared/enums/minfactory-role.enum';
 
 export class MinFactoryUser {
+  public id: string = '';
   public createdAt: Date = new Date();
   public email: string = '';
   public role: MinFactoryRole = MinFactoryRole.User;

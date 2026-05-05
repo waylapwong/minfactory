@@ -12,9 +12,7 @@ import { MinRpsGameRepository } from '../repositories/minrps-game.repository';
 export class MinRpsGameService {
   private readonly cachedGames: WritableSignal<MinRpsGame[]> = signal([]);
 
-  public games: Signal<MinRpsOverviewViewModel[]> = computed(() =>
-    this.cachedGames().map(MinRpsDomainMapper.domainToOverviewViewModel),
-  );
+  public games: Signal<MinRpsOverviewViewModel[]> = computed(() => this.cachedGames().map(MinRpsDomainMapper.domainToOverviewViewModel));
 
   constructor(private readonly gameRepository: MinRpsGameRepository) {}
 

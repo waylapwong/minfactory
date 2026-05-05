@@ -51,32 +51,23 @@ describe('MinFactoryAuthenticationService', () => {
     it('should login with firebase and then fetch minfactory user', async () => {
       const result = await service.loginUser('user@example.com', 'password123');
 
-      expect(AUTHENTICATION_SERVICE_MOCK.loginWithEmailAndPassword).toHaveBeenCalledWith(
-        'user@example.com',
-        'password123',
-      );
+      expect(AUTHENTICATION_SERVICE_MOCK.loginWithEmailAndPassword).toHaveBeenCalledWith('user@example.com', 'password123');
       expect(MINFACTORY_USER_REPOSITORY_MOCK.get).toHaveBeenCalled();
       expect(result.email).toBe('user@example.com');
       expect(result.createdAt).toEqual(new Date('2026-03-19T10:00:00.000Z'));
     });
 
     it('should not fetch minfactory user when firebase login fails', async () => {
-      AUTHENTICATION_SERVICE_MOCK.loginWithEmailAndPassword.and.returnValue(
-        Promise.reject(new Error('Ungültige Anmeldedaten.')),
-      );
+      AUTHENTICATION_SERVICE_MOCK.loginWithEmailAndPassword.and.returnValue(Promise.reject(new Error('Ungültige Anmeldedaten.')));
 
-      await expectAsync(service.loginUser('user@example.com', 'wrongpassword')).toBeRejectedWithError(
-        'Ungültige Anmeldedaten.',
-      );
+      await expectAsync(service.loginUser('user@example.com', 'wrongpassword')).toBeRejectedWithError('Ungültige Anmeldedaten.');
       expect(MINFACTORY_USER_REPOSITORY_MOCK.get).not.toHaveBeenCalled();
     });
 
     it('should throw error when fetching user fails', async () => {
       MINFACTORY_USER_REPOSITORY_MOCK.get.and.returnValue(Promise.reject(new Error('Benutzer nicht gefunden.')));
 
-      await expectAsync(service.loginUser('user@example.com', 'password123')).toBeRejectedWithError(
-        'Benutzer nicht gefunden.',
-      );
+      await expectAsync(service.loginUser('user@example.com', 'password123')).toBeRejectedWithError('Benutzer nicht gefunden.');
     });
   });
 
@@ -84,10 +75,7 @@ describe('MinFactoryAuthenticationService', () => {
     it('should register with firebase and then create minfactory user', async () => {
       const result = await service.registerUser('user@example.com', 'password123');
 
-      expect(AUTHENTICATION_SERVICE_MOCK.registerWithEmailAndPassword).toHaveBeenCalledWith(
-        'user@example.com',
-        'password123',
-      );
+      expect(AUTHENTICATION_SERVICE_MOCK.registerWithEmailAndPassword).toHaveBeenCalledWith('user@example.com', 'password123');
       expect(AUTHENTICATION_SERVICE_MOCK.getIdToken).toHaveBeenCalledWith(true);
       expect(MINFACTORY_USER_REPOSITORY_MOCK.create).toHaveBeenCalled();
       expect(result.email).toBe('user@example.com');
@@ -107,13 +95,9 @@ describe('MinFactoryAuthenticationService', () => {
     });
 
     it('should not create minfactory user when firebase registration fails', async () => {
-      AUTHENTICATION_SERVICE_MOCK.registerWithEmailAndPassword.and.returnValue(
-        Promise.reject(new Error('firebase failed')),
-      );
+      AUTHENTICATION_SERVICE_MOCK.registerWithEmailAndPassword.and.returnValue(Promise.reject(new Error('firebase failed')));
 
-      await expectAsync(service.registerUser('user@example.com', 'password123')).toBeRejectedWithError(
-        'firebase failed',
-      );
+      await expectAsync(service.registerUser('user@example.com', 'password123')).toBeRejectedWithError('firebase failed');
       expect(MINFACTORY_USER_REPOSITORY_MOCK.create).not.toHaveBeenCalled();
     });
 

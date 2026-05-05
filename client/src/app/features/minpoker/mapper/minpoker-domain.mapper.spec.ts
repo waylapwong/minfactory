@@ -44,20 +44,41 @@ describe('MinPokerDomainMapper', () => {
       expect(viewModel.isObserver).toBeFalse();
     });
 
+    it('should map hand to view model', () => {
+      const domain = new MinPokerMatch();
+      domain.hand = ['Ah', 'Ks'];
+      domain.observerIds = [];
+      domain.players = [];
+
+      const viewModel = MinPokerDomainMapper.domainToGameViewModel(domain, '');
+
+      expect(viewModel.hand).toEqual(['Ah', 'Ks']);
+    });
+
+    it('should return empty hand when match has no hand', () => {
+      const domain = new MinPokerMatch();
+      domain.observerIds = [];
+      domain.players = [];
+
+      const viewModel = MinPokerDomainMapper.domainToGameViewModel(domain, '');
+
+      expect(viewModel.hand).toEqual([]);
+    });
+
     it('should map seated players to correct seat positions', () => {
       const domain = new MinPokerMatch();
       domain.observerIds = [];
       domain.players = [
-        new MinPokerMatchPlayer({ avatar: 'man-1.svg', id: 'p1', name: 'Alice', seat: 0 }),
+        new MinPokerMatchPlayer({ avatar: 'man-1.svg', id: 'p1', name: 'Alice', seat: 0, stack: 200 }),
         null,
-        new MinPokerMatchPlayer({ avatar: 'woman-2.svg', id: 'p2', name: 'Bob', seat: 2 }),
+        new MinPokerMatchPlayer({ avatar: 'woman-2.svg', id: 'p2', name: 'Bob', seat: 2, stack: 150 }),
       ];
 
       const viewModel = MinPokerDomainMapper.domainToGameViewModel(domain, '');
 
-      expect(viewModel.seats[0]).toEqual(jasmine.objectContaining({ id: 'p1', name: 'Alice', seat: 0 }));
+      expect(viewModel.seats[0]).toEqual(jasmine.objectContaining({ id: 'p1', name: 'Alice', seat: 0, stack: 200 }));
       expect(viewModel.seats[1]).toBeNull();
-      expect(viewModel.seats[2]).toEqual(jasmine.objectContaining({ id: 'p2', name: 'Bob', seat: 2 }));
+      expect(viewModel.seats[2]).toEqual(jasmine.objectContaining({ id: 'p2', name: 'Bob', seat: 2, stack: 150 }));
     });
   });
 

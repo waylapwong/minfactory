@@ -12,7 +12,10 @@ describe('MinFactoryUserRepository', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         MinFactoryUserRepository,
-        { provide: getRepositoryToken(MinFactoryUserEntity), useValue: MINFACTORY_USER_TYPEORM_REPOSITORY_MOCK },
+        {
+          provide: getRepositoryToken(MinFactoryUserEntity),
+          useValue: MINFACTORY_USER_TYPEORM_REPOSITORY_MOCK,
+        },
       ],
     }).compile();
 

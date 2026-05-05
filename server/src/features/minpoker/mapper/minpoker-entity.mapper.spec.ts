@@ -12,7 +12,7 @@ describe('MinPokerEntityMapper', () => {
       entity.bigBlind = 2;
       entity.smallBlind = 1;
 
-      const domain: MinPokerGame = MinPokerEntityMapper.entityToDomain(entity);
+      const domain: MinPokerGame = MinPokerEntityMapper.toDomain(entity);
 
       expect(domain.id).toBe('e1');
       expect(domain.name).toBe('Table 1');

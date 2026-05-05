@@ -1,6 +1,6 @@
 import { MinFactoryUser } from '../models/domains/minfactory-user';
 import { MinFactoryUserDtoMapper } from './minfactory-user-dto.mapper';
-import { FirebaseUserDto } from 'src/core/authentication/models/firebase-user.dto';
+import { FirebaseUserDto } from '../../../core/authentication/models/firebase-user.dto';
 
 describe('MinFactoryUserDtoMapper', () => {
   describe('dtoToDomain', () => {

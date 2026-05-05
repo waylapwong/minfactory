@@ -16,10 +16,8 @@ describe('MinFactoryRegisterComponent', () => {
   };
 
   const settleRegistration = async (): Promise<void> => {
-    const registerPromise: Promise<unknown> | undefined =
-      MINFACTORY_AUTHENTICATION_SERVICE_MOCK.registerUser.calls.mostRecent()?.returnValue as
-        | Promise<unknown>
-        | undefined;
+    const registerPromise: Promise<unknown> | undefined = MINFACTORY_AUTHENTICATION_SERVICE_MOCK.registerUser.calls.mostRecent()
+      ?.returnValue as Promise<unknown> | undefined;
 
     try {
       await registerPromise;

@@ -13,10 +13,7 @@ describe('AuthenticationService', () => {
     FIREBASE_AUTH_MOCK.signOut.calls.reset();
 
     TestBed.configureTestingModule({
-      providers: [
-        provideZonelessChangeDetection(),
-        { provide: FirebaseAuth, useValue: FIREBASE_AUTH_MOCK as unknown as FirebaseAuth },
-      ],
+      providers: [provideZonelessChangeDetection(), { provide: FirebaseAuth, useValue: FIREBASE_AUTH_MOCK as unknown as FirebaseAuth }],
     });
 
     service = TestBed.inject(AuthenticationService);

@@ -2,6 +2,7 @@ import { MinFactoryUserDto } from '../../../core/generated';
 import { of } from 'rxjs';
 
 const defaultUserDto: MinFactoryUserDto = {
+  id: 'user-id-123',
   createdAt: '2026-03-19T10:00:00.000Z',
   email: 'user@example.com',
   role: MinFactoryUserDto.RoleEnum.User,

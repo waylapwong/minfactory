@@ -14,7 +14,7 @@ import { MinRpsMatchUpdatedPayload } from '../models/payloads/minrps-match-updat
 import { MinRpsMatchRepository } from '../repositories/minrps-match.repository';
 import { MinRpsPlayerIdRepository } from '../repositories/minrps-player-id.repository';
 import { MinRpsRoomSystem } from '../systems/minrps-room.system';
-import { GameRuleException } from 'src/shared/exceptions/game-rule.exception';
+import { GameRuleException } from '../../../shared/exceptions/game-rule.exception';
 
 @Injectable()
 export class MinRpsMultiplayerService {

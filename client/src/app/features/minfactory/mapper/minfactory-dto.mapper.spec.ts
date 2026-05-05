@@ -7,6 +7,7 @@ describe('MinFactoryDtoMapper', () => {
   describe('userDtoToDomain()', () => {
     it('should map user dto to domain', () => {
       const dto: MinFactoryUserDto = {
+        id: 'user-id-123',
         createdAt: '2026-03-21T16:30:00.000Z',
         email: 'user@example.com',
         role: MinFactoryUserDto.RoleEnum.User,
@@ -16,6 +17,7 @@ describe('MinFactoryDtoMapper', () => {
 
       expect(domain).toEqual(
         jasmine.objectContaining({
+          id: 'user-id-123',
           email: 'user@example.com',
           role: MinFactoryRole.User,
         }),
@@ -25,6 +27,7 @@ describe('MinFactoryDtoMapper', () => {
 
     it('should return a MinFactoryUser instance', () => {
       const dto: MinFactoryUserDto = {
+        id: 'factory-id-456',
         createdAt: '2026-03-21T08:15:00.000Z',
         email: 'factory@example.com',
         role: MinFactoryUserDto.RoleEnum.User,

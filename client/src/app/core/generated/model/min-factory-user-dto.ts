@@ -12,6 +12,7 @@
 
 
 export interface MinFactoryUserDto { 
+    id: string;
     createdAt: string;
     email: string;
     role: MinFactoryUserDto.RoleEnum;
