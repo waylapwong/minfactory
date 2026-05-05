@@ -16,18 +16,15 @@ export const MINRPS_ROUTES: Routes = [
   {
     path: `${MinRpsPath.Multiplayer}/:id`,
     canDeactivate: [leaveGameGuard],
-    loadComponent: () =>
-      import('./pages/minrps-multiplayer/minrps-multiplayer.component').then((m) => m.MinRpsMultiplayerComponent),
+    loadComponent: () => import('./pages/minrps-multiplayer/minrps-multiplayer.component').then((m) => m.MinRpsMultiplayerComponent),
   },
   {
     path: MinRpsPath.Overview,
-    loadComponent: () =>
-      import('./pages/minrps-overview/minrps-overview.component').then((m) => m.MinRpsOverviewComponent),
+    loadComponent: () => import('./pages/minrps-overview/minrps-overview.component').then((m) => m.MinRpsOverviewComponent),
   },
   {
     path: MinRpsPath.Singleplayer,
     canDeactivate: [leaveGameGuard],
-    loadComponent: () =>
-      import('./pages/minrps-singleplayer/minrps-singleplayer.component').then((m) => m.MinRpsSingleplayerComponent),
+    loadComponent: () => import('./pages/minrps-singleplayer/minrps-singleplayer.component').then((m) => m.MinRpsSingleplayerComponent),
   },
 ];

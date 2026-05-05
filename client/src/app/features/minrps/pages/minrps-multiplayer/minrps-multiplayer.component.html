@@ -1,12 +1,7 @@
 <div class="relative flex h-full flex-col px-4 text-center">
   <div class="absolute top-0 right-0 left-0 flex flex-row justify-between">
     <!-- SHARE BUTTON -->
-    <min-button
-      (clicked)="shareGameUrl()"
-      [color]="Color.White"
-      ariaLabel="Link zum Spiel kopieren"
-      title="Link kopieren"
-    >
+    <min-button (clicked)="shareGameUrl()" [color]="Color.White" ariaLabel="Link zum Spiel kopieren" title="Link kopieren">
       <img src="assets/svgs/minrps/share.svg" alt="Link kopieren" class="h-4 w-4" />
     </min-button>
     <!-- LEAVE BUTTON -->
@@ -150,9 +145,7 @@
         @for (selectableMove of SELECTABLE_MOVES; track $index) {
           <minrps-move
             [hasResult]="game().result !== MinRpsResult.None"
-            [isDisabled]="
-              game().heroHasSelectedMove && selectableMove !== selectedMove() && selectableMove !== game().heroMove
-            "
+            [isDisabled]="game().heroHasSelectedMove && selectableMove !== selectedMove() && selectableMove !== game().heroMove"
             [isPlayed]="selectableMove === selectedMove() || selectableMove === game().heroMove"
             [isSelected]="selectableMove === selectedMove()"
             [isWinning]="game().heroIsWinning"
@@ -178,22 +171,13 @@
   }
 
   <!-- SNACKBAR -->
-  <min-snackbar
-    [isOpen]="isShareSnackbarOpen()"
-    [message]="shareNotificationMessage"
-    (closed)="closeShareSnackbar()"
-  ></min-snackbar>
+  <min-snackbar [isOpen]="isShareSnackbarOpen()" [message]="shareNotificationMessage" (closed)="closeShareSnackbar()"></min-snackbar>
 </div>
 
 <!-- SEAT GAME DIALOG -->
 <min-dialog title="Platz nehmen" [isOpen]="isSeatDialogOpen()" (closed)="closeSeatDialog()">
   <div class="mb-4 flex flex-col">
-    <min-input
-      label="Spielername"
-      [formControlInput]="seatName"
-      id="seat-name-input"
-      placeholder="Namen eingeben"
-    ></min-input>
+    <min-input label="Spielername" [formControlInput]="seatName" id="seat-name-input" placeholder="Namen eingeben"></min-input>
   </div>
 
   <div class="flex flex-row justify-end">

@@ -21,12 +21,9 @@ import { AuthenticationInterceptor } from './core/authentication/authentication.
 function getFirebaseProviders(): (Provider | EnvironmentProviders)[] {
   const { FIREBASE_CONFIG } = ENVIRONMENT;
 
-  const isFirebaseConfigured = [
-    FIREBASE_CONFIG.apiKey,
-    FIREBASE_CONFIG.authDomain,
-    FIREBASE_CONFIG.projectId,
-    FIREBASE_CONFIG.appId,
-  ].every(isConfiguredFirebaseValue);
+  const isFirebaseConfigured = [FIREBASE_CONFIG.apiKey, FIREBASE_CONFIG.authDomain, FIREBASE_CONFIG.projectId, FIREBASE_CONFIG.appId].every(
+    isConfiguredFirebaseValue,
+  );
 
   if (!isFirebaseConfigured) {
     return [];

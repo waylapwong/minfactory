@@ -23,10 +23,7 @@ describe('MinRpsMultiplayerService', () => {
     MINRPS_SOCKET_REPOSITORY_MOCK.emit.calls.reset();
 
     TestBed.configureTestingModule({
-      providers: [
-        provideZonelessChangeDetection(),
-        { provide: MinRpsSocketRepository, useValue: MINRPS_SOCKET_REPOSITORY_MOCK },
-      ],
+      providers: [provideZonelessChangeDetection(), { provide: MinRpsSocketRepository, useValue: MINRPS_SOCKET_REPOSITORY_MOCK }],
     });
     service = TestBed.inject(MinRpsMultiplayerService);
   });
@@ -176,9 +173,7 @@ describe('MinRpsMultiplayerService', () => {
 
       service.connect();
 
-      const updatedCb = MINRPS_SOCKET_REPOSITORY_MOCK.on.calls
-        .all()
-        .find((c) => c.args[0] === MinRpsMatchEvent.Updated)!.args[1];
+      const updatedCb = MINRPS_SOCKET_REPOSITORY_MOCK.on.calls.all().find((c) => c.args[0] === MinRpsMatchEvent.Updated)!.args[1];
       updatedCb(updatedPayload);
 
       expect(service.game().result).toBe(MinRpsResult.Player1);
@@ -196,9 +191,7 @@ describe('MinRpsMultiplayerService', () => {
 
       service.connect();
 
-      const connectedCb = MINRPS_SOCKET_REPOSITORY_MOCK.on.calls
-        .all()
-        .find((c) => c.args[0] === MinRpsMatchEvent.Connected)!.args[1];
+      const connectedCb = MINRPS_SOCKET_REPOSITORY_MOCK.on.calls.all().find((c) => c.args[0] === MinRpsMatchEvent.Connected)!.args[1];
       connectedCb(connectedPayload);
 
       expect(service.playerId()).toBe('player-123');
@@ -211,9 +204,7 @@ describe('MinRpsMultiplayerService', () => {
 
       service.connect();
 
-      const connectedCb = MINRPS_SOCKET_REPOSITORY_MOCK.on.calls
-        .all()
-        .find((c) => c.args[0] === MinRpsMatchEvent.Connected)!.args[1];
+      const connectedCb = MINRPS_SOCKET_REPOSITORY_MOCK.on.calls.all().find((c) => c.args[0] === MinRpsMatchEvent.Connected)!.args[1];
       connectedCb(connectedPayload);
 
       expect(service.playerId()).toBe('player-42');
@@ -240,9 +231,7 @@ describe('MinRpsMultiplayerService', () => {
 
       service.connect();
 
-      const updatedCb = MINRPS_SOCKET_REPOSITORY_MOCK.on.calls
-        .all()
-        .find((c) => c.args[0] === MinRpsMatchEvent.Updated)!.args[1];
+      const updatedCb = MINRPS_SOCKET_REPOSITORY_MOCK.on.calls.all().find((c) => c.args[0] === MinRpsMatchEvent.Updated)!.args[1];
       updatedCb(updatedPayload);
 
       expect(service.game().result).toBe(MinRpsResult.Player2);

@@ -16,16 +16,7 @@ import { MinRpsGameService } from '../../services/minrps-game.service';
   selector: 'min-minrps-overview',
   templateUrl: './minrps-overview.component.html',
   styleUrls: ['./minrps-overview.component.scss'],
-  imports: [
-    CardButtonComponent,
-    H2Component,
-    H1Component,
-    ButtonComponent,
-    DialogComponent,
-    InputComponent,
-    ReactiveFormsModule,
-    DatePipe,
-  ],
+  imports: [CardButtonComponent, H2Component, H1Component, ButtonComponent, DialogComponent, InputComponent, ReactiveFormsModule, DatePipe],
 })
 export class MinRpsOverviewComponent implements OnInit {
   public readonly Color = Color;

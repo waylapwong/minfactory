@@ -6,9 +6,7 @@ const cachedProfile: WritableSignal<MinFactoryProfileViewModel | null> = signal(
 
 export const MINFACTORY_USER_SERVICE_MOCK = {
   profileViewModel: computed((): MinFactoryProfileViewModel | null => cachedProfile()),
-  setProfile: jasmine
-    .createSpy('setProfile')
-    .and.callFake((profile: MinFactoryProfileViewModel | null) => cachedProfile.set(profile)),
+  setProfile: jasmine.createSpy('setProfile').and.callFake((profile: MinFactoryProfileViewModel | null) => cachedProfile.set(profile)),
   loadProfile: jasmine.createSpy('loadProfile').and.callFake(async (): Promise<void> => {
     MINFACTORY_USER_SERVICE_MOCK.setProfile({
       createdAt: '19.03.2026, 11:00',

@@ -1,13 +1,7 @@
 import { provideZonelessChangeDetection } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { of } from 'rxjs';
-import {
-  MinRPSApiService,
-  MinRpsMove,
-  MinRpsPlayDto,
-  MinRpsPlayResultDto,
-  MinRpsResult,
-} from '../../../core/generated';
+import { MinRPSApiService, MinRpsMove, MinRpsPlayDto, MinRpsPlayResultDto, MinRpsResult } from '../../../core/generated';
 import { MINRPS_API_SERVICE_MOCK } from '../mocks/minrps-api.service.mock';
 import { MinRpsPlayRepository } from './minrps-play.repository';
 
@@ -18,11 +12,7 @@ describe('MinRpsPlayRepository', () => {
     MINRPS_API_SERVICE_MOCK.playMinRpsGame.calls.reset();
 
     TestBed.configureTestingModule({
-      providers: [
-        provideZonelessChangeDetection(),
-        MinRpsPlayRepository,
-        { provide: MinRPSApiService, useValue: MINRPS_API_SERVICE_MOCK },
-      ],
+      providers: [provideZonelessChangeDetection(), MinRpsPlayRepository, { provide: MinRPSApiService, useValue: MINRPS_API_SERVICE_MOCK }],
     });
     repository = TestBed.inject(MinRpsPlayRepository);
   });

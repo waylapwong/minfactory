@@ -43,9 +43,7 @@ export class MinPokerGameComponent implements OnInit, OnDestroy, CanLeaveGame {
   public readonly hand: Signal<string[]> = computed(() => this.multiplayerService.game().hand);
   public readonly isObserver: Signal<boolean> = computed(() => this.multiplayerService.game().isObserver);
   public readonly isRoundActive: Signal<boolean> = computed(() => this.hand().length > 0);
-  public readonly opponents: Signal<(MinPokerGameSeatViewModel | null)[]> = computed(
-    () => this.multiplayerService.game().seats,
-  );
+  public readonly opponents: Signal<(MinPokerGameSeatViewModel | null)[]> = computed(() => this.multiplayerService.game().seats);
   public readonly heroSeat: Signal<MinPokerGameSeatViewModel | null> = computed(() => {
     const heroId: string = this.multiplayerService.playerId();
     if (!heroId) {
@@ -71,9 +69,7 @@ export class MinPokerGameComponent implements OnInit, OnDestroy, CanLeaveGame {
 
     return this.mapSeatsByOrder(topSeatOrder);
   });
-  public readonly bottomObserverSeats: Signal<MinPokerDisplaySeatViewModel[]> = computed(() =>
-    this.mapSeatsByOrder([5, 4, 3]),
-  );
+  public readonly bottomObserverSeats: Signal<MinPokerDisplaySeatViewModel[]> = computed(() => this.mapSeatsByOrder([5, 4, 3]));
 
   private readonly cachedBetAmount: WritableSignal<number> = signal(2);
   private readonly cachedCallAmount: WritableSignal<number> = signal(120);

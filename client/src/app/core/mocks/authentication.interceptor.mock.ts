@@ -4,7 +4,5 @@ import { Observable } from 'rxjs';
 export const AUTHENTICATION_INTERCEPTOR_MOCK: HttpInterceptor = {
   intercept: jasmine
     .createSpy('intercept')
-    .and.callFake(
-      (request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> => next.handle(request),
-    ),
+    .and.callFake((request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> => next.handle(request)),
 };

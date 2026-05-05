@@ -49,18 +49,9 @@ describe('MinPokerMultiplayerService', () => {
     it('should subscribe to Connected, HandDealt and Updated events', async () => {
       await service.connect();
 
-      expect(MINPOKER_SOCKET_REPOSITORY_MOCK.on).toHaveBeenCalledWith(
-        MinPokerMatchEvent.Connected,
-        jasmine.any(Function),
-      );
-      expect(MINPOKER_SOCKET_REPOSITORY_MOCK.on).toHaveBeenCalledWith(
-        MinPokerMatchEvent.HandDealt,
-        jasmine.any(Function),
-      );
-      expect(MINPOKER_SOCKET_REPOSITORY_MOCK.on).toHaveBeenCalledWith(
-        MinPokerMatchEvent.Updated,
-        jasmine.any(Function),
-      );
+      expect(MINPOKER_SOCKET_REPOSITORY_MOCK.on).toHaveBeenCalledWith(MinPokerMatchEvent.Connected, jasmine.any(Function));
+      expect(MINPOKER_SOCKET_REPOSITORY_MOCK.on).toHaveBeenCalledWith(MinPokerMatchEvent.HandDealt, jasmine.any(Function));
+      expect(MINPOKER_SOCKET_REPOSITORY_MOCK.on).toHaveBeenCalledWith(MinPokerMatchEvent.Updated, jasmine.any(Function));
     });
 
     it('should only subscribe once even when called multiple times', async () => {
@@ -83,18 +74,9 @@ describe('MinPokerMultiplayerService', () => {
       await service.connect();
       service.disconnect();
 
-      expect(MINPOKER_SOCKET_REPOSITORY_MOCK.off).toHaveBeenCalledWith(
-        MinPokerMatchEvent.Connected,
-        jasmine.any(Function),
-      );
-      expect(MINPOKER_SOCKET_REPOSITORY_MOCK.off).toHaveBeenCalledWith(
-        MinPokerMatchEvent.HandDealt,
-        jasmine.any(Function),
-      );
-      expect(MINPOKER_SOCKET_REPOSITORY_MOCK.off).toHaveBeenCalledWith(
-        MinPokerMatchEvent.Updated,
-        jasmine.any(Function),
-      );
+      expect(MINPOKER_SOCKET_REPOSITORY_MOCK.off).toHaveBeenCalledWith(MinPokerMatchEvent.Connected, jasmine.any(Function));
+      expect(MINPOKER_SOCKET_REPOSITORY_MOCK.off).toHaveBeenCalledWith(MinPokerMatchEvent.HandDealt, jasmine.any(Function));
+      expect(MINPOKER_SOCKET_REPOSITORY_MOCK.off).toHaveBeenCalledWith(MinPokerMatchEvent.Updated, jasmine.any(Function));
     });
 
     it('should not unsubscribe if not connected', () => {
@@ -124,9 +106,8 @@ describe('MinPokerMultiplayerService', () => {
     it('should not emit Seat command when matchId is missing', async () => {
       const connectedEvent: MinPokerMatchConnectedEvent = { playerId: 'player-1' };
       await service.connect();
-      const connectedCb = MINPOKER_SOCKET_REPOSITORY_MOCK.on.calls
-        .all()
-        .find((c) => c.args[0] === MinPokerMatchEvent.Connected)!.args[1] as (p: MinPokerMatchConnectedEvent) => void;
+      const connectedCb = MINPOKER_SOCKET_REPOSITORY_MOCK.on.calls.all().find((c) => c.args[0] === MinPokerMatchEvent.Connected)!
+        .args[1] as (p: MinPokerMatchConnectedEvent) => void;
       connectedCb(connectedEvent);
       MINPOKER_SOCKET_REPOSITORY_MOCK.emit.calls.reset();
 
@@ -139,9 +120,8 @@ describe('MinPokerMultiplayerService', () => {
       service.setGameId('match-42');
       const connectedEvent: MinPokerMatchConnectedEvent = { playerId: 'player-1' };
       await service.connect();
-      const connectedCb = MINPOKER_SOCKET_REPOSITORY_MOCK.on.calls
-        .all()
-        .find((c) => c.args[0] === MinPokerMatchEvent.Connected)!.args[1] as (p: MinPokerMatchConnectedEvent) => void;
+      const connectedCb = MINPOKER_SOCKET_REPOSITORY_MOCK.on.calls.all().find((c) => c.args[0] === MinPokerMatchEvent.Connected)!
+        .args[1] as (p: MinPokerMatchConnectedEvent) => void;
       connectedCb(connectedEvent);
       MINPOKER_SOCKET_REPOSITORY_MOCK.emit.calls.reset();
 
@@ -155,9 +135,8 @@ describe('MinPokerMultiplayerService', () => {
 
       const connectedEvent: MinPokerMatchConnectedEvent = { playerId: 'player-1' };
       await service.connect();
-      const connectedCb = MINPOKER_SOCKET_REPOSITORY_MOCK.on.calls
-        .all()
-        .find((c) => c.args[0] === MinPokerMatchEvent.Connected)!.args[1] as (p: MinPokerMatchConnectedEvent) => void;
+      const connectedCb = MINPOKER_SOCKET_REPOSITORY_MOCK.on.calls.all().find((c) => c.args[0] === MinPokerMatchEvent.Connected)!
+        .args[1] as (p: MinPokerMatchConnectedEvent) => void;
       connectedCb(connectedEvent);
       MINPOKER_SOCKET_REPOSITORY_MOCK.emit.calls.reset();
 
@@ -199,15 +178,13 @@ describe('MinPokerMultiplayerService', () => {
       };
 
       await service.connect();
-      const updatedCb = MINPOKER_SOCKET_REPOSITORY_MOCK.on.calls
-        .all()
-        .find((c) => c.args[0] === MinPokerMatchEvent.Updated)!.args[1] as (p: MinPokerMatchUpdatedEvent) => void;
+      const updatedCb = MINPOKER_SOCKET_REPOSITORY_MOCK.on.calls.all().find((c) => c.args[0] === MinPokerMatchEvent.Updated)!.args[1] as (
+        p: MinPokerMatchUpdatedEvent,
+      ) => void;
       updatedCb(updatedEvent);
 
       expect(service.game().gameId).toBe('game-1');
-      expect(service.game().seats[0]).toEqual(
-        jasmine.objectContaining({ name: 'Chris', avatar: 'man-1.svg', seat: 0, stack: 200 }),
-      );
+      expect(service.game().seats[0]).toEqual(jasmine.objectContaining({ name: 'Chris', avatar: 'man-1.svg', seat: 0, stack: 200 }));
       expect(service.game().seats[1]).toBeNull();
     });
 
@@ -224,12 +201,11 @@ describe('MinPokerMultiplayerService', () => {
       };
 
       await service.connect();
-      const handDealtCb = MINPOKER_SOCKET_REPOSITORY_MOCK.on.calls
-        .all()
-        .find((c) => c.args[0] === MinPokerMatchEvent.HandDealt)!.args[1] as (p: MinPokerMatchHandDealtEvent) => void;
-      const updatedCb = MINPOKER_SOCKET_REPOSITORY_MOCK.on.calls
-        .all()
-        .find((c) => c.args[0] === MinPokerMatchEvent.Updated)!.args[1] as (p: MinPokerMatchUpdatedEvent) => void;
+      const handDealtCb = MINPOKER_SOCKET_REPOSITORY_MOCK.on.calls.all().find((c) => c.args[0] === MinPokerMatchEvent.HandDealt)!
+        .args[1] as (p: MinPokerMatchHandDealtEvent) => void;
+      const updatedCb = MINPOKER_SOCKET_REPOSITORY_MOCK.on.calls.all().find((c) => c.args[0] === MinPokerMatchEvent.Updated)!.args[1] as (
+        p: MinPokerMatchUpdatedEvent,
+      ) => void;
 
       handDealtCb(handDealtEvent);
       updatedCb(updatedEvent);
@@ -243,9 +219,8 @@ describe('MinPokerMultiplayerService', () => {
       const handDealtEvent: MinPokerMatchHandDealtEvent = { hand: ['Ah', 'Ks'] };
 
       await service.connect();
-      const handDealtCb = MINPOKER_SOCKET_REPOSITORY_MOCK.on.calls
-        .all()
-        .find((c) => c.args[0] === MinPokerMatchEvent.HandDealt)!.args[1] as (p: MinPokerMatchHandDealtEvent) => void;
+      const handDealtCb = MINPOKER_SOCKET_REPOSITORY_MOCK.on.calls.all().find((c) => c.args[0] === MinPokerMatchEvent.HandDealt)!
+        .args[1] as (p: MinPokerMatchHandDealtEvent) => void;
       handDealtCb(handDealtEvent);
 
       expect(service.game().hand).toEqual(['Ah', 'Ks']);
@@ -265,9 +240,8 @@ describe('MinPokerMultiplayerService', () => {
       const connectedEvent: MinPokerMatchConnectedEvent = { playerId: 'player-123' };
 
       await service.connect();
-      const connectedCb = MINPOKER_SOCKET_REPOSITORY_MOCK.on.calls
-        .all()
-        .find((c) => c.args[0] === MinPokerMatchEvent.Connected)!.args[1] as (p: MinPokerMatchConnectedEvent) => void;
+      const connectedCb = MINPOKER_SOCKET_REPOSITORY_MOCK.on.calls.all().find((c) => c.args[0] === MinPokerMatchEvent.Connected)!
+        .args[1] as (p: MinPokerMatchConnectedEvent) => void;
       connectedCb(connectedEvent);
 
       expect(service.playerId()).toBe('player-123');
@@ -280,9 +254,8 @@ describe('MinPokerMultiplayerService', () => {
       service.setGameId('game-99');
 
       await service.connect();
-      const connectedCb = MINPOKER_SOCKET_REPOSITORY_MOCK.on.calls
-        .all()
-        .find((c) => c.args[0] === MinPokerMatchEvent.Connected)!.args[1] as (p: MinPokerMatchConnectedEvent) => void;
+      const connectedCb = MINPOKER_SOCKET_REPOSITORY_MOCK.on.calls.all().find((c) => c.args[0] === MinPokerMatchEvent.Connected)!
+        .args[1] as (p: MinPokerMatchConnectedEvent) => void;
       connectedCb(connectedEvent);
 
       expect(service.playerId()).toBe('player-42');
@@ -298,10 +271,7 @@ describe('MinPokerMultiplayerService', () => {
     it('should emit Leave command', () => {
       service.leaveGame();
 
-      expect(MINPOKER_SOCKET_REPOSITORY_MOCK.emit).toHaveBeenCalledWith(
-        MinPokerMatchCommand.Leave,
-        jasmine.any(Object),
-      );
+      expect(MINPOKER_SOCKET_REPOSITORY_MOCK.emit).toHaveBeenCalledWith(MinPokerMatchCommand.Leave, jasmine.any(Object));
     });
 
     it('should emit Leave command as MinPokerMatchLeaveCommand with correct matchId and playerId', async () => {
@@ -309,9 +279,8 @@ describe('MinPokerMultiplayerService', () => {
 
       const connectedEvent: MinPokerMatchConnectedEvent = { playerId: 'player-1' };
       await service.connect();
-      const connectedCb = MINPOKER_SOCKET_REPOSITORY_MOCK.on.calls
-        .all()
-        .find((c) => c.args[0] === MinPokerMatchEvent.Connected)!.args[1] as (p: MinPokerMatchConnectedEvent) => void;
+      const connectedCb = MINPOKER_SOCKET_REPOSITORY_MOCK.on.calls.all().find((c) => c.args[0] === MinPokerMatchEvent.Connected)!
+        .args[1] as (p: MinPokerMatchConnectedEvent) => void;
       connectedCb(connectedEvent);
       MINPOKER_SOCKET_REPOSITORY_MOCK.emit.calls.reset();
 

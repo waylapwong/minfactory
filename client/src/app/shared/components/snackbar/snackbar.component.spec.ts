@@ -70,9 +70,7 @@ describe('SnackbarComponent', () => {
     fixture.componentRef.setInput('message', 'Spiel-Link kopiert');
     fixture.detectChanges();
 
-    const closeButton: HTMLButtonElement | null = fixture.nativeElement.querySelector(
-      'button[aria-label="Benachrichtigung schliessen"]',
-    );
+    const closeButton: HTMLButtonElement | null = fixture.nativeElement.querySelector('button[aria-label="Benachrichtigung schliessen"]');
 
     closeButton?.click();
 
