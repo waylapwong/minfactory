@@ -7,11 +7,7 @@ import { MinRpsMatchPlayPayload } from '../models/payloads/minrps-match-play.pay
 import { MinRpsMatchSeatPayload } from '../models/payloads/minrps-match-seat.payload';
 import { MinRpsMultiplayerService } from '../services/minrps-multiplayer.service';
 import { MINRPS_MULTIPLAYER_SERVICE_MOCK } from '../mocks/minrps-multiplayer.service.mock';
-import {
-  MINRPS_SERVER_MOCK,
-  MINRPS_SERVER_TO_EXCEPT_EMIT_MOCK,
-  MINRPS_SERVER_TO_EXCEPT_MOCK,
-} from '../mocks/minrps-server.mock';
+import { MINRPS_SERVER_MOCK, MINRPS_SERVER_TO_EXCEPT_EMIT_MOCK, MINRPS_SERVER_TO_EXCEPT_MOCK } from '../mocks/minrps-server.mock';
 import { MINRPS_SOCKET_MOCK } from '../mocks/minrps-socket.mock';
 import { MinRpsGateway } from './minrps.gateway';
 
@@ -72,10 +68,7 @@ describe('MinRpsGateway', () => {
 
       gateway.handleJoinCommand(mockSocket, joinPayload);
 
-      expect(MINRPS_MULTIPLAYER_SERVICE_MOCK.joinMatch).toHaveBeenCalledWith(
-        mockSocket,
-        joinPayload,
-      );
+      expect(MINRPS_MULTIPLAYER_SERVICE_MOCK.joinMatch).toHaveBeenCalledWith(mockSocket, joinPayload);
       expect(mockServer.to).toHaveBeenCalledWith('match-1');
     });
   });
@@ -91,10 +84,7 @@ describe('MinRpsGateway', () => {
 
       gateway.handleLeaveCommand(mockSocket, leavePayload);
 
-      expect(MINRPS_MULTIPLAYER_SERVICE_MOCK.leaveMatch).toHaveBeenCalledWith(
-        mockSocket,
-        leavePayload,
-      );
+      expect(MINRPS_MULTIPLAYER_SERVICE_MOCK.leaveMatch).toHaveBeenCalledWith(mockSocket, leavePayload);
       expect(mockServer.to).toHaveBeenCalledWith('match-1');
     });
   });

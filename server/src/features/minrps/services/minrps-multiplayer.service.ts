@@ -107,8 +107,7 @@ export class MinRpsMultiplayerService {
 
     // Update match
     const updatedMatch: MinRpsGame = this.matchRepository.save(match);
-    const payload: MinRpsMatchUpdatedPayload =
-      MinRpsDomainMapper.domainToMatchUpdatedPayload(updatedMatch);
+    const payload: MinRpsMatchUpdatedPayload = MinRpsDomainMapper.domainToMatchUpdatedPayload(updatedMatch);
     // Hide all moves until both players have played
     if (!updatedMatch.isGameReady()) {
       payload.player1Move = MinRpsMove.None;

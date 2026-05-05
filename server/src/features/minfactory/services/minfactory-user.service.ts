@@ -18,8 +18,7 @@ export class MinFactoryUserService {
 
   public async createUser(user: FirebaseUserDto): Promise<MinFactoryUserDto> {
     const { firebaseUid, email } = user;
-    const existingUserByFirebaseUid: MinFactoryUserEntity | null =
-      await this.findByFirebaseUidOrNull(firebaseUid);
+    const existingUserByFirebaseUid: MinFactoryUserEntity | null = await this.findByFirebaseUidOrNull(firebaseUid);
 
     if (existingUserByFirebaseUid) {
       return this.entityToDto(existingUserByFirebaseUid);
@@ -42,15 +41,13 @@ export class MinFactoryUserService {
         throw error;
       }
 
-      const duplicatedUserByFirebaseUid: MinFactoryUserEntity | null =
-        await this.findByFirebaseUidOrNull(firebaseUid);
+      const duplicatedUserByFirebaseUid: MinFactoryUserEntity | null = await this.findByFirebaseUidOrNull(firebaseUid);
 
       if (duplicatedUserByFirebaseUid) {
         return this.entityToDto(duplicatedUserByFirebaseUid);
       }
 
-      const duplicatedUserByEmail: MinFactoryUserEntity | null =
-        await this.findByEmailOrNull(email);
+      const duplicatedUserByEmail: MinFactoryUserEntity | null = await this.findByEmailOrNull(email);
 
       if (duplicatedUserByEmail) {
         throw new ConflictException('User already registered');
@@ -137,8 +134,6 @@ export class MinFactoryUserService {
       };
     };
 
-    return (
-      driverError.driverError?.code === 'ER_DUP_ENTRY' || driverError.driverError?.errno === 1062
-    );
+    return driverError.driverError?.code === 'ER_DUP_ENTRY' || driverError.driverError?.errno === 1062;
   }
 }

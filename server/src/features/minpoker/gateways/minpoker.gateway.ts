@@ -10,6 +10,7 @@ import {
 import { Server, Socket } from 'socket.io';
 import { AuthenticationService } from '../../../core/authentication/services/authentication.service';
 import { Namespace } from '../../../shared/enums/namespace.enum';
+import { MinFactoryUserEntity } from '../../minfactory/models/entities/minfactory-user.entity';
 import { MinFactoryUserRepository } from '../../minfactory/repositories/minfactory-user.repository';
 import { MinPokerJoinCommand } from '../models/commands/minpoker-join.command';
 import { MinPokerLeaveCommand } from '../models/commands/minpoker-leave.command';
@@ -21,10 +22,8 @@ import { MinPokerDisconnectedEvent } from '../models/events/minpoker-disconnecte
 import { MinPokerHandDealtEvent } from '../models/events/minpoker-hand-dealt.event';
 import { MinPokerUpdatedEvent } from '../models/events/minpoker-updated.event';
 import { MinPokerPlayerIdRepository } from '../repositories/minpoker-player-id.repository';
-import {
-  MinPokerSeatResult,
-  MinPokerTournamentService,
-} from '../services/minpoker-tournament.service';
+import { MinPokerSeatResult, MinPokerTournamentService } from '../services/minpoker-tournament.service';
+import { DecodedIdToken } from 'firebase-admin/auth';
 
 @WebSocketGateway({
   cors: { origin: '*' },
@@ -42,20 +41,14 @@ export class MinPokerGateway implements OnGatewayConnection, OnGatewayDisconnect
   ) {}
 
   @SubscribeMessage(MinPokerCommand.Join)
-  public async handleJoinCommand(
-    @ConnectedSocket() client: Socket,
-    @MessageBody() command: MinPokerJoinCommand,
-  ): Promise<void> {
+  public async handleJoinCommand(@ConnectedSocket() client: Socket, @MessageBody() command: MinPokerJoinCommand): Promise<void> {
     console.log(`Receiving Command: ${MinPokerCommand.Join}`, command);
     const event: MinPokerUpdatedEvent = await this.tournamentService.joinMatch(client, command);
     this.sendMatchUpdatedEvent(event);
   }
 
   @SubscribeMessage(MinPokerCommand.Leave)
-  public handleLeaveCommand(
-    @ConnectedSocket() client: Socket,
-    @MessageBody() command: MinPokerLeaveCommand,
-  ): void {
+  public handleLeaveCommand(@ConnectedSocket() client: Socket, @MessageBody() command: MinPokerLeaveCommand): void {
     console.log(`Receiving Command: ${MinPokerCommand.Leave}`, command);
     const event: MinPokerUpdatedEvent | null = this.tournamentService.leaveMatch(client, command);
     if (event) {
@@ -64,10 +57,7 @@ export class MinPokerGateway implements OnGatewayConnection, OnGatewayDisconnect
   }
 
   @SubscribeMessage(MinPokerCommand.Seat)
-  public async handleSeatCommand(
-    @ConnectedSocket() client: Socket,
-    @MessageBody() command: MinPokerSeatCommand,
-  ): Promise<void> {
+  public async handleSeatCommand(@ConnectedSocket() client: Socket, @MessageBody() command: MinPokerSeatCommand): Promise<void> {
     console.log(`Receiving Command: ${MinPokerCommand.Seat}`, command);
     const result: MinPokerSeatResult = await this.tournamentService.seatPlayer(client, command);
     this.sendMatchUpdatedEvent(result.updatedEvent);
@@ -87,12 +77,9 @@ export class MinPokerGateway implements OnGatewayConnection, OnGatewayDisconnect
         client.disconnect();
         return;
       }
-      const decodedToken = await this.authenticationService.verifyIdToken(token);
-      const user = await this.userRepository.findByFirebaseUid(decodedToken.uid);
-      const event: MinPokerConnectedEvent = this.tournamentService.handleConnection(
-        client,
-        user.id,
-      );
+      const decodedToken: DecodedIdToken = await this.authenticationService.verifyIdToken(token);
+      const user: MinFactoryUserEntity = await this.userRepository.findByFirebaseUid(decodedToken.uid);
+      const event: MinPokerConnectedEvent = this.tournamentService.handleConnection(client, user.id);
       this.sendClientEvent(client, MinPokerEvent.MatchConnected, event);
     } catch (error) {
       console.error('MinPoker connection authentication failed', error);

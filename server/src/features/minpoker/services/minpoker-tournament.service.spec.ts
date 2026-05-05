@@ -126,10 +126,7 @@ describe('MinpokerTournamentService', () => {
     it('should deal hands to all players when 2 or more are seated', async () => {
       const socket = { data: { playerId: 'player-2' }, id: 'socket-2' } as any;
       const match = new MinPokerGame({ id: 'match-1', name: 'Table 1' });
-      match.seatPlayer(
-        new MinPokerPlayer({ avatar: 'man-1.svg', id: 'player-1', name: 'Alice' }),
-        0,
-      );
+      match.seatPlayer(new MinPokerPlayer({ avatar: 'man-1.svg', id: 'player-1', name: 'Alice' }), 0);
       match.addObserver('player-2');
       const command: MinPokerSeatCommand = {
         avatar: 'woman-2.svg',
@@ -150,10 +147,7 @@ describe('MinpokerTournamentService', () => {
       expect(result.hands?.has('player-2')).toBe(true);
       expect(result.hands?.get('player-1')?.hand).toHaveLength(2);
       expect(result.hands?.get('player-2')?.hand).toHaveLength(2);
-      expect(MINPOKER_DECK_REPOSITORY_MOCK.save).toHaveBeenCalledWith(
-        'match-1',
-        expect.any(Object),
-      );
+      expect(MINPOKER_DECK_REPOSITORY_MOCK.save).toHaveBeenCalledWith('match-1', expect.any(Object));
     });
 
     it('should not deal hands when only 1 player is seated', async () => {
@@ -208,20 +202,14 @@ describe('MinpokerTournamentService', () => {
       expect(result?.observerIds).toEqual(['observer-2']);
       expect(MINPOKER_MATCH_REPOSITORY_MOCK.save).toHaveBeenCalled();
       expect(MINPOKER_MATCH_REPOSITORY_MOCK.delete).not.toHaveBeenCalled();
-      expect(MINPOKER_ROOM_SYSTEM_MOCK.removePlayerFromRoom).toHaveBeenCalledWith(
-        socket,
-        'match-1',
-      );
+      expect(MINPOKER_ROOM_SYSTEM_MOCK.removePlayerFromRoom).toHaveBeenCalledWith(socket, 'match-1');
     });
 
     it('should remove seated player from match and return updated event', () => {
       const socket = { data: { playerId: 'player-1' }, id: 'socket-1', leave: jest.fn() } as any;
       const match = new MinPokerGame({ id: 'match-1', name: 'Table 1' });
       match.addObserver('observer-1');
-      match.seatPlayer(
-        new MinPokerPlayer({ avatar: 'man-1.svg', id: 'player-1', name: 'Alice' }),
-        0,
-      );
+      match.seatPlayer(new MinPokerPlayer({ avatar: 'man-1.svg', id: 'player-1', name: 'Alice' }), 0);
       const command: MinPokerLeaveCommand = { matchId: 'match-1', playerId: 'player-1' };
 
       MINPOKER_MATCH_REPOSITORY_MOCK.findOne.mockReturnValue(match);
@@ -232,10 +220,7 @@ describe('MinpokerTournamentService', () => {
       expect(result?.players).toEqual([]);
       expect(result?.observerIds).toEqual(['observer-1']);
       expect(MINPOKER_MATCH_REPOSITORY_MOCK.save).toHaveBeenCalled();
-      expect(MINPOKER_ROOM_SYSTEM_MOCK.removePlayerFromRoom).toHaveBeenCalledWith(
-        socket,
-        'match-1',
-      );
+      expect(MINPOKER_ROOM_SYSTEM_MOCK.removePlayerFromRoom).toHaveBeenCalledWith(socket, 'match-1');
     });
 
     it('should delete match and return null when last participant leaves', () => {
@@ -252,10 +237,7 @@ describe('MinpokerTournamentService', () => {
       expect(result).toBeNull();
       expect(MINPOKER_MATCH_REPOSITORY_MOCK.delete).toHaveBeenCalledWith('match-1');
       expect(MINPOKER_MATCH_REPOSITORY_MOCK.save).not.toHaveBeenCalledWith(match);
-      expect(MINPOKER_ROOM_SYSTEM_MOCK.removePlayerFromRoom).toHaveBeenCalledWith(
-        socket,
-        'match-1',
-      );
+      expect(MINPOKER_ROOM_SYSTEM_MOCK.removePlayerFromRoom).toHaveBeenCalledWith(socket, 'match-1');
     });
 
     it('should reject leave when payload playerId does not match socket playerId', () => {
@@ -277,9 +259,7 @@ describe('MinpokerTournamentService', () => {
 
       const result = service.handleDisconnect(socket);
 
-      expect(result?.disconnectedEvent).toEqual(
-        expect.objectContaining({ matchId: 'match-1', playerId: 'player-1' }),
-      );
+      expect(result?.disconnectedEvent).toEqual(expect.objectContaining({ matchId: 'match-1', playerId: 'player-1' }));
       expect(result?.updatedEvent).toBeNull();
       expect(MINPOKER_ROOM_SYSTEM_MOCK.removePlayerFromAllRooms).toHaveBeenCalledWith(socket);
       expect(MINPOKER_PLAYER_ID_REPOSITORY_MOCK.delete).toHaveBeenCalledWith('socket-1');

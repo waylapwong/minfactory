@@ -32,9 +32,7 @@ export class MinPokerGame {
   }
 
   public dealHands(deck: MinPokerDeck): void {
-    const seatedPlayers: MinPokerPlayer[] = this.players.filter(
-      (player): player is MinPokerPlayer => player !== null,
-    );
+    const seatedPlayers: MinPokerPlayer[] = this.players.filter((player): player is MinPokerPlayer => player !== null);
     for (const player of seatedPlayers) {
       player.hand = deck.deal(2);
     }
@@ -61,9 +59,7 @@ export class MinPokerGame {
   }
 
   public removePlayer(playerId: string): void {
-    const seat: number = this.players.findIndex(
-      (player: MinPokerPlayer | null) => player?.id === playerId,
-    );
+    const seat: number = this.players.findIndex((player: MinPokerPlayer | null) => player?.id === playerId);
     if (seat !== -1) {
       this.players[seat] = null;
       return;
@@ -80,9 +76,7 @@ export class MinPokerGame {
       throw new GameRuleException(`Seat ${seat} is already occupied`);
     }
 
-    const currentSeat: number = this.players.findIndex(
-      (existingPlayer: MinPokerPlayer | null) => existingPlayer?.id === player.id,
-    );
+    const currentSeat: number = this.players.findIndex((existingPlayer: MinPokerPlayer | null) => existingPlayer?.id === player.id);
     if (currentSeat !== -1 && currentSeat !== seat) {
       this.players[currentSeat] = null;
     }

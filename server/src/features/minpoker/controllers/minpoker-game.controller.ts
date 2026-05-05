@@ -1,14 +1,4 @@
-import {
-  Body,
-  Controller,
-  Delete,
-  Get,
-  HttpCode,
-  Param,
-  ParseUUIDPipe,
-  Post,
-  UseGuards,
-} from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpCode, Param, ParseUUIDPipe, Post, UseGuards } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { FirebaseUser } from '../../../core/authentication/decorators/firebase-user.decorator';
 import { AuthenticationGuard } from '../../../core/authentication/guards/authentication.guard';
@@ -43,10 +33,7 @@ export class MinPokerGameController {
   @API_403()
   @API_404()
   @API_500()
-  public async delete(
-    @Param('id', new ParseUUIDPipe()) id: string,
-    @FirebaseUser() firebaseUser: FirebaseUserDto,
-  ): Promise<void> {
+  public async delete(@Param('id', new ParseUUIDPipe()) id: string, @FirebaseUser() firebaseUser: FirebaseUserDto): Promise<void> {
     await this.gameService.deleteGame(id, firebaseUser);
   }
 
@@ -71,10 +58,7 @@ export class MinPokerGameController {
   @API_403()
   @API_404()
   @API_500()
-  public async create(
-    @Body() dto: MinPokerCreateGameDto,
-    @FirebaseUser() firebaseUser: FirebaseUserDto,
-  ): Promise<MinPokerGameDto> {
+  public async create(@Body() dto: MinPokerCreateGameDto, @FirebaseUser() firebaseUser: FirebaseUserDto): Promise<MinPokerGameDto> {
     return await this.gameService.createGame(dto, firebaseUser);
   }
 }

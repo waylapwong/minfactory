@@ -20,9 +20,7 @@ describe('AuthenticationGuard', () => {
   let guard: AuthenticationGuard;
 
   beforeEach(() => {
-    guard = new AuthenticationGuard(
-      AUTHENTICATION_SERVICE_MOCK as unknown as AuthenticationService,
-    );
+    guard = new AuthenticationGuard(AUTHENTICATION_SERVICE_MOCK as unknown as AuthenticationService);
   });
 
   afterEach(() => {

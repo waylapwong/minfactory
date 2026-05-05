@@ -17,12 +17,7 @@ describe('MinRpsMultiplayerService', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [
-        MinRpsMultiplayerService,
-        MinRpsRoomSystem,
-        MinRpsMatchRepository,
-        MinRpsPlayerIdRepository,
-      ],
+      providers: [MinRpsMultiplayerService, MinRpsRoomSystem, MinRpsMatchRepository, MinRpsPlayerIdRepository],
     }).compile();
 
     service = module.get<MinRpsMultiplayerService>(MinRpsMultiplayerService);

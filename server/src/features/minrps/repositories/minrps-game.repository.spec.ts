@@ -79,9 +79,7 @@ describe('MinRpsGameRepository', () => {
       MINRPS_GAME_TYPEORM_REPOSITORY_MOCK.findOne.mockResolvedValue(null);
 
       await expect(repository.findOne('non-existent-id')).rejects.toThrow(NotFoundException);
-      await expect(repository.findOne('non-existent-id')).rejects.toThrow(
-        'minRPS game with ID non-existent-id not found',
-      );
+      await expect(repository.findOne('non-existent-id')).rejects.toThrow('minRPS game with ID non-existent-id not found');
     });
   });
 

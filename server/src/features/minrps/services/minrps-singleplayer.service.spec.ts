@@ -30,13 +30,9 @@ describe('MinRpsSingleplayerService', () => {
       expect(result.player1Move).toBe(MinRpsMove.Rock);
       expect(result.player2Move).toBeDefined();
       expect(result.player2Move).not.toBe(MinRpsMove.None);
-      expect([MinRpsMove.Rock, MinRpsMove.Paper, MinRpsMove.Scissors]).toContain(
-        result.player2Move,
-      );
+      expect([MinRpsMove.Rock, MinRpsMove.Paper, MinRpsMove.Scissors]).toContain(result.player2Move);
       expect(result.result).toBeDefined();
-      expect([MinRpsResult.Player1, MinRpsResult.Player2, MinRpsResult.Draw]).toContain(
-        result.result,
-      );
+      expect([MinRpsResult.Player1, MinRpsResult.Player2, MinRpsResult.Draw]).toContain(result.result);
     });
 
     it('should play game and return result with player1 Paper', () => {

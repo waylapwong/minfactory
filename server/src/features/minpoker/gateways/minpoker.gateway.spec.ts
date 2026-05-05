@@ -70,13 +70,8 @@ describe('MinpokerGateway', () => {
       await gateway.handleConnection(mockSocket);
 
       expect(AUTHENTICATION_SERVICE_MOCK.verifyIdToken).toHaveBeenCalledWith('valid-token');
-      expect(MINFACTORY_USER_REPOSITORY_MOCK.findByFirebaseUid).toHaveBeenCalledWith(
-        'firebase-uid',
-      );
-      expect(MINPOKER_TOURNAMENT_SERVICE_MOCK.handleConnection).toHaveBeenCalledWith(
-        mockSocket,
-        'user-1',
-      );
+      expect(MINFACTORY_USER_REPOSITORY_MOCK.findByFirebaseUid).toHaveBeenCalledWith('firebase-uid');
+      expect(MINPOKER_TOURNAMENT_SERVICE_MOCK.handleConnection).toHaveBeenCalledWith(mockSocket, 'user-1');
       expect(mockSocket.emit).toHaveBeenCalledWith(MinPokerEvent.MatchConnected, {
         playerId: 'user-1',
       });
@@ -184,9 +179,7 @@ describe('MinpokerGateway', () => {
         updatedEvent: { matchId: 'match-1' },
         hands,
       });
-      MINPOKER_PLAYER_ID_REPOSITORY_MOCK.findByPlayerId
-        .mockReturnValueOnce('socket-1')
-        .mockReturnValueOnce('socket-2');
+      MINPOKER_PLAYER_ID_REPOSITORY_MOCK.findByPlayerId.mockReturnValueOnce('socket-1').mockReturnValueOnce('socket-2');
 
       await gateway.handleSeatCommand(mockSocket, command);
 
@@ -219,10 +212,7 @@ describe('MinpokerGateway', () => {
       expect(MINPOKER_SERVER_TO_EMIT_MOCK).toHaveBeenCalledWith(MinPokerEvent.Updated, {
         matchId: 'match-1',
       });
-      expect(MINPOKER_SERVER_TO_EMIT_MOCK).not.toHaveBeenCalledWith(
-        MinPokerEvent.HandDealt,
-        expect.anything(),
-      );
+      expect(MINPOKER_SERVER_TO_EMIT_MOCK).not.toHaveBeenCalledWith(MinPokerEvent.HandDealt, expect.anything());
     });
   });
 
