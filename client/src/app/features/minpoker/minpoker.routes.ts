@@ -24,6 +24,7 @@ export const MINPOKER_ROUTES: Routes = [
   },
   {
     path: MinPokerPath.PublicGames,
-    loadComponent: () => import('./pages/minpoker-public-games/minpoker-public-games.component').then((m) => m.MinPokerPublicGamesComponent),
+    loadComponent: () =>
+      import('./pages/minpoker-public-games/minpoker-public-games.component').then((m) => m.MinPokerPublicGamesComponent),
   },
 ];

@@ -12,14 +12,14 @@ import { MinPokerMatchEvent } from '../models/enums/minpoker-match-event.enum';
 import { MinPokerMatchConnectedEvent } from '../models/events/minpoker-match-connected.event';
 import { MinPokerMatchHandDealtEvent } from '../models/events/minpoker-match-hand-dealt.event';
 import { MinPokerMatchUpdatedEvent } from '../models/events/minpoker-match-updated.event';
-import { MinPokerGameViewModel } from '../models/viewmodels/minpoker-game.viewmodel';
+import { MinPokerGameVm } from '../models/viewmodels/minpoker-game.vm';
 import { MinPokerSocketRepository } from '../repositories/minpoker-socket.repository';
 
 @Injectable({
   providedIn: 'root',
 })
 export class MinPokerMultiplayerService {
-  public readonly game: Signal<MinPokerGameViewModel> = computed(() =>
+  public readonly game: Signal<MinPokerGameVm> = computed(() =>
     MinPokerDomainMapper.domainToGameViewModel(this.cachedMatch(), this.cachedPlayerId()),
   );
   public readonly playerId: Signal<string> = computed(() => this.cachedPlayerId());
@@ -105,7 +105,7 @@ export class MinPokerMultiplayerService {
 
   private readonly onMatchUpdatedEvent = (event: MinPokerMatchUpdatedEvent): void => {
     this.logger.debug('Incoming Event: Updated');
-    const updatedMatch: MinPokerMatch = MinPokerEventMapper.matchUpdatedEventToDomain(event);
+    const updatedMatch: MinPokerMatch = MinPokerEventMapper.toDomain(event);
     if (event.matchId === this.cachedMatch().id) {
       updatedMatch.hand = this.cachedMatch().hand;
     }

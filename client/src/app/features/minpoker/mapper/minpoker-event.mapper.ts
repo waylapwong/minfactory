@@ -3,7 +3,7 @@ import { MinPokerMatchPlayer } from '../models/domains/minpoker-match-player';
 import { MinPokerMatchUpdatedEvent, MinPokerMatchUpdatedPlayerEvent } from '../models/events/minpoker-match-updated.event';
 
 export class MinPokerEventMapper {
-  public static matchUpdatedEventToDomain(event: MinPokerMatchUpdatedEvent): MinPokerMatch {
+  public static toDomain(event: MinPokerMatchUpdatedEvent): MinPokerMatch {
     const domain: MinPokerMatch = new MinPokerMatch();
 
     domain.bigBlind = event.bigBlind;

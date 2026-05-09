@@ -57,11 +57,11 @@ describe('MinPokerGameService', () => {
       await service.loadGames();
 
       expect(MINPOKER_GAME_REPOSITORY_MOCK.getAll).toHaveBeenCalled();
-      expect(service.lobbyViewModels().length).toBe(2);
-      expect(service.lobbyViewModels()[0].id).toBe('id-2');
-      expect(service.lobbyViewModels()[1].id).toBe('id-1');
-      expect(service.lobbyViewModels()[0].smallBlind).toBe(25);
-      expect(service.lobbyViewModels()[0].bigBlind).toBe(50);
+      expect(service.publicGamesVm().games.length).toBe(2);
+      expect(service.publicGamesVm().games[0].id).toBe('id-2');
+      expect(service.publicGamesVm().games[1].id).toBe('id-1');
+      expect(service.publicGamesVm().games[0].smallBlind).toBe(25);
+      expect(service.publicGamesVm().games[0].bigBlind).toBe(50);
     });
   });
 
@@ -83,8 +83,8 @@ describe('MinPokerGameService', () => {
       await service.createGame('New Game');
 
       expect(MINPOKER_GAME_REPOSITORY_MOCK.create).toHaveBeenCalledWith({ name: 'New Game' });
-      expect(service.lobbyViewModels().length).toBe(1);
-      expect(service.lobbyViewModels()[0].id).toBe('new-id');
+      expect(service.publicGamesVm().games.length).toBe(1);
+      expect(service.publicGamesVm().games[0].id).toBe('new-id');
     });
 
     it('should sort created game against already cached games', async () => {
@@ -118,7 +118,7 @@ describe('MinPokerGameService', () => {
       await service.loadGames();
       await service.createGame('Newer Game');
 
-      expect(service.lobbyViewModels().map((game) => game.id)).toEqual(['newer-id', 'older-id']);
+      expect(service.publicGamesVm().games.map((game) => game.id)).toEqual(['newer-id', 'older-id']);
     });
   });
 });

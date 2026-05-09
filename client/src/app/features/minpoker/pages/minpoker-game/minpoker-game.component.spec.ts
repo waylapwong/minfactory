@@ -9,7 +9,7 @@ import {
   MINPOKER_MULTIPLAYER_PLAYER_ID_SIGNAL,
   MINPOKER_MULTIPLAYER_SERVICE_MOCK,
 } from '../../mocks/minpoker-multiplayer.service.mock';
-import { MinPokerGameSeatViewModel, MinPokerGameViewModel } from '../../models/viewmodels/minpoker-game.viewmodel';
+import { MinPokerGameSeatVm, MinPokerGameVm } from '../../models/viewmodels/minpoker-game.vm';
 import { MinPokerMultiplayerService } from '../../services/minpoker-multiplayer.service';
 import { MinPokerGameComponent } from './minpoker-game.component';
 
@@ -25,7 +25,7 @@ describe('MinPokerGameComponent', () => {
     ACTIVATED_ROUTE_MOCK.snapshot.paramMap.get.calls.reset();
     ACTIVATED_ROUTE_MOCK.snapshot.paramMap.get.and.returnValue('game-id-1');
 
-    MINPOKER_MULTIPLAYER_GAME_SIGNAL.set(new MinPokerGameViewModel());
+    MINPOKER_MULTIPLAYER_GAME_SIGNAL.set(new MinPokerGameVm());
     MINPOKER_MULTIPLAYER_PLAYER_ID_SIGNAL.set('');
 
     MINPOKER_MULTIPLAYER_SERVICE_MOCK.connect.calls.reset();
@@ -81,7 +81,7 @@ describe('MinPokerGameComponent', () => {
     });
 
     it('should be true when hand has cards', () => {
-      const vm = new MinPokerGameViewModel();
+      const vm = new MinPokerGameVm();
       vm.hand = ['Ah', 'Kd'];
       MINPOKER_MULTIPLAYER_GAME_SIGNAL.set(vm);
       fixture.detectChanges();
@@ -179,7 +179,7 @@ describe('MinPokerGameComponent', () => {
 
   describe('table perspective', () => {
     it('should show observer top and bottom seat order as 1-2-3 and 6-5-4', () => {
-      const vm = new MinPokerGameViewModel();
+      const vm = new MinPokerGameVm();
       vm.isObserver = true;
       vm.seats = new Array(6).fill(null);
       MINPOKER_MULTIPLAYER_GAME_SIGNAL.set(vm);
@@ -190,13 +190,13 @@ describe('MinPokerGameComponent', () => {
     });
 
     it('should rotate top seats around hero seat in player view', () => {
-      const heroSeat = new MinPokerGameSeatViewModel();
+      const heroSeat = new MinPokerGameSeatVm();
       heroSeat.id = 'hero-id';
       heroSeat.name = 'Hero';
       heroSeat.avatar = 'man-1.svg';
       heroSeat.seat = 3;
 
-      const vm = new MinPokerGameViewModel();
+      const vm = new MinPokerGameVm();
       vm.isObserver = false;
       vm.seats = new Array(6).fill(null);
       vm.seats[3] = heroSeat;
@@ -210,7 +210,7 @@ describe('MinPokerGameComponent', () => {
 
   describe('openSeatDialog()', () => {
     it('should open seat dialog for an empty seat', async () => {
-      const vm = new MinPokerGameViewModel();
+      const vm = new MinPokerGameVm();
       vm.seats = new Array(6).fill(null);
       MINPOKER_MULTIPLAYER_GAME_SIGNAL.set(vm);
       fixture.detectChanges();
@@ -223,9 +223,9 @@ describe('MinPokerGameComponent', () => {
     });
 
     it('should not open seat dialog for an occupied seat', async () => {
-      const seat = new MinPokerGameSeatViewModel();
+      const seat = new MinPokerGameSeatVm();
       seat.id = 'p1';
-      const vm = new MinPokerGameViewModel();
+      const vm = new MinPokerGameVm();
       vm.seats = [seat, null, null, null, null, null];
       MINPOKER_MULTIPLAYER_GAME_SIGNAL.set(vm);
       fixture.detectChanges();
@@ -237,7 +237,7 @@ describe('MinPokerGameComponent', () => {
     });
 
     it('should not open seat dialog for invalid index', async () => {
-      const vm = new MinPokerGameViewModel();
+      const vm = new MinPokerGameVm();
       vm.seats = new Array(6).fill(null);
       MINPOKER_MULTIPLAYER_GAME_SIGNAL.set(vm);
       fixture.detectChanges();
@@ -252,7 +252,7 @@ describe('MinPokerGameComponent', () => {
     });
 
     it('should not open seat dialog when user is not observer', async () => {
-      const vm = new MinPokerGameViewModel();
+      const vm = new MinPokerGameVm();
       vm.isObserver = false;
       vm.seats = new Array(6).fill(null);
       MINPOKER_MULTIPLAYER_GAME_SIGNAL.set(vm);
@@ -267,7 +267,7 @@ describe('MinPokerGameComponent', () => {
 
   describe('closeSeatDialog()', () => {
     it('should close seat dialog and reset selected seat', async () => {
-      const vm = new MinPokerGameViewModel();
+      const vm = new MinPokerGameVm();
       vm.seats = new Array(6).fill(null);
       MINPOKER_MULTIPLAYER_GAME_SIGNAL.set(vm);
       fixture.detectChanges();
@@ -283,7 +283,7 @@ describe('MinPokerGameComponent', () => {
 
   describe('seatGame()', () => {
     beforeEach(async () => {
-      const vm = new MinPokerGameViewModel();
+      const vm = new MinPokerGameVm();
       vm.seats = new Array(6).fill(null);
       MINPOKER_MULTIPLAYER_GAME_SIGNAL.set(vm);
       fixture.detectChanges();
@@ -349,7 +349,7 @@ describe('MinPokerGameComponent', () => {
     });
 
     it('should close an open seat dialog when canDeactivate is called', async () => {
-      const vm = new MinPokerGameViewModel();
+      const vm = new MinPokerGameVm();
       vm.seats = new Array(6).fill(null);
       MINPOKER_MULTIPLAYER_GAME_SIGNAL.set(vm);
       fixture.detectChanges();

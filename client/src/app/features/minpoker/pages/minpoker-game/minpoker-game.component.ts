@@ -12,7 +12,7 @@ import { SelectComponent, SelectOption } from '../../../../shared/components/sel
 import { SliderComponent } from '../../../../shared/components/slider/slider.component';
 import { Color } from '../../../../shared/enums/color.enum';
 import { CanLeaveGame } from '../../../../shared/guards/leave-game.guard';
-import { MinPokerGameSeatViewModel } from '../../models/viewmodels/minpoker-game.viewmodel';
+import { MinPokerGameSeatVm } from '../../models/viewmodels/minpoker-game.vm';
 import { MinPokerMultiplayerService } from '../../services/minpoker-multiplayer.service';
 
 @Component({
@@ -43,8 +43,8 @@ export class MinPokerGameComponent implements OnInit, OnDestroy, CanLeaveGame {
   public readonly hand: Signal<string[]> = computed(() => this.multiplayerService.game().hand);
   public readonly isObserver: Signal<boolean> = computed(() => this.multiplayerService.game().isObserver);
   public readonly isRoundActive: Signal<boolean> = computed(() => this.hand().length > 0);
-  public readonly opponents: Signal<(MinPokerGameSeatViewModel | null)[]> = computed(() => this.multiplayerService.game().seats);
-  public readonly heroSeat: Signal<MinPokerGameSeatViewModel | null> = computed(() => {
+  public readonly opponents: Signal<(MinPokerGameSeatVm | null)[]> = computed(() => this.multiplayerService.game().seats);
+  public readonly heroSeat: Signal<MinPokerGameSeatVm | null> = computed(() => {
     const heroId: string = this.multiplayerService.playerId();
     if (!heroId) {
       return null;
@@ -56,7 +56,7 @@ export class MinPokerGameComponent implements OnInit, OnDestroy, CanLeaveGame {
       return this.mapSeatsByOrder([0, 1, 2]);
     }
 
-    const heroSeat: MinPokerGameSeatViewModel | null = this.heroSeat();
+    const heroSeat: MinPokerGameSeatVm | null = this.heroSeat();
     const seatCount: number = this.getSeatCount();
     if (!heroSeat || seatCount <= 1) {
       return this.mapSeatsByOrder([0, 1, 2, 3, 4]);
@@ -214,7 +214,7 @@ export class MinPokerGameComponent implements OnInit, OnDestroy, CanLeaveGame {
 }
 
 interface MinPokerDisplaySeatViewModel {
-  player: MinPokerGameSeatViewModel | null;
+  player: MinPokerGameSeatVm | null;
   seatIndex: number;
 }
 

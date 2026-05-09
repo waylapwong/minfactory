@@ -2,7 +2,7 @@ import { MinPokerGameDto } from '../../../core/generated';
 import { MinPokerDtoMapper } from './minpoker-dto.mapper';
 
 describe('MinPokerDtoMapper', () => {
-  describe('gameDtoToDomain()', () => {
+  describe('toDomain()', () => {
     it('should map game DTO to domain', () => {
       const dto: MinPokerGameDto = {
         bigBlind: 100,
@@ -15,7 +15,7 @@ describe('MinPokerDtoMapper', () => {
         smallBlind: 50,
       };
 
-      const domain = MinPokerDtoMapper.gameDtoToDomain(dto);
+      const domain = MinPokerDtoMapper.toDomain(dto);
 
       expect(domain.id).toBe('game-id');
       expect(domain.name).toBe('Evening Table');

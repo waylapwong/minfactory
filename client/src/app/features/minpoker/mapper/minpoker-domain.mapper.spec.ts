@@ -6,14 +6,15 @@ import { MinPokerDomainMapper } from './minpoker-domain.mapper';
 describe('MinPokerDomainMapper', () => {
   describe('domainToGameViewModel()', () => {
     it('should map domain fields to game view model', () => {
-      const domain = new MinPokerMatch();
-      domain.bigBlind = 20;
-      domain.id = 'match-1';
-      domain.name = 'Evening Table';
-      domain.smallBlind = 10;
-      domain.tableSize = 6;
-      domain.observerIds = ['obs-1'];
-      domain.players = new Array(6).fill(null);
+      const domain = new MinPokerMatch({
+        bigBlind: 20,
+        id: 'match-1',
+        name: 'Evening Table',
+        observerIds: ['obs-1'],
+        players: new Array(6).fill(null),
+        smallBlind: 10,
+        tableSize: 6,
+      });
 
       const viewModel = MinPokerDomainMapper.domainToGameViewModel(domain, 'obs-1');
 
@@ -30,6 +31,16 @@ describe('MinPokerDomainMapper', () => {
       domain.players = [];
 
       const viewModel = MinPokerDomainMapper.domainToGameViewModel(domain, 'player-1');
+
+      expect(viewModel.isObserver).toBeTrue();
+    });
+
+    it('should mark hero as observer when heroId is not seated', () => {
+      const domain = new MinPokerMatch();
+      domain.observerIds = [];
+      domain.players = [new MinPokerMatchPlayer({ avatar: 'man-1.svg', id: 'player-1', name: 'Chris', seat: 0 })];
+
+      const viewModel = MinPokerDomainMapper.domainToGameViewModel(domain, 'player-2');
 
       expect(viewModel.isObserver).toBeTrue();
     });
@@ -80,9 +91,22 @@ describe('MinPokerDomainMapper', () => {
       expect(viewModel.seats[1]).toBeNull();
       expect(viewModel.seats[2]).toEqual(jasmine.objectContaining({ id: 'p2', name: 'Bob', seat: 2, stack: 150 }));
     });
+
+    it('should create a copy of hand array', () => {
+      const hand = ['Ah', 'Ks'];
+      const domain = new MinPokerMatch();
+      domain.hand = hand;
+      domain.observerIds = [];
+      domain.players = [];
+
+      const viewModel = MinPokerDomainMapper.domainToGameViewModel(domain, '');
+      hand.push('Qd');
+
+      expect(viewModel.hand).toEqual(['Ah', 'Ks']);
+    });
   });
 
-  describe('domainToLobbyViewModel()', () => {
+  describe('toPublicGameVm()', () => {
     it('should map domain to lobby view model', () => {
       const domain = new MinPokerGame();
       domain.bigBlind = 100;
@@ -94,7 +118,7 @@ describe('MinPokerDomainMapper', () => {
       domain.playerCount = 4;
       domain.smallBlind = 50;
 
-      const viewModel = MinPokerDomainMapper.domainToLobbyViewModel(domain);
+      const viewModel = MinPokerDomainMapper.toPublicGameVm(domain);
 
       expect(viewModel.id).toBe('game-id');
       expect(viewModel.name).toBe('Evening Table');
@@ -104,6 +128,64 @@ describe('MinPokerDomainMapper', () => {
       expect(viewModel.observerCount).toBe(2);
       expect(viewModel.smallBlind).toBe(50);
       expect(viewModel.bigBlind).toBe(100);
+    });
+  });
+
+  describe('toPublicGamesVm()', () => {
+    it('should map domains to public games view model', () => {
+      const domains: MinPokerGame[] = [
+        new MinPokerGame({
+          bigBlind: 100,
+          createdAt: new Date('2026-01-01T18:00:00.000Z'),
+          id: 'game-1',
+          name: 'Evening Table',
+          observerCount: 2,
+          playerCount: 4,
+          smallBlind: 50,
+          tableSize: 9,
+        }),
+        new MinPokerGame({
+          bigBlind: 20,
+          createdAt: new Date('2026-01-02T18:00:00.000Z'),
+          id: 'game-2',
+          name: 'Quick Table',
+          observerCount: 0,
+          playerCount: 2,
+          smallBlind: 10,
+          tableSize: 6,
+        }),
+      ];
+
+      const viewModel = MinPokerDomainMapper.toPublicGamesVm(domains);
+
+      expect(viewModel.games).toEqual([
+        jasmine.objectContaining({
+          bigBlind: 100,
+          createdAt: new Date('2026-01-01T18:00:00.000Z'),
+          id: 'game-1',
+          maxPlayerCount: 9,
+          name: 'Evening Table',
+          observerCount: 2,
+          playerCount: 4,
+          smallBlind: 50,
+        }),
+        jasmine.objectContaining({
+          bigBlind: 20,
+          createdAt: new Date('2026-01-02T18:00:00.000Z'),
+          id: 'game-2',
+          maxPlayerCount: 6,
+          name: 'Quick Table',
+          observerCount: 0,
+          playerCount: 2,
+          smallBlind: 10,
+        }),
+      ]);
+    });
+
+    it('should return an empty games array when no domains are provided', () => {
+      const viewModel = MinPokerDomainMapper.toPublicGamesVm([]);
+
+      expect(viewModel.games).toEqual([]);
     });
   });
 });

@@ -8,7 +8,7 @@ import { DialogComponent } from '../../../../shared/components/dialog/dialog.com
 import { H2Component } from '../../../../shared/components/h2/h2.component';
 import { InputComponent } from '../../../../shared/components/input/input.component';
 import { Color } from '../../../../shared/enums/color.enum';
-import { MinPokerLobbyViewModel } from '../../models/viewmodels/minpoker-lobby.viewmodel';
+import { MinPokerPublicGamesVm } from '../../models/viewmodels/minpoker-public-games.vm';
 import { MinPokerGameService } from '../../services/minpoker-game.service';
 
 @Component({
@@ -24,10 +24,10 @@ export class MinPokerMyGamesComponent implements OnInit {
   public readonly isError: WritableSignal<boolean> = signal(false);
   public readonly isLoading: WritableSignal<boolean> = signal(true);
 
-  public games: Signal<MinPokerLobbyViewModel[]>;
   public isDeleteDialogOpen: WritableSignal<boolean> = signal(false);
   public isNewGameDialogOpen: WritableSignal<boolean> = signal(false);
   public newGameFormGroup: FormGroup = this.createFormGroup();
+  public viewModel: Signal<MinPokerPublicGamesVm>;
 
   private gameIdToDelete: string | null = null;
 
@@ -35,7 +35,7 @@ export class MinPokerMyGamesComponent implements OnInit {
     public readonly routingService: RoutingService,
     private readonly gameService: MinPokerGameService,
   ) {
-    this.games = this.gameService.lobbyViewModels;
+    this.viewModel = this.gameService.publicGamesVm;
   }
 
   public get newGameName(): FormControl {

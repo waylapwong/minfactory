@@ -1,4 +1,4 @@
-export class MinPokerLobbyViewModel {
+export class MinPokerPublicGameVm {
   public bigBlind!: number;
   public createdAt!: Date;
   public id!: string;
