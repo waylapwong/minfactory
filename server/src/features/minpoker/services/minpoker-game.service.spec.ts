@@ -1,13 +1,13 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { MinFactoryRole } from '../../../shared/enums/minfactory-role.enum';
+import { MINFACTORY_USER_REPOSITORY_MOCK } from '../../minfactory/mocks/minfactory-user.repository.mock';
+import { MinFactoryUserRepository } from '../../minfactory/repositories/minfactory-user.repository';
 import { MINPOKER_GAME_REPOSITORY_MOCK } from '../mocks/minpoker-game.repository.mock';
 import { MinPokerCreateGameDto } from '../models/dtos/minpoker-create-game.dto';
 import { MinPokerGameEntity } from '../models/entities/minpoker-game.entity';
 import { MinPokerGameVisibility } from '../models/enums/minpoker-game-visibility.enum';
 import { MinPokerGameRepository } from '../repositories/minpoker-game.repository';
 import { MinPokerGameService } from './minpoker-game.service';
-import { MINFACTORY_USER_REPOSITORY_MOCK } from '../../minfactory/mocks/minfactory-user.repository.mock';
-import { MinFactoryUserRepository } from '../../minfactory/repositories/minfactory-user.repository';
-import { MinFactoryRole } from '../../../shared/enums/minfactory-role.enum';
 
 describe('MinPokerGameService', () => {
   let service: MinPokerGameService;

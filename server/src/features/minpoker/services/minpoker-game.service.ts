@@ -1,4 +1,8 @@
 import { ForbiddenException, Injectable } from '@nestjs/common';
+import { FirebaseUserDto } from '../../../core/authentication/models/firebase-user.dto';
+import { MinFactoryRole } from '../../../shared/enums/minfactory-role.enum';
+import { MinFactoryUserEntity } from '../../minfactory/models/entities/minfactory-user.entity';
+import { MinFactoryUserRepository } from '../../minfactory/repositories/minfactory-user.repository';
 import { MinPokerDomainMapper } from '../mapper/minpoker-domain.mapper';
 import { MinPokerDtoMapper } from '../mapper/minpoker-dto.mapper';
 import { MinPokerEntityMapper } from '../mapper/minpoker-entity.mapper';
@@ -8,10 +12,6 @@ import { MinPokerGameDto } from '../models/dtos/minpoker-game.dto';
 import { MinPokerGameEntity } from '../models/entities/minpoker-game.entity';
 import { MinPokerGameVisibility } from '../models/enums/minpoker-game-visibility.enum';
 import { MinPokerGameRepository } from '../repositories/minpoker-game.repository';
-import { FirebaseUserDto } from '../../../core/authentication/models/firebase-user.dto';
-import { MinFactoryUserEntity } from '../../minfactory/models/entities/minfactory-user.entity';
-import { MinFactoryUserRepository } from '../../minfactory/repositories/minfactory-user.repository';
-import { MinFactoryRole } from '../../../shared/enums/minfactory-role.enum';
 
 @Injectable()
 export class MinPokerGameService {

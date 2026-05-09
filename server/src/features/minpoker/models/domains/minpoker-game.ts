@@ -1,6 +1,6 @@
+import { GameRuleException } from '../../../../shared/exceptions/game-rule.exception';
 import { MinPokerDeck } from './minpoker-deck';
 import { MinPokerPlayer } from './minpoker-player';
-import { GameRuleException } from '../../../../shared/exceptions/game-rule.exception';
 
 export class MinPokerGame {
   public bigBlind: number = 2;
