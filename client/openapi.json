@@ -9,10 +9,20 @@
             "name": "id",
             "required": true,
             "in": "path",
-            "description": "UUID of resource",
+            "description": "Unique ID of resource",
             "schema": {
               "example": "550e8400-e29b-41d4-a716-446655440000",
               "type": "string"
+            }
+          },
+          {
+            "name": "X-Request-Id",
+            "required": true,
+            "in": "header",
+            "description": "Unique request ID",
+            "schema": {
+              "type": "string",
+              "example": "80210e8c-9688-4369-a20a-4d69d1187dd7"
             }
           }
         ],
@@ -21,7 +31,7 @@
             "description": "Deleted"
           },
           "400": {
-            "description": "Bad Request"
+            "description": "Bad Request\n\nBad Request"
           },
           "401": {
             "description": "Unauthorized"
@@ -43,7 +53,18 @@
     "/minpoker/games": {
       "get": {
         "operationId": "getAllMinPokerGames",
-        "parameters": [],
+        "parameters": [
+          {
+            "name": "X-Request-Id",
+            "required": true,
+            "in": "header",
+            "description": "Unique request ID",
+            "schema": {
+              "type": "string",
+              "example": "80210e8c-9688-4369-a20a-4d69d1187dd7"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "OK",
@@ -57,6 +78,9 @@
                 }
               }
             }
+          },
+          "400": {
+            "description": "Bad Request"
           },
           "401": {
             "description": "Unauthorized"
@@ -76,7 +100,18 @@
       },
       "post": {
         "operationId": "createMinPokerGame",
-        "parameters": [],
+        "parameters": [
+          {
+            "name": "X-Request-Id",
+            "required": true,
+            "in": "header",
+            "description": "Unique request ID",
+            "schema": {
+              "type": "string",
+              "example": "80210e8c-9688-4369-a20a-4d69d1187dd7"
+            }
+          }
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -99,7 +134,7 @@
             }
           },
           "400": {
-            "description": "Bad Request"
+            "description": "Bad Request\n\nBad Request"
           },
           "401": {
             "description": "Unauthorized"
@@ -121,10 +156,24 @@
     "/minfactory/users/me": {
       "delete": {
         "operationId": "deleteMinFactoryUserMe",
-        "parameters": [],
+        "parameters": [
+          {
+            "name": "X-Request-Id",
+            "required": true,
+            "in": "header",
+            "description": "Unique request ID",
+            "schema": {
+              "type": "string",
+              "example": "80210e8c-9688-4369-a20a-4d69d1187dd7"
+            }
+          }
+        ],
         "responses": {
           "204": {
             "description": "Deleted"
+          },
+          "400": {
+            "description": "Bad Request"
           },
           "401": {
             "description": "Unauthorized"
@@ -141,7 +190,18 @@
       },
       "get": {
         "operationId": "getMinFactoryUserMe",
-        "parameters": [],
+        "parameters": [
+          {
+            "name": "X-Request-Id",
+            "required": true,
+            "in": "header",
+            "description": "Unique request ID",
+            "schema": {
+              "type": "string",
+              "example": "80210e8c-9688-4369-a20a-4d69d1187dd7"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "OK",
@@ -152,6 +212,9 @@
                 }
               }
             }
+          },
+          "400": {
+            "description": "Bad Request"
           },
           "401": {
             "description": "Unauthorized"
@@ -170,7 +233,18 @@
     "/minfactory/users": {
       "post": {
         "operationId": "createMinFactoryUser",
-        "parameters": [],
+        "parameters": [
+          {
+            "name": "X-Request-Id",
+            "required": true,
+            "in": "header",
+            "description": "Unique request ID",
+            "schema": {
+              "type": "string",
+              "example": "80210e8c-9688-4369-a20a-4d69d1187dd7"
+            }
+          }
+        ],
         "responses": {
           "201": {
             "description": "Created",
@@ -181,6 +255,9 @@
                 }
               }
             }
+          },
+          "400": {
+            "description": "Bad Request"
           },
           "401": {
             "description": "Unauthorized"
@@ -204,10 +281,20 @@
             "name": "id",
             "required": true,
             "in": "path",
-            "description": "UUID of resource",
+            "description": "Unique ID of resource",
             "schema": {
               "example": "550e8400-e29b-41d4-a716-446655440000",
               "type": "string"
+            }
+          },
+          {
+            "name": "X-Request-Id",
+            "required": true,
+            "in": "header",
+            "description": "Unique request ID",
+            "schema": {
+              "type": "string",
+              "example": "80210e8c-9688-4369-a20a-4d69d1187dd7"
             }
           }
         ],
@@ -216,7 +303,7 @@
             "description": "Deleted"
           },
           "400": {
-            "description": "Bad Request"
+            "description": "Bad Request\n\nBad Request"
           },
           "404": {
             "description": "Not Found"
@@ -238,6 +325,16 @@
             "schema": {
               "type": "string"
             }
+          },
+          {
+            "name": "X-Request-Id",
+            "required": true,
+            "in": "header",
+            "description": "Unique request ID",
+            "schema": {
+              "type": "string",
+              "example": "80210e8c-9688-4369-a20a-4d69d1187dd7"
+            }
           }
         ],
         "responses": {
@@ -252,7 +349,7 @@
             }
           },
           "400": {
-            "description": "Bad Request"
+            "description": "Bad Request\n\nBad Request"
           },
           "404": {
             "description": "Not Found"
@@ -268,7 +365,18 @@
     "/minrps/games": {
       "get": {
         "operationId": "getAllMinRpsGames",
-        "parameters": [],
+        "parameters": [
+          {
+            "name": "X-Request-Id",
+            "required": true,
+            "in": "header",
+            "description": "Unique request ID",
+            "schema": {
+              "type": "string",
+              "example": "80210e8c-9688-4369-a20a-4d69d1187dd7"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "OK",
@@ -283,6 +391,9 @@
               }
             }
           },
+          "400": {
+            "description": "Bad Request"
+          },
           "500": {
             "description": "Internal Server Error"
           }
@@ -292,7 +403,18 @@
       },
       "post": {
         "operationId": "createMinRpsGame",
-        "parameters": [],
+        "parameters": [
+          {
+            "name": "X-Request-Id",
+            "required": true,
+            "in": "header",
+            "description": "Unique request ID",
+            "schema": {
+              "type": "string",
+              "example": "80210e8c-9688-4369-a20a-4d69d1187dd7"
+            }
+          }
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -315,7 +437,7 @@
             }
           },
           "400": {
-            "description": "Bad Request"
+            "description": "Bad Request\n\nBad Request"
           },
           "500": {
             "description": "Internal Server Error"
@@ -328,7 +450,18 @@
     "/minrps/play": {
       "post": {
         "operationId": "playMinRpsGame",
-        "parameters": [],
+        "parameters": [
+          {
+            "name": "X-Request-Id",
+            "required": true,
+            "in": "header",
+            "description": "Unique request ID",
+            "schema": {
+              "type": "string",
+              "example": "80210e8c-9688-4369-a20a-4d69d1187dd7"
+            }
+          }
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -351,7 +484,7 @@
             }
           },
           "400": {
-            "description": "Bad Request"
+            "description": "Bad Request\n\nBad Request"
           },
           "409": {
             "description": "Conflict"

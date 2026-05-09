@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { AuthenticationService } from '../../../core/authentication/authentication.service';
+import { AuthenticationService } from '../../../core/authentication/services/authentication.service';
 import { MinFactoryUserDto } from '../../../core/generated';
 import { MinFactoryDtoMapper } from '../mapper/minfactory-dto.mapper';
 import { MinFactoryUser } from '../models/domains/minfactory-user';

@@ -15,8 +15,9 @@ import { getAuth, provideAuth } from '@angular/fire/auth';
 import { provideRouter } from '@angular/router';
 import { ENVIRONMENT } from '../environments/environment';
 import { APP_ROUTES } from './app.routes';
+import { AuthenticationInterceptor } from './core/authentication/interceptors/authentication.interceptor';
 import { ApiModule, BASE_PATH } from './core/generated';
-import { AuthenticationInterceptor } from './core/authentication/authentication.interceptor';
+import { RequestIdInterceptor } from './core/tracing/interceptors/request-id.interceptor';
 
 function getFirebaseProviders(): (Provider | EnvironmentProviders)[] {
   const { FIREBASE_CONFIG } = ENVIRONMENT;
@@ -50,6 +51,7 @@ export const APP_CONFIG: ApplicationConfig = {
     provideHttpClient(withInterceptorsFromDi()),
     importProvidersFrom(ApiModule),
     { provide: BASE_PATH, useValue: ENVIRONMENT.API_BASE_PATH },
+    { provide: HTTP_INTERCEPTORS, useClass: RequestIdInterceptor, multi: true },
     ...getFirebaseProviders(),
     { provide: LOCALE_ID, useValue: 'de-DE' },
   ],

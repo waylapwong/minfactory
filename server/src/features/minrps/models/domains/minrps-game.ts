@@ -1,14 +1,13 @@
-import { randomUUID } from 'node:crypto';
+import { GameRuleException } from '../../../../shared/exceptions/game-rule.exception';
 import { MinRpsResult } from '../enums/minrps-game-result.enum';
 import { MinRpsMove } from '../enums/minrps-move.enum';
 import { MinRpsPlayer } from './minrps-player';
-import { GameRuleException } from '../../../../shared/exceptions/game-rule.exception';
 
 export class MinRpsGame {
   private readonly RESULT_HISTORY_LIMIT = 10;
 
   public createdAt: Date = new Date();
-  public id: string = randomUUID();
+  public id: string = crypto.randomUUID();
   public name: string = '';
   public observers: Map<string, MinRpsPlayer> = new Map<string, MinRpsPlayer>();
   public player1: MinRpsPlayer = new MinRpsPlayer();

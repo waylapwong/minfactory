@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { ContextService } from '../../core/context/context.service';
+import { ContextService } from '../../core/context/services/context.service';
 import { AppName } from '../../shared/enums/app-name.enum';
 
 @Component({
