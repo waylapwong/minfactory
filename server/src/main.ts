@@ -1,4 +1,4 @@
-import { ClassSerializerInterceptor, ValidationPipe } from '@nestjs/common';
+import { ClassSerializerInterceptor, INestApplication, ValidationPipe } from '@nestjs/common';
 import { NestFactory, Reflector } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import helmet from 'helmet';
@@ -7,8 +7,8 @@ import { AppModule } from './app.module';
 import { MinApp } from './shared/enums/minapp.enum';
 
 async function bootstrap() {
-  // APPLICATION
-  const application = await NestFactory.create(AppModule);
+  // APPLICATION & LOGGER
+  const application: INestApplication<any> = await NestFactory.create(AppModule);
 
   // HELMET
   application.use(helmet());
@@ -17,7 +17,7 @@ async function bootstrap() {
   application.enableCors({
     origin: '*',
     methods: 'GET,POST,PUT,DELETE,OPTIONS',
-    allowedHeaders: 'Content-Type, Authorization',
+    allowedHeaders: 'Content-Type, Authorization, X-Request-Id',
   });
 
   // REQUEST VALIDATION

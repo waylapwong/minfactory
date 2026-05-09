@@ -1,24 +1,28 @@
 @BASE_PATH = http://localhost:3000/minrps
 @GAMES = games
-@ID = f534f71c-d81b-43b1-b963-073cab444708
+@ID = fa8782d9-d9c5-4ccf-9b21-093be8238804
 @PLAY = play
+@REQUEST_ID = d6a850d8-8977-466e-b710-edbd6513dd0d
 @VERSION = version
 
 
 ### GET /games
 GET {{BASE_PATH}}/{{GAMES}}
 Accept: application/json
+X-Request-Id: {{REQUEST_ID}}
 
 
 ### GET /games/{id}
 GET {{BASE_PATH}}/{{GAMES}}/{{ID}}
 Accept: application/json
+X-Request-Id: {{REQUEST_ID}}
 
 
 ### POST /games
 POST {{BASE_PATH}}/{{GAMES}}
 Accept: application/json
 Content-Type: application/json
+X-Request-Id: {{REQUEST_ID}}
 
 {
   "name": "Test Game"
@@ -28,12 +32,14 @@ Content-Type: application/json
 ### DELETE /games/{id}
 DELETE {{BASE_PATH}}/{{GAMES}}/{{ID}}
 Accept: application/json
+X-Request-Id: {{REQUEST_ID}}
 
 
 ### POST /play
 POST {{BASE_PATH}}/{{PLAY}}
 Accept: application/json
 Content-Type: application/json
+X-Request-Id: {{REQUEST_ID}}
 
 {
   "player1Move": "rock"
