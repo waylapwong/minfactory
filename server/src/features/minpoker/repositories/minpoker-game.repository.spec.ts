@@ -85,6 +85,44 @@ describe('MinPokerGameRepository', () => {
     });
   });
 
+  describe('findAllByCreator()', () => {
+    it('should return all entities by creator ordered by createdAt DESC', async () => {
+      const entities = [
+        Object.assign(new MinPokerGameEntity(), { id: '1', name: 'My Table' }),
+      ];
+
+      MINPOKER_GAME_TYPEORM_REPOSITORY_MOCK.find.mockResolvedValue(entities);
+
+      const result = await repository.findAllByCreator('creator-id');
+
+      expect(result).toBe(entities);
+      expect(MINPOKER_GAME_TYPEORM_REPOSITORY_MOCK.find).toHaveBeenCalledWith({
+        where: { creator: { id: 'creator-id' } },
+        relations: ['creator'],
+        order: { createdAt: 'DESC' },
+      });
+    });
+  });
+
+  describe('findAllPublic()', () => {
+    it('should return all public entities ordered by createdAt DESC', async () => {
+      const entities = [
+        Object.assign(new MinPokerGameEntity(), { id: '1', name: 'Public Table', isPublic: true }),
+      ];
+
+      MINPOKER_GAME_TYPEORM_REPOSITORY_MOCK.find.mockResolvedValue(entities);
+
+      const result = await repository.findAllPublic();
+
+      expect(result).toBe(entities);
+      expect(MINPOKER_GAME_TYPEORM_REPOSITORY_MOCK.find).toHaveBeenCalledWith({
+        where: { isPublic: true },
+        relations: ['creator'],
+        order: { createdAt: 'DESC' },
+      });
+    });
+  });
+
   describe('delete()', () => {
     it('should delete entity when found', async () => {
       const entity = new MinPokerGameEntity();

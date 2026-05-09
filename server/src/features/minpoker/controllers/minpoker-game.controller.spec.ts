@@ -6,6 +6,7 @@ import { AuthenticationService } from '../../../core/authentication/services/aut
 import { MINPOKER_GAME_SERVICE_MOCK } from '../mocks/minpoker-game.service.mock';
 import { MinPokerCreateGameDto } from '../models/dtos/minpoker-create-game.dto';
 import { MinPokerGameDto } from '../models/dtos/minpoker-game.dto';
+import { MinPokerGameVisibility } from '../models/enums/minpoker-game-visibility.enum';
 import { MinPokerGameService } from '../services/minpoker-game.service';
 import { MinPokerGameController } from './minpoker-game.controller';
 
@@ -17,6 +18,7 @@ describe('MinPokerGameController', () => {
       bigBlind: 2,
       createdAt: new Date('2026-03-24T18:45:30.000Z'),
       id: '550e8400-e29b-41d4-a716-446655440000',
+      isPublic: false,
       tableSize: 6,
       name: 'Evening Table',
       observerCount: 2,
@@ -27,6 +29,7 @@ describe('MinPokerGameController', () => {
       bigBlind: 2,
       createdAt: new Date('2026-03-24T19:10:00.000Z'),
       id: '660e8400-e29b-41d4-a716-446655440000',
+      isPublic: true,
       tableSize: 6,
       name: 'Turbo Sit and Go',
       observerCount: 1,
@@ -65,27 +68,26 @@ describe('MinPokerGameController', () => {
   });
 
   describe('getAll()', () => {
-    it('should return mock game dtos', async () => {
+    it('should return own games when no visibility parameter is given', async () => {
       const fakeUser = { firebaseUid: 'fb-1', email: 'u@e.com' } as any;
-      const result = await controller.getAll(fakeUser, 'test-request-id');
+      const result = await controller.getAll(fakeUser, undefined, 'test-request-id');
 
       expect(result).toHaveLength(2);
-      expect(result[0]).toMatchObject({
-        bigBlind: 2,
-        id: '550e8400-e29b-41d4-a716-446655440000',
-        name: 'Evening Table',
-        observerCount: 2,
-        playerCount: 4,
-        smallBlind: 1,
-        tableSize: 6,
-      });
-      expect(MINPOKER_GAME_SERVICE_MOCK.getAllGames).toHaveBeenCalledWith(fakeUser);
+      expect(MINPOKER_GAME_SERVICE_MOCK.getAllGames).toHaveBeenCalledWith(fakeUser, undefined);
+    });
+
+    it('should return public games when visibility=public', async () => {
+      const fakeUser = { firebaseUid: 'fb-1', email: 'u@e.com' } as any;
+      const result = await controller.getAll(fakeUser, MinPokerGameVisibility.Public, 'test-request-id');
+
+      expect(result).toHaveLength(2);
+      expect(MINPOKER_GAME_SERVICE_MOCK.getAllGames).toHaveBeenCalledWith(fakeUser, MinPokerGameVisibility.Public);
     });
   });
 
   describe('create()', () => {
     it('should create a new game via service and return dto', async () => {
-      const dto: MinPokerCreateGameDto = { name: 'New Table' } as MinPokerCreateGameDto;
+      const dto: MinPokerCreateGameDto = { name: 'New Table', isPublic: true } as MinPokerCreateGameDto;
 
       const fakeUser = { firebaseUid: 'fb-1', email: 'u@e.com' } as any;
       const result = await controller.create(dto, fakeUser, 'test-request-id');

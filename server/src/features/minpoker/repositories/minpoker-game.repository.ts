@@ -27,6 +27,14 @@ export class MinPokerGameRepository {
     });
   }
 
+  public async findAllPublic(): Promise<MinPokerGameEntity[]> {
+    return await this.repository.find({
+      where: { isPublic: true },
+      relations: ['creator'],
+      order: { createdAt: 'DESC' },
+    });
+  }
+
   public async findOne(id: string): Promise<MinPokerGameEntity> {
     const entity: MinPokerGameEntity | null = await this.repository.findOne({
       where: { id },

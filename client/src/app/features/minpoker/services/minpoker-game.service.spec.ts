@@ -34,6 +34,7 @@ describe('MinPokerGameService', () => {
           bigBlind: 20,
           createdAt: new Date('2026-01-01T18:00:00.000Z').toISOString(),
           id: 'id-1',
+          isPublic: false,
           tableSize: 6,
           name: 'Game 1',
           observerCount: 0,
@@ -44,6 +45,7 @@ describe('MinPokerGameService', () => {
           bigBlind: 50,
           createdAt: new Date('2026-01-02T18:00:00.000Z').toISOString(),
           id: 'id-2',
+          isPublic: true,
           tableSize: 6,
           name: 'Game 2',
           observerCount: 1,
@@ -71,6 +73,7 @@ describe('MinPokerGameService', () => {
         bigBlind: 50,
         createdAt: new Date().toISOString(),
         id: 'new-id',
+        isPublic: false,
         tableSize: 6,
         name: 'New Game',
         observerCount: 0,
@@ -82,7 +85,7 @@ describe('MinPokerGameService', () => {
 
       await service.createGame('New Game');
 
-      expect(MINPOKER_GAME_REPOSITORY_MOCK.create).toHaveBeenCalledWith({ name: 'New Game' });
+      expect(MINPOKER_GAME_REPOSITORY_MOCK.create).toHaveBeenCalledWith({ name: 'New Game', isPublic: false });
       expect(service.publicGamesVm().games.length).toBe(1);
       expect(service.publicGamesVm().games[0].id).toBe('new-id');
     });
@@ -94,6 +97,7 @@ describe('MinPokerGameService', () => {
             bigBlind: 20,
             createdAt: new Date('2026-01-01T18:00:00.000Z').toISOString(),
             id: 'older-id',
+            isPublic: false,
             tableSize: 6,
             name: 'Older Game',
             observerCount: 0,
@@ -107,6 +111,7 @@ describe('MinPokerGameService', () => {
           bigBlind: 50,
           createdAt: new Date('2026-01-02T18:00:00.000Z').toISOString(),
           id: 'newer-id',
+          isPublic: false,
           tableSize: 6,
           name: 'Newer Game',
           observerCount: 0,

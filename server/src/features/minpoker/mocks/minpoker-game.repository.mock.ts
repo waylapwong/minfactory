@@ -4,4 +4,5 @@ export const MINPOKER_GAME_REPOSITORY_MOCK = {
   findOne: jest.fn(),
   findAll: jest.fn(),
   findAllByCreator: jest.fn(),
+  findAllPublic: jest.fn(),
 };

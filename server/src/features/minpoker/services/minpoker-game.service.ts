@@ -6,6 +6,7 @@ import { MinPokerGame } from '../models/domains/minpoker-game';
 import { MinPokerCreateGameDto } from '../models/dtos/minpoker-create-game.dto';
 import { MinPokerGameDto } from '../models/dtos/minpoker-game.dto';
 import { MinPokerGameEntity } from '../models/entities/minpoker-game.entity';
+import { MinPokerGameVisibility } from '../models/enums/minpoker-game-visibility.enum';
 import { MinPokerGameRepository } from '../repositories/minpoker-game.repository';
 import { FirebaseUserDto } from '../../../core/authentication/models/firebase-user.dto';
 import { MinFactoryUserEntity } from '../../minfactory/models/entities/minfactory-user.entity';
@@ -46,13 +47,16 @@ export class MinPokerGameService {
     await this.gameRepository.delete(id);
   }
 
-  public async getAllGames(firebaseUser: FirebaseUserDto): Promise<MinPokerGameDto[]> {
-    // Find User and return all games for Admin, or only creator's games for others
-    const userEntity: MinFactoryUserEntity = await this.userRepository.findByFirebaseUid(firebaseUser.firebaseUid);
-    const entities: MinPokerGameEntity[] =
-      userEntity.role === MinFactoryRole.Admin
-        ? await this.gameRepository.findAll()
-        : await this.gameRepository.findAllByCreator(userEntity.id);
+  public async getAllGames(firebaseUser: FirebaseUserDto, visibility?: MinPokerGameVisibility): Promise<MinPokerGameDto[]> {
+    let entities: MinPokerGameEntity[];
+
+    if (visibility === MinPokerGameVisibility.Public) {
+      entities = await this.gameRepository.findAllPublic();
+    } else {
+      const userEntity: MinFactoryUserEntity = await this.userRepository.findByFirebaseUid(firebaseUser.firebaseUid);
+      entities = await this.gameRepository.findAllByCreator(userEntity.id);
+    }
+
     // Map to DTOs
     const domains: MinPokerGame[] = entities.map(MinPokerEntityMapper.toDomain);
     const dtos: MinPokerGameDto[] = domains.map(MinPokerDomainMapper.domainToDto);

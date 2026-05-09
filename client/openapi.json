@@ -14,16 +14,6 @@
               "example": "550e8400-e29b-41d4-a716-446655440000",
               "type": "string"
             }
-          },
-          {
-            "name": "X-Request-Id",
-            "required": true,
-            "in": "header",
-            "description": "Unique request ID",
-            "schema": {
-              "type": "string",
-              "example": "80210e8c-9688-4369-a20a-4d69d1187dd7"
-            }
           }
         ],
         "responses": {
@@ -47,7 +37,9 @@
           }
         },
         "summary": "",
-        "tags": ["minPoker"]
+        "tags": [
+          "minPoker"
+        ]
       }
     },
     "/minpoker/games": {
@@ -55,13 +47,14 @@
         "operationId": "getAllMinPokerGames",
         "parameters": [
           {
-            "name": "X-Request-Id",
-            "required": true,
-            "in": "header",
-            "description": "Unique request ID",
+            "name": "visibility",
+            "required": false,
+            "in": "query",
             "schema": {
-              "type": "string",
-              "example": "80210e8c-9688-4369-a20a-4d69d1187dd7"
+              "enum": [
+                "public"
+              ],
+              "type": "string"
             }
           }
         ],
@@ -96,22 +89,13 @@
           }
         },
         "summary": "",
-        "tags": ["minPoker"]
+        "tags": [
+          "minPoker"
+        ]
       },
       "post": {
         "operationId": "createMinPokerGame",
-        "parameters": [
-          {
-            "name": "X-Request-Id",
-            "required": true,
-            "in": "header",
-            "description": "Unique request ID",
-            "schema": {
-              "type": "string",
-              "example": "80210e8c-9688-4369-a20a-4d69d1187dd7"
-            }
-          }
-        ],
+        "parameters": [],
         "requestBody": {
           "required": true,
           "content": {
@@ -150,24 +134,15 @@
           }
         },
         "summary": "",
-        "tags": ["minPoker"]
+        "tags": [
+          "minPoker"
+        ]
       }
     },
     "/minfactory/users/me": {
       "delete": {
         "operationId": "deleteMinFactoryUserMe",
-        "parameters": [
-          {
-            "name": "X-Request-Id",
-            "required": true,
-            "in": "header",
-            "description": "Unique request ID",
-            "schema": {
-              "type": "string",
-              "example": "80210e8c-9688-4369-a20a-4d69d1187dd7"
-            }
-          }
-        ],
+        "parameters": [],
         "responses": {
           "204": {
             "description": "Deleted"
@@ -186,22 +161,13 @@
           }
         },
         "summary": "",
-        "tags": ["minFactory"]
+        "tags": [
+          "minFactory"
+        ]
       },
       "get": {
         "operationId": "getMinFactoryUserMe",
-        "parameters": [
-          {
-            "name": "X-Request-Id",
-            "required": true,
-            "in": "header",
-            "description": "Unique request ID",
-            "schema": {
-              "type": "string",
-              "example": "80210e8c-9688-4369-a20a-4d69d1187dd7"
-            }
-          }
-        ],
+        "parameters": [],
         "responses": {
           "200": {
             "description": "OK",
@@ -227,24 +193,15 @@
           }
         },
         "summary": "",
-        "tags": ["minFactory"]
+        "tags": [
+          "minFactory"
+        ]
       }
     },
     "/minfactory/users": {
       "post": {
         "operationId": "createMinFactoryUser",
-        "parameters": [
-          {
-            "name": "X-Request-Id",
-            "required": true,
-            "in": "header",
-            "description": "Unique request ID",
-            "schema": {
-              "type": "string",
-              "example": "80210e8c-9688-4369-a20a-4d69d1187dd7"
-            }
-          }
-        ],
+        "parameters": [],
         "responses": {
           "201": {
             "description": "Created",
@@ -270,7 +227,9 @@
           }
         },
         "summary": "",
-        "tags": ["minFactory"]
+        "tags": [
+          "minFactory"
+        ]
       }
     },
     "/minrps/games/{id}": {
@@ -285,16 +244,6 @@
             "schema": {
               "example": "550e8400-e29b-41d4-a716-446655440000",
               "type": "string"
-            }
-          },
-          {
-            "name": "X-Request-Id",
-            "required": true,
-            "in": "header",
-            "description": "Unique request ID",
-            "schema": {
-              "type": "string",
-              "example": "80210e8c-9688-4369-a20a-4d69d1187dd7"
             }
           }
         ],
@@ -313,7 +262,9 @@
           }
         },
         "summary": "",
-        "tags": ["minRPS"]
+        "tags": [
+          "minRPS"
+        ]
       },
       "get": {
         "operationId": "getMinRpsGame",
@@ -324,16 +275,6 @@
             "in": "path",
             "schema": {
               "type": "string"
-            }
-          },
-          {
-            "name": "X-Request-Id",
-            "required": true,
-            "in": "header",
-            "description": "Unique request ID",
-            "schema": {
-              "type": "string",
-              "example": "80210e8c-9688-4369-a20a-4d69d1187dd7"
             }
           }
         ],
@@ -359,24 +300,15 @@
           }
         },
         "summary": "",
-        "tags": ["minRPS"]
+        "tags": [
+          "minRPS"
+        ]
       }
     },
     "/minrps/games": {
       "get": {
         "operationId": "getAllMinRpsGames",
-        "parameters": [
-          {
-            "name": "X-Request-Id",
-            "required": true,
-            "in": "header",
-            "description": "Unique request ID",
-            "schema": {
-              "type": "string",
-              "example": "80210e8c-9688-4369-a20a-4d69d1187dd7"
-            }
-          }
-        ],
+        "parameters": [],
         "responses": {
           "200": {
             "description": "OK",
@@ -399,22 +331,13 @@
           }
         },
         "summary": "",
-        "tags": ["minRPS"]
+        "tags": [
+          "minRPS"
+        ]
       },
       "post": {
         "operationId": "createMinRpsGame",
-        "parameters": [
-          {
-            "name": "X-Request-Id",
-            "required": true,
-            "in": "header",
-            "description": "Unique request ID",
-            "schema": {
-              "type": "string",
-              "example": "80210e8c-9688-4369-a20a-4d69d1187dd7"
-            }
-          }
-        ],
+        "parameters": [],
         "requestBody": {
           "required": true,
           "content": {
@@ -444,24 +367,15 @@
           }
         },
         "summary": "",
-        "tags": ["minRPS"]
+        "tags": [
+          "minRPS"
+        ]
       }
     },
     "/minrps/play": {
       "post": {
         "operationId": "playMinRpsGame",
-        "parameters": [
-          {
-            "name": "X-Request-Id",
-            "required": true,
-            "in": "header",
-            "description": "Unique request ID",
-            "schema": {
-              "type": "string",
-              "example": "80210e8c-9688-4369-a20a-4d69d1187dd7"
-            }
-          }
-        ],
+        "parameters": [],
         "requestBody": {
           "required": true,
           "content": {
@@ -494,13 +408,15 @@
           }
         },
         "summary": "",
-        "tags": ["minRPS"]
+        "tags": [
+          "minRPS"
+        ]
       }
     }
   },
   "info": {
     "title": "minFactory",
-    "description": "minFactory OpenAPI specification. \u003Cbr/\u003E \u003Ca href=\"http://localhost:3000/openapi-json/\" target=\"_blank\"\u003EJSON specification\u003C/a\u003E",
+    "description": "minFactory OpenAPI specification. <br/> <a href=\"http://localhost:3000/openapi-json/\" target=\"_blank\">JSON specification</a>",
     "version": "v0.0.0",
     "contact": {
       "name": "minFactory",
@@ -559,9 +475,23 @@
             "example": 6,
             "minimum": 6,
             "maximum": 6
+          },
+          "isPublic": {
+            "type": "boolean",
+            "example": true
           }
         },
-        "required": ["bigBlind", "createdAt", "id", "name", "observerCount", "playerCount", "smallBlind", "tableSize"]
+        "required": [
+          "bigBlind",
+          "createdAt",
+          "id",
+          "isPublic",
+          "name",
+          "observerCount",
+          "playerCount",
+          "smallBlind",
+          "tableSize"
+        ]
       },
       "MinPokerCreateGameDto": {
         "type": "object",
@@ -571,9 +501,16 @@
             "example": "Test Name",
             "maxLength": 32,
             "minLength": 2
+          },
+          "isPublic": {
+            "type": "boolean",
+            "example": true
           }
         },
-        "required": ["name"]
+        "required": [
+          "isPublic",
+          "name"
+        ]
       },
       "MinFactoryUserDto": {
         "type": "object",
@@ -593,11 +530,19 @@
           },
           "role": {
             "type": "string",
-            "enum": ["admin", "user"],
+            "enum": [
+              "admin",
+              "user"
+            ],
             "example": "user"
           }
         },
-        "required": ["id", "createdAt", "email", "role"]
+        "required": [
+          "id",
+          "createdAt",
+          "email",
+          "role"
+        ]
       },
       "MinRpsGameDto": {
         "type": "object",
@@ -629,7 +574,13 @@
             "minimum": 0
           }
         },
-        "required": ["createdAt", "id", "name", "observerCount", "playerCount"]
+        "required": [
+          "createdAt",
+          "id",
+          "name",
+          "observerCount",
+          "playerCount"
+        ]
       },
       "MinRpsCreateGameDto": {
         "type": "object",
@@ -640,11 +591,18 @@
             "example": "Test Game"
           }
         },
-        "required": ["name"]
+        "required": [
+          "name"
+        ]
       },
       "MinRpsMove": {
         "type": "string",
-        "enum": ["none", "rock", "paper", "scissors"],
+        "enum": [
+          "none",
+          "rock",
+          "paper",
+          "scissors"
+        ],
         "description": "Player move"
       },
       "MinRpsPlayDto": {
@@ -660,11 +618,18 @@
             ]
           }
         },
-        "required": ["player1Move"]
+        "required": [
+          "player1Move"
+        ]
       },
       "MinRpsResult": {
         "type": "string",
-        "enum": ["None", "Player1", "Player2", "Draw"]
+        "enum": [
+          "None",
+          "Player1",
+          "Player2",
+          "Draw"
+        ]
       },
       "MinRpsPlayResultDto": {
         "type": "object",
@@ -694,7 +659,11 @@
             ]
           }
         },
-        "required": ["player1Move", "player2Move", "result"]
+        "required": [
+          "player1Move",
+          "player2Move",
+          "result"
+        ]
       }
     }
   }

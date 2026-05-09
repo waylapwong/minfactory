@@ -11,6 +11,7 @@ describe('MinPokerEntityMapper', () => {
       entity.createdAt = new Date('2025-02-02');
       entity.bigBlind = 2;
       entity.smallBlind = 1;
+      entity.isPublic = true;
 
       const domain: MinPokerGame = MinPokerEntityMapper.toDomain(entity);
 
@@ -19,6 +20,7 @@ describe('MinPokerEntityMapper', () => {
       expect(domain.createdAt).toEqual(new Date('2025-02-02'));
       expect(domain.bigBlind).toBe(2);
       expect(domain.smallBlind).toBe(1);
+      expect(domain.isPublic).toBe(true);
     });
   });
 });

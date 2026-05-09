@@ -7,11 +7,13 @@ describe('MinPokerDtoMapper', () => {
     it('should map create DTO to domain', () => {
       const dto = new MinPokerCreateGameDto();
       dto.name = 'New Table';
+      dto.isPublic = true;
 
       const domain: MinPokerGame = MinPokerDtoMapper.createDtoToDomain(dto);
 
       expect(domain).toBeDefined();
       expect(domain.name).toBe('New Table');
+      expect(domain.isPublic).toBe(true);
     });
   });
 });

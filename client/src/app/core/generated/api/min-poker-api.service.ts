@@ -163,7 +163,7 @@ export class MinPokerApiService {
 
     /**
      * 
-     * @param id UUID of resource
+     * @param id Unique ID of resource
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
@@ -220,13 +220,20 @@ export class MinPokerApiService {
 
     /**
      * 
+     * @param visibility 
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public getAllMinPokerGames(observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<Array<MinPokerGameDto>>;
-    public getAllMinPokerGames(observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpResponse<Array<MinPokerGameDto>>>;
-    public getAllMinPokerGames(observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpEvent<Array<MinPokerGameDto>>>;
-    public getAllMinPokerGames(observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<any> {
+    public getAllMinPokerGames(visibility?: 'public', observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<Array<MinPokerGameDto>>;
+    public getAllMinPokerGames(visibility?: 'public', observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpResponse<Array<MinPokerGameDto>>>;
+    public getAllMinPokerGames(visibility?: 'public', observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpEvent<Array<MinPokerGameDto>>>;
+    public getAllMinPokerGames(visibility?: 'public', observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<any> {
+
+        let localVarQueryParameters = new HttpParams({encoder: this.encoder});
+        if (visibility !== undefined && visibility !== null) {
+          localVarQueryParameters = this.addToHttpParams(localVarQueryParameters,
+            <any>visibility, 'visibility');
+        }
 
         let localVarHeaders = this.defaultHeaders;
 
@@ -263,6 +270,7 @@ export class MinPokerApiService {
         return this.httpClient.request<Array<MinPokerGameDto>>('get', `${this.configuration.basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
+                params: localVarQueryParameters,
                 responseType: <any>responseType_,
                 withCredentials: this.configuration.withCredentials,
                 headers: localVarHeaders,

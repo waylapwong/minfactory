@@ -1,5 +1,5 @@
-import { Body, Controller, Delete, Get, Headers, HttpCode, Param, ParseUUIDPipe, Post, UseGuards } from '@nestjs/common';
-import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { Body, Controller, Delete, Get, Headers, HttpCode, Param, ParseUUIDPipe, Post, Query, UseGuards } from '@nestjs/common';
+import { ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { FirebaseUser } from '../../../core/authentication/decorators/firebase-user.decorator';
 import { AuthenticationGuard } from '../../../core/authentication/guards/authentication.guard';
 import type { FirebaseUserDto } from '../../../core/authentication/models/firebase-user.dto';
@@ -17,6 +17,7 @@ import { API_HEADER_REQUEST_ID } from '../../../shared/decorators/api-request-id
 import { MinApp } from '../../../shared/enums/minapp.enum';
 import { MinPokerCreateGameDto } from '../models/dtos/minpoker-create-game.dto';
 import { MinPokerGameDto } from '../models/dtos/minpoker-game.dto';
+import { MinPokerGameVisibility } from '../models/enums/minpoker-game-visibility.enum';
 import { MinPokerGameService } from '../services/minpoker-game.service';
 
 @Controller('minpoker/games')
@@ -56,12 +57,14 @@ export class MinPokerGameController {
   @API_403()
   @API_404()
   @API_500()
+  @ApiQuery({ name: 'visibility', enum: MinPokerGameVisibility, required: false, description: 'public = alle öffentlichen Spiele. Ohne Parameter = eigene Spiele.' })
   public async getAll(
     @FirebaseUser() firebaseUser: FirebaseUserDto,
+    @Query('visibility') visibility: MinPokerGameVisibility | undefined,
     @Headers('X-Request-Id') requestId: string,
   ): Promise<MinPokerGameDto[]> {
     this.logger.log(`Incoming request GET /minpoker/games`, requestId);
-    return await this.gameService.getAllGames(firebaseUser);
+    return await this.gameService.getAllGames(firebaseUser, visibility);
   }
 
   @Post()

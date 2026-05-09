@@ -10,6 +10,7 @@ describe('MinPokerDomainMapper', () => {
       domain.id = 'test-id';
       domain.name = 'Test Table';
       domain.createdAt = new Date('2025-01-01');
+      domain.isPublic = true;
       domain.players = [{ id: 'p1', name: 'A' } as any];
 
       const dto: MinPokerGameDto = MinPokerDomainMapper.domainToDto(domain);
@@ -18,6 +19,7 @@ describe('MinPokerDomainMapper', () => {
       expect(dto.name).toBe('Test Table');
       expect(dto.createdAt).toEqual(new Date('2025-01-01'));
       expect(dto.playerCount).toBe(1);
+      expect(dto.isPublic).toBe(true);
     });
   });
 
@@ -27,6 +29,7 @@ describe('MinPokerDomainMapper', () => {
       domain.id = 'test-id';
       domain.name = 'Test Table';
       domain.createdAt = new Date('2025-01-01');
+      domain.isPublic = false;
       domain.tableSize = 6;
 
       const entity: MinPokerGameEntity = MinPokerDomainMapper.domainToEntity(domain);
@@ -35,6 +38,7 @@ describe('MinPokerDomainMapper', () => {
       expect(entity.name).toBe('Test Table');
       expect(entity.createdAt).toEqual(new Date('2025-01-01'));
       expect(entity.tableSize).toBe(6);
+      expect(entity.isPublic).toBe(false);
     });
   });
 });

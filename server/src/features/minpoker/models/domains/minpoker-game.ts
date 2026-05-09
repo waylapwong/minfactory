@@ -6,6 +6,7 @@ export class MinPokerGame {
   public bigBlind: number = 2;
   public createdAt: Date = new Date(0);
   public creatorId: string = '';
+  public isPublic: boolean = false;
   public id: string = '';
   public name: string = '';
   public observers: Map<string, MinPokerPlayer> = new Map<string, MinPokerPlayer>();

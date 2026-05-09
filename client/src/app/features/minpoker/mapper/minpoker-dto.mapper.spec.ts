@@ -8,6 +8,7 @@ describe('MinPokerDtoMapper', () => {
         bigBlind: 100,
         createdAt: '2026-01-01T18:00:00.000Z',
         id: 'game-id',
+        isPublic: false,
         tableSize: 6,
         name: 'Evening Table',
         observerCount: 2,

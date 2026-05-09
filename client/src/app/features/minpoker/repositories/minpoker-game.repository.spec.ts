@@ -34,6 +34,7 @@ describe('MinPokerGameRepository', () => {
           bigBlind: 20,
           createdAt: new Date('2026-01-01T18:00:00.000Z').toISOString(),
           id: 'id-1',
+          isPublic: false,
           tableSize: 6,
           name: 'Game 1',
           observerCount: 0,
@@ -44,6 +45,7 @@ describe('MinPokerGameRepository', () => {
           bigBlind: 50,
           createdAt: new Date('2026-01-02T18:00:00.000Z').toISOString(),
           id: 'id-2',
+          isPublic: true,
           tableSize: 6,
           name: 'Game 2',
           observerCount: 1,
@@ -67,6 +69,7 @@ describe('MinPokerGameRepository', () => {
         bigBlind: 20,
         createdAt: new Date().toISOString(),
         id: 'new-id',
+        isPublic: false,
         tableSize: 6,
         name: 'New Game',
         observerCount: 0,
@@ -76,7 +79,7 @@ describe('MinPokerGameRepository', () => {
 
       MINPOKER_API_SERVICE_MOCK.createMinPokerGame.and.returnValue(of(mockDto) as any);
 
-      const result = await repository.create({ name: 'New Game' });
+      const result = await repository.create({ name: 'New Game', isPublic: false });
 
       expect(MINPOKER_API_SERVICE_MOCK.createMinPokerGame).toHaveBeenCalled();
       expect(result).toEqual(mockDto);

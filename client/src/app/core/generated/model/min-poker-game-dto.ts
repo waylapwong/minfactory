@@ -20,5 +20,6 @@ export interface MinPokerGameDto {
     playerCount: number;
     smallBlind: number;
     tableSize: number;
+    isPublic: boolean;
 }
 

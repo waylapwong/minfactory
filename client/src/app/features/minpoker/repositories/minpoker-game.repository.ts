@@ -8,8 +8,8 @@ import { MinPokerApiService, MinPokerCreateGameDto, MinPokerGameDto } from '../.
 export class MinPokerGameRepository {
   constructor(private readonly apiService: MinPokerApiService) {}
 
-  public async create(game: { name: string }): Promise<MinPokerGameDto> {
-    const dto: MinPokerCreateGameDto = { name: game.name };
+  public async create(game: { name: string; isPublic: boolean }): Promise<MinPokerGameDto> {
+    const dto: MinPokerCreateGameDto = { name: game.name, isPublic: game.isPublic };
     return await firstValueFrom(this.apiService.createMinPokerGame(dto));
   }
 
