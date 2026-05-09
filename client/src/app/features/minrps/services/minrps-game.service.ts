@@ -1,5 +1,6 @@
 import { Injectable, Signal, WritableSignal, computed, signal } from '@angular/core';
 import { MinRpsGameDto } from '../../../core/generated';
+import { LoggerService } from '../../../core/logger/logger.service';
 import { MinRpsDomainMapper } from '../mapper/minrps-domain.mapper';
 import { MinRpsDtoMapper } from '../mapper/minrps-dto.mapper';
 import { MinRpsGame } from '../models/domains/minrps-game';
@@ -11,6 +12,7 @@ import { MinRpsGameRepository } from '../repositories/minrps-game.repository';
 })
 export class MinRpsGameService {
   private readonly cachedGames: WritableSignal<MinRpsGame[]> = signal([]);
+  private readonly logger: LoggerService = new LoggerService('MinRpsGameService');
 
   public games: Signal<MinRpsOverviewViewModel[]> = computed(() => this.cachedGames().map(MinRpsDomainMapper.domainToOverviewViewModel));
 
@@ -38,7 +40,7 @@ export class MinRpsGameService {
       const dto: MinRpsGameDto = await this.gameRepository.get(id);
       return !!dto;
     } catch (error: unknown) {
-      console.error(error);
+      this.logger.error(String(error));
       return false;
     }
   }

@@ -1,5 +1,6 @@
 import { Injectable, Signal, WritableSignal, computed, signal } from '@angular/core';
 import { AuthenticationService } from '../../../core/authentication/authentication.service';
+import { LoggerService } from '../../../core/logger/logger.service';
 import { MinPokerDomainMapper } from '../mapper/minpoker-domain.mapper';
 import { MinPokerEventMapper } from '../mapper/minpoker-event.mapper';
 import { MinPokerMatchJoinCommand } from '../models/commands/minpoker-match-join.command';
@@ -27,6 +28,7 @@ export class MinPokerMultiplayerService {
   private readonly cachedPlayerId: WritableSignal<string> = signal('');
 
   private isSubscribed: boolean = false;
+  private readonly logger: LoggerService = new LoggerService('MinPokerMultiplayerService');
 
   constructor(
     private readonly socketRepository: MinPokerSocketRepository,
@@ -53,7 +55,7 @@ export class MinPokerMultiplayerService {
     command.matchId = this.cachedMatch().id;
     command.playerId = this.cachedPlayerId();
     this.socketRepository.emit(MinPokerMatchCommand.Leave, command);
-    console.warn(`Sending Command: ${MinPokerMatchCommand.Leave}`, command);
+    this.logger.debug(`Outgoing Command: ${MinPokerMatchCommand.Leave}`);
   }
 
   public seatGame(playerName: string, avatar: string, seat: number): void {
@@ -68,7 +70,7 @@ export class MinPokerMultiplayerService {
     command.avatar = avatar;
     command.seat = seat;
     this.socketRepository.emit(MinPokerMatchCommand.Seat, command);
-    console.warn(`Sending Command: ${MinPokerMatchCommand.Seat}`, command);
+    this.logger.debug(`Outgoing Command: ${MinPokerMatchCommand.Seat}`);
   }
 
   public setGameId(id: string): void {
@@ -85,24 +87,24 @@ export class MinPokerMultiplayerService {
     command.matchId = this.cachedMatch().id;
     command.playerId = this.cachedPlayerId();
     this.socketRepository.emit(MinPokerMatchCommand.Join, command);
-    console.warn(`Sending Command: ${MinPokerMatchCommand.Join}`, command);
+    this.logger.debug(`Outgoing Command: ${MinPokerMatchCommand.Join}`);
   }
 
   private readonly onMatchConnectedEvent = (event: MinPokerMatchConnectedEvent): void => {
-    console.warn('Receiving Event: Connected', event);
+    this.logger.debug('Incoming Event: Connected');
     this.cachedPlayerId.set(event.playerId);
     this.joinGame();
   };
 
   private readonly onMatchHandDealtEvent = (event: MinPokerMatchHandDealtEvent): void => {
-    console.warn('Receiving Event: HandDealt', event);
+    this.logger.debug('Incoming Event: HandDealt');
     const newMatch: MinPokerMatch = new MinPokerMatch(this.cachedMatch());
     newMatch.hand = [...event.hand];
     this.cachedMatch.set(newMatch);
   };
 
   private readonly onMatchUpdatedEvent = (event: MinPokerMatchUpdatedEvent): void => {
-    console.warn('Receiving Event: Updated', event);
+    this.logger.debug('Incoming Event: Updated');
     const updatedMatch: MinPokerMatch = MinPokerEventMapper.matchUpdatedEventToDomain(event);
     if (event.matchId === this.cachedMatch().id) {
       updatedMatch.hand = this.cachedMatch().hand;
