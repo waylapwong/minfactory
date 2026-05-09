@@ -7,7 +7,7 @@ import { AppModule } from './app.module';
 import { MinApp } from './shared/enums/minapp.enum';
 
 async function bootstrap() {
-  // APPLICATION & LOGGER
+  // APPLICATION
   const application: INestApplication<any> = await NestFactory.create(AppModule);
 
   // HELMET
