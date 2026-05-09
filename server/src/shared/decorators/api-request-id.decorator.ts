@@ -1,6 +1,6 @@
 import { applyDecorators, UseGuards } from '@nestjs/common';
 import { ApiHeader } from '@nestjs/swagger';
-import { RequestIdGuard } from '../../core/request/guards/request-id.guard';
+import { RequestIdGuard } from '../../core/tracing/guards/request-id.guard';
 import { API_400 } from './api-400.decorator';
 
 export function API_HEADER_REQUEST_ID() {

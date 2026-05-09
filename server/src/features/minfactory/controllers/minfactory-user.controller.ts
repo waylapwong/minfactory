@@ -3,7 +3,7 @@ import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { FirebaseUser } from '../../../core/authentication/decorators/firebase-user.decorator';
 import { AuthenticationGuard } from '../../../core/authentication/guards/authentication.guard';
 import type { FirebaseUserDto } from '../../../core/authentication/models/firebase-user.dto';
-import { LoggerService } from '../../../core/logger/logger.service';
+import { LoggerService } from '../../../core/logging/services/logger.service';
 import { API_200 } from '../../../shared/decorators/api-200.decorator';
 import { API_201 } from '../../../shared/decorators/api-201.decorator';
 import { API_204 } from '../../../shared/decorators/api-204.decorator';

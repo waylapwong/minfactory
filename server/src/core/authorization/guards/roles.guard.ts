@@ -1,11 +1,11 @@
 import { CanActivate, ExecutionContext, ForbiddenException, Injectable } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { Request } from 'express';
-import { MinFactoryUserEntity } from '../models/entities/minfactory-user.entity';
-import { MinFactoryUserRepository } from '../repositories/minfactory-user.repository';
-import { ROLES_KEY } from '../../../core/authentication/decorators/roles.decorator';
-import { AuthenticatedRequest } from '../../../core/authentication/models/authenticated-request';
+import { MinFactoryUserEntity } from '../../../features/minfactory/models/entities/minfactory-user.entity';
+import { MinFactoryUserRepository } from '../../../features/minfactory/repositories/minfactory-user.repository';
 import { MinFactoryRole, hasRequiredRole } from '../../../shared/enums/minfactory-role.enum';
+import { ROLES_KEY } from '../../authentication/decorators/roles.decorator';
+import { AuthenticatedRequest } from '../../authentication/models/authenticated-request';
 
 @Injectable()
 export class RolesGuard implements CanActivate {

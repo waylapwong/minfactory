@@ -1,6 +1,6 @@
 import { Body, Controller, Headers, HttpCode, Post } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
-import { LoggerService } from '../../../core/logger/logger.service';
+import { LoggerService } from '../../../core/logging/services/logger.service';
 import { API_201 } from '../../../shared/decorators/api-201.decorator';
 import { API_400 } from '../../../shared/decorators/api-400.decorator';
 import { API_409 } from '../../../shared/decorators/api-409.decorator';

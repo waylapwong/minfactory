@@ -1,5 +1,5 @@
 import { ExecutionContext, UnauthorizedException } from '@nestjs/common';
-import { AUTHENTICATION_SERVICE_MOCK } from '../../mocks/authentication.service.mock';
+import { AUTHENTICATION_SERVICE_MOCK } from '../mocks/authentication.service.mock';
 import { AuthenticationService } from '../services/authentication.service';
 import { AuthenticationGuard } from './authentication.guard';
 

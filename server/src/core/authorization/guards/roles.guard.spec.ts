@@ -1,9 +1,9 @@
 import { ExecutionContext, ForbiddenException, NotFoundException } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
-import { ROLES_KEY } from '../../../core/authentication/decorators/roles.decorator';
+import { MINFACTORY_USER_REPOSITORY_MOCK } from '../../../features/minfactory/mocks/minfactory-user.repository.mock';
+import { MinFactoryUserRepository } from '../../../features/minfactory/repositories/minfactory-user.repository';
 import { MinFactoryRole } from '../../../shared/enums/minfactory-role.enum';
-import { MinFactoryUserRepository } from '../repositories/minfactory-user.repository';
-import { MINFACTORY_USER_REPOSITORY_MOCK } from '../mocks/minfactory-user.repository.mock';
+import { ROLES_KEY } from '../../authentication/decorators/roles.decorator';
 import { RolesGuard } from './roles.guard';
 
 function createExecutionContext(firebaseUid: string = 'firebase-uid-123'): ExecutionContext {

@@ -1,12 +1,12 @@
 import { ConflictException, NotFoundException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
-import { MinFactoryUserEntity } from '../models/entities/minfactory-user.entity';
-import { MinFactoryUserRepository } from '../repositories/minfactory-user.repository';
-import { MINFACTORY_USER_REPOSITORY_MOCK } from '../mocks/minfactory-user.repository.mock';
-import { MinFactoryUserService } from './minfactory-user.service';
+import { AUTHENTICATION_SERVICE_MOCK } from '../../../core/authentication/mocks/authentication.service.mock';
 import { FirebaseUserDto } from '../../../core/authentication/models/firebase-user.dto';
 import { AuthenticationService } from '../../../core/authentication/services/authentication.service';
-import { AUTHENTICATION_SERVICE_MOCK } from '../../../core/mocks/authentication.service.mock';
+import { MINFACTORY_USER_REPOSITORY_MOCK } from '../mocks/minfactory-user.repository.mock';
+import { MinFactoryUserEntity } from '../models/entities/minfactory-user.entity';
+import { MinFactoryUserRepository } from '../repositories/minfactory-user.repository';
+import { MinFactoryUserService } from './minfactory-user.service';
 
 describe('MinFactoryUserService', () => {
   let userService: MinFactoryUserService;

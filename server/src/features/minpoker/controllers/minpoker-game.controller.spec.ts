@@ -1,8 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { AuthenticationGuard } from '../../../core/authentication/guards/authentication.guard';
+import { AUTHENTICATION_GUARD_MOCK } from '../../../core/authentication/mocks/authentication.guard.mock';
+import { AUTHENTICATION_SERVICE_MOCK } from '../../../core/authentication/mocks/authentication.service.mock';
 import { AuthenticationService } from '../../../core/authentication/services/authentication.service';
-import { AUTHENTICATION_GUARD_MOCK } from '../../../core/mocks/authentication.guard.mock';
-import { AUTHENTICATION_SERVICE_MOCK } from '../../../core/mocks/authentication.service.mock';
 import { MINPOKER_GAME_SERVICE_MOCK } from '../mocks/minpoker-game.service.mock';
 import { MinPokerCreateGameDto } from '../models/dtos/minpoker-create-game.dto';
 import { MinPokerGameDto } from '../models/dtos/minpoker-game.dto';
@@ -67,7 +67,7 @@ describe('MinPokerGameController', () => {
   describe('getAll()', () => {
     it('should return mock game dtos', async () => {
       const fakeUser = { firebaseUid: 'fb-1', email: 'u@e.com' } as any;
-      const result = await controller.getAll(fakeUser);
+      const result = await controller.getAll(fakeUser, 'test-request-id');
 
       expect(result).toHaveLength(2);
       expect(result[0]).toMatchObject({
@@ -88,7 +88,7 @@ describe('MinPokerGameController', () => {
       const dto: MinPokerCreateGameDto = { name: 'New Table' } as MinPokerCreateGameDto;
 
       const fakeUser = { firebaseUid: 'fb-1', email: 'u@e.com' } as any;
-      const result = await controller.create(dto, fakeUser);
+      const result = await controller.create(dto, fakeUser, 'test-request-id');
 
       expect(result).toMatchObject({ name: 'New Table', id: 'new-id' });
       expect(MINPOKER_GAME_SERVICE_MOCK.createGame).toHaveBeenCalledWith(dto, fakeUser);

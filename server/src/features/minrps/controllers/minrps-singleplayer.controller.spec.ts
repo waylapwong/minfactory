@@ -1,11 +1,11 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { MinRpsSingleplayerController } from './minrps-singleplayer.controller';
-import { MinRpsSingleplayerService } from '../services/minrps-singleplayer.service';
 import { MINRPS_SINGLEPLAYER_SERVICE_MOCK } from '../mocks/minrps-singleplayer.service.mock';
-import { MinRpsPlayDto } from '../models/dtos/minrps-play.dto';
 import { MinRpsPlayResultDto } from '../models/dtos/minrps-play-result.dto';
-import { MinRpsMove } from '../models/enums/minrps-move.enum';
+import { MinRpsPlayDto } from '../models/dtos/minrps-play.dto';
 import { MinRpsResult } from '../models/enums/minrps-game-result.enum';
+import { MinRpsMove } from '../models/enums/minrps-move.enum';
+import { MinRpsSingleplayerService } from '../services/minrps-singleplayer.service';
+import { MinRpsSingleplayerController } from './minrps-singleplayer.controller';
 
 describe('MinRpsSingleplayerController', () => {
   let controller: MinRpsSingleplayerController;
@@ -32,7 +32,7 @@ describe('MinRpsSingleplayerController', () => {
     expect(controller).toBeDefined();
   });
 
-  describe('play', () => {
+  describe('play()', () => {
     it('should play a game and return result', () => {
       const playDto = new MinRpsPlayDto();
       playDto.player1Move = MinRpsMove.Rock;
@@ -44,7 +44,7 @@ describe('MinRpsSingleplayerController', () => {
 
       MINRPS_SINGLEPLAYER_SERVICE_MOCK.playGame.mockReturnValue(resultDto);
 
-      const result = controller.play(playDto);
+      const result = controller.play(playDto, 'test-request-id');
 
       expect(result).toBe(resultDto);
       expect(MINRPS_SINGLEPLAYER_SERVICE_MOCK.playGame).toHaveBeenCalledWith(playDto);
