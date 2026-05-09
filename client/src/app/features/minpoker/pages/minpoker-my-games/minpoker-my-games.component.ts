@@ -12,13 +12,13 @@ import { MinPokerLobbyViewModel } from '../../models/viewmodels/minpoker-lobby.v
 import { MinPokerGameService } from '../../services/minpoker-game.service';
 
 @Component({
-  selector: 'min-minpoker-lobby',
-  templateUrl: './minpoker-lobby.component.html',
-  styleUrls: ['./minpoker-lobby.component.scss'],
+  selector: 'min-minpoker-my-games',
+  templateUrl: './minpoker-my-games.component.html',
+  styleUrls: ['./minpoker-my-games.component.scss'],
   host: { class: 'block h-full w-full' },
   imports: [CardButtonComponent, H2Component, ButtonComponent, DialogComponent, InputComponent, ReactiveFormsModule, DatePipe],
 })
-export class MinPokerLobbyComponent implements OnInit {
+export class MinPokerMyGamesComponent implements OnInit {
   public readonly Color: typeof Color = Color;
   public readonly errorMessage: WritableSignal<string> = signal('');
   public readonly isError: WritableSignal<boolean> = signal(false);
@@ -92,7 +92,7 @@ export class MinPokerLobbyComponent implements OnInit {
   }
 
   public reloadGames(): void {
-    void this.loadLobbyGames();
+    void this.loadGames();
   }
 
   private createFormGroup(): FormGroup {
@@ -104,7 +104,7 @@ export class MinPokerLobbyComponent implements OnInit {
     });
   }
 
-  private async loadLobbyGames(): Promise<void> {
+  private async loadGames(): Promise<void> {
     this.isLoading.set(true);
     this.isError.set(false);
     this.errorMessage.set('');

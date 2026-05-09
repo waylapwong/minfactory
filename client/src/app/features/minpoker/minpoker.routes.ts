@@ -4,7 +4,8 @@ import { leaveGameGuard } from '../../shared/guards/leave-game.guard';
 export enum MinPokerPath {
   Root = '',
   Game = 'game',
-  Lobby = 'lobby',
+  MyGames = 'my-games',
+  PublicGames = 'public-games',
 }
 
 export const MINPOKER_ROUTES: Routes = [
@@ -18,7 +19,11 @@ export const MINPOKER_ROUTES: Routes = [
     loadComponent: () => import('./pages/minpoker-game/minpoker-game.component').then((m) => m.MinPokerGameComponent),
   },
   {
-    path: MinPokerPath.Lobby,
-    loadComponent: () => import('./pages/minpoker-lobby/minpoker-lobby.component').then((m) => m.MinPokerLobbyComponent),
+    path: MinPokerPath.MyGames,
+    loadComponent: () => import('./pages/minpoker-my-games/minpoker-my-games.component').then((m) => m.MinPokerMyGamesComponent),
+  },
+  {
+    path: MinPokerPath.PublicGames,
+    loadComponent: () => import('./pages/minpoker-public-games/minpoker-public-games.component').then((m) => m.MinPokerPublicGamesComponent),
   },
 ];

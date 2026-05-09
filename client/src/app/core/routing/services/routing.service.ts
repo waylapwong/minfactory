@@ -23,20 +23,24 @@ export class RoutingService {
     this.router.navigate([AppPath.Root, MinFactoryPath.Login]);
   }
 
-  public navigateToMinRps(): void {
-    this.router.navigate([AppPath.MinRps]);
-  }
-
   public navigateToMinPoker(): void {
     this.router.navigate([AppPath.MinPoker]);
   }
 
-  public navigateToMinPokerLobby(): void {
-    this.router.navigate([AppPath.MinPoker, MinPokerPath.Lobby]);
-  }
-
   public navigateToMinPokerGame(id: string): void {
     this.router.navigate([AppPath.MinPoker, MinPokerPath.Game, id]);
+  }
+
+  public navigateToMinPokerMyGames(): void {
+    this.router.navigate([AppPath.MinPoker, MinPokerPath.MyGames]);
+  }
+
+  public navigateToMinPokerPublicGames(): void {
+    this.router.navigate([AppPath.MinPoker, MinPokerPath.PublicGames]);
+  }
+
+  public navigateToMinRps(): void {
+    this.router.navigate([AppPath.MinRps]);
   }
 
   public navigateToMinRpsMultiplayer(id: string): void {

@@ -5,11 +5,11 @@ import { RoutingService } from '../../../../core/routing/services/routing.servic
 import { Color } from '../../../../shared/enums/color.enum';
 import { MINPOKER_GAME_SERVICE_MOCK } from '../../mocks/minpoker-game.service.mock';
 import { MinPokerGameService } from '../../services/minpoker-game.service';
-import { MinPokerLobbyComponent } from './minpoker-lobby.component';
+import { MinPokerPublicGamesComponent } from './minpoker-public-games.component';
 
-describe('MinPokerLobbyComponent', () => {
-  let component: MinPokerLobbyComponent;
-  let fixture: ComponentFixture<MinPokerLobbyComponent>;
+describe('MinPokerPublicGamesComponent', () => {
+  let component: MinPokerPublicGamesComponent;
+  let fixture: ComponentFixture<MinPokerPublicGamesComponent>;
   let resolveLoadGames: (() => void) | null;
 
   beforeEach(async () => {
@@ -25,7 +25,7 @@ describe('MinPokerLobbyComponent', () => {
     );
 
     await TestBed.configureTestingModule({
-      imports: [MinPokerLobbyComponent],
+      imports: [MinPokerPublicGamesComponent],
       providers: [
         provideZonelessChangeDetection(),
         { provide: MinPokerGameService, useValue: MINPOKER_GAME_SERVICE_MOCK },
@@ -33,7 +33,7 @@ describe('MinPokerLobbyComponent', () => {
       ],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(MinPokerLobbyComponent);
+    fixture = TestBed.createComponent(MinPokerPublicGamesComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
@@ -50,7 +50,7 @@ describe('MinPokerLobbyComponent', () => {
     expect(component.games).toBe(MINPOKER_GAME_SERVICE_MOCK.lobbyViewModels);
   });
 
-  it('should call refreshGames on init', () => {
+  it('should call reloadGames on init', () => {
     expect(MINPOKER_GAME_SERVICE_MOCK.loadGames).toHaveBeenCalled();
   });
 
