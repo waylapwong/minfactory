@@ -1,9 +1,9 @@
 import { provideZonelessChangeDetection } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
-import { AuthenticationService } from '../authentication/authentication.service';
-import { RoutingService } from '../routing/routing.service';
+import { ROUTING_SERVICE_MOCK } from '../../routing/mocks/routing.service.mock';
+import { RoutingService } from '../../routing/services/routing.service';
 import { AUTHENTICATION_SERVICE_MOCK } from '../mocks/authentication.service.mock';
-import { ROUTING_SERVICE_MOCK } from '../mocks/routing.service.mock';
+import { AuthenticationService } from '../services/authentication.service';
 import { authenticationGuard } from './authentication.guard';
 
 describe('authenticationGuard', () => {

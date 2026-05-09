@@ -1,6 +1,6 @@
 import { Injectable, Signal, WritableSignal, computed, signal } from '@angular/core';
 import { MinRpsMove } from '../../../core/generated';
-import { LoggerService } from '../../../core/logger/logger.service';
+import { LoggerService } from '../../../core/logging/services/logger.service';
 import { MinRpsDomainMapper } from '../mapper/minrps-domain.mapper';
 import { MinRpsPayloadMapper } from '../mapper/minrps-payload.mapper';
 import { MinRpsGame } from '../models/domains/minrps-game';

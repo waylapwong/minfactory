@@ -1,5 +1,5 @@
 import { WritableSignal, computed, signal } from '@angular/core';
-import { AppName } from '../../shared/enums/app-name.enum';
+import { AppName } from '../../../shared/enums/app-name.enum';
 
 const app: WritableSignal<AppName> = signal(AppName.MinFactory);
 const appVersions: Readonly<Record<AppName, string>> = {

@@ -8,8 +8,8 @@ import { MinFactoryPath } from '../../../features/minfactory/minfactory.routes';
 import { LogoComponent } from '../../../shared/components/logo/logo.component';
 import { PopoverComponent } from '../../../shared/components/popover/popover.component';
 import { AppName } from '../../../shared/enums/app-name.enum';
-import { AuthenticationService } from '../../authentication/authentication.service';
-import { ContextService } from '../../context/context.service';
+import { AuthenticationService } from '../../authentication/services/authentication.service';
+import { ContextService } from '../../context/services/context.service';
 
 @Component({
   selector: 'min-header',

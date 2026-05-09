@@ -1,9 +1,9 @@
 import { provideZonelessChangeDetection } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { ROUTING_SERVICE_MOCK } from '../../../../core/mocks/routing.service.mock';
-import { RoutingService } from '../../../../core/routing/routing.service';
-import { MinFactoryAuthenticationService } from '../../services/minfactory-authentication.service';
+import { ROUTING_SERVICE_MOCK } from '../../../../core/routing/mocks/routing.service.mock';
+import { RoutingService } from '../../../../core/routing/services/routing.service';
 import { MINFACTORY_AUTHENTICATION_SERVICE_MOCK } from '../../mocks/minfactory-authentication.service.mock';
+import { MinFactoryAuthenticationService } from '../../services/minfactory-authentication.service';
 import { MinFactoryLoginComponent } from './minfactory-login.component';
 
 describe('MinFactoryLoginComponent', () => {

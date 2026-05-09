@@ -1,5 +1,5 @@
 import { Injectable, Signal, WritableSignal, computed, signal } from '@angular/core';
-import { AppName } from '../../shared/enums/app-name.enum';
+import { AppName } from '../../../shared/enums/app-name.enum';
 
 @Injectable({
   providedIn: 'root',

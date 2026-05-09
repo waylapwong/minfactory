@@ -5,12 +5,13 @@ import { Auth as FirebaseAuth, User as FirebaseUser, createUserWithEmailAndPassw
   providedIn: 'root',
 })
 export class AuthenticationService {
-  private readonly cachedCurrentUser: WritableSignal<FirebaseUser | null> = signal(null);
   private readonly authStateInitialized: Promise<void>;
-  private resolveAuthStateInitialized?: () => void;
+  private readonly cachedCurrentUser: WritableSignal<FirebaseUser | null> = signal(null);
 
   public currentUser: Signal<FirebaseUser | null> = computed(() => this.cachedCurrentUser());
   public isAuthenticated: Signal<boolean> = computed(() => this.currentUser() !== null);
+
+  private resolveAuthStateInitialized?: () => void;
 
   constructor(
     private readonly firebaseAuth: FirebaseAuth,

@@ -3,10 +3,10 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { User as FirebaseUser } from '@angular/fire/auth';
 import { provideRouter } from '@angular/router';
 import { AppName } from '../../../shared/enums/app-name.enum';
-import { AuthenticationService } from '../../authentication/authentication.service';
-import { AUTHENTICATION_SERVICE_MOCK } from '../../mocks/authentication.service.mock';
-import { ContextService } from '../../context/context.service';
-import { CONTEXT_SERVICE_MOCK } from '../../mocks/context.service.mock';
+import { AUTHENTICATION_SERVICE_MOCK } from '../../authentication/mocks/authentication.service.mock';
+import { AuthenticationService } from '../../authentication/services/authentication.service';
+import { CONTEXT_SERVICE_MOCK } from '../../context/mocks/context.service.mock';
+import { ContextService } from '../../context/services/context.service';
 import { HeaderComponent } from './header.component';
 
 describe('HeaderComponent', () => {

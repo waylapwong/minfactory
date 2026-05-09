@@ -1,7 +1,7 @@
 import { Component, Signal, computed, effect, inject } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { AuthenticationService } from './core/authentication/authentication.service';
-import { ContextService } from './core/context/context.service';
+import { AuthenticationService } from './core/authentication/services/authentication.service';
+import { ContextService } from './core/context/services/context.service';
 import { FooterComponent } from './core/layout/footer/footer.component';
 import { HeaderComponent } from './core/layout/header/header.component';
 import { MinFactoryUserService } from './features/minfactory/services/minfactory-user.service';

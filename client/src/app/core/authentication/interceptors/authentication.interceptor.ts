@@ -1,9 +1,9 @@
 import { HttpEvent, HttpHandler, HttpInterceptor, HttpRequest } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, defer, from, of } from 'rxjs';
-import { ENVIRONMENT } from '../../../environments/environment';
-import { AuthenticationService } from './authentication.service';
 import { catchError, switchMap } from 'rxjs/operators';
+import { ENVIRONMENT } from '../../../../environments/environment';
+import { AuthenticationService } from '../services/authentication.service';
 
 @Injectable()
 export class AuthenticationInterceptor implements HttpInterceptor {

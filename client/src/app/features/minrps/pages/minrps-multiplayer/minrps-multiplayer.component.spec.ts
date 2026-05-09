@@ -3,14 +3,14 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ActivatedRoute, convertToParamMap } from '@angular/router';
 import { of } from 'rxjs';
 import { MinRpsMove, MinRpsResult } from '../../../../core/generated';
-import { RoutingService } from '../../../../core/routing/routing.service';
-import { ROUTING_SERVICE_MOCK } from '../../../../core/mocks/routing.service.mock';
+import { ROUTING_SERVICE_MOCK } from '../../../../core/routing/mocks/routing.service.mock';
+import { RoutingService } from '../../../../core/routing/services/routing.service';
 import { Color } from '../../../../shared/enums/color.enum';
+import { MINRPS_GAME_SERVICE_MOCK } from '../../mocks/minrps-game.service.mock';
+import { MINRPS_MULTIPLAYER_SERVICE_MOCK } from '../../mocks/minrps-multiplayer.service.mock';
 import { MinRpsMultiplayerViewModel } from '../../models/viewmodels/minrps-multiplayer.viewmodel';
 import { MinRpsGameService } from '../../services/minrps-game.service';
-import { MINRPS_GAME_SERVICE_MOCK } from '../../mocks/minrps-game.service.mock';
 import { MinRpsMultiplayerService } from '../../services/minrps-multiplayer.service';
-import { MINRPS_MULTIPLAYER_SERVICE_MOCK } from '../../mocks/minrps-multiplayer.service.mock';
 import { MinRpsMultiplayerComponent } from './minrps-multiplayer.component';
 
 describe('MinRpsMultiplayerComponent', () => {

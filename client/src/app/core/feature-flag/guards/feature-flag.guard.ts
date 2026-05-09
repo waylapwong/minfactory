@@ -1,9 +1,9 @@
 import { inject } from '@angular/core';
 import { CanActivateFn, Router, UrlTree } from '@angular/router';
-import { ENVIRONMENT } from '../../../environments/environment';
-import { AppPath } from '../../app.routes';
-import { MinFactoryUserService } from '../../features/minfactory/services/minfactory-user.service';
-import { MinFactoryRole } from '../../shared/enums/minfactory-role.enum';
+import { ENVIRONMENT } from '../../../../environments/environment';
+import { AppPath } from '../../../app.routes';
+import { MinFactoryUserService } from '../../../features/minfactory/services/minfactory-user.service';
+import { MinFactoryRole } from '../../../shared/enums/minfactory-role.enum';
 
 function isFeatureEnabled(feature: string): boolean {
   const featureFlags: Record<string, boolean> = {

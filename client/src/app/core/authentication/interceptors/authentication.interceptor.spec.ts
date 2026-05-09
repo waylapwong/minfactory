@@ -3,9 +3,9 @@ import { HttpTestingController, provideHttpClientTesting } from '@angular/common
 import { provideZonelessChangeDetection } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { firstValueFrom } from 'rxjs';
-import { ENVIRONMENT } from '../../../environments/environment';
-import { AuthenticationService } from './authentication.service';
+import { ENVIRONMENT } from '../../../../environments/environment';
 import { AUTHENTICATION_SERVICE_MOCK } from '../mocks/authentication.service.mock';
+import { AuthenticationService } from '../services/authentication.service';
 import { AuthenticationInterceptor } from './authentication.interceptor';
 
 describe('AuthenticationInterceptor', () => {

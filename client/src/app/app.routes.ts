@@ -1,7 +1,7 @@
 import { Routes } from '@angular/router';
-import { authenticationGuard } from './core/guards/authentication.guard';
-import { featureFlagGuard } from './core/guards/feature-flag.guard';
-import { roleGuard } from './core/guards/role.guard';
+import { authenticationGuard } from './core/authentication/guards/authentication.guard';
+import { roleGuard } from './core/authorization/guards/role.guard';
+import { featureFlagGuard } from './core/feature-flag/guards/feature-flag.guard';
 import { AppName } from './shared/enums/app-name.enum';
 import { MinFactoryRole } from './shared/enums/minfactory-role.enum';
 

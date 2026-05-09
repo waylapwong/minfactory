@@ -1,6 +1,6 @@
 import { Injectable, Signal, WritableSignal, computed, signal } from '@angular/core';
-import { AuthenticationService } from '../../../core/authentication/authentication.service';
-import { LoggerService } from '../../../core/logger/logger.service';
+import { AuthenticationService } from '../../../core/authentication/services/authentication.service';
+import { LoggerService } from '../../../core/logging/services/logger.service';
 import { MinPokerDomainMapper } from '../mapper/minpoker-domain.mapper';
 import { MinPokerEventMapper } from '../mapper/minpoker-event.mapper';
 import { MinPokerMatchJoinCommand } from '../models/commands/minpoker-match-join.command';

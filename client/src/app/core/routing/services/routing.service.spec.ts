@@ -1,10 +1,10 @@
 import { provideZonelessChangeDetection } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { Router } from '@angular/router';
-import { AppPath } from '../../app.routes';
-import { MinFactoryPath } from '../../features/minfactory/minfactory.routes';
-import { MinPokerPath } from '../../features/minpoker/minpoker.routes';
-import { MinRpsPath } from '../../features/minrps/minrps.routes';
+import { AppPath } from '../../../app.routes';
+import { MinFactoryPath } from '../../../features/minfactory/minfactory.routes';
+import { MinPokerPath } from '../../../features/minpoker/minpoker.routes';
+import { MinRpsPath } from '../../../features/minrps/minrps.routes';
 import { ROUTER_MOCK } from '../mocks/router.mock';
 import { RoutingService } from './routing.service';
 

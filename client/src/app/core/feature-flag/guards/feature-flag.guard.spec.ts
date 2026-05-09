@@ -1,11 +1,11 @@
 import { provideZonelessChangeDetection } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { ActivatedRouteSnapshot, Router, UrlTree, provideRouter } from '@angular/router';
-import { ENVIRONMENT } from '../../../environments/environment';
-import { AppPath } from '../../app.routes';
-import { MINFACTORY_USER_SERVICE_MOCK } from '../../features/minfactory/mocks/minfactory-user.service.mock';
-import { MinFactoryUserService } from '../../features/minfactory/services/minfactory-user.service';
-import { MinFactoryRole } from '../../shared/enums/minfactory-role.enum';
+import { ENVIRONMENT } from '../../../../environments/environment';
+import { AppPath } from '../../../app.routes';
+import { MINFACTORY_USER_SERVICE_MOCK } from '../../../features/minfactory/mocks/minfactory-user.service.mock';
+import { MinFactoryUserService } from '../../../features/minfactory/services/minfactory-user.service';
+import { MinFactoryRole } from '../../../shared/enums/minfactory-role.enum';
 import { featureFlagGuard } from './feature-flag.guard';
 
 describe('featureFlagGuard', () => {

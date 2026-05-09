@@ -1,6 +1,6 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit, Signal, WritableSignal, computed, signal } from '@angular/core';
-import { RoutingService } from '../../../../core/routing/routing.service';
+import { RoutingService } from '../../../../core/routing/services/routing.service';
 import { ButtonComponent } from '../../../../shared/components/button/button.component';
 import { CardComponent } from '../../../../shared/components/card/card.component';
 import { DialogComponent } from '../../../../shared/components/dialog/dialog.component';

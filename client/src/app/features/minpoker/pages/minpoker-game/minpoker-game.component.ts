@@ -2,7 +2,7 @@ import { DecimalPipe } from '@angular/common';
 import { Component, OnDestroy, OnInit, Signal, WritableSignal, computed, signal } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
-import { RoutingService } from '../../../../core/routing/routing.service';
+import { RoutingService } from '../../../../core/routing/services/routing.service';
 import { ButtonComponent } from '../../../../shared/components/button/button.component';
 import { DialogComponent } from '../../../../shared/components/dialog/dialog.component';
 import { H2Component } from '../../../../shared/components/h2/h2.component';
