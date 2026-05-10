@@ -6,11 +6,12 @@ import { MinPokerHandDealtEvent } from '../models/events/minpoker-hand-dealt.eve
 import { MinPokerUpdatedEvent } from '../models/events/minpoker-updated.event';
 
 export class MinPokerDomainMapper {
-  public static domainToDto(domain: MinPokerGame): MinPokerGameDto {
+  public static toDto(domain: MinPokerGame): MinPokerGameDto {
     const dto: MinPokerGameDto = new MinPokerGameDto();
 
     dto.bigBlind = domain.bigBlind;
     dto.createdAt = domain.createdAt;
+    dto.creatorId = domain.creatorId;
     dto.id = domain.id;
     dto.isPublic = domain.isPublic;
     dto.name = domain.name;
@@ -22,21 +23,17 @@ export class MinPokerDomainMapper {
     return dto;
   }
 
-  public static domainToEntity(domain: MinPokerGame): MinPokerGameEntity {
+  public static toEntity(domain: MinPokerGame): MinPokerGameEntity {
     const entity: MinPokerGameEntity = new MinPokerGameEntity();
 
     entity.bigBlind = domain.bigBlind;
-    if (domain.createdAt.getTime() !== new Date(0).getTime()) {
-      entity.createdAt = domain.createdAt;
-    }
-    if (domain.creatorId && domain.creatorId !== '') {
+    entity.createdAt = domain.createdAt;
+    if (domain.creatorId) {
       const creator: MinFactoryUserEntity = new MinFactoryUserEntity();
       creator.id = domain.creatorId;
       entity.creator = creator;
     }
-    if (domain.id !== '') {
-      entity.id = domain.id;
-    }
+    entity.id = domain.id;
     entity.isPublic = domain.isPublic;
     entity.name = domain.name;
     entity.smallBlind = domain.smallBlind;
@@ -45,7 +42,7 @@ export class MinPokerDomainMapper {
     return entity;
   }
 
-  public static domainToHandDealtEvent(hand: string[]): MinPokerHandDealtEvent {
+  public static toHandDealtEvent(hand: string[]): MinPokerHandDealtEvent {
     const event: MinPokerHandDealtEvent = new MinPokerHandDealtEvent();
     event.hand = [...hand];
     return event;

@@ -10,15 +10,18 @@ export class MinFactoryUserRepository {
     private readonly repository: Repository<MinFactoryUserEntity>,
   ) {}
 
+  public async deleteByFirebaseUid(firebaseUid: string): Promise<void> {
+    const entity: MinFactoryUserEntity = await this.findByFirebaseUid(firebaseUid);
+    await this.repository.remove(entity);
+  }
+
   public async findByEmail(email: string): Promise<MinFactoryUserEntity> {
     const entity: MinFactoryUserEntity | null = await this.repository.findOne({
       where: { email },
     });
-
     if (!entity) {
       throw new NotFoundException('User not found');
     }
-
     return entity;
   }
 
@@ -26,17 +29,10 @@ export class MinFactoryUserRepository {
     const entity: MinFactoryUserEntity | null = await this.repository.findOne({
       where: { firebaseUid },
     });
-
     if (!entity) {
       throw new NotFoundException('User not found');
     }
-
     return entity;
-  }
-
-  public async deleteByFirebaseUid(firebaseUid: string): Promise<void> {
-    const entity: MinFactoryUserEntity = await this.findByFirebaseUid(firebaseUid);
-    await this.repository.remove(entity);
   }
 
   public async save(entity: MinFactoryUserEntity): Promise<MinFactoryUserEntity> {

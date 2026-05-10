@@ -44,32 +44,36 @@ export class MinPokerGameController {
     @FirebaseUser() firebaseUser: FirebaseUserDto,
     @Headers('X-Request-Id') requestId: string,
   ): Promise<void> {
-    this.logger.log(`Incoming request DELETE /minpoker/games/${id}`, requestId);
-    await this.gameService.deleteGame(id, firebaseUser);
+    this.logger.debug(`START delete(id: ${id}, firebaseUser: ${firebaseUser.uid})`, requestId);
+    await this.gameService.deleteGame(id, firebaseUser, requestId);
+    this.logger.debug(`END delete(...)`, requestId);
   }
 
   @Get()
   @HttpCode(200)
   @ApiOperation({ operationId: 'getAllMinPokerGames' })
+  @ApiQuery({
+    description: 'public = alle öffentlichen Spiele. Ohne Parameter = eigene Spiele.',
+    enum: MinPokerGameVisibility,
+    example: MinPokerGameVisibility.Public,
+    name: 'visibility',
+    required: true,
+  })
   @API_HEADER_REQUEST_ID()
   @API_200({ isArray: true, type: MinPokerGameDto })
   @API_401()
   @API_403()
   @API_404()
   @API_500()
-  @ApiQuery({
-    name: 'visibility',
-    enum: MinPokerGameVisibility,
-    required: false,
-    description: 'public = alle öffentlichen Spiele. Ohne Parameter = eigene Spiele.',
-  })
   public async getAll(
     @FirebaseUser() firebaseUser: FirebaseUserDto,
-    @Query('visibility') visibility: MinPokerGameVisibility | undefined,
     @Headers('X-Request-Id') requestId: string,
+    @Query('visibility') visibility: MinPokerGameVisibility,
   ): Promise<MinPokerGameDto[]> {
-    this.logger.log(`Incoming request GET /minpoker/games`, requestId);
-    return await this.gameService.getAllGames(firebaseUser, visibility);
+    this.logger.debug(`START getAll(firebaseUser: ${firebaseUser.uid}, visibility: ${visibility})`, requestId);
+    const response: MinPokerGameDto[] = await this.gameService.getAllGames(firebaseUser, visibility, requestId);
+    this.logger.debug(`END getAll(...)`, requestId);
+    return response;
   }
 
   @Post()
@@ -87,7 +91,9 @@ export class MinPokerGameController {
     @FirebaseUser() firebaseUser: FirebaseUserDto,
     @Headers('X-Request-Id') requestId: string,
   ): Promise<MinPokerGameDto> {
-    this.logger.log(`Incoming request POST /minpoker/games`, requestId);
-    return await this.gameService.createGame(dto, firebaseUser);
+    this.logger.debug(`START create(dto: ${JSON.stringify(dto)}, firebaseUser: ${firebaseUser.uid})`, requestId);
+    const response: MinPokerGameDto = await this.gameService.createGame(dto, firebaseUser, requestId);
+    this.logger.debug(`END create(...)`, requestId);
+    return response;
   }
 }

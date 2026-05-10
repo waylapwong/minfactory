@@ -5,7 +5,7 @@ export class MinFactoryUserDtoMapper {
   public static dtoToDomain(dto: FirebaseUserDto): MinFactoryUser {
     const domain: MinFactoryUser = new MinFactoryUser();
 
-    domain.firebaseUid = dto.firebaseUid;
+    domain.firebaseUid = dto.uid;
     domain.email = dto.email;
 
     return domain;

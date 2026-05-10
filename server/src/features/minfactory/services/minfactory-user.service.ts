@@ -17,7 +17,7 @@ export class MinFactoryUserService {
   ) {}
 
   public async createUser(user: FirebaseUserDto): Promise<MinFactoryUserDto> {
-    const { firebaseUid, email } = user;
+    const { uid: firebaseUid, email } = user;
     const existingUserByFirebaseUid: MinFactoryUserEntity | null = await this.findByFirebaseUidOrNull(firebaseUid);
 
     if (existingUserByFirebaseUid) {
@@ -58,7 +58,7 @@ export class MinFactoryUserService {
   }
 
   public async deleteMe(user: FirebaseUserDto): Promise<void> {
-    const { firebaseUid } = user;
+    const { uid: firebaseUid } = user;
 
     const entity: MinFactoryUserEntity | null = await this.findByFirebaseUidOrNull(firebaseUid);
 
@@ -78,7 +78,7 @@ export class MinFactoryUserService {
   }
 
   public async getMe(user: FirebaseUserDto): Promise<MinFactoryUserDto> {
-    const { firebaseUid } = user;
+    const { uid: firebaseUid } = user;
     const entity: MinFactoryUserEntity = await this.userRepository.findByFirebaseUid(firebaseUid);
 
     return this.entityToDto(entity);

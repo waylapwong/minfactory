@@ -32,7 +32,7 @@ describe('MinFactoryUserController', () => {
 
   describe('deleteMe()', () => {
     const user: FirebaseUserDto = {
-      firebaseUid: 'firebase-uid-123',
+      uid: 'firebase-uid-123',
       email: 'user@example.com',
     };
 
@@ -53,7 +53,7 @@ describe('MinFactoryUserController', () => {
 
   describe('create()', () => {
     const user: FirebaseUserDto = {
-      firebaseUid: 'firebase-uid-123',
+      uid: 'firebase-uid-123',
       email: 'user@example.com',
     };
 
@@ -79,7 +79,7 @@ describe('MinFactoryUserController', () => {
 
   describe('getMe()', () => {
     const user: FirebaseUserDto = {
-      firebaseUid: 'firebase-uid-123',
+      uid: 'firebase-uid-123',
       email: 'user@example.com',
     };
 

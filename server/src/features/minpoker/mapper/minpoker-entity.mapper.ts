@@ -6,13 +6,13 @@ export class MinPokerEntityMapper {
     const domain: MinPokerGame = new MinPokerGame();
 
     domain.bigBlind = entity.bigBlind;
-    domain.createdAt = entity.createdAt;
-    domain.creatorId = entity.creator?.id ?? '';
-    domain.id = entity.id;
     domain.isPublic = entity.isPublic;
     domain.name = entity.name;
     domain.smallBlind = entity.smallBlind;
     domain.tableSize = entity.tableSize;
+    domain.createdAt = entity.createdAt;
+    domain.creatorId = entity.creator.id;
+    domain.id = entity.id;
 
     return domain;
   }

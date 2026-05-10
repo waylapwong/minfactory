@@ -27,11 +27,11 @@ export class RolesGuard implements CanActivate {
     const request: Request = context.switchToHttp().getRequest<Request>();
     const firebaseUser = (request as AuthenticatedRequest).firebaseUser;
 
-    if (!firebaseUser?.firebaseUid) {
+    if (!firebaseUser?.uid) {
       throw new ForbiddenException('Authentication required');
     }
 
-    const firebaseUid = firebaseUser.firebaseUid;
+    const firebaseUid = firebaseUser.uid;
     const user: MinFactoryUserEntity = await this.userRepository.findByFirebaseUid(firebaseUid);
 
     if (!user) {

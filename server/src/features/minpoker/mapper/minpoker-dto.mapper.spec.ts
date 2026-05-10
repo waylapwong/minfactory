@@ -3,13 +3,13 @@ import { MinPokerCreateGameDto } from '../models/dtos/minpoker-create-game.dto';
 import { MinPokerDtoMapper } from './minpoker-dto.mapper';
 
 describe('MinPokerDtoMapper', () => {
-  describe('createDtoToDomain()', () => {
+  describe('toDomain()', () => {
     it('should map create DTO to domain', () => {
       const dto = new MinPokerCreateGameDto();
       dto.name = 'New Table';
       dto.isPublic = true;
 
-      const domain: MinPokerGame = MinPokerDtoMapper.createDtoToDomain(dto);
+      const domain: MinPokerGame = MinPokerDtoMapper.toDomain(dto);
 
       expect(domain).toBeDefined();
       expect(domain.name).toBe('New Table');

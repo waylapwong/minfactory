@@ -4,10 +4,10 @@ import { MinPokerPlayer } from './minpoker-player';
 
 export class MinPokerGame {
   public bigBlind: number = 2;
-  public createdAt: Date = new Date(0);
+  public createdAt: Date = new Date();
   public creatorId: string = '';
+  public id: string = crypto.randomUUID();
   public isPublic: boolean = false;
-  public id: string = '';
   public name: string = '';
   public observers: Map<string, MinPokerPlayer> = new Map<string, MinPokerPlayer>();
   public players: Array<MinPokerPlayer | null> = Array.from({ length: 6 }, () => null);

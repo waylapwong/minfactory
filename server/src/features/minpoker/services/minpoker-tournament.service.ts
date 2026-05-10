@@ -100,7 +100,7 @@ export class MinPokerTournamentService {
     // ADD SOCKET TO MATCH ROOM
     this.roomSystem.addPlayerToRoom(clientSocket, command.matchId);
     // GET MATCH
-    const match: MinPokerGame = await this.findOrCreateMatch(command.matchId);
+    const match: MinPokerGame = await this.findOrCreateMatch(command.matchId, command.requestId);
     // UPDATE MATCH
     match.addObserver(playerId);
     // SAVE MATCH
@@ -144,7 +144,7 @@ export class MinPokerTournamentService {
       name: command.playerName,
     });
     // GET MATCH
-    const match: MinPokerGame = await this.findOrCreateMatch(command.matchId);
+    const match: MinPokerGame = await this.findOrCreateMatch(command.matchId, command.requestId);
     // UPDATE MATCH
     match.seatPlayer(player, command.seat);
     // DEAL HANDS, ONLY WHEN ROUND STARTS FOR THE FIRST TIME (no deck yet)
@@ -169,18 +169,18 @@ export class MinPokerTournamentService {
     const hands: Map<string, MinPokerHandDealtEvent> = new Map<string, MinPokerHandDealtEvent>();
     for (const player of match.players) {
       if (player && player.hand.length > 0) {
-        hands.set(player.id, MinPokerDomainMapper.domainToHandDealtEvent(player.hand));
+        hands.set(player.id, MinPokerDomainMapper.toHandDealtEvent(player.hand));
       }
     }
     return hands;
   }
 
-  private async findOrCreateMatch(matchId: string): Promise<MinPokerGame> {
+  private async findOrCreateMatch(matchId: string, requestId: string): Promise<MinPokerGame> {
     const cachedMatch: MinPokerGame | null = this.matchRepository.findOne(matchId);
     if (cachedMatch) {
       return cachedMatch;
     } else {
-      const entity: MinPokerGameEntity = await this.gameRepository.findOne(matchId);
+      const entity: MinPokerGameEntity = await this.gameRepository.findOne(matchId, requestId);
       const match: MinPokerGame = MinPokerEntityMapper.toDomain(entity);
       if (match.players.length !== match.tableSize) {
         match.players = Array.from({ length: match.tableSize }, () => null);

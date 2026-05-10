@@ -1,6 +1,10 @@
 import { Logger } from '@nestjs/common';
 
 export class LoggerService extends Logger {
+  constructor(context: string) {
+    super(context, { timestamp: true });
+  }
+
   public debug(message: string, requestId: string): void {
     super.debug(this.withRequestId(message, requestId));
   }

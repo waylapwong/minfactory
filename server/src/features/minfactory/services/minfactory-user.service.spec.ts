@@ -29,7 +29,7 @@ describe('MinFactoryUserService', () => {
 
   describe('createUser', () => {
     const user: FirebaseUserDto = {
-      firebaseUid: 'firebase-uid-123',
+      uid: 'firebase-uid-123',
       email: 'user@example.com',
     };
 
@@ -75,7 +75,7 @@ describe('MinFactoryUserService', () => {
 
       await userService.createUser(user);
 
-      expect(MINFACTORY_USER_REPOSITORY_MOCK.findByFirebaseUid).toHaveBeenCalledWith(user.firebaseUid);
+      expect(MINFACTORY_USER_REPOSITORY_MOCK.findByFirebaseUid).toHaveBeenCalledWith(user.uid);
       expect(MINFACTORY_USER_REPOSITORY_MOCK.findByEmail).toHaveBeenCalledWith(user.email);
     });
 
@@ -119,7 +119,7 @@ describe('MinFactoryUserService', () => {
 
   describe('getMe()', () => {
     const user: FirebaseUserDto = {
-      firebaseUid: 'firebase-uid-123',
+      uid: 'firebase-uid-123',
       email: 'user@example.com',
     };
 
@@ -144,7 +144,7 @@ describe('MinFactoryUserService', () => {
 
       await userService.getMe(user);
 
-      expect(MINFACTORY_USER_REPOSITORY_MOCK.findByFirebaseUid).toHaveBeenCalledWith(user.firebaseUid);
+      expect(MINFACTORY_USER_REPOSITORY_MOCK.findByFirebaseUid).toHaveBeenCalledWith(user.uid);
     });
 
     it('should throw NotFoundException when user is not found', async () => {
@@ -156,7 +156,7 @@ describe('MinFactoryUserService', () => {
 
   describe('deleteMe()', () => {
     const user: FirebaseUserDto = {
-      firebaseUid: 'firebase-uid-123',
+      uid: 'firebase-uid-123',
       email: 'user@example.com',
     };
 
@@ -174,9 +174,9 @@ describe('MinFactoryUserService', () => {
 
       await userService.deleteMe(user);
 
-      expect(MINFACTORY_USER_REPOSITORY_MOCK.findByFirebaseUid).toHaveBeenCalledWith(user.firebaseUid);
-      expect(AUTHENTICATION_SERVICE_MOCK.deleteUser).toHaveBeenCalledWith(user.firebaseUid);
-      expect(MINFACTORY_USER_REPOSITORY_MOCK.deleteByFirebaseUid).toHaveBeenCalledWith(user.firebaseUid);
+      expect(MINFACTORY_USER_REPOSITORY_MOCK.findByFirebaseUid).toHaveBeenCalledWith(user.uid);
+      expect(AUTHENTICATION_SERVICE_MOCK.deleteUser).toHaveBeenCalledWith(user.uid);
+      expect(MINFACTORY_USER_REPOSITORY_MOCK.deleteByFirebaseUid).toHaveBeenCalledWith(user.uid);
     });
 
     it('should throw NotFoundException without touching Firebase when user is not found in DB', async () => {
@@ -216,7 +216,7 @@ describe('MinFactoryUserService', () => {
 
       await userService.deleteMe(user);
 
-      expect(MINFACTORY_USER_REPOSITORY_MOCK.deleteByFirebaseUid).toHaveBeenCalledWith(user.firebaseUid);
+      expect(MINFACTORY_USER_REPOSITORY_MOCK.deleteByFirebaseUid).toHaveBeenCalledWith(user.uid);
     });
   });
 });
