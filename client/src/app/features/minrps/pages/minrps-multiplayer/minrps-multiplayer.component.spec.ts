@@ -233,6 +233,18 @@ describe('MinRpsMultiplayerComponent', () => {
       component.selectMove(MinRpsMove.Scissors);
       expect(component.selectedMove()).toBe(MinRpsMove.Scissors);
     });
+
+    it('should not update selectedMove when observer', () => {
+      MINRPS_MULTIPLAYER_SERVICE_MOCK.game.set(createViewModel({ isObserver: true }));
+      component.selectMove(MinRpsMove.Rock);
+      expect(component.selectedMove()).toBe(MinRpsMove.None);
+    });
+
+    it('should not update selectedMove when hero has already selected a move', () => {
+      MINRPS_MULTIPLAYER_SERVICE_MOCK.game.set(createViewModel({ heroHasSelectedMove: true }));
+      component.selectMove(MinRpsMove.Rock);
+      expect(component.selectedMove()).toBe(MinRpsMove.None);
+    });
   });
 
   describe('seatName getter', () => {

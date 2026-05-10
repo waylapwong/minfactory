@@ -65,4 +65,42 @@ describe('AuthenticationService', () => {
 
     expect(() => new AuthenticationService()).toThrow('FIREBASE_PROJECT_ID is not configured');
   });
+
+  it('should throw when firebase client email is missing', () => {
+    delete process.env.FIREBASE_CLIENT_EMAIL;
+
+    expect(() => new AuthenticationService()).toThrow('FIREBASE_CLIENT_EMAIL is not configured');
+  });
+
+  it('should throw when firebase private key is missing', () => {
+    delete process.env.FIREBASE_PRIVATE_KEY;
+
+    expect(() => new AuthenticationService()).toThrow('FIREBASE_PRIVATE_KEY is not configured');
+  });
+
+  describe('verifyFirebaseIdToken()', () => {
+    it('should call verifyIdToken with the given token and return the decoded token', async () => {
+      const service = new AuthenticationService();
+      const mockAuth = (admin.app() as any).auth();
+      const decodedToken = { uid: 'firebase-uid', email: 'user@example.com' };
+      mockAuth.verifyIdToken.mockResolvedValue(decodedToken);
+
+      const result = await service.verifyFirebaseIdToken('test-token');
+
+      expect(mockAuth.verifyIdToken).toHaveBeenCalledWith('test-token');
+      expect(result).toBe(decodedToken);
+    });
+  });
+
+  describe('deleteUser()', () => {
+    it('should call auth deleteUser with the given uid', async () => {
+      const service = new AuthenticationService();
+      const mockAuth = (admin.app() as any).auth();
+      mockAuth.deleteUser = jest.fn().mockResolvedValue(undefined);
+
+      await service.deleteUser('firebase-uid-123');
+
+      expect(mockAuth.deleteUser).toHaveBeenCalledWith('firebase-uid-123');
+    });
+  });
 });

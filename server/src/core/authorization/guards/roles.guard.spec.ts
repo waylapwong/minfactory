@@ -112,4 +112,26 @@ describe('RolesGuard', () => {
 
     await expect(guard.canActivate(createExecutionContext())).rejects.toThrow(NotFoundException);
   });
+
+  it('should throw ForbiddenException when firebaseUser is not set on request', async () => {
+    reflector.getAllAndOverride.mockReturnValue([MinFactoryRole.Admin]);
+
+    const context: ExecutionContext = {
+      switchToHttp: () => ({
+        getRequest: () => ({ firebaseUser: undefined }),
+      }),
+      getHandler: () => ({}),
+      getClass: () => ({}),
+    } as unknown as ExecutionContext;
+
+    await expect(guard.canActivate(context)).rejects.toThrow(ForbiddenException);
+    expect(MINFACTORY_USER_REPOSITORY_MOCK.findByFirebaseUid).not.toHaveBeenCalled();
+  });
+
+  it('should throw ForbiddenException when findByFirebaseUid returns null', async () => {
+    reflector.getAllAndOverride.mockReturnValue([MinFactoryRole.Admin]);
+    MINFACTORY_USER_REPOSITORY_MOCK.findByFirebaseUid.mockResolvedValue(null);
+
+    await expect(guard.canActivate(createExecutionContext())).rejects.toThrow(ForbiddenException);
+  });
 });

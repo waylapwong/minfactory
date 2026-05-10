@@ -92,4 +92,32 @@ describe('RoutingService', () => {
       expect(ROUTER_MOCK.navigate).toHaveBeenCalledWith([AppPath.MinRps, MinRpsPath.Multiplayer, 'game-123']);
     });
   });
+
+  describe('navigateToApps()', () => {
+    it('should navigate to apps page', () => {
+      service.navigateToApps();
+      expect(ROUTER_MOCK.navigate).toHaveBeenCalledWith([AppPath.Root, MinFactoryPath.Apps]);
+    });
+  });
+
+  describe('navigateToMinPokerMyGames()', () => {
+    it('should navigate to my games page', () => {
+      service.navigateToMinPokerMyGames();
+      expect(ROUTER_MOCK.navigate).toHaveBeenCalledWith([AppPath.MinPoker, MinPokerPath.MyGames]);
+    });
+  });
+
+  describe('navigateToMinPokerPublicGames()', () => {
+    it('should navigate to public games page', () => {
+      service.navigateToMinPokerPublicGames();
+      expect(ROUTER_MOCK.navigate).toHaveBeenCalledWith([AppPath.MinPoker, MinPokerPath.PublicGames]);
+    });
+  });
+
+  describe('navigateToRegister()', () => {
+    it('should navigate to register page', () => {
+      service.navigateToRegister();
+      expect(ROUTER_MOCK.navigate).toHaveBeenCalledWith([AppPath.Root, MinFactoryPath.Register]);
+    });
+  });
 });

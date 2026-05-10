@@ -152,7 +152,7 @@ describe('MinRpsGame', () => {
       expect(game.player2).toBe(player2);
     });
 
-    it('should throw GameRuleException if both seats are occupied', () => {
+    it('should throw GameRuleException if seat 1 is already occupied', () => {
       const player1 = new MinRpsPlayer();
       player1.id = 'player-1-id';
       game.setPlayer1(player1);
@@ -166,6 +166,18 @@ describe('MinRpsGame', () => {
 
       expect(() => game.seatPlayer(player3, 1)).toThrow(GameRuleException);
       expect(() => game.seatPlayer(player3, 1)).toThrow('Player 1 seat is already occupied');
+    });
+
+    it('should throw GameRuleException if seat 2 is already occupied', () => {
+      const player2 = new MinRpsPlayer();
+      player2.id = 'player-2-id';
+      game.setPlayer2(player2);
+
+      const player3 = new MinRpsPlayer();
+      player3.id = 'player-3-id';
+
+      expect(() => game.seatPlayer(player3, 2)).toThrow(GameRuleException);
+      expect(() => game.seatPlayer(player3, 2)).toThrow('Player 2 seat is already occupied');
     });
   });
 
@@ -598,6 +610,22 @@ describe('MinRpsGame', () => {
 
       expect(game.resultHistory.length).toBe(10);
       expect(game.resultHistory[0]).toBe(MinRpsResult.Player2);
+    });
+
+    it('should return None for unknown move in mapToWinningMove (default case)', () => {
+      const player1 = new MinRpsPlayer();
+      player1.id = 'player-1-id';
+      game.setPlayer1(player1);
+      game.setPlayer1Move(MinRpsMove.Rock);
+
+      const player2 = new MinRpsPlayer();
+      player2.id = 'player-2-id';
+      game.setPlayer2(player2);
+      // Set an invalid move that hits the default case of mapToWinningMove
+      game.setPlayer2Move('UnknownMove' as unknown as MinRpsMove);
+
+      // player1Move ('Rock') !== mapToWinningMove('UnknownMove' → None) → Player2 wins
+      expect(game.getResult()).toBe(MinRpsResult.Player2);
     });
   });
 });

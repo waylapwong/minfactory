@@ -65,4 +65,11 @@ describe('AuthenticationGuard', () => {
 
     await expect(guard.canActivate(context)).rejects.toThrow(UnauthorizedException);
   });
+
+  it('should throw UnauthorizedException when uid is present but email is undefined', async () => {
+    const context = createExecutionContext('Bearer valid-token');
+    AUTHENTICATION_SERVICE_MOCK.verifyFirebaseIdToken.mockResolvedValue({ uid: 'valid-uid', email: undefined });
+
+    await expect(guard.canActivate(context)).rejects.toThrow(UnauthorizedException);
+  });
 });

@@ -110,4 +110,14 @@ describe('roleGuard', () => {
 
     expect(MINFACTORY_USER_SERVICE_MOCK.ensureProfileLoaded).toHaveBeenCalled();
   });
+
+  it('should redirect to root when ensureProfileLoaded throws', async () => {
+    MINFACTORY_USER_SERVICE_MOCK.ensureProfileLoaded.and.returnValue(Promise.reject(new Error('load failed')));
+    const route = { data: { role: MinFactoryRole.Admin } } as unknown as ActivatedRouteSnapshot;
+
+    const result = await TestBed.runInInjectionContext(() => roleGuard(route, {} as never));
+
+    expect(result instanceof UrlTree).toBeTrue();
+    expect(router.serializeUrl(result as UrlTree)).toBe('/');
+  });
 });

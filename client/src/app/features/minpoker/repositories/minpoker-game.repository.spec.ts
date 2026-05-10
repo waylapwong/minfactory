@@ -85,4 +85,14 @@ describe('MinPokerGameRepository', () => {
       expect(result).toEqual(mockDto);
     });
   });
+
+  describe('delete()', () => {
+    it('should call API delete with game id', async () => {
+      MINPOKER_API_SERVICE_MOCK.deleteMinPokerGame.and.returnValue(of(undefined) as any);
+
+      await repository.delete('game-id-1');
+
+      expect(MINPOKER_API_SERVICE_MOCK.deleteMinPokerGame).toHaveBeenCalledWith('game-id-1');
+    });
+  });
 });

@@ -17,4 +17,5 @@ export const MINFACTORY_USER_REPOSITORY_MOCK = {
         role: MinFactoryUserDto.RoleEnum.User,
       }) as MinFactoryUserDto,
   ),
+  delete: jasmine.createSpy('delete').and.resolveTo(),
 };

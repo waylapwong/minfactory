@@ -132,6 +132,42 @@ describe('MinRpsGateway', () => {
       );
     });
 
+    it('should mask player2 move when player2 is the playing client', () => {
+      const playPayload: MinRpsMatchPlayPayload = {
+        matchId: 'match-1',
+        playerId: 'player-2',
+        playerMove: MinRpsMove.Paper,
+      };
+      const mockEvent = {
+        matchId: 'match-1',
+        observers: [],
+        player1HasSelectedMove: false,
+        player1Id: 'player-1',
+        player1Move: MinRpsMove.None,
+        player1Name: 'Alice',
+        player2HasSelectedMove: true,
+        player2Id: 'player-2',
+        player2Move: MinRpsMove.Paper,
+        player2Name: 'Bob',
+        result: 'None',
+      };
+      MINRPS_MULTIPLAYER_SERVICE_MOCK.playMatch.mockReturnValue(mockEvent as any);
+
+      gateway.handlePlayCommand(mockSocket, playPayload);
+
+      // Opponent notification: player2's move is hidden (masked to None), hasSelectedMove stays true
+      expect(MINRPS_SERVER_TO_EXCEPT_EMIT_MOCK).toHaveBeenCalledWith(
+        expect.any(String),
+        expect.objectContaining({
+          matchId: 'match-1',
+          player1HasSelectedMove: false,
+          player1Move: MinRpsMove.None,
+          player2HasSelectedMove: true,
+          player2Move: MinRpsMove.None,
+        }),
+      );
+    });
+
     it('should handle play command when both players have played', () => {
       jest.useFakeTimers();
 

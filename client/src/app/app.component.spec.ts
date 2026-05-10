@@ -74,4 +74,22 @@ describe('AppComponent', () => {
 
     expect(MINFACTORY_USER_SERVICE_MOCK.ensureProfileLoaded).not.toHaveBeenCalled();
   });
+
+  it('should return true for isInMinFactory when app is MinFactory', () => {
+    const fixture = TestBed.createComponent(AppComponent);
+    const contextService: ContextService = TestBed.inject(ContextService);
+    contextService.app.set(AppName.MinFactory);
+    fixture.detectChanges();
+
+    expect(fixture.componentInstance.isInMinFactory()).toBeTrue();
+  });
+
+  it('should return false for isInMinFactory when app is not MinFactory', () => {
+    const fixture = TestBed.createComponent(AppComponent);
+    const contextService: ContextService = TestBed.inject(ContextService);
+    contextService.app.set(AppName.MinRps);
+    fixture.detectChanges();
+
+    expect(fixture.componentInstance.isInMinFactory()).toBeFalse();
+  });
 });

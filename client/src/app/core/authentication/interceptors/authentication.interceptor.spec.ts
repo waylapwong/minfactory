@@ -92,4 +92,20 @@ describe('AuthenticationInterceptor', () => {
     request.flush({});
     await responsePromise;
   });
+
+  it('should proceed without token when getIdToken throws', async () => {
+    AUTHENTICATION_SERVICE_MOCK.getIdToken.and.rejectWith(new Error('token error'));
+
+    const responsePromise = firstValueFrom(httpClient.get(`${ENVIRONMENT.API_BASE_PATH}/minfactory`));
+
+    await Promise.resolve();
+    await Promise.resolve();
+
+    const request = httpTestingController.expectOne(`${ENVIRONMENT.API_BASE_PATH}/minfactory`);
+
+    expect(request.request.headers.has('Authorization')).toBeFalse();
+
+    request.flush({});
+    await responsePromise;
+  });
 });

@@ -42,4 +42,31 @@ describe('MinFactoryUserRepository', () => {
       expect(MINFACTORY_API_SERVICE_MOCK.createMinFactoryUser).toHaveBeenCalled();
     });
   });
+
+  describe('delete()', () => {
+    it('should call deleteMinFactoryUserMe via API service', async () => {
+      MINFACTORY_API_SERVICE_MOCK.deleteMinFactoryUserMe.and.returnValue(of(undefined) as any);
+
+      await repository.delete();
+
+      expect(MINFACTORY_API_SERVICE_MOCK.deleteMinFactoryUserMe).toHaveBeenCalled();
+    });
+  });
+
+  describe('get()', () => {
+    it('should return user dto via API service', async () => {
+      const userDto: MinFactoryUserDto = {
+        id: 'user-id-123',
+        createdAt: '2026-03-19T10:00:00.000Z',
+        email: 'user@example.com',
+        role: MinFactoryUserDto.RoleEnum.User,
+      };
+      MINFACTORY_API_SERVICE_MOCK.getMinFactoryUserMe.and.returnValue(of(userDto) as any);
+
+      const result = await repository.get();
+
+      expect(result).toEqual(userDto);
+      expect(MINFACTORY_API_SERVICE_MOCK.getMinFactoryUserMe).toHaveBeenCalled();
+    });
+  });
 });
