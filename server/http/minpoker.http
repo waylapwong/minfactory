@@ -1,12 +1,13 @@
 @BASE_PATH = http://localhost:3000/minpoker
 @GAMES = games
-@TOKEN = _____
-
+@REQUEST_ID = d6a850d8-8977-466e-b710-edbd6513dd0d
+@TOKEN = eyJhbGciOiJSUzI1NiIsImtpZCI6Ijg2OGU0YWNlMGI2NTE2ZDM2YjlmNTZkZThjZTQ5Nzg4ZmNjZGFjNDMiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJodHRwczovL3NlY3VyZXRva2VuLmdvb2dsZS5jb20vbWluZmFjdG9yeS05ODY4NiIsImF1ZCI6Im1pbmZhY3RvcnktOTg2ODYiLCJhdXRoX3RpbWUiOjE3NzQ2MjU4NTEsInVzZXJfaWQiOiJYUUkxTE9PVmRnT3RFejYyY29jakdYTnlpRVkyIiwic3ViIjoiWFFJMUxPT1ZkZ090RXo2MmNvY2pHWE55aUVZMiIsImlhdCI6MTc3ODM1OTkyNiwiZXhwIjoxNzc4MzYzNTI2LCJlbWFpbCI6IndheWxhcHdvbmdAZ21haWwuY29tIiwiZW1haWxfdmVyaWZpZWQiOmZhbHNlLCJmaXJlYmFzZSI6eyJpZGVudGl0aWVzIjp7ImVtYWlsIjpbIndheWxhcHdvbmdAZ21haWwuY29tIl19LCJzaWduX2luX3Byb3ZpZGVyIjoicGFzc3dvcmQifX0.Bw-sHoFPWU_vqTTm2uaWTuZLnPPOWFEmRkSA0Gxv1hHdNsuNbqA6hzfs9W-zUhZt8_6gGG5vHV3f-Zb9SZ1DTI-Pfmn8SKmpbYopQRts_9v4GWRQAgdeQSYLHB-lfoWbVUPV8R03X8hnRlgilxc_pKV4II6mkOduiLlTMaYO_SPIHj0DCAiRDJerMtLXzAIWHsD23W6q0IFCy_dqVzLbZGAnfEGjf5fICOLzyQx6qyoSiKwLIKfR0Tl9JbqrDVmqITcduadqSgyo3B_Qz2N9fV7pbV8f6Ak3_9LAt9ENQX2wLJz7jwLTKmpRynbUZjJRP4CFQgu5MR8EXZ_YACEPmg
 
 ### GET /games
 GET {{BASE_PATH}}/{{GAMES}}
 Accept: application/json
 Authorization: Bearer {{TOKEN}}
+X-Request-Id: {{REQUEST_ID}}
 
 
 ### POST /games
@@ -14,6 +15,7 @@ POST {{BASE_PATH}}/{{GAMES}}
 Accept: application/json
 Content-Type: application/json
 Authorization: Bearer {{TOKEN}}
+X-Request-Id: {{REQUEST_ID}}
 
 {
   "name": "Test"

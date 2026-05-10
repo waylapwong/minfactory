@@ -87,9 +87,7 @@ describe('MinPokerGameRepository', () => {
 
   describe('findAllByCreator()', () => {
     it('should return all entities by creator ordered by createdAt DESC', async () => {
-      const entities = [
-        Object.assign(new MinPokerGameEntity(), { id: '1', name: 'My Table' }),
-      ];
+      const entities = [Object.assign(new MinPokerGameEntity(), { id: '1', name: 'My Table' })];
 
       MINPOKER_GAME_TYPEORM_REPOSITORY_MOCK.find.mockResolvedValue(entities);
 
@@ -106,9 +104,7 @@ describe('MinPokerGameRepository', () => {
 
   describe('findAllPublic()', () => {
     it('should return all public entities ordered by createdAt DESC', async () => {
-      const entities = [
-        Object.assign(new MinPokerGameEntity(), { id: '1', name: 'Public Table', isPublic: true }),
-      ];
+      const entities = [Object.assign(new MinPokerGameEntity(), { id: '1', name: 'Public Table', isPublic: true })];
 
       MINPOKER_GAME_TYPEORM_REPOSITORY_MOCK.find.mockResolvedValue(entities);
 

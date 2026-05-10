@@ -57,7 +57,12 @@ export class MinPokerGameController {
   @API_403()
   @API_404()
   @API_500()
-  @ApiQuery({ name: 'visibility', enum: MinPokerGameVisibility, required: false, description: 'public = alle öffentlichen Spiele. Ohne Parameter = eigene Spiele.' })
+  @ApiQuery({
+    name: 'visibility',
+    enum: MinPokerGameVisibility,
+    required: false,
+    description: 'public = alle öffentlichen Spiele. Ohne Parameter = eigene Spiele.',
+  })
   public async getAll(
     @FirebaseUser() firebaseUser: FirebaseUserDto,
     @Query('visibility') visibility: MinPokerGameVisibility | undefined,
