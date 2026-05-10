@@ -1,5 +1,6 @@
 import { DatePipe } from '@angular/common';
 import { Component, OnInit, Signal, WritableSignal, signal } from '@angular/core';
+import { LoggerService } from '../../../../core/logging/services/logger.service';
 import { RoutingService } from '../../../../core/routing/services/routing.service';
 import { ButtonComponent } from '../../../../shared/components/button/button.component';
 import { CardButtonComponent } from '../../../../shared/components/card-button/card-button.component';
@@ -23,6 +24,8 @@ export class MinPokerPublicGamesComponent implements OnInit {
   public isLoading: WritableSignal<boolean> = signal(true);
   public viewModel: Signal<MinPokerPublicGamesVm>;
 
+  private readonly logger: LoggerService = new LoggerService(MinPokerPublicGamesComponent.name);
+
   constructor(
     public readonly routingService: RoutingService,
     private readonly gameService: MinPokerGameService,
@@ -31,10 +34,13 @@ export class MinPokerPublicGamesComponent implements OnInit {
   }
 
   public ngOnInit(): void {
+    this.logger.debug(`START ngOnInit()`);
     void this.loadGames();
+    this.logger.debug(`END ngOnInit(...)`);
   }
 
   public async loadGames(): Promise<void> {
+    this.logger.debug(`START loadGames()`);
     this.isLoading.set(true);
     this.isError.set(false);
     this.errorMessage.set('');
@@ -46,10 +52,13 @@ export class MinPokerPublicGamesComponent implements OnInit {
       this.errorMessage.set(error instanceof Error ? error.message : 'Spiele konnten nicht geladen werden. Bitte versuche es erneut.');
     } finally {
       this.isLoading.set(false);
+      this.logger.debug(`END loadGames(...)`);
     }
   }
 
   public navigateToGame(id: string): void {
+    this.logger.debug(`START navigateToGame(id: ${id})`);
     this.routingService.navigateToMinPokerGame(id);
+    this.logger.debug(`END navigateToGame(...)`);
   }
 }

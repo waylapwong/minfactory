@@ -190,6 +190,27 @@ describe('MinpokerGateway', () => {
       expect(MINPOKER_SERVER_TO_EMIT_MOCK).toHaveBeenCalledWith(MinPokerEvent.Updated, { matchId: 'match-1' });
       expect(MINPOKER_SERVER_TO_EMIT_MOCK).not.toHaveBeenCalledWith(MinPokerEvent.HandDealt, expect.anything());
     });
+
+    it('should skip HandDealt event when player socket id is not found', async () => {
+      const command: MinPokerSeatCommand = {
+        avatar: 'woman-1.svg',
+        matchId: 'match-1',
+        playerId: 'user-1',
+        playerName: 'Alice',
+        seat: 0,
+      };
+      const hands: Map<string, { hand: string[] }> = new Map([['player-1', { hand: ['Ah', 'Ks'] }]]);
+      MINPOKER_TOURNAMENT_SERVICE_MOCK.handleSeatCommand.mockResolvedValue({
+        updatedEvent: { matchId: 'match-1' },
+        hands,
+      });
+      MINPOKER_PLAYER_ID_REPOSITORY_MOCK.findByPlayerId.mockReturnValue(null);
+
+      await gateway.handleSeatCommand(mockSocket, command);
+
+      expect(MINPOKER_PLAYER_ID_REPOSITORY_MOCK.findByPlayerId).toHaveBeenCalledWith('player-1');
+      expect(MINPOKER_SERVER_TO_EMIT_MOCK).not.toHaveBeenCalledWith(MinPokerEvent.HandDealt, expect.anything());
+    });
   });
 
   describe('handleDisconnect()', () => {
@@ -233,6 +254,21 @@ describe('MinpokerGateway', () => {
       expect(MINPOKER_TOURNAMENT_SERVICE_MOCK.handleDisconnectCommand).toHaveBeenCalledWith(mockSocket);
       expect(mockServer.emit).not.toHaveBeenCalled();
       expect(MINPOKER_SERVER_TO_EMIT_MOCK).not.toHaveBeenCalled();
+    });
+
+    it('should use server.emit when disconnectedEvent has no matchId', () => {
+      MINPOKER_TOURNAMENT_SERVICE_MOCK.handleDisconnectCommand.mockReturnValue({
+        disconnectedEvent: { matchId: null, playerId: 'user-1' },
+        updatedEvent: null,
+      });
+
+      gateway.handleDisconnect(mockSocket);
+
+      expect(mockServer.emit).toHaveBeenCalledWith(MinPokerEvent.MatchDisconnected, {
+        matchId: null,
+        playerId: 'user-1',
+      });
+      expect(mockServer.to).not.toHaveBeenCalledWith(null);
     });
   });
 });

@@ -1,53 +1,130 @@
+import { GameRuleException } from '../../../../shared/exceptions/game-rule.exception';
+import { MinPokerDeck } from './minpoker-deck';
 import { MinPokerGame } from './minpoker-game';
 import { MinPokerPlayer } from './minpoker-player';
-import { MinPokerDeck } from './minpoker-deck';
 
 describe('MinPokerGame', () => {
-  it('should have default values', () => {
-    const domain = new MinPokerGame();
+  afterEach(() => jest.clearAllMocks());
 
-    expect(domain.bigBlind).toBe(2);
-    expect(domain.smallBlind).toBe(1);
-    expect(domain.tableSize).toBe(6);
-    expect(domain.players).toBeInstanceOf(Array);
-    expect(domain.observers).toBeInstanceOf(Map);
+  describe('constructor', () => {
+    it('should have default values', () => {
+      const domain = new MinPokerGame();
+
+      expect(domain.bigBlind).toBe(2);
+      expect(domain.smallBlind).toBe(1);
+      expect(domain.tableSize).toBe(6);
+      expect(domain.players).toBeInstanceOf(Array);
+      expect(domain.observers).toBeInstanceOf(Map);
+    });
+
+    it('should assign partial values via constructor', () => {
+      const domain = new MinPokerGame({ id: 'id-1', name: 'Table A' });
+
+      expect(domain.id).toBe('id-1');
+      expect(domain.name).toBe('Table A');
+    });
   });
 
-  it('should assign partial values via constructor', () => {
-    const domain = new MinPokerGame({ id: 'id-1', name: 'Table A' });
+  describe('addObserver()', () => {
+    it('should add observer only once', () => {
+      const domain = new MinPokerGame();
 
-    expect(domain.id).toBe('id-1');
-    expect(domain.name).toBe('Table A');
+      domain.addObserver('observer-1');
+      domain.addObserver('observer-1');
+
+      expect(domain.observers.size).toBe(1);
+      expect(domain.isObserver('observer-1')).toBe(true);
+    });
+
+    it('should not add observer when they are already a seated player', () => {
+      const domain = new MinPokerGame();
+      domain.seatPlayer(new MinPokerPlayer({ id: 'player-1', name: 'Alice' }), 0);
+
+      domain.addObserver('player-1');
+
+      expect(domain.observers.size).toBe(0);
+    });
   });
 
-  it('should add observer only once', () => {
-    const domain = new MinPokerGame();
+  describe('seatPlayer()', () => {
+    it('should seat observer on free seat and remove from observers', () => {
+      const domain = new MinPokerGame();
+      const player = new MinPokerPlayer({ avatar: 'avatar.svg', id: 'player-1', name: 'Alice' });
 
-    domain.addObserver('observer-1');
-    domain.addObserver('observer-1');
+      domain.addObserver('player-1');
+      domain.seatPlayer(player, 2);
 
-    expect(domain.observers.size).toBe(1);
-    expect(domain.isObserver('observer-1')).toBe(true);
+      expect(domain.players[2]).toEqual(expect.objectContaining({ id: 'player-1', seat: 2 }));
+      expect(domain.isObserver('player-1')).toBe(false);
+    });
+
+    it('should throw GameRuleException when seat index is invalid', () => {
+      const domain = new MinPokerGame();
+      const player = new MinPokerPlayer({ id: 'player-1', name: 'Alice' });
+
+      expect(() => domain.seatPlayer(player, -1)).toThrow(GameRuleException);
+      expect(() => domain.seatPlayer(player, domain.tableSize)).toThrow(GameRuleException);
+    });
+
+    it('should throw GameRuleException when seat is occupied by another player', () => {
+      const domain = new MinPokerGame();
+      domain.seatPlayer(new MinPokerPlayer({ id: 'player-1', name: 'Alice' }), 0);
+
+      expect(() => domain.seatPlayer(new MinPokerPlayer({ id: 'player-2', name: 'Bob' }), 0)).toThrow(GameRuleException);
+    });
+
+    it('should move player from old seat to new seat', () => {
+      const domain = new MinPokerGame();
+      const player = new MinPokerPlayer({ id: 'player-1', name: 'Alice' });
+      domain.seatPlayer(player, 0);
+
+      domain.seatPlayer(player, 2);
+
+      expect(domain.players[0]).toBeNull();
+      expect(domain.players[2]).toEqual(expect.objectContaining({ id: 'player-1', seat: 2 }));
+    });
   });
 
-  it('should seat observer on free seat', () => {
-    const domain = new MinPokerGame();
-    const player = new MinPokerPlayer({ avatar: 'avatar.svg', id: 'player-1', name: 'Alice' });
+  describe('removePlayer()', () => {
+    it('should remove player from seat by player id', () => {
+      const domain = new MinPokerGame();
 
-    domain.addObserver('player-1');
-    domain.seatPlayer(player, 2);
+      domain.seatPlayer(new MinPokerPlayer({ id: 'player-1', name: 'Alice' }), 0);
+      domain.removePlayer('player-1');
 
-    expect(domain.players[2]).toEqual(expect.objectContaining({ id: 'player-1', seat: 2 }));
-    expect(domain.isObserver('player-1')).toBe(false);
+      expect(domain.players[0]).toBeNull();
+    });
+
+    it('should remove observer when player id is not a seated player', () => {
+      const domain = new MinPokerGame();
+      domain.addObserver('observer-1');
+
+      domain.removePlayer('observer-1');
+
+      expect(domain.isObserver('observer-1')).toBe(false);
+    });
   });
 
-  it('should remove player from seat by player id', () => {
-    const domain = new MinPokerGame();
+  describe('hasParticipants()', () => {
+    it('should return false when no players and no observers', () => {
+      const domain = new MinPokerGame();
 
-    domain.seatPlayer(new MinPokerPlayer({ id: 'player-1', name: 'Alice' }), 0);
-    domain.removePlayer('player-1');
+      expect(domain.hasParticipants()).toBe(false);
+    });
 
-    expect(domain.players[0]).toBeNull();
+    it('should return true when only observers are present', () => {
+      const domain = new MinPokerGame();
+      domain.addObserver('observer-1');
+
+      expect(domain.hasParticipants()).toBe(true);
+    });
+
+    it('should return true when only seated players are present', () => {
+      const domain = new MinPokerGame();
+      domain.seatPlayer(new MinPokerPlayer({ id: 'player-1', name: 'Alice' }), 0);
+
+      expect(domain.hasParticipants()).toBe(true);
+    });
   });
 
   describe('canStartRound()', () => {

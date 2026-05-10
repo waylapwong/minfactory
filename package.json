@@ -7,6 +7,8 @@
     "format:client": "npm --prefix client run format",
     "format:server": "npm --prefix server run format",
     "start:client": "npm --prefix client run start",
-    "start:server": "npm --prefix server run start"
+    "start:server": "npm --prefix server run start",
+    "test:client": "npm --prefix client run test",
+    "test:server": "npm --prefix server run test"
   }
 }
