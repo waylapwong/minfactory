@@ -41,7 +41,7 @@ describe('AuthenticationGuard', () => {
 
     const request = context.switchToHttp().getRequest();
     expect(request.firebaseUser).toEqual({
-      firebaseUid: 'firebase-uid-123',
+      uid: 'firebase-uid-123',
       email: 'user@example.com',
     });
   });

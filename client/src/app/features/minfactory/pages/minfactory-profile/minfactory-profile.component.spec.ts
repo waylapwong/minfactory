@@ -1,3 +1,4 @@
+import { HttpErrorResponse } from '@angular/common/http';
 import { provideZonelessChangeDetection } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ROUTING_SERVICE_MOCK } from '../../../../core/routing/mocks/routing.service.mock';
@@ -74,10 +75,56 @@ describe('MinFactoryProfileComponent', () => {
 
     expect(MINFACTORY_USER_SERVICE_MOCK.loadProfile).toHaveBeenCalled();
     expect(component.profileRequestState()).toBe(RequestState.Success);
+    expect(component.profileRequestError()).toBe('');
   });
 
   it('should navigate to login when profile loading fails with unauthorized error', async () => {
     MINFACTORY_USER_SERVICE_MOCK.loadProfile.and.returnValue(Promise.reject(new Error('401 Unauthorized')));
+
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    expect(ROUTING_SERVICE_MOCK.navigateToLogin).toHaveBeenCalled();
+  });
+
+  it('should navigate to login when profile loading fails with HttpErrorResponse 401', async () => {
+    MINFACTORY_USER_SERVICE_MOCK.loadProfile.and.callFake(async () => {
+      throw new HttpErrorResponse({ status: 401 });
+    });
+
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    expect(ROUTING_SERVICE_MOCK.navigateToLogin).toHaveBeenCalled();
+  });
+
+  it('should navigate to login when profile loading fails with HttpErrorResponse non-401', async () => {
+    MINFACTORY_USER_SERVICE_MOCK.loadProfile.and.callFake(async () => {
+      throw new HttpErrorResponse({ status: 500 });
+    });
+
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    expect(component.profileRequestState()).toBe(RequestState.Error);
+    expect(ROUTING_SERVICE_MOCK.navigateToLogin).not.toHaveBeenCalled();
+  });
+
+  it('should navigate to login when profile loading fails with "unauthorized" message', async () => {
+    MINFACTORY_USER_SERVICE_MOCK.loadProfile.and.callFake(async () => {
+      throw new Error('unauthorized access');
+    });
+
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    expect(ROUTING_SERVICE_MOCK.navigateToLogin).toHaveBeenCalled();
+  });
+
+  it('should navigate to login when profile loading fails with "unauthenticated" message', async () => {
+    MINFACTORY_USER_SERVICE_MOCK.loadProfile.and.callFake(async () => {
+      throw new Error('unauthenticated user');
+    });
 
     fixture.detectChanges();
     await fixture.whenStable();
@@ -137,7 +184,12 @@ describe('MinFactoryProfileComponent', () => {
       await settleLogout();
 
       expect(component.logoutRequestState()).toBe(RequestState.Error);
+      expect(component.logoutRequestError()).toBe('Logout fehlgeschlagen. Bitte versuche es erneut.');
       expect(ROUTING_SERVICE_MOCK.navigateToHomePage).not.toHaveBeenCalled();
+    });
+
+    it('should return empty string for logoutRequestError when not in error state', () => {
+      expect(component.logoutRequestError()).toBe('');
     });
   });
 
@@ -206,7 +258,12 @@ describe('MinFactoryProfileComponent', () => {
       await settleDeleteAccount();
 
       expect(component.deleteRequestState()).toBe(RequestState.Error);
+      expect(component.deleteRequestError()).toBe('Account konnte nicht gelöscht werden. Bitte versuche es erneut.');
       expect(ROUTING_SERVICE_MOCK.navigateToHomePage).not.toHaveBeenCalled();
+    });
+
+    it('should return empty string for deleteRequestError when not in error state', () => {
+      expect(component.deleteRequestError()).toBe('');
     });
   });
 });

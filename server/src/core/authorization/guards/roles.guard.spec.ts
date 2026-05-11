@@ -8,7 +8,7 @@ import { RolesGuard } from './roles.guard';
 
 function createExecutionContext(firebaseUid: string = 'firebase-uid-123'): ExecutionContext {
   const request = {
-    firebaseUser: { firebaseUid, email: 'user@example.com' },
+    firebaseUser: { uid: firebaseUid, email: 'user@example.com' },
   };
   return {
     switchToHttp: () => ({

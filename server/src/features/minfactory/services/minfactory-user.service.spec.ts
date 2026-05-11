@@ -265,9 +265,7 @@ describe('MinFactoryUserService', () => {
       MINFACTORY_USER_REPOSITORY_MOCK.findByEmail.mockRejectedValue(new NotFoundException());
       MINFACTORY_USER_REPOSITORY_MOCK.save.mockRejectedValue(null);
 
-      await expect(
-        userService.createUser({ uid: 'firebase-uid-123', email: 'user@example.com' }),
-      ).rejects.toBeNull();
+      await expect(userService.createUser({ uid: 'firebase-uid-123', email: 'user@example.com' })).rejects.toBeNull();
     });
   });
 });

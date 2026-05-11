@@ -27,8 +27,14 @@ describe('AppComponent', () => {
     }).compileComponents();
 
     AUTHENTICATION_SERVICE_MOCK.setCurrentUser(null);
-    MINFACTORY_USER_SERVICE_MOCK.setProfile(null);
     MINFACTORY_USER_SERVICE_MOCK.ensureProfileLoaded.calls.reset();
+    MINFACTORY_USER_SERVICE_MOCK.setProfile(null);
+    MINFACTORY_USER_SERVICE_MOCK.ensureProfileLoaded.and.callFake(async (): Promise<void> => {
+      if (MINFACTORY_USER_SERVICE_MOCK.profileViewModel()) {
+        return;
+      }
+      await MINFACTORY_USER_SERVICE_MOCK.loadProfile();
+    });
   });
 
   it('should create the app', () => {
@@ -57,6 +63,18 @@ describe('AppComponent', () => {
   });
 
   it('should load profile when auth state becomes authenticated', async () => {
+    const fixture = TestBed.createComponent(AppComponent);
+    fixture.detectChanges();
+
+    AUTHENTICATION_SERVICE_MOCK.setCurrentUser({ uid: 'admin-1' } as any);
+    fixture.detectChanges();
+    await flushMicrotasks();
+
+    expect(MINFACTORY_USER_SERVICE_MOCK.ensureProfileLoaded).toHaveBeenCalled();
+  });
+
+  it('should silently catch error when ensureProfileLoaded fails', async () => {
+    MINFACTORY_USER_SERVICE_MOCK.ensureProfileLoaded.and.rejectWith(new Error('profile load failed'));
     const fixture = TestBed.createComponent(AppComponent);
     fixture.detectChanges();
 

@@ -159,4 +159,66 @@ describe('MinPokerMyGamesComponent', () => {
       expect(ROUTING_SERVICE_MOCK.navigateToMinPokerGame).toHaveBeenCalledWith('some-game-id');
     });
   });
+
+  describe('delete game dialog', () => {
+    beforeEach(() => {
+      MINPOKER_GAME_SERVICE_MOCK.deleteGame.calls.reset();
+      MINPOKER_GAME_SERVICE_MOCK.deleteGame.and.resolveTo();
+    });
+
+    it('should open delete dialog when openDeleteDialog is called', () => {
+      const event: MouseEvent = new MouseEvent('click');
+      component.openDeleteDialog('game-1', event);
+
+      expect(component.isDeleteDialogOpen()).toBeTrue();
+    });
+
+    it('should close delete dialog and clear gameIdToDelete when cancelDeleteGame is called', () => {
+      const event: MouseEvent = new MouseEvent('click');
+      component.openDeleteDialog('game-1', event);
+
+      component.cancelDeleteGame();
+
+      expect(component.isDeleteDialogOpen()).toBeFalse();
+    });
+
+    it('should call deleteGame and close dialog when confirmDeleteGame is called with a valid gameId', async () => {
+      const event: MouseEvent = new MouseEvent('click');
+      component.openDeleteDialog('game-1', event);
+
+      await component.confirmDeleteGame();
+
+      expect(MINPOKER_GAME_SERVICE_MOCK.deleteGame).toHaveBeenCalledWith('game-1');
+      expect(component.isDeleteDialogOpen()).toBeFalse();
+    });
+
+    it('should show error when deleteGame rejects with an Error', async () => {
+      const event: MouseEvent = new MouseEvent('click');
+      component.openDeleteDialog('game-1', event);
+      MINPOKER_GAME_SERVICE_MOCK.deleteGame.and.rejectWith(new Error('Delete failed'));
+
+      await component.confirmDeleteGame();
+
+      expect(component.isError()).toBeTrue();
+      expect(component.errorMessage()).toBe('Delete failed');
+    });
+
+    it('should show fallback error message when deleteGame rejects with non-Error', async () => {
+      const event: MouseEvent = new MouseEvent('click');
+      component.openDeleteDialog('game-1', event);
+      MINPOKER_GAME_SERVICE_MOCK.deleteGame.and.rejectWith('unexpected error');
+
+      await component.confirmDeleteGame();
+
+      expect(component.isError()).toBeTrue();
+      expect(component.errorMessage()).toBe('Spiel konnte nicht gelöscht werden.');
+    });
+
+    it('should close dialog without calling deleteGame when no gameIdToDelete is set', async () => {
+      await component.confirmDeleteGame();
+
+      expect(MINPOKER_GAME_SERVICE_MOCK.deleteGame).not.toHaveBeenCalled();
+      expect(component.isDeleteDialogOpen()).toBeFalse();
+    });
+  });
 });

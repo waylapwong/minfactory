@@ -25,6 +25,12 @@ describe('roleGuard', () => {
     MINFACTORY_USER_SERVICE_MOCK.loadProfile.calls.reset();
     MINFACTORY_USER_SERVICE_MOCK.clearUserCache.calls.reset();
     MINFACTORY_USER_SERVICE_MOCK.setProfile(null);
+    MINFACTORY_USER_SERVICE_MOCK.ensureProfileLoaded.and.callFake(async (): Promise<void> => {
+      if (MINFACTORY_USER_SERVICE_MOCK.profileViewModel()) {
+        return;
+      }
+      await MINFACTORY_USER_SERVICE_MOCK.loadProfile();
+    });
   });
 
   it('should allow route when no role is required', async () => {

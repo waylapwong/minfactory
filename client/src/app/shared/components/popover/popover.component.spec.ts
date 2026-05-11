@@ -105,4 +105,84 @@ describe('PopoverComponent', () => {
     expect(component.isPinnedByClick()).toBeTrue();
     expect(component.isVisible()).toBeTrue();
   });
+
+  describe('onFocusOut()', () => {
+    it('should close popover when focus leaves the host element', () => {
+      component.isVisible.set(true);
+      fixture.detectChanges();
+
+      const focusEvent: FocusEvent = new FocusEvent('focusout', { relatedTarget: document.body });
+      component.onFocusOut(focusEvent);
+      fixture.detectChanges();
+
+      expect(component.isVisible()).toBeFalse();
+    });
+
+    it('should keep popover open when focus moves within the host element', () => {
+      component.isVisible.set(true);
+      fixture.detectChanges();
+
+      const host: HTMLElement = fixture.nativeElement;
+      const innerElement: HTMLElement = host.querySelector('button') as HTMLElement;
+
+      const focusEvent: FocusEvent = new FocusEvent('focusout', { relatedTarget: innerElement });
+      component.onFocusOut(focusEvent);
+      fixture.detectChanges();
+
+      expect(component.isVisible()).toBeTrue();
+    });
+
+    it('should keep popover open when pinned and focus moves outside', () => {
+      component.isVisible.set(true);
+      component.isPinnedByClick.set(true);
+      fixture.detectChanges();
+
+      const focusEvent: FocusEvent = new FocusEvent('focusout', { relatedTarget: document.body });
+      component.onFocusOut(focusEvent);
+      fixture.detectChanges();
+
+      expect(component.isVisible()).toBeTrue();
+    });
+
+    it('should handle null relatedTarget in onFocusOut', () => {
+      component.isVisible.set(true);
+      fixture.detectChanges();
+
+      const focusEvent: FocusEvent = new FocusEvent('focusout', { relatedTarget: null });
+      component.onFocusOut(focusEvent);
+      fixture.detectChanges();
+
+      expect(component.isVisible()).toBeFalse();
+    });
+  });
+
+  describe('onDocumentClick()', () => {
+    it('should not close popover when document click target is not a Node', () => {
+      component.isVisible.set(true);
+      component.isPinnedByClick.set(true);
+      fixture.detectChanges();
+
+      const nonNodeEvent: MouseEvent = { target: null } as unknown as MouseEvent;
+      component.onDocumentClick(nonNodeEvent);
+      fixture.detectChanges();
+
+      expect(component.isVisible()).toBeTrue();
+      expect(component.isPinnedByClick()).toBeTrue();
+    });
+
+    it('should not close popover when document click is inside host element', () => {
+      component.isVisible.set(true);
+      component.isPinnedByClick.set(true);
+      fixture.detectChanges();
+
+      const host: HTMLElement = fixture.nativeElement;
+      const innerElement: HTMLElement = host.querySelector('button') as HTMLElement;
+
+      const insideEvent: MouseEvent = { target: innerElement } as unknown as MouseEvent;
+      component.onDocumentClick(insideEvent);
+      fixture.detectChanges();
+
+      expect(component.isVisible()).toBeTrue();
+    });
+  });
 });
