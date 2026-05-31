@@ -55,6 +55,7 @@ export class MinPokerDomainMapper {
       viewModel.observerCount = domain.observerCount;
       viewModel.playerCount = domain.playerCount;
       viewModel.smallBlind = domain.smallBlind;
+      viewModel.visibility = domain.visibility;
 
       return viewModel;
     } finally {

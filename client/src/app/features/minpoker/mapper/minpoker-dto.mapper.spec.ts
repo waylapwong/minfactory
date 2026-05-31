@@ -27,6 +27,7 @@ describe('MinPokerDtoMapper', () => {
       expect(domain.smallBlind).toBe(50);
       expect(domain.bigBlind).toBe(100);
       expect(domain.tableSize).toBe(6);
+      expect(domain.visibility).toBe('private');
     });
   });
 });

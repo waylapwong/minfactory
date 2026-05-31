@@ -18,6 +18,7 @@ export class MinPokerDtoMapper {
       domain.playerCount = dto.playerCount;
       domain.smallBlind = dto.smallBlind;
       domain.tableSize = dto.tableSize;
+      domain.visibility = dto.visibility;
 
       return domain;
     } finally {

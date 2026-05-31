@@ -39,7 +39,7 @@ export class MinPokerMyGamesComponent implements OnInit {
     public readonly routingService: RoutingService,
     private readonly gameService: MinPokerGameService,
   ) {
-    this.viewModel = this.gameService.publicGamesVm;
+    this.viewModel = this.gameService.myGamesVm;
   }
 
   public get newGameName(): FormControl {

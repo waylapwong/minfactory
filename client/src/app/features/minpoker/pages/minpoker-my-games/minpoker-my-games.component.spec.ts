@@ -47,7 +47,7 @@ describe('MinPokerMyGamesComponent', () => {
   });
 
   it('should inject game service games signal', () => {
-    expect(component.viewModel).toBe(MINPOKER_GAME_SERVICE_MOCK.publicGamesVm);
+    expect(component.viewModel).toBe(MINPOKER_GAME_SERVICE_MOCK.myGamesVm);
   });
 
   it('should call reloadGames on init', () => {

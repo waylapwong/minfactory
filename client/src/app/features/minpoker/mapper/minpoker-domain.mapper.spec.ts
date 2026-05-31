@@ -117,6 +117,7 @@ describe('MinPokerDomainMapper', () => {
       domain.observerCount = 2;
       domain.playerCount = 4;
       domain.smallBlind = 50;
+      domain.visibility = 'public';
 
       const viewModel = MinPokerDomainMapper.toPublicGameVm(domain);
 
@@ -128,6 +129,7 @@ describe('MinPokerDomainMapper', () => {
       expect(viewModel.observerCount).toBe(2);
       expect(viewModel.smallBlind).toBe(50);
       expect(viewModel.bigBlind).toBe(100);
+      expect(viewModel.visibility).toBe('public');
     });
   });
 
