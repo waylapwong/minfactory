@@ -5,6 +5,7 @@ import { MinPokerGameVisibility } from '../../../../core/generated';
 import { LoggerService } from '../../../../core/logging/services/logger.service';
 import { RoutingService } from '../../../../core/routing/services/routing.service';
 import { ButtonComponent } from '../../../../shared/components/button/button.component';
+import { ToggleComponent } from '../../../../shared/components/toggle/toggle.component';
 import { CardButtonComponent } from '../../../../shared/components/card-button/card-button.component';
 import { DialogComponent } from '../../../../shared/components/dialog/dialog.component';
 import { H2Component } from '../../../../shared/components/h2/h2.component';
@@ -18,7 +19,7 @@ import { MinPokerGameService } from '../../services/minpoker-game.service';
   templateUrl: './minpoker-my-games.component.html',
   styleUrls: ['./minpoker-my-games.component.scss'],
   host: { class: 'block h-full w-full' },
-  imports: [CardButtonComponent, H2Component, ButtonComponent, DialogComponent, InputComponent, ReactiveFormsModule, DatePipe],
+  imports: [CardButtonComponent, H2Component, ButtonComponent, DialogComponent, InputComponent, ToggleComponent, ReactiveFormsModule, DatePipe],
 })
 export class MinPokerMyGamesComponent implements OnInit {
   public readonly Color: typeof Color = Color;
@@ -44,6 +45,10 @@ export class MinPokerMyGamesComponent implements OnInit {
 
   public get newGameName(): FormControl {
     return this.newGameFormGroup.get('name') as FormControl;
+  }
+
+  public get newGameVisibility(): FormControl {
+    return this.newGameFormGroup.get('visibility') as FormControl;
   }
 
   public ngOnInit(): void {
@@ -78,7 +83,10 @@ export class MinPokerMyGamesComponent implements OnInit {
     this.logger.debug(`START createGame()`);
     if (this.newGameFormGroup.valid) {
       try {
-        await this.gameService.createGame(this.newGameName.value, MinPokerGameVisibility.Private);
+        const visibility: MinPokerGameVisibility = this.newGameVisibility.value
+          ? MinPokerGameVisibility.Public
+          : MinPokerGameVisibility.Private;
+        await this.gameService.createGame(this.newGameName.value, visibility);
         this.isNewGameDialogOpen.set(false);
       } catch (error: unknown) {
         this.isError.set(true);
@@ -133,6 +141,10 @@ export class MinPokerMyGamesComponent implements OnInit {
         name: new FormControl('', {
           nonNullable: true,
           validators: [Validators.maxLength(32), Validators.minLength(2), Validators.required],
+        }),
+        visibility: new FormControl(false, {
+          nonNullable: true,
+          validators: [Validators.required],
         }),
       });
     } finally {

@@ -99,6 +99,13 @@
         }
       }
     </div>
+    <min-toggle
+      id="poker-game-visibility-toggle"
+      label="Sichtbarkeit"
+      labelLeft="Privat"
+      labelRight="Öffentlich"
+      [formControlInput]="newGameVisibility"
+    />
     <div class="flex flex-row justify-end">
       <min-button [color]="Color.Green" [isDisabled]="newGameFormGroup.invalid" (clicked)="createGame()"> Spiel erstellen </min-button>
     </div>
