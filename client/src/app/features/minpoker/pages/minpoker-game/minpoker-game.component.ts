@@ -13,6 +13,7 @@ import { SelectComponent, SelectOption } from '../../../../shared/components/sel
 import { SliderComponent } from '../../../../shared/components/slider/slider.component';
 import { Color } from '../../../../shared/enums/color.enum';
 import { CanLeaveGame } from '../../../../shared/guards/leave-game.guard';
+import { MinPokerGameStatus } from '../../models/enums/minpoker-game-status.enum';
 import { MinPokerGameSeatVm } from '../../models/viewmodels/minpoker-game.vm';
 import { MinPokerMultiplayerService } from '../../services/minpoker-multiplayer.service';
 
@@ -35,6 +36,7 @@ import { MinPokerMultiplayerService } from '../../services/minpoker-multiplayer.
 })
 export class MinPokerGameComponent implements OnInit, OnDestroy, CanLeaveGame {
   public readonly Color: typeof Color = Color;
+  public readonly MinPokerGameStatus: typeof MinPokerGameStatus = MinPokerGameStatus;
   private readonly logger: LoggerService = new LoggerService(MinPokerGameComponent.name);
 
   public readonly avatarOptions: readonly SelectOption[] = AVATAR_FILE_NAMES.map((avatarFileName) => ({
@@ -45,6 +47,8 @@ export class MinPokerGameComponent implements OnInit, OnDestroy, CanLeaveGame {
   public readonly communityCards: readonly string[] = ['?', '?', '?', '?', '?'];
   public readonly hand: Signal<string[]> = computed(() => this.multiplayerService.game().hand);
   public readonly isObserver: Signal<boolean> = computed(() => this.multiplayerService.game().isObserver);
+  public readonly isOwner: Signal<boolean> = computed(() => this.multiplayerService.game().isOwner);
+  public readonly gameStatus: Signal<MinPokerGameStatus> = computed(() => this.multiplayerService.game().status);
   public readonly isRoundActive: Signal<boolean> = computed(() => this.hand().length > 0);
   public readonly opponents: Signal<(MinPokerGameSeatVm | null)[]> = computed(() => this.multiplayerService.game().seats);
   public readonly heroSeat: Signal<MinPokerGameSeatVm | null> = computed(() => {
@@ -195,9 +199,27 @@ export class MinPokerGameComponent implements OnInit, OnDestroy, CanLeaveGame {
     this.logger.debug(`END onFold(...)`);
   }
 
+  public onPauseGame(): void {
+    this.logger.debug(`START onPauseGame()`);
+    this.multiplayerService.pauseGame();
+    this.logger.debug(`END onPauseGame(...)`);
+  }
+
   public onRaise(): void {
     this.logger.debug(`START onRaise()`);
     this.logger.debug(`END onRaise(...)`);
+  }
+
+  public onResumeGame(): void {
+    this.logger.debug(`START onResumeGame()`);
+    this.multiplayerService.resumeGame();
+    this.logger.debug(`END onResumeGame(...)`);
+  }
+
+  public onStartGame(): void {
+    this.logger.debug(`START onStartGame()`);
+    this.multiplayerService.startGame();
+    this.logger.debug(`END onStartGame(...)`);
   }
 
   public openSeatDialog(seatIndex: number): void {

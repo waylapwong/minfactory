@@ -12,7 +12,10 @@ import { AuthenticationService } from '../../../core/authentication/services/aut
 import { Namespace } from '../../../shared/enums/namespace.enum';
 import { MinPokerJoinCommand } from '../models/commands/minpoker-join.command';
 import { MinPokerLeaveCommand } from '../models/commands/minpoker-leave.command';
+import { MinPokerPauseCommand } from '../models/commands/minpoker-pause.command';
+import { MinPokerResumeCommand } from '../models/commands/minpoker-resume.command';
 import { MinPokerSeatCommand } from '../models/commands/minpoker-seat.command';
+import { MinPokerStartCommand } from '../models/commands/minpoker-start.command';
 import { MinPokerCommand } from '../models/enums/minpoker-command.enum';
 import { MinPokerEvent } from '../models/enums/minpoker-event.enum';
 import { MinPokerConnectedEvent } from '../models/events/minpoker-connected.event';
@@ -20,7 +23,12 @@ import { MinPokerDisconnectedEvent } from '../models/events/minpoker-disconnecte
 import { MinPokerHandDealtEvent } from '../models/events/minpoker-hand-dealt.event';
 import { MinPokerUpdatedEvent } from '../models/events/minpoker-updated.event';
 import { MinPokerPlayerIdRepository } from '../repositories/minpoker-player-id.repository';
-import { MinPokerDisconnectResult, MinPokerSeatResult, MinPokerTournamentService } from '../services/minpoker-tournament.service';
+import {
+  MinPokerDisconnectResult,
+  MinPokerSeatResult,
+  MinPokerStartResult,
+  MinPokerTournamentService,
+} from '../services/minpoker-tournament.service';
 import { DecodedIdToken } from 'firebase-admin/auth';
 
 @WebSocketGateway({
@@ -57,6 +65,33 @@ export class MinPokerGateway implements OnGatewayConnection, OnGatewayDisconnect
   public async handleSeatCommand(@ConnectedSocket() clientSocket: Socket, @MessageBody() command: MinPokerSeatCommand): Promise<void> {
     console.log(`Incoming Command: ${MinPokerCommand.Seat}`, command);
     const result: MinPokerSeatResult = await this.tournamentService.handleSeatCommand(clientSocket, command);
+    this.sendMatchUpdatedEvent(result.updatedEvent);
+
+    if (result.hands) {
+      for (const [playerId, hand] of result.hands) {
+        this.sendHandDealtEvent(playerId, hand);
+      }
+    }
+  }
+
+  @SubscribeMessage(MinPokerCommand.Pause)
+  public handlePauseCommand(@ConnectedSocket() clientSocket: Socket, @MessageBody() command: MinPokerPauseCommand): void {
+    console.log(`Incoming Command: ${MinPokerCommand.Pause}`, command);
+    const event: MinPokerUpdatedEvent = this.tournamentService.handlePauseCommand(clientSocket, command);
+    this.sendMatchUpdatedEvent(event);
+  }
+
+  @SubscribeMessage(MinPokerCommand.Resume)
+  public handleResumeCommand(@ConnectedSocket() clientSocket: Socket, @MessageBody() command: MinPokerResumeCommand): void {
+    console.log(`Incoming Command: ${MinPokerCommand.Resume}`, command);
+    const event: MinPokerUpdatedEvent = this.tournamentService.handleResumeCommand(clientSocket, command);
+    this.sendMatchUpdatedEvent(event);
+  }
+
+  @SubscribeMessage(MinPokerCommand.Start)
+  public handleStartCommand(@ConnectedSocket() clientSocket: Socket, @MessageBody() command: MinPokerStartCommand): void {
+    console.log(`Incoming Command: ${MinPokerCommand.Start}`, command);
+    const result: MinPokerStartResult = this.tournamentService.handleStartCommand(clientSocket, command);
     this.sendMatchUpdatedEvent(result.updatedEvent);
 
     if (result.hands) {

@@ -52,6 +52,7 @@ export class MinPokerDomainMapper {
     const event: MinPokerUpdatedEvent = new MinPokerUpdatedEvent();
 
     event.bigBlind = domain.bigBlind;
+    event.creatorId = domain.creatorId;
     event.matchId = domain.id;
     event.name = domain.name;
     event.observerIds = [...domain.observers.keys()];
@@ -65,6 +66,7 @@ export class MinPokerDomainMapper {
         stack: player.stack,
       }));
     event.smallBlind = domain.smallBlind;
+    event.status = domain.status;
     event.tableSize = domain.tableSize;
 
     return event;

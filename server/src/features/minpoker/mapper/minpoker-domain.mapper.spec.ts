@@ -124,6 +124,7 @@ describe('MinPokerDomainMapper', () => {
 
       expect(event).toEqual({
         bigBlind: 20,
+        creatorId: '',
         matchId: 'match-id',
         name: 'Updated Table',
         observerIds: ['o1', 'o2'],
@@ -132,6 +133,7 @@ describe('MinPokerDomainMapper', () => {
           { avatar: 'avatar-b', id: 'p2', name: 'B', seat: 2, stack: 220 },
         ],
         smallBlind: 10,
+        status: 'waiting',
         tableSize: 3,
       });
     });

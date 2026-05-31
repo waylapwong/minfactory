@@ -6,11 +6,13 @@ describe('MinPokerEventMapper', () => {
     it('should map event fields to domain', () => {
       const event: MinPokerMatchUpdatedEvent = {
         bigBlind: 20,
+        creatorId: 'creator-1',
         matchId: 'match-1',
         name: 'Evening Table',
         observerIds: ['obs-1', 'obs-2'],
         players: [],
         smallBlind: 10,
+        status: 'active',
         tableSize: 6,
       };
 
@@ -27,11 +29,13 @@ describe('MinPokerEventMapper', () => {
     it('should create a players array of tableSize length filled with null', () => {
       const event: MinPokerMatchUpdatedEvent = {
         bigBlind: 20,
+        creatorId: 'creator-1',
         matchId: 'match-1',
         name: 'Table',
         observerIds: [],
         players: [],
         smallBlind: 10,
+        status: 'waiting',
         tableSize: 4,
       };
 
@@ -44,6 +48,7 @@ describe('MinPokerEventMapper', () => {
     it('should place players at the correct seat index', () => {
       const event: MinPokerMatchUpdatedEvent = {
         bigBlind: 20,
+        creatorId: 'creator-1',
         matchId: 'match-1',
         name: 'Table',
         observerIds: [],
@@ -52,6 +57,7 @@ describe('MinPokerEventMapper', () => {
           { avatar: 'woman-2.svg', id: 'p2', name: 'Bob', seat: 3, stack: 150 },
         ],
         smallBlind: 10,
+        status: 'waiting',
         tableSize: 6,
       };
 
@@ -69,11 +75,13 @@ describe('MinPokerEventMapper', () => {
       const observerIds = ['obs-1'];
       const event: MinPokerMatchUpdatedEvent = {
         bigBlind: 0,
+        creatorId: '',
         matchId: '',
         name: '',
         observerIds,
         players: [],
         smallBlind: 0,
+        status: 'waiting',
         tableSize: 2,
       };
 

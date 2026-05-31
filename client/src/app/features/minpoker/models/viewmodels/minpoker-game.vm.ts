@@ -1,3 +1,5 @@
+import { MinPokerGameStatus } from '../enums/minpoker-game-status.enum';
+
 export class MinPokerGameSeatVm {
   public avatar: string = '';
   public id: string = '';
@@ -12,7 +14,9 @@ export class MinPokerGameVm {
   public gameName: string = '';
   public hand: string[] = [];
   public isObserver: boolean = true;
+  public isOwner: boolean = false;
   public seats: (MinPokerGameSeatVm | null)[] = [];
   public smallBlind: number = 0;
+  public status: MinPokerGameStatus = MinPokerGameStatus.Waiting;
   public tableSize: number = 0;
 }

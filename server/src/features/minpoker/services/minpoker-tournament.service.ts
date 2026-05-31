@@ -6,7 +6,10 @@ import { MinPokerDomainMapper } from '../mapper/minpoker-domain.mapper';
 import { MinPokerEntityMapper } from '../mapper/minpoker-entity.mapper';
 import { MinPokerJoinCommand } from '../models/commands/minpoker-join.command';
 import { MinPokerLeaveCommand } from '../models/commands/minpoker-leave.command';
+import { MinPokerPauseCommand } from '../models/commands/minpoker-pause.command';
+import { MinPokerResumeCommand } from '../models/commands/minpoker-resume.command';
 import { MinPokerSeatCommand } from '../models/commands/minpoker-seat.command';
+import { MinPokerStartCommand } from '../models/commands/minpoker-start.command';
 import { MinPokerDeck } from '../models/domains/minpoker-deck';
 import { MinPokerGame } from '../models/domains/minpoker-game';
 import { MinPokerPlayer } from '../models/domains/minpoker-player';
@@ -27,6 +30,11 @@ export interface MinPokerDisconnectResult {
 }
 
 export interface MinPokerSeatResult {
+  hands: Map<string, MinPokerHandDealtEvent> | null;
+  updatedEvent: MinPokerUpdatedEvent;
+}
+
+export interface MinPokerStartResult {
   hands: Map<string, MinPokerHandDealtEvent> | null;
   updatedEvent: MinPokerUpdatedEvent;
 }
@@ -149,7 +157,79 @@ export class MinPokerTournamentService {
     match.seatPlayer(player, command.seat);
     // DEAL HANDS, ONLY WHEN ROUND STARTS FOR THE FIRST TIME (no deck yet)
     let hands: Map<string, MinPokerHandDealtEvent> | null = null;
-    if (match.canStartRound() && !this.deckRepository.findOne(match.id)) {
+    if (match.isActive() && match.canStartRound() && !this.deckRepository.findOne(match.id)) {
+      const deck: MinPokerDeck = new MinPokerDeck();
+      deck.shuffle();
+      this.deckRepository.save(match.id, deck);
+      match.dealHands(deck);
+      hands = this.buildHandDealtEvents(match);
+    }
+    // SAVE MATCH
+    const updatedMatch: MinPokerGame = this.matchRepository.save(match);
+    // RETURN EVENT
+    return {
+      updatedEvent: MinPokerDomainMapper.toUpdatedEvent(updatedMatch),
+      hands,
+    };
+  }
+
+  public handlePauseCommand(clientSocket: Socket, command: MinPokerPauseCommand): MinPokerUpdatedEvent {
+    // GET PLAYER ID
+    const playerId: string = this.resolvePlayerId(clientSocket, command.playerId);
+    // GET MATCH
+    const match: MinPokerGame | null = this.matchRepository.findOne(command.matchId);
+    if (!match) {
+      throw new ForbiddenException('Match not found');
+    }
+    // AUTHORIZE: only creator can pause
+    if (match.creatorId !== playerId) {
+      throw new ForbiddenException('Only the game owner can pause the game');
+    }
+    // UPDATE MATCH
+    match.pause();
+    // SAVE MATCH
+    const updatedMatch: MinPokerGame = this.matchRepository.save(match);
+    // RETURN EVENT
+    return MinPokerDomainMapper.toUpdatedEvent(updatedMatch);
+  }
+
+  public handleResumeCommand(clientSocket: Socket, command: MinPokerResumeCommand): MinPokerUpdatedEvent {
+    // GET PLAYER ID
+    const playerId: string = this.resolvePlayerId(clientSocket, command.playerId);
+    // GET MATCH
+    const match: MinPokerGame | null = this.matchRepository.findOne(command.matchId);
+    if (!match) {
+      throw new ForbiddenException('Match not found');
+    }
+    // AUTHORIZE: only creator can resume
+    if (match.creatorId !== playerId) {
+      throw new ForbiddenException('Only the game owner can resume the game');
+    }
+    // UPDATE MATCH
+    match.resume();
+    // SAVE MATCH
+    const updatedMatch: MinPokerGame = this.matchRepository.save(match);
+    // RETURN EVENT
+    return MinPokerDomainMapper.toUpdatedEvent(updatedMatch);
+  }
+
+  public handleStartCommand(clientSocket: Socket, command: MinPokerStartCommand): MinPokerStartResult {
+    // GET PLAYER ID
+    const playerId: string = this.resolvePlayerId(clientSocket, command.playerId);
+    // GET MATCH
+    const match: MinPokerGame | null = this.matchRepository.findOne(command.matchId);
+    if (!match) {
+      throw new ForbiddenException('Match not found');
+    }
+    // AUTHORIZE: only creator can start
+    if (match.creatorId !== playerId) {
+      throw new ForbiddenException('Only the game owner can start the game');
+    }
+    // UPDATE MATCH
+    match.start();
+    // DEAL HANDS, IF ROUND CAN START AND NO DECK EXISTS YET
+    let hands: Map<string, MinPokerHandDealtEvent> | null = null;
+    if (match.isActive() && match.canStartRound() && !this.deckRepository.findOne(match.id)) {
       const deck: MinPokerDeck = new MinPokerDeck();
       deck.shuffle();
       this.deckRepository.save(match.id, deck);

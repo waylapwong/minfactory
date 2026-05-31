@@ -202,11 +202,13 @@ describe('MinPokerMultiplayerService', () => {
     it('should update seats when match updated event fires', async () => {
       const updatedEvent: MinPokerMatchUpdatedEvent = {
         bigBlind: 20,
+        creatorId: 'creator-1',
         matchId: 'game-1',
         name: 'Test Table',
         observerIds: [],
         players: [{ avatar: 'man-1.svg', id: 'player-1', name: 'Chris', seat: 0, stack: 200 }],
         smallBlind: 10,
+        status: 'waiting',
         tableSize: 6,
       };
 
@@ -225,11 +227,13 @@ describe('MinPokerMultiplayerService', () => {
       const handDealtEvent: MinPokerMatchHandDealtEvent = { hand: ['Ah', 'Ks'] };
       const updatedEvent: MinPokerMatchUpdatedEvent = {
         bigBlind: 20,
+        creatorId: 'creator-1',
         matchId: 'game-1',
         name: 'Test Table',
         observerIds: [],
         players: [{ avatar: 'man-1.svg', id: 'player-1', name: 'Chris', seat: 0, stack: 200 }],
         smallBlind: 10,
+        status: 'waiting',
         tableSize: 6,
       };
 
@@ -251,11 +255,13 @@ describe('MinPokerMultiplayerService', () => {
       const handDealtEvent: MinPokerMatchHandDealtEvent = { hand: ['Ah', 'Ks'] };
       const updatedEventOtherMatch: MinPokerMatchUpdatedEvent = {
         bigBlind: 20,
+        creatorId: 'creator-1',
         matchId: 'game-2',
         name: 'Other Table',
         observerIds: [],
         players: [],
         smallBlind: 10,
+        status: 'waiting',
         tableSize: 6,
       };
 

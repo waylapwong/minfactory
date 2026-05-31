@@ -5,7 +5,10 @@ import { MinPokerDomainMapper } from '../mapper/minpoker-domain.mapper';
 import { MinPokerEventMapper } from '../mapper/minpoker-event.mapper';
 import { MinPokerMatchJoinCommand } from '../models/commands/minpoker-match-join.command';
 import { MinPokerMatchLeaveCommand } from '../models/commands/minpoker-match-leave.command';
+import { MinPokerMatchPauseCommand } from '../models/commands/minpoker-match-pause.command';
+import { MinPokerMatchResumeCommand } from '../models/commands/minpoker-match-resume.command';
 import { MinPokerMatchSeatCommand } from '../models/commands/minpoker-match-seat.command';
+import { MinPokerMatchStartCommand } from '../models/commands/minpoker-match-start.command';
 import { MinPokerMatch } from '../models/domains/minpoker-match';
 import { MinPokerMatchCommand } from '../models/enums/minpoker-match-command.enum';
 import { MinPokerMatchEvent } from '../models/enums/minpoker-match-event.enum';
@@ -65,6 +68,36 @@ export class MinPokerMultiplayerService {
     this.socketRepository.emit(MinPokerMatchCommand.Leave, command);
     this.logger.debug(`Outgoing Command: ${MinPokerMatchCommand.Leave}`);
     this.logger.debug(`END leaveGame(...)`);
+  }
+
+  public pauseGame(): void {
+    this.logger.debug(`START pauseGame()`);
+    const command: MinPokerMatchPauseCommand = new MinPokerMatchPauseCommand();
+    command.matchId = this.cachedMatch().id;
+    command.playerId = this.cachedPlayerId();
+    this.socketRepository.emit(MinPokerMatchCommand.Pause, command);
+    this.logger.debug(`Outgoing Command: ${MinPokerMatchCommand.Pause}`);
+    this.logger.debug(`END pauseGame(...)`);
+  }
+
+  public resumeGame(): void {
+    this.logger.debug(`START resumeGame()`);
+    const command: MinPokerMatchResumeCommand = new MinPokerMatchResumeCommand();
+    command.matchId = this.cachedMatch().id;
+    command.playerId = this.cachedPlayerId();
+    this.socketRepository.emit(MinPokerMatchCommand.Resume, command);
+    this.logger.debug(`Outgoing Command: ${MinPokerMatchCommand.Resume}`);
+    this.logger.debug(`END resumeGame(...)`);
+  }
+
+  public startGame(): void {
+    this.logger.debug(`START startGame()`);
+    const command: MinPokerMatchStartCommand = new MinPokerMatchStartCommand();
+    command.matchId = this.cachedMatch().id;
+    command.playerId = this.cachedPlayerId();
+    this.socketRepository.emit(MinPokerMatchCommand.Start, command);
+    this.logger.debug(`Outgoing Command: ${MinPokerMatchCommand.Start}`);
+    this.logger.debug(`END startGame(...)`);
   }
 
   public seatGame(playerName: string, avatar: string, seat: number): void {

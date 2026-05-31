@@ -171,6 +171,7 @@ describe('MinpokerTournamentService', () => {
     it('should deal hands to all players when 2 or more are seated', async () => {
       const socket = { data: { playerId: 'player-2' }, id: 'socket-2' } as any;
       const match = new MinPokerGame({ id: 'match-1', name: 'Table 1' });
+      match.start();
       match.seatPlayer(new MinPokerPlayer({ avatar: 'man-1.svg', id: 'player-1', name: 'Alice' }), 0);
       match.addObserver('player-2');
       const command: MinPokerSeatCommand = {
