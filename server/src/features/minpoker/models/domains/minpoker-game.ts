@@ -1,4 +1,5 @@
 import { GameRuleException } from '../../../../shared/exceptions/game-rule.exception';
+import { MinPokerGameVisibility } from '../enums/minpoker-game-visibility.enum';
 import { MinPokerDeck } from './minpoker-deck';
 import { MinPokerPlayer } from './minpoker-player';
 
@@ -7,12 +8,12 @@ export class MinPokerGame {
   public createdAt: Date = new Date();
   public creatorId: string = '';
   public id: string = crypto.randomUUID();
-  public isPublic: boolean = false;
   public name: string = '';
   public observers: Map<string, MinPokerPlayer> = new Map<string, MinPokerPlayer>();
   public players: Array<MinPokerPlayer | null> = Array.from({ length: 6 }, () => null);
   public smallBlind: number = 1;
   public tableSize: number = 6;
+  public visibility: MinPokerGameVisibility = MinPokerGameVisibility.Public;
 
   constructor(init?: Partial<MinPokerGame>) {
     if (init) {

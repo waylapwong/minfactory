@@ -40,9 +40,9 @@ export class MinPokerGameController {
   @API_404()
   @API_500()
   public async delete(
-    @Param('id', new ParseUUIDPipe()) id: string,
     @FirebaseUser() firebaseUser: FirebaseUserDto,
     @Headers('X-Request-Id') requestId: string,
+    @Param('id', new ParseUUIDPipe()) id: string,
   ): Promise<void> {
     this.logger.debug(`START delete(id: ${id}, firebaseUser: ${firebaseUser.uid})`, requestId);
     await this.gameService.deleteGame(id, firebaseUser, requestId);
@@ -55,6 +55,7 @@ export class MinPokerGameController {
   @ApiQuery({
     description: 'public = alle öffentlichen Spiele. Ohne Parameter = eigene Spiele.',
     enum: MinPokerGameVisibility,
+    enumName: 'MinPokerGameVisibility',
     example: MinPokerGameVisibility.Public,
     name: 'visibility',
     required: true,

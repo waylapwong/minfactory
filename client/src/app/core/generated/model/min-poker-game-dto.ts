@@ -9,17 +9,22 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
+import { MinPokerGameVisibility } from './min-poker-game-visibility';
 
 
 export interface MinPokerGameDto { 
     bigBlind: number;
     createdAt: string;
+    creatorId: string;
     id: string;
     name: string;
     observerCount: number;
     playerCount: number;
     smallBlind: number;
     tableSize: number;
-    isPublic: boolean;
+    visibility: MinPokerGameVisibility;
 }
+export namespace MinPokerGameDto {
+}
+
 

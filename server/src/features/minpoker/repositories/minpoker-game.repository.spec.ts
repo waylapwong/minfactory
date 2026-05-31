@@ -114,7 +114,7 @@ describe('MinPokerGameRepository', () => {
 
       expect(result).toBe(entities);
       expect(MINPOKER_GAME_TYPEORM_REPOSITORY_MOCK.find).toHaveBeenCalledWith({
-        where: { isPublic: true },
+        where: { visibility: 'public' },
         relations: ['creator'],
         order: { createdAt: 'DESC' },
       });
@@ -122,26 +122,20 @@ describe('MinPokerGameRepository', () => {
   });
 
   describe('delete()', () => {
-    it('should delete entity when found', async () => {
-      const entity = new MinPokerGameEntity();
-      entity.id = 'test-id';
-
-      MINPOKER_GAME_TYPEORM_REPOSITORY_MOCK.findOne.mockResolvedValue(entity);
+    it('should delete entity', async () => {
       MINPOKER_GAME_TYPEORM_REPOSITORY_MOCK.delete.mockResolvedValue({} as any);
 
       await repository.delete('test-id', 'test-request-id');
 
-      expect(MINPOKER_GAME_TYPEORM_REPOSITORY_MOCK.findOne).toHaveBeenCalledWith({
-        where: { id: 'test-id' },
-        relations: ['creator'],
-      });
       expect(MINPOKER_GAME_TYPEORM_REPOSITORY_MOCK.delete).toHaveBeenCalledWith({ id: 'test-id' });
     });
 
-    it('should throw NotFoundException when entity not found for deletion', async () => {
-      MINPOKER_GAME_TYPEORM_REPOSITORY_MOCK.findOne.mockResolvedValue(null);
+    it('should call delete even when entity does not exist', async () => {
+      MINPOKER_GAME_TYPEORM_REPOSITORY_MOCK.delete.mockResolvedValue({} as any);
 
-      await expect(repository.delete('non-existent-id', 'test-request-id')).rejects.toThrow(NotFoundException);
+      await repository.delete('non-existent-id', 'test-request-id');
+
+      expect(MINPOKER_GAME_TYPEORM_REPOSITORY_MOCK.delete).toHaveBeenCalledWith({ id: 'non-existent-id' });
     });
   });
 });

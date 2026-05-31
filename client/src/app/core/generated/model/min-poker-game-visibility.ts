@@ -9,14 +9,12 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
-import { MinPokerGameVisibility } from './min-poker-game-visibility';
 
 
-export interface MinPokerCreateGameDto { 
-    visibility: MinPokerGameVisibility;
-    name: string;
-}
-export namespace MinPokerCreateGameDto {
-}
+export type MinPokerGameVisibility = 'private' | 'public';
 
+export const MinPokerGameVisibility = {
+    Private: 'private' as MinPokerGameVisibility,
+    Public: 'public' as MinPokerGameVisibility
+};
 

@@ -7,13 +7,14 @@ describe('MinPokerDtoMapper', () => {
       const dto: MinPokerGameDto = {
         bigBlind: 100,
         createdAt: '2026-01-01T18:00:00.000Z',
+        creatorId: 'creator-id',
         id: 'game-id',
-        isPublic: false,
         tableSize: 6,
         name: 'Evening Table',
         observerCount: 2,
         playerCount: 4,
         smallBlind: 50,
+        visibility: 'private',
       };
 
       const domain = MinPokerDtoMapper.toDomain(dto);

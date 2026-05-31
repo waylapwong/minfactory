@@ -1,18 +1,19 @@
 import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { MinFactoryUserEntity } from '../../../minfactory/models/entities/minfactory-user.entity';
+import { MinPokerGameVisibility } from '../enums/minpoker-game-visibility.enum';
 
 @Entity({ name: 'minpoker_games' })
 export class MinPokerGameEntity {
   @Column({ type: 'int', default: 2 })
   public bigBlind!: number;
-  @Column({ type: 'boolean', default: false })
-  public isPublic!: boolean;
   @Column({ length: 32 })
   public name!: string;
   @Column({ type: 'int', default: 1 })
   public smallBlind!: number;
   @Column({ type: 'int', default: 6 })
   public tableSize!: number;
+  @Column({ type: 'simple-enum', enum: MinPokerGameVisibility, default: MinPokerGameVisibility.Private })
+  public visibility!: MinPokerGameVisibility;
   @CreateDateColumn()
   public createdAt!: Date;
   @ManyToOne(() => MinFactoryUserEntity, { nullable: false })

@@ -38,7 +38,7 @@
         <p>{{ errorMessage() }}</p>
       </div>
       <div class="flex flex-row justify-center">
-        <min-button [color]="Color.Gray" (clicked)="reloadGames()">
+        <min-button [color]="Color.Gray" (clicked)="loadGames()">
           <img src="assets/svgs/minfactory/ui/refresh.svg" alt="Spiel löschen" class="h-4 w-4" />
         </min-button>
       </div>
@@ -96,5 +96,14 @@
     <div class="flex flex-row justify-end">
       <min-button [color]="Color.Green" [isDisabled]="newGameFormGroup.invalid" (clicked)="createGame()"> Spiel erstellen </min-button>
     </div>
+  </div>
+</min-dialog>
+
+<!-- DELETE DIALOG -->
+<min-dialog title="Spiel löschen" [isOpen]="isDeleteDialogOpen()" (closed)="cancelDeleteGame()">
+  <p class="my-4">Möchtest du das Spiel wirklich löschen?</p>
+  <div class="flex flex-row justify-end gap-2">
+    <min-button [color]="Color.Red" (clicked)="confirmDeleteGame()">Löschen</min-button>
+    <min-button [color]="Color.Gray" (clicked)="cancelDeleteGame()">Abbrechen</min-button>
   </div>
 </min-dialog>

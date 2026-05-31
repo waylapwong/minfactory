@@ -16,15 +16,15 @@ export class MinFactoryUserService {
     private readonly authenticationService: AuthenticationService,
   ) {}
 
-  public async createUser(user: FirebaseUserDto): Promise<MinFactoryUserDto> {
+  public async createUser(user: FirebaseUserDto, requestId: string): Promise<MinFactoryUserDto> {
     const { uid: firebaseUid, email } = user;
-    const existingUserByFirebaseUid: MinFactoryUserEntity | null = await this.findByFirebaseUidOrNull(firebaseUid);
+    const existingUserByFirebaseUid: MinFactoryUserEntity | null = await this.findByFirebaseUidOrNull(firebaseUid, requestId);
 
     if (existingUserByFirebaseUid) {
       return this.entityToDto(existingUserByFirebaseUid);
     }
 
-    const existingUserByEmail: MinFactoryUserEntity | null = await this.findByEmailOrNull(email);
+    const existingUserByEmail: MinFactoryUserEntity | null = await this.findByEmailOrNull(email, requestId);
 
     if (existingUserByEmail) {
       throw new ConflictException('User already registered');
@@ -34,20 +34,20 @@ export class MinFactoryUserService {
     const entity: MinFactoryUserEntity = MinFactoryUserDomainMapper.domainToEntity(domain);
 
     try {
-      const savedEntity: MinFactoryUserEntity = await this.userRepository.save(entity);
+      const savedEntity: MinFactoryUserEntity = await this.userRepository.save(entity, requestId);
       return this.entityToDto(savedEntity);
     } catch (error) {
       if (!this.isDuplicateUserError(error)) {
         throw error;
       }
 
-      const duplicatedUserByFirebaseUid: MinFactoryUserEntity | null = await this.findByFirebaseUidOrNull(firebaseUid);
+      const duplicatedUserByFirebaseUid: MinFactoryUserEntity | null = await this.findByFirebaseUidOrNull(firebaseUid, requestId);
 
       if (duplicatedUserByFirebaseUid) {
         return this.entityToDto(duplicatedUserByFirebaseUid);
       }
 
-      const duplicatedUserByEmail: MinFactoryUserEntity | null = await this.findByEmailOrNull(email);
+      const duplicatedUserByEmail: MinFactoryUserEntity | null = await this.findByEmailOrNull(email, requestId);
 
       if (duplicatedUserByEmail) {
         throw new ConflictException('User already registered');
@@ -57,10 +57,10 @@ export class MinFactoryUserService {
     }
   }
 
-  public async deleteMe(user: FirebaseUserDto): Promise<void> {
+  public async deleteMe(user: FirebaseUserDto, requestId: string): Promise<void> {
     const { uid: firebaseUid } = user;
 
-    const entity: MinFactoryUserEntity | null = await this.findByFirebaseUidOrNull(firebaseUid);
+    const entity: MinFactoryUserEntity | null = await this.findByFirebaseUidOrNull(firebaseUid, requestId);
 
     if (!entity) {
       throw new NotFoundException('User not found');
@@ -74,12 +74,12 @@ export class MinFactoryUserService {
       }
     }
 
-    await this.userRepository.deleteByFirebaseUid(firebaseUid);
+    await this.userRepository.deleteByFirebaseUid(firebaseUid, requestId);
   }
 
-  public async getMe(user: FirebaseUserDto): Promise<MinFactoryUserDto> {
+  public async getMe(user: FirebaseUserDto, requestId: string): Promise<MinFactoryUserDto> {
     const { uid: firebaseUid } = user;
-    const entity: MinFactoryUserEntity = await this.userRepository.findByFirebaseUid(firebaseUid);
+    const entity: MinFactoryUserEntity = await this.userRepository.findByFirebaseUid(firebaseUid, requestId);
 
     return this.entityToDto(entity);
   }
@@ -90,9 +90,9 @@ export class MinFactoryUserService {
     return MinFactoryUserDomainMapper.domainToDto(savedDomain);
   }
 
-  private async findByEmailOrNull(email: string): Promise<MinFactoryUserEntity | null> {
+  private async findByEmailOrNull(email: string, requestId: string): Promise<MinFactoryUserEntity | null> {
     try {
-      return await this.userRepository.findByEmail(email);
+      return await this.userRepository.findByEmail(email, requestId);
     } catch (error) {
       if (error instanceof NotFoundException) {
         return null;
@@ -102,9 +102,9 @@ export class MinFactoryUserService {
     }
   }
 
-  private async findByFirebaseUidOrNull(firebaseUid: string): Promise<MinFactoryUserEntity | null> {
+  private async findByFirebaseUidOrNull(firebaseUid: string, requestId: string): Promise<MinFactoryUserEntity | null> {
     try {
-      return await this.userRepository.findByFirebaseUid(firebaseUid);
+      return await this.userRepository.findByFirebaseUid(firebaseUid, requestId);
     } catch (error) {
       if (error instanceof NotFoundException) {
         return null;

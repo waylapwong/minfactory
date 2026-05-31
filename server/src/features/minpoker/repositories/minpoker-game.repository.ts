@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { LoggerService } from '../../../core/logging/services/logger.service';
 import { MinPokerGameEntity } from '../models/entities/minpoker-game.entity';
+import { MinPokerGameVisibility } from '../models/enums/minpoker-game-visibility.enum';
 
 @Injectable()
 export class MinPokerGameRepository {
@@ -15,8 +16,7 @@ export class MinPokerGameRepository {
 
   public async delete(id: string, requestId: string): Promise<void> {
     this.logger.debug(`START delete(id: ${id})`, requestId);
-    const entity: MinPokerGameEntity = await this.findOne(id, requestId);
-    await this.repository.delete({ id: entity.id });
+    await this.repository.delete({ id });
     this.logger.debug(`END delete(...)`, requestId);
   }
 
@@ -41,7 +41,7 @@ export class MinPokerGameRepository {
   public async findAllPublic(requestId: string): Promise<MinPokerGameEntity[]> {
     this.logger.debug(`START findAllPublic()`, requestId);
     const entities: MinPokerGameEntity[] = await this.repository.find({
-      where: { isPublic: true },
+      where: { visibility: MinPokerGameVisibility.Public },
       relations: ['creator'],
       order: { createdAt: 'DESC' },
     });

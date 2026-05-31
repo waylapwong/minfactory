@@ -1,6 +1,7 @@
 import { DatePipe } from '@angular/common';
 import { Component, OnInit, Signal, WritableSignal, signal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { MinPokerGameVisibility } from '../../../../core/generated';
 import { LoggerService } from '../../../../core/logging/services/logger.service';
 import { RoutingService } from '../../../../core/routing/services/routing.service';
 import { ButtonComponent } from '../../../../shared/components/button/button.component';
@@ -25,10 +26,10 @@ export class MinPokerMyGamesComponent implements OnInit {
   public readonly isError: WritableSignal<boolean> = signal(false);
   public readonly isLoading: WritableSignal<boolean> = signal(true);
 
+  private readonly logger: LoggerService = new LoggerService(MinPokerMyGamesComponent.name);
+
   public isDeleteDialogOpen: WritableSignal<boolean> = signal(false);
   public isNewGameDialogOpen: WritableSignal<boolean> = signal(false);
-  private logger: LoggerService = new LoggerService(MinPokerMyGamesComponent.name);
-
   public newGameFormGroup: FormGroup = this.createFormGroup();
   public viewModel: Signal<MinPokerPublicGamesVm>;
 
@@ -42,17 +43,12 @@ export class MinPokerMyGamesComponent implements OnInit {
   }
 
   public get newGameName(): FormControl {
-    this.logger.debug(`START newGameName()`);
-    try {
-      return this.newGameFormGroup.get('name') as FormControl;
-    } finally {
-      this.logger.debug(`END newGameName(...)`);
-    }
+    return this.newGameFormGroup.get('name') as FormControl;
   }
 
   public ngOnInit(): void {
     this.logger.debug(`START ngOnInit()`);
-    this.reloadGames();
+    this.loadGames();
     this.logger.debug(`END ngOnInit(...)`);
   }
 
@@ -82,7 +78,7 @@ export class MinPokerMyGamesComponent implements OnInit {
     this.logger.debug(`START createGame()`);
     if (this.newGameFormGroup.valid) {
       try {
-        await this.gameService.createGame(this.newGameName.value);
+        await this.gameService.createGame(this.newGameName.value, MinPokerGameVisibility.Private);
         this.isNewGameDialogOpen.set(false);
       } catch (error: unknown) {
         this.isError.set(true);
@@ -90,6 +86,23 @@ export class MinPokerMyGamesComponent implements OnInit {
       }
     }
     this.logger.debug(`END createGame(...)`);
+  }
+
+  public async loadGames(): Promise<void> {
+    this.logger.debug(`START loadGames()`);
+    this.isLoading.set(true);
+    this.isError.set(false);
+    this.errorMessage.set('');
+
+    try {
+      await this.gameService.loadGames(MinPokerGameVisibility.Private);
+    } catch (error) {
+      this.isError.set(true);
+      this.errorMessage.set(error instanceof Error ? error.message : 'Spiele konnten nicht geladen werden. Bitte versuche es erneut.');
+    } finally {
+      this.isLoading.set(false);
+      this.logger.debug(`END loadGames(...)`);
+    }
   }
 
   public navigateToGame(id: string): void {
@@ -113,12 +126,6 @@ export class MinPokerMyGamesComponent implements OnInit {
     this.logger.debug(`END openNewGameDialog(...)`);
   }
 
-  public reloadGames(): void {
-    this.logger.debug(`START reloadGames()`);
-    void this.loadGames();
-    this.logger.debug(`END reloadGames(...)`);
-  }
-
   private createFormGroup(): FormGroup {
     this.logger.debug(`START createFormGroup()`);
     try {
@@ -130,23 +137,6 @@ export class MinPokerMyGamesComponent implements OnInit {
       });
     } finally {
       this.logger.debug(`END createFormGroup(...)`);
-    }
-  }
-
-  private async loadGames(): Promise<void> {
-    this.logger.debug(`START loadGames()`);
-    this.isLoading.set(true);
-    this.isError.set(false);
-    this.errorMessage.set('');
-
-    try {
-      await this.gameService.loadGames();
-    } catch (error) {
-      this.isError.set(true);
-      this.errorMessage.set(error instanceof Error ? error.message : 'Spiele konnten nicht geladen werden. Bitte versuche es erneut.');
-    } finally {
-      this.isLoading.set(false);
-      this.logger.debug(`END loadGames(...)`);
     }
   }
 }

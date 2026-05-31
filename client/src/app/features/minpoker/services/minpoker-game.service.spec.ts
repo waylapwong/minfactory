@@ -34,30 +34,32 @@ describe('MinPokerGameService', () => {
         {
           bigBlind: 20,
           createdAt: new Date('2026-01-01T18:00:00.000Z').toISOString(),
+          creatorId: 'creator-id',
           id: 'id-1',
-          isPublic: false,
           tableSize: 6,
           name: 'Game 1',
           observerCount: 0,
           playerCount: 2,
           smallBlind: 10,
+          visibility: 'private',
         },
         {
           bigBlind: 50,
           createdAt: new Date('2026-01-02T18:00:00.000Z').toISOString(),
+          creatorId: 'creator-id',
           id: 'id-2',
-          isPublic: true,
           tableSize: 6,
           name: 'Game 2',
           observerCount: 1,
           playerCount: 4,
           smallBlind: 25,
+          visibility: 'public',
         },
       ];
 
       MINPOKER_GAME_REPOSITORY_MOCK.getAll.and.returnValue(Promise.resolve(mockDtos));
 
-      await service.loadGames();
+      await service.loadGames('public');
 
       expect(MINPOKER_GAME_REPOSITORY_MOCK.getAll).toHaveBeenCalled();
       expect(service.publicGamesVm().games.length).toBe(2);
@@ -73,20 +75,21 @@ describe('MinPokerGameService', () => {
       const mockDto: MinPokerGameDto = {
         bigBlind: 50,
         createdAt: new Date().toISOString(),
+        creatorId: 'creator-id',
         id: 'new-id',
-        isPublic: false,
         tableSize: 6,
         name: 'New Game',
         observerCount: 0,
         playerCount: 1,
         smallBlind: 25,
+        visibility: 'private',
       };
 
       MINPOKER_GAME_REPOSITORY_MOCK.create.and.returnValue(Promise.resolve(mockDto));
 
-      await service.createGame('New Game');
+      await service.createGame('New Game', 'private');
 
-      expect(MINPOKER_GAME_REPOSITORY_MOCK.create).toHaveBeenCalledWith({ name: 'New Game', isPublic: false });
+      expect(MINPOKER_GAME_REPOSITORY_MOCK.create).toHaveBeenCalledWith('New Game', 'private');
       expect(service.publicGamesVm().games.length).toBe(1);
       expect(service.publicGamesVm().games[0].id).toBe('new-id');
     });
@@ -97,13 +100,14 @@ describe('MinPokerGameService', () => {
           {
             bigBlind: 20,
             createdAt: new Date('2026-01-01T18:00:00.000Z').toISOString(),
+            creatorId: 'creator-id',
             id: 'older-id',
-            isPublic: false,
             tableSize: 6,
             name: 'Older Game',
             observerCount: 0,
             playerCount: 2,
             smallBlind: 10,
+            visibility: 'private',
           },
         ]),
       );
@@ -111,18 +115,19 @@ describe('MinPokerGameService', () => {
         Promise.resolve({
           bigBlind: 50,
           createdAt: new Date('2026-01-02T18:00:00.000Z').toISOString(),
+          creatorId: 'creator-id',
           id: 'newer-id',
-          isPublic: false,
           tableSize: 6,
           name: 'Newer Game',
           observerCount: 0,
           playerCount: 1,
           smallBlind: 25,
+          visibility: 'private',
         }),
       );
 
-      await service.loadGames();
-      await service.createGame('Newer Game');
+      await service.loadGames('public');
+      await service.createGame('Newer Game', 'private');
 
       expect(service.publicGamesVm().games.map((game) => game.id)).toEqual(['newer-id', 'older-id']);
     });
@@ -134,31 +139,33 @@ describe('MinPokerGameService', () => {
         {
           bigBlind: 20,
           createdAt: new Date('2026-01-01T18:00:00.000Z').toISOString(),
+          creatorId: 'creator-id',
           id: 'id-1',
-          isPublic: false,
           tableSize: 6,
           name: 'Game 1',
           observerCount: 0,
           playerCount: 2,
           smallBlind: 10,
+          visibility: 'private',
         },
         {
           bigBlind: 50,
           createdAt: new Date('2026-01-02T18:00:00.000Z').toISOString(),
+          creatorId: 'creator-id',
           id: 'id-2',
-          isPublic: true,
           tableSize: 6,
           name: 'Game 2',
           observerCount: 1,
           playerCount: 4,
           smallBlind: 25,
+          visibility: 'public',
         },
       ];
 
       MINPOKER_GAME_REPOSITORY_MOCK.getAll.and.returnValue(Promise.resolve(mockDtos));
       MINPOKER_GAME_REPOSITORY_MOCK.delete.and.returnValue(Promise.resolve());
 
-      await service.loadGames();
+      await service.loadGames('public');
       await service.deleteGame('id-1');
 
       expect(MINPOKER_GAME_REPOSITORY_MOCK.delete).toHaveBeenCalledWith('id-1');

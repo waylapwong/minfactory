@@ -26,7 +26,7 @@ export class MinPokerGameService {
   public async createGame(dto: MinPokerCreateGameDto, firebaseUser: FirebaseUserDto, requestId: string): Promise<MinPokerGameDto> {
     this.logger.debug(`START createGame(dto: ${JSON.stringify(dto)}, firebaseUser: ${firebaseUser.uid})`, requestId);
     // FIND USER
-    const userEntity: MinFactoryUserEntity = await this.userRepository.findByFirebaseUid(firebaseUser.uid);
+    const userEntity: MinFactoryUserEntity = await this.userRepository.findByFirebaseUid(firebaseUser.uid, requestId);
     // MAP TO DOMAIN
     const domain: MinPokerGame = MinPokerDtoMapper.toDomain(dto);
     // UPDATE DOMAIN
@@ -45,7 +45,7 @@ export class MinPokerGameService {
   public async deleteGame(id: string, firebaseUser: FirebaseUserDto, requestId: string): Promise<void> {
     this.logger.debug(`START deleteGame(id: ${id}, firebaseUser: ${firebaseUser.uid})`, requestId);
     // FIND USER
-    const userEntity: MinFactoryUserEntity = await this.userRepository.findByFirebaseUid(firebaseUser.uid);
+    const userEntity: MinFactoryUserEntity = await this.userRepository.findByFirebaseUid(firebaseUser.uid, requestId);
     // FIND GAME
     const gameEntity: MinPokerGameEntity = await this.gameRepository.findOne(id, requestId);
     // CHECK PERMISSIONS
@@ -72,7 +72,7 @@ export class MinPokerGameService {
       entities = await this.gameRepository.findAllPublic(requestId);
     } else {
       // GET ALL USER CREATED GAMES
-      const userEntity: MinFactoryUserEntity = await this.userRepository.findByFirebaseUid(firebaseUser.uid);
+      const userEntity: MinFactoryUserEntity = await this.userRepository.findByFirebaseUid(firebaseUser.uid, requestId);
       entities = await this.gameRepository.findAllByCreator(userEntity.id, requestId);
     }
     // MAP TO DTO

@@ -1,5 +1,6 @@
 import { DatePipe } from '@angular/common';
 import { Component, OnInit, Signal, WritableSignal, signal } from '@angular/core';
+import { MinPokerGameVisibility } from '../../../../core/generated';
 import { LoggerService } from '../../../../core/logging/services/logger.service';
 import { RoutingService } from '../../../../core/routing/services/routing.service';
 import { ButtonComponent } from '../../../../shared/components/button/button.component';
@@ -19,12 +20,12 @@ import { MinPokerGameService } from '../../services/minpoker-game.service';
 export class MinPokerPublicGamesComponent implements OnInit {
   public readonly Color: typeof Color = Color;
 
+  private readonly logger: LoggerService = new LoggerService(MinPokerPublicGamesComponent.name);
+
   public errorMessage: WritableSignal<string> = signal('');
   public isError: WritableSignal<boolean> = signal(false);
   public isLoading: WritableSignal<boolean> = signal(true);
   public viewModel: Signal<MinPokerPublicGamesVm>;
-
-  private readonly logger: LoggerService = new LoggerService(MinPokerPublicGamesComponent.name);
 
   constructor(
     public readonly routingService: RoutingService,
@@ -46,7 +47,7 @@ export class MinPokerPublicGamesComponent implements OnInit {
     this.errorMessage.set('');
 
     try {
-      await this.gameService.loadGames();
+      await this.gameService.loadGames(MinPokerGameVisibility.Public);
     } catch (error) {
       this.isError.set(true);
       this.errorMessage.set(error instanceof Error ? error.message : 'Spiele konnten nicht geladen werden. Bitte versuche es erneut.');

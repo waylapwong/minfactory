@@ -72,7 +72,7 @@ describe('MinPokerMyGamesComponent', () => {
 
     MINPOKER_GAME_SERVICE_MOCK.loadGames.and.rejectWith(new Error('Server down'));
 
-    component.reloadGames();
+    component.loadGames();
     await fixture.whenStable();
 
     expect(component.isLoading()).toBeFalse();
@@ -92,7 +92,7 @@ describe('MinPokerMyGamesComponent', () => {
 
       await component.createGame();
 
-      expect(MINPOKER_GAME_SERVICE_MOCK.createGame).toHaveBeenCalledWith('Ab');
+      expect(MINPOKER_GAME_SERVICE_MOCK.createGame).toHaveBeenCalledWith('Ab', 'private');
       expect(component.isNewGameDialogOpen()).toBeFalse();
     });
 
@@ -142,7 +142,7 @@ describe('MinPokerMyGamesComponent', () => {
 
     MINPOKER_GAME_SERVICE_MOCK.loadGames.and.rejectWith('unexpected');
 
-    component.reloadGames();
+    component.loadGames();
     await fixture.whenStable();
 
     expect(component.isLoading()).toBeFalse();

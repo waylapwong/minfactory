@@ -6,6 +6,16 @@
         "operationId": "deleteMinPokerGame",
         "parameters": [
           {
+            "name": "X-Request-Id",
+            "required": true,
+            "in": "header",
+            "description": "Unique request ID",
+            "schema": {
+              "type": "string",
+              "example": "80210e8c-9688-4369-a20a-4d69d1187dd7"
+            }
+          },
+          {
             "name": "id",
             "required": true,
             "in": "path",
@@ -45,12 +55,22 @@
         "operationId": "getAllMinPokerGames",
         "parameters": [
           {
-            "name": "visibility",
-            "required": false,
-            "in": "query",
+            "name": "X-Request-Id",
+            "required": true,
+            "in": "header",
+            "description": "Unique request ID",
             "schema": {
-              "enum": ["public"],
-              "type": "string"
+              "type": "string",
+              "example": "80210e8c-9688-4369-a20a-4d69d1187dd7"
+            }
+          },
+          {
+            "name": "visibility",
+            "required": true,
+            "in": "query",
+            "description": "public = alle öffentlichen Spiele. Ohne Parameter = eigene Spiele.",
+            "schema": {
+              "$ref": "#/components/schemas/MinPokerGameVisibility"
             }
           }
         ],
@@ -89,7 +109,18 @@
       },
       "post": {
         "operationId": "createMinPokerGame",
-        "parameters": [],
+        "parameters": [
+          {
+            "name": "X-Request-Id",
+            "required": true,
+            "in": "header",
+            "description": "Unique request ID",
+            "schema": {
+              "type": "string",
+              "example": "80210e8c-9688-4369-a20a-4d69d1187dd7"
+            }
+          }
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -134,7 +165,18 @@
     "/minfactory/users/me": {
       "delete": {
         "operationId": "deleteMinFactoryUserMe",
-        "parameters": [],
+        "parameters": [
+          {
+            "name": "X-Request-Id",
+            "required": true,
+            "in": "header",
+            "description": "Unique request ID",
+            "schema": {
+              "type": "string",
+              "example": "80210e8c-9688-4369-a20a-4d69d1187dd7"
+            }
+          }
+        ],
         "responses": {
           "204": {
             "description": "Deleted"
@@ -157,7 +199,18 @@
       },
       "get": {
         "operationId": "getMinFactoryUserMe",
-        "parameters": [],
+        "parameters": [
+          {
+            "name": "X-Request-Id",
+            "required": true,
+            "in": "header",
+            "description": "Unique request ID",
+            "schema": {
+              "type": "string",
+              "example": "80210e8c-9688-4369-a20a-4d69d1187dd7"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "OK",
@@ -189,7 +242,18 @@
     "/minfactory/users": {
       "post": {
         "operationId": "createMinFactoryUser",
-        "parameters": [],
+        "parameters": [
+          {
+            "name": "X-Request-Id",
+            "required": true,
+            "in": "header",
+            "description": "Unique request ID",
+            "schema": {
+              "type": "string",
+              "example": "80210e8c-9688-4369-a20a-4d69d1187dd7"
+            }
+          }
+        ],
         "responses": {
           "201": {
             "description": "Created",
@@ -231,6 +295,16 @@
               "example": "550e8400-e29b-41d4-a716-446655440000",
               "type": "string"
             }
+          },
+          {
+            "name": "X-Request-Id",
+            "required": true,
+            "in": "header",
+            "description": "Unique request ID",
+            "schema": {
+              "type": "string",
+              "example": "80210e8c-9688-4369-a20a-4d69d1187dd7"
+            }
           }
         ],
         "responses": {
@@ -259,6 +333,16 @@
             "in": "path",
             "schema": {
               "type": "string"
+            }
+          },
+          {
+            "name": "X-Request-Id",
+            "required": true,
+            "in": "header",
+            "description": "Unique request ID",
+            "schema": {
+              "type": "string",
+              "example": "80210e8c-9688-4369-a20a-4d69d1187dd7"
             }
           }
         ],
@@ -290,7 +374,18 @@
     "/minrps/games": {
       "get": {
         "operationId": "getAllMinRpsGames",
-        "parameters": [],
+        "parameters": [
+          {
+            "name": "X-Request-Id",
+            "required": true,
+            "in": "header",
+            "description": "Unique request ID",
+            "schema": {
+              "type": "string",
+              "example": "80210e8c-9688-4369-a20a-4d69d1187dd7"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "OK",
@@ -317,7 +412,18 @@
       },
       "post": {
         "operationId": "createMinRpsGame",
-        "parameters": [],
+        "parameters": [
+          {
+            "name": "X-Request-Id",
+            "required": true,
+            "in": "header",
+            "description": "Unique request ID",
+            "schema": {
+              "type": "string",
+              "example": "80210e8c-9688-4369-a20a-4d69d1187dd7"
+            }
+          }
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -353,7 +459,18 @@
     "/minrps/play": {
       "post": {
         "operationId": "playMinRpsGame",
-        "parameters": [],
+        "parameters": [
+          {
+            "name": "X-Request-Id",
+            "required": true,
+            "in": "header",
+            "description": "Unique request ID",
+            "schema": {
+              "type": "string",
+              "example": "80210e8c-9688-4369-a20a-4d69d1187dd7"
+            }
+          }
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -392,7 +509,7 @@
   },
   "info": {
     "title": "minFactory",
-    "description": "minFactory OpenAPI specification. <br/> <a href=\"http://localhost:3000/openapi-json/\" target=\"_blank\">JSON specification</a>",
+    "description": "minFactory OpenAPI specification. \u003Cbr/\u003E \u003Ca href=\"http://localhost:3000/openapi-json/\" target=\"_blank\"\u003EJSON specification\u003C/a\u003E",
     "version": "v0.0.0",
     "contact": {
       "name": "minFactory",
@@ -404,6 +521,10 @@
   "servers": [],
   "components": {
     "schemas": {
+      "MinPokerGameVisibility": {
+        "type": "string",
+        "enum": ["private", "public"]
+      },
       "MinPokerGameDto": {
         "type": "object",
         "properties": {
@@ -418,9 +539,14 @@
             "type": "string",
             "example": "2026-03-24T18:45:30.000Z"
           },
-          "id": {
+          "creatorId": {
             "type": "string",
             "example": "550e8400-e29b-41d4-a716-446655440000",
+            "format": "uuid"
+          },
+          "id": {
+            "type": "string",
+            "example": "0d82d524-adfe-4403-8872-0c3899c727be",
             "format": "uuid"
           },
           "name": {
@@ -452,28 +578,47 @@
             "minimum": 6,
             "maximum": 6
           },
-          "isPublic": {
-            "type": "boolean",
-            "example": true
+          "visibility": {
+            "example": "public",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/MinPokerGameVisibility"
+              }
+            ]
           }
         },
-        "required": ["bigBlind", "createdAt", "id", "isPublic", "name", "observerCount", "playerCount", "smallBlind", "tableSize"]
+        "required": [
+          "bigBlind",
+          "createdAt",
+          "creatorId",
+          "id",
+          "name",
+          "observerCount",
+          "playerCount",
+          "smallBlind",
+          "tableSize",
+          "visibility"
+        ]
       },
       "MinPokerCreateGameDto": {
         "type": "object",
         "properties": {
+          "visibility": {
+            "example": "public",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/MinPokerGameVisibility"
+              }
+            ]
+          },
           "name": {
             "type": "string",
             "example": "Test Name",
             "maxLength": 32,
             "minLength": 2
-          },
-          "isPublic": {
-            "type": "boolean",
-            "example": true
           }
         },
-        "required": ["isPublic", "name"]
+        "required": ["visibility", "name"]
       },
       "MinFactoryUserDto": {
         "type": "object",

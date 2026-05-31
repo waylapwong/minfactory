@@ -13,12 +13,12 @@ export class MinPokerDomainMapper {
     dto.createdAt = domain.createdAt;
     dto.creatorId = domain.creatorId;
     dto.id = domain.id;
-    dto.isPublic = domain.isPublic;
     dto.name = domain.name;
     dto.observerCount = domain.observers?.size ?? 0;
     dto.playerCount = domain.getPlayerCount();
     dto.smallBlind = domain.smallBlind;
     dto.tableSize = domain.tableSize;
+    dto.visibility = domain.visibility;
 
     return dto;
   }
@@ -34,7 +34,7 @@ export class MinPokerDomainMapper {
       entity.creator = creator;
     }
     entity.id = domain.id;
-    entity.isPublic = domain.isPublic;
+    entity.visibility = domain.visibility;
     entity.name = domain.name;
     entity.smallBlind = domain.smallBlind;
     entity.tableSize = domain.tableSize;

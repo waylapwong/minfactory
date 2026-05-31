@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { MinPokerGameVisibility } from '../enums/minpoker-game-visibility.enum';
 
 export class MinPokerGameDto {
   @ApiProperty({ example: 2, minimum: 2, maximum: 2 })
@@ -9,8 +10,6 @@ export class MinPokerGameDto {
   public creatorId!: string;
   @ApiProperty({ example: '0d82d524-adfe-4403-8872-0c3899c727be', format: 'uuid' })
   public id!: string;
-  @ApiProperty({ example: true })
-  public isPublic!: boolean;
   @ApiProperty({ example: 'Test Name', maxLength: 32, minLength: 2 })
   public name!: string;
   @ApiProperty({ example: 10, minimum: 0 })
@@ -21,4 +20,6 @@ export class MinPokerGameDto {
   public smallBlind!: number;
   @ApiProperty({ example: 6, minimum: 6, maximum: 6 })
   public tableSize!: number;
+  @ApiProperty({ enum: MinPokerGameVisibility, enumName: 'MinPokerGameVisibility', example: MinPokerGameVisibility.Public })
+  public visibility!: MinPokerGameVisibility;
 }

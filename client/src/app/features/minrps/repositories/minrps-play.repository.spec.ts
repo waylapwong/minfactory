@@ -36,7 +36,7 @@ describe('MinRpsPlayRepository', () => {
       const result = await repository.play(playDto);
 
       expect(result).toEqual(resultDto);
-      expect(MINRPS_API_SERVICE_MOCK.playMinRpsGame).toHaveBeenCalledWith(playDto);
+      expect(MINRPS_API_SERVICE_MOCK.playMinRpsGame).toHaveBeenCalledWith('', playDto);
     });
 
     it('should handle different game outcomes', async () => {

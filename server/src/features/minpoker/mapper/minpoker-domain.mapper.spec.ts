@@ -2,6 +2,7 @@ import { MinPokerGame } from '../models/domains/minpoker-game';
 import { MinPokerPlayer } from '../models/domains/minpoker-player';
 import { MinPokerGameDto } from '../models/dtos/minpoker-game.dto';
 import { MinPokerGameEntity } from '../models/entities/minpoker-game.entity';
+import { MinPokerGameVisibility } from '../models/enums/minpoker-game-visibility.enum';
 import { MinPokerHandDealtEvent } from '../models/events/minpoker-hand-dealt.event';
 import { MinPokerUpdatedEvent } from '../models/events/minpoker-updated.event';
 import { MinPokerDomainMapper } from './minpoker-domain.mapper';
@@ -14,7 +15,7 @@ describe('MinPokerDomainMapper', () => {
       domain.name = 'Test Table';
       domain.createdAt = new Date('2025-01-01');
       domain.creatorId = 'creator-id';
-      domain.isPublic = true;
+      domain.visibility = MinPokerGameVisibility.Public;
       domain.bigBlind = 20;
       domain.smallBlind = 10;
       domain.tableSize = 9;
@@ -35,7 +36,7 @@ describe('MinPokerDomainMapper', () => {
       expect(dto.tableSize).toBe(9);
       expect(dto.playerCount).toBe(2);
       expect(dto.observerCount).toBe(2);
-      expect(dto.isPublic).toBe(true);
+      expect(dto.visibility).toBe(MinPokerGameVisibility.Public);
     });
 
     it('should use zero observers when observer map is missing', () => {
@@ -54,7 +55,7 @@ describe('MinPokerDomainMapper', () => {
       domain.id = 'test-id';
       domain.name = 'Test Table';
       domain.createdAt = new Date('2025-01-01');
-      domain.isPublic = false;
+      domain.visibility = MinPokerGameVisibility.Private;
       domain.tableSize = 6;
       domain.bigBlind = 50;
       domain.smallBlind = 25;
@@ -68,7 +69,7 @@ describe('MinPokerDomainMapper', () => {
       expect(entity.bigBlind).toBe(50);
       expect(entity.smallBlind).toBe(25);
       expect(entity.tableSize).toBe(6);
-      expect(entity.isPublic).toBe(false);
+      expect(entity.visibility).toBe(MinPokerGameVisibility.Private);
       expect(entity.creator.id).toBe('creator-id');
     });
 

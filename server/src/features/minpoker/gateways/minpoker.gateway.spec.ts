@@ -89,7 +89,7 @@ describe('MinpokerGateway', () => {
 
   describe('handleJoinCommand()', () => {
     it('should handle join command and broadcast updated event to room', async () => {
-      const command: MinPokerJoinCommand = { matchId: 'match-1', playerId: 'user-1' };
+      const command: MinPokerJoinCommand = { matchId: 'match-1', playerId: 'user-1', requestId: '' };
       MINPOKER_TOURNAMENT_SERVICE_MOCK.handleJoinCommand.mockResolvedValue({ matchId: 'match-1' });
 
       await gateway.handleJoinCommand(mockSocket, command);
@@ -131,6 +131,7 @@ describe('MinpokerGateway', () => {
         matchId: 'match-1',
         playerId: 'user-1',
         playerName: 'Alice',
+        requestId: '',
         seat: 2,
       };
       MINPOKER_TOURNAMENT_SERVICE_MOCK.handleSeatCommand.mockResolvedValue({
@@ -151,6 +152,7 @@ describe('MinpokerGateway', () => {
         matchId: 'match-1',
         playerId: 'user-1',
         playerName: 'Alice',
+        requestId: '',
         seat: 0,
       };
       const hands: Map<string, { hand: string[] }> = new Map([
@@ -177,6 +179,7 @@ describe('MinpokerGateway', () => {
         matchId: 'match-1',
         playerId: 'user-1',
         playerName: 'Alice',
+        requestId: '',
         seat: 0,
       };
       MINPOKER_TOURNAMENT_SERVICE_MOCK.handleSeatCommand.mockResolvedValue({
@@ -197,6 +200,7 @@ describe('MinpokerGateway', () => {
         matchId: 'match-1',
         playerId: 'user-1',
         playerName: 'Alice',
+        requestId: '',
         seat: 0,
       };
       const hands: Map<string, { hand: string[] }> = new Map([['player-1', { hand: ['Ah', 'Ks'] }]]);

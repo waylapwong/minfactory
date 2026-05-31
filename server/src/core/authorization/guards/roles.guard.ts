@@ -32,7 +32,8 @@ export class RolesGuard implements CanActivate {
     }
 
     const firebaseUid = firebaseUser.uid;
-    const user: MinFactoryUserEntity = await this.userRepository.findByFirebaseUid(firebaseUid);
+    const requestId: string = (request.headers?.['x-request-id'] as string) ?? '';
+    const user: MinFactoryUserEntity = await this.userRepository.findByFirebaseUid(firebaseUid, requestId);
 
     if (!user) {
       throw new ForbiddenException('Insufficient permissions');

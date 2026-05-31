@@ -16,12 +16,12 @@ export class MinRpsGameService {
     private readonly matchRepository: MinRpsMatchRepository,
   ) {}
 
-  public async createGame(dto: MinRpsCreateGameDto): Promise<MinRpsGameDto> {
+  public async createGame(dto: MinRpsCreateGameDto, requestId: string): Promise<MinRpsGameDto> {
     // Mapping
     const domain: MinRpsGame = MinRpsDtoMapper.createDtoToDomain(dto);
     const entity: MinRpsGameEntity = MinRpsDomainMapper.domainToEntity(domain);
     // Save to DB
-    const savedEntity: MinRpsGameEntity = await this.gameRepository.save(entity);
+    const savedEntity: MinRpsGameEntity = await this.gameRepository.save(entity, requestId);
     // Mapping
     const savedDomain: MinRpsGame = MinRpsEntityMapper.entityToDomain(savedEntity);
     const savedDto: MinRpsGameDto = MinRpsDomainMapper.domainToDto(savedDomain);
@@ -29,13 +29,13 @@ export class MinRpsGameService {
     return savedDto;
   }
 
-  public async deleteGame(id: string): Promise<void> {
-    await this.gameRepository.delete(id);
+  public async deleteGame(id: string, requestId: string): Promise<void> {
+    await this.gameRepository.delete(id, requestId);
   }
 
-  public async getAllGames(): Promise<MinRpsGameDto[]> {
+  public async getAllGames(requestId: string): Promise<MinRpsGameDto[]> {
     // Fetch from DB
-    const entities: MinRpsGameEntity[] = await this.gameRepository.findAll();
+    const entities: MinRpsGameEntity[] = await this.gameRepository.findAll(requestId);
     // Mapping
     const domains: MinRpsGame[] = entities
       .map((entity: MinRpsGameEntity) => MinRpsEntityMapper.entityToDomain(entity))
@@ -45,9 +45,9 @@ export class MinRpsGameService {
     return dtos;
   }
 
-  public async getGame(id: string): Promise<MinRpsGameDto> {
+  public async getGame(id: string, requestId: string): Promise<MinRpsGameDto> {
     // Fetch from DB
-    const entity = await this.gameRepository.findOne(id);
+    const entity = await this.gameRepository.findOne(id, requestId);
     // Mapping
     const domain: MinRpsGame = this.applyMatchState(MinRpsEntityMapper.entityToDomain(entity));
     const dto: MinRpsGameDto = MinRpsDomainMapper.domainToDto(domain);

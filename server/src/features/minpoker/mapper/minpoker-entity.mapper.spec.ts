@@ -1,6 +1,7 @@
 import { MinPokerGame } from '../models/domains/minpoker-game';
 import { MinPokerGameEntity } from '../models/entities/minpoker-game.entity';
 import { MinFactoryUserEntity } from '../../minfactory/models/entities/minfactory-user.entity';
+import { MinPokerGameVisibility } from '../models/enums/minpoker-game-visibility.enum';
 import { MinPokerEntityMapper } from './minpoker-entity.mapper';
 
 describe('MinPokerEntityMapper', () => {
@@ -15,7 +16,7 @@ describe('MinPokerEntityMapper', () => {
       entity.bigBlind = 20;
       entity.smallBlind = 10;
       entity.tableSize = 9;
-      entity.isPublic = true;
+      entity.visibility = MinPokerGameVisibility.Public;
 
       const domain: MinPokerGame = MinPokerEntityMapper.toDomain(entity);
 
@@ -26,7 +27,7 @@ describe('MinPokerEntityMapper', () => {
       expect(domain.bigBlind).toBe(20);
       expect(domain.smallBlind).toBe(10);
       expect(domain.tableSize).toBe(9);
-      expect(domain.isPublic).toBe(true);
+      expect(domain.visibility).toBe(MinPokerGameVisibility.Public);
     });
   });
 });

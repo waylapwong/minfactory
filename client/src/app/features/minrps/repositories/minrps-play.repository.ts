@@ -9,6 +9,6 @@ export class MinRpsPlayRepository {
   constructor(private readonly apiService: MinRPSApiService) {}
 
   public async play(dto: MinRpsPlayDto): Promise<MinRpsPlayResultDto> {
-    return await firstValueFrom(this.apiService.playMinRpsGame(dto));
+    return await firstValueFrom(this.apiService.playMinRpsGame('', dto));
   }
 }

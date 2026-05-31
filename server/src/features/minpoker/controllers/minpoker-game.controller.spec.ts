@@ -19,7 +19,7 @@ describe('MinPokerGameController', () => {
       createdAt: new Date('2026-03-24T18:45:30.000Z'),
       creatorId: '2f647dc3-2290-4a9e-839f-9792d0d711d1',
       id: '550e8400-e29b-41d4-a716-446655440000',
-      isPublic: false,
+      visibility: MinPokerGameVisibility.Private,
       tableSize: 6,
       name: 'Evening Table',
       observerCount: 2,
@@ -31,7 +31,7 @@ describe('MinPokerGameController', () => {
       createdAt: new Date('2026-03-24T19:10:00.000Z'),
       creatorId: '744f9336-461b-4b87-a8f8-e6033b0fbfb0',
       id: '660e8400-e29b-41d4-a716-446655440000',
-      isPublic: true,
+      visibility: MinPokerGameVisibility.Public,
       tableSize: 6,
       name: 'Turbo Sit and Go',
       observerCount: 1,
@@ -90,7 +90,7 @@ describe('MinPokerGameController', () => {
 
   describe('create()', () => {
     it('should create a new game via service and return dto', async () => {
-      const dto: MinPokerCreateGameDto = { name: 'New Table', isPublic: true } as MinPokerCreateGameDto;
+      const dto: MinPokerCreateGameDto = { name: 'New Table', visibility: MinPokerGameVisibility.Public } as MinPokerCreateGameDto;
 
       const fakeUser = { firebaseUid: 'fb-1', email: 'u@e.com' } as any;
       const result = await controller.create(dto, fakeUser, 'test-request-id');
@@ -105,7 +105,7 @@ describe('MinPokerGameController', () => {
       const fakeUser = { firebaseUid: 'fb-1', email: 'u@e.com' } as any;
       const id = '550e8400-e29b-41d4-a716-446655440000';
 
-      const result = await controller.delete(id, fakeUser, 'test-request-id');
+      const result = await controller.delete(fakeUser, 'test-request-id', id);
 
       expect(result).toBeUndefined();
       expect(MINPOKER_GAME_SERVICE_MOCK.deleteGame).toHaveBeenCalledWith(id, fakeUser, 'test-request-id');

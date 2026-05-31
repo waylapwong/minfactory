@@ -41,7 +41,7 @@ describe('MinFactoryUserController', () => {
 
       await userController.deleteMe(user, 'test-request-id');
 
-      expect(MINFACTORY_USER_SERVICE_MOCK.deleteMe).toHaveBeenCalledWith(user);
+      expect(MINFACTORY_USER_SERVICE_MOCK.deleteMe).toHaveBeenCalledWith(user, 'test-request-id');
     });
 
     it('should propagate NotFoundException from service', async () => {
@@ -67,7 +67,7 @@ describe('MinFactoryUserController', () => {
       const result = await userController.create(user, 'test-request-id');
 
       expect(result).toBe(dto);
-      expect(MINFACTORY_USER_SERVICE_MOCK.createUser).toHaveBeenCalledWith(user);
+      expect(MINFACTORY_USER_SERVICE_MOCK.createUser).toHaveBeenCalledWith(user, 'test-request-id');
     });
 
     it('should propagate ConflictException from service', async () => {
@@ -93,7 +93,7 @@ describe('MinFactoryUserController', () => {
       const result = await userController.getMe(user, 'test-request-id');
 
       expect(result).toBe(dto);
-      expect(MINFACTORY_USER_SERVICE_MOCK.getMe).toHaveBeenCalledWith(user);
+      expect(MINFACTORY_USER_SERVICE_MOCK.getMe).toHaveBeenCalledWith(user, 'test-request-id');
     });
 
     it('should propagate NotFoundException from service', async () => {

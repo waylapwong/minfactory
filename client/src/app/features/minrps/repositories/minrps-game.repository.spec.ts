@@ -38,7 +38,7 @@ describe('MinRpsGameRepository', () => {
       const result = await repository.create('Test Game');
 
       expect(result).toEqual(mockDto);
-      expect(MINRPS_API_SERVICE_MOCK.createMinRpsGame).toHaveBeenCalledWith({ name: 'Test Game' });
+      expect(MINRPS_API_SERVICE_MOCK.createMinRpsGame).toHaveBeenCalledWith('', { name: 'Test Game' });
     });
   });
 
@@ -48,7 +48,7 @@ describe('MinRpsGameRepository', () => {
 
       await repository.delete('test-id');
 
-      expect(MINRPS_API_SERVICE_MOCK.deleteMinRpsGame).toHaveBeenCalledWith('test-id');
+      expect(MINRPS_API_SERVICE_MOCK.deleteMinRpsGame).toHaveBeenCalledWith('test-id', '');
     });
   });
 
@@ -66,7 +66,7 @@ describe('MinRpsGameRepository', () => {
       const result = await repository.get('test-id');
 
       expect(result).toEqual(mockDto);
-      expect(MINRPS_API_SERVICE_MOCK.getMinRpsGame).toHaveBeenCalledWith('test-id');
+      expect(MINRPS_API_SERVICE_MOCK.getMinRpsGame).toHaveBeenCalledWith('test-id', '');
     });
   });
 

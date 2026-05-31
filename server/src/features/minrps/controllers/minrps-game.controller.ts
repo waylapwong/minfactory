@@ -32,7 +32,7 @@ export class MinRpsGameController {
   @API_500()
   public async delete(@Param('id', new ParseUUIDPipe()) id: string, @Headers('X-Request-Id') requestId: string): Promise<void> {
     this.logger.log(`Incoming request DELETE /minrps/games/${id}`, requestId);
-    await this.gameService.deleteGame(id);
+    await this.gameService.deleteGame(id, requestId);
   }
 
   @Get(':id')
@@ -45,7 +45,7 @@ export class MinRpsGameController {
   @API_500()
   public async get(@Param('id', new ParseUUIDPipe()) id: string, @Headers('X-Request-Id') requestId: string): Promise<MinRpsGameDto> {
     this.logger.log(`Incoming request GET /minrps/games/${id}`, requestId);
-    return await this.gameService.getGame(id);
+    return await this.gameService.getGame(id, requestId);
   }
 
   @Get()
@@ -56,7 +56,7 @@ export class MinRpsGameController {
   @API_500()
   public async getAll(@Headers('X-Request-Id') requestId: string): Promise<MinRpsGameDto[]> {
     this.logger.log(`Incoming request GET /minrps/games`, requestId);
-    return await this.gameService.getAllGames();
+    return await this.gameService.getAllGames(requestId);
   }
 
   @Post()
@@ -68,6 +68,6 @@ export class MinRpsGameController {
   @API_500()
   public async create(@Body() dto: MinRpsCreateGameDto, @Headers('X-Request-Id') requestId: string): Promise<MinRpsGameDto> {
     this.logger.log(`Incoming request POST /minrps/games`, requestId);
-    return await this.gameService.createGame(dto);
+    return await this.gameService.createGame(dto, requestId);
   }
 }

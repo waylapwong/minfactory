@@ -1,5 +1,6 @@
 import { MinPokerGame } from '../models/domains/minpoker-game';
 import { MinPokerCreateGameDto } from '../models/dtos/minpoker-create-game.dto';
+import { MinPokerGameVisibility } from '../models/enums/minpoker-game-visibility.enum';
 import { MinPokerDtoMapper } from './minpoker-dto.mapper';
 
 describe('MinPokerDtoMapper', () => {
@@ -7,13 +8,13 @@ describe('MinPokerDtoMapper', () => {
     it('should map create DTO to domain', () => {
       const dto = new MinPokerCreateGameDto();
       dto.name = 'New Table';
-      dto.isPublic = true;
+      dto.visibility = MinPokerGameVisibility.Public;
 
       const domain: MinPokerGame = MinPokerDtoMapper.toDomain(dto);
 
       expect(domain).toBeDefined();
       expect(domain.name).toBe('New Table');
-      expect(domain.isPublic).toBe(true);
+      expect(domain.visibility).toBe(MinPokerGameVisibility.Public);
     });
   });
 });

@@ -34,7 +34,7 @@ export class MinFactoryUserController {
   @API_500()
   public async deleteMe(@FirebaseUser() user: FirebaseUserDto, @Headers('X-Request-Id') requestId: string): Promise<void> {
     this.logger.log(`Incoming request DELETE /minfactory/users/me`, requestId);
-    return await this.userService.deleteMe(user);
+    return await this.userService.deleteMe(user, requestId);
   }
 
   @Get('me')
@@ -47,7 +47,7 @@ export class MinFactoryUserController {
   @API_500()
   public async getMe(@FirebaseUser() user: FirebaseUserDto, @Headers('X-Request-Id') requestId: string): Promise<MinFactoryUserDto> {
     this.logger.log(`Incoming request GET /minfactory/users/me`, requestId);
-    return await this.userService.getMe(user);
+    return await this.userService.getMe(user, requestId);
   }
 
   @Post()
@@ -61,6 +61,6 @@ export class MinFactoryUserController {
   @API_500()
   public async create(@FirebaseUser() user: FirebaseUserDto, @Headers('X-Request-Id') requestId: string): Promise<MinFactoryUserDto> {
     this.logger.log(`Incoming request POST /minfactory/users`, requestId);
-    return await this.userService.createUser(user);
+    return await this.userService.createUser(user, requestId);
   }
 }

@@ -44,7 +44,7 @@ export class MinPokerTournamentService {
 
   public async handleConnectionCommand(clientSocket: Socket, firebaseUid: string): Promise<MinPokerConnectedEvent> {
     // GET USER ID
-    const userEntity: MinFactoryUserEntity = await this.userRepository.findByFirebaseUid(firebaseUid);
+    const userEntity: MinFactoryUserEntity = await this.userRepository.findByFirebaseUid(firebaseUid, '');
     const userId: string = userEntity.id;
     // BIND SOCKET ID TO USER ID
     clientSocket.data.playerId = userId;

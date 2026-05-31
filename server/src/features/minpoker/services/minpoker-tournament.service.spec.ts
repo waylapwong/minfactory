@@ -57,7 +57,7 @@ describe('MinpokerTournamentService', () => {
 
       expect(result.playerId).toBe('user-1');
       expect(socket.data.playerId).toBe('user-1');
-      expect(MINFACTORY_USER_REPOSITORY_MOCK.findByFirebaseUid).toHaveBeenCalledWith('firebase-uid');
+      expect(MINFACTORY_USER_REPOSITORY_MOCK.findByFirebaseUid).toHaveBeenCalledWith('firebase-uid', '');
       expect(MINPOKER_PLAYER_ID_REPOSITORY_MOCK.save).toHaveBeenCalledWith('socket-1', 'user-1');
     });
   });
@@ -70,7 +70,7 @@ describe('MinpokerTournamentService', () => {
         join: jest.fn(),
         leave: jest.fn(),
       } as any;
-      const command: MinPokerJoinCommand = { matchId: 'match-1', playerId: 'player-1' };
+      const command: MinPokerJoinCommand = { matchId: 'match-1', playerId: 'player-1', requestId: '' };
       const creator = Object.assign(new MinFactoryUserEntity(), { id: 'creator-1' });
       const entity = Object.assign(new MinPokerGameEntity(), {
         bigBlind: 2,
@@ -90,14 +90,14 @@ describe('MinpokerTournamentService', () => {
 
       expect(MINPOKER_ROOM_SYSTEM_MOCK.removePlayerFromAllRooms).toHaveBeenCalledWith(socket);
       expect(MINPOKER_ROOM_SYSTEM_MOCK.addPlayerToRoom).toHaveBeenCalledWith(socket, 'match-1');
-      expect(MINPOKER_GAME_REPOSITORY_MOCK.findOne).toHaveBeenCalledWith('match-1', undefined);
+      expect(MINPOKER_GAME_REPOSITORY_MOCK.findOne).toHaveBeenCalledWith('match-1', '');
       expect(result.matchId).toBe('match-1');
       expect(result.observerIds).toEqual(['player-1']);
     });
 
     it('should reject join when payload playerId does not match socket playerId', async () => {
       const socket = { data: { playerId: 'player-1' }, id: 'socket-1' } as any;
-      const command: MinPokerJoinCommand = { matchId: 'match-1', playerId: 'player-2' };
+      const command: MinPokerJoinCommand = { matchId: 'match-1', playerId: 'player-2', requestId: '' };
       MINPOKER_PLAYER_ID_REPOSITORY_MOCK.findOne.mockReturnValue('player-1');
 
       await expect(service.handleJoinCommand(socket, command)).rejects.toThrow('Player id mismatch');
@@ -105,7 +105,7 @@ describe('MinpokerTournamentService', () => {
 
     it('should throw ForbiddenException when socket is not bound to a player', async () => {
       const socket = { data: {}, id: 'socket-1' } as any;
-      const command: MinPokerJoinCommand = { matchId: 'match-1', playerId: 'player-1' };
+      const command: MinPokerJoinCommand = { matchId: 'match-1', playerId: 'player-1', requestId: '' };
       MINPOKER_PLAYER_ID_REPOSITORY_MOCK.findOne.mockReturnValue(null);
 
       await expect(service.handleJoinCommand(socket, command)).rejects.toThrow('Socket is not bound to a player');
@@ -118,7 +118,7 @@ describe('MinpokerTournamentService', () => {
         join: jest.fn(),
         leave: jest.fn(),
       } as any;
-      const command: MinPokerJoinCommand = { matchId: 'match-1', playerId: 'player-1' };
+      const command: MinPokerJoinCommand = { matchId: 'match-1', playerId: 'player-1', requestId: '' };
       const creator = Object.assign(new MinFactoryUserEntity(), { id: 'creator-1' });
       const entity = Object.assign(new MinPokerGameEntity(), {
         bigBlind: 4,
@@ -151,6 +151,7 @@ describe('MinpokerTournamentService', () => {
         matchId: 'match-1',
         playerId: 'player-1',
         playerName: 'Alice',
+        requestId: '',
         seat: 3,
       };
 
@@ -177,6 +178,7 @@ describe('MinpokerTournamentService', () => {
         matchId: 'match-1',
         playerId: 'player-2',
         playerName: 'Bob',
+        requestId: '',
         seat: 1,
       };
 
@@ -206,6 +208,7 @@ describe('MinpokerTournamentService', () => {
         matchId: 'match-1',
         playerId: 'player-3',
         playerName: 'Charlie',
+        requestId: '',
         seat: 2,
       };
 
@@ -228,6 +231,7 @@ describe('MinpokerTournamentService', () => {
         matchId: 'match-1',
         playerId: 'player-1',
         playerName: 'Alice',
+        requestId: '',
         seat: 0,
       };
 
@@ -247,6 +251,7 @@ describe('MinpokerTournamentService', () => {
         matchId: 'match-1',
         playerId: 'player-2',
         playerName: 'Alice',
+        requestId: '',
         seat: 3,
       };
       MINPOKER_PLAYER_ID_REPOSITORY_MOCK.findOne.mockReturnValue('player-1');

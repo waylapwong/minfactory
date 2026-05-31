@@ -5,7 +5,7 @@ export class MinPokerDtoMapper {
   public static toDomain(dto: MinPokerCreateGameDto): MinPokerGame {
     const domain: MinPokerGame = new MinPokerGame();
 
-    domain.isPublic = dto.isPublic;
+    domain.visibility = dto.visibility;
     domain.name = dto.name;
 
     return domain;

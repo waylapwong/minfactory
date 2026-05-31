@@ -35,13 +35,13 @@ describe('MinPokerGameService', () => {
     it('should create and return a game dto', async () => {
       const createDto = new MinPokerCreateGameDto();
       createDto.name = 'Test Poker Table';
-      createDto.isPublic = false;
+      createDto.visibility = MinPokerGameVisibility.Private;
       const firebaseUser = { uid: 'fb-creator-1' } as any;
 
       const savedEntity = new MinPokerGameEntity();
       savedEntity.id = 'poker-id';
       savedEntity.name = 'Test Poker Table';
-      savedEntity.isPublic = false;
+      savedEntity.visibility = MinPokerGameVisibility.Private;
       savedEntity.createdAt = new Date();
       savedEntity.bigBlind = 2;
       savedEntity.smallBlind = 1;
@@ -59,12 +59,12 @@ describe('MinPokerGameService', () => {
       expect(result).toBeDefined();
       expect(result.name).toBe('Test Poker Table');
       expect(result.id).toBe('poker-id');
-      expect(result.isPublic).toBe(false);
-      expect(MINFACTORY_USER_REPOSITORY_MOCK.findByFirebaseUid).toHaveBeenCalledWith('fb-creator-1');
+      expect(result.visibility).toBe(MinPokerGameVisibility.Private);
+      expect(MINFACTORY_USER_REPOSITORY_MOCK.findByFirebaseUid).toHaveBeenCalledWith('fb-creator-1', 'test-request-id');
       expect(MINPOKER_GAME_REPOSITORY_MOCK.save).toHaveBeenCalledWith(
         expect.objectContaining({
           name: 'Test Poker Table',
-          isPublic: false,
+          visibility: MinPokerGameVisibility.Private,
           creator: expect.objectContaining({ id: 'creator-1' }),
         }),
         'test-request-id',
@@ -102,7 +102,7 @@ describe('MinPokerGameService', () => {
 
       expect(result).toHaveLength(2);
       expect(result[0].name).toBe('Table 1');
-      expect(MINFACTORY_USER_REPOSITORY_MOCK.findByFirebaseUid).toHaveBeenCalledWith('fb-creator-1');
+      expect(MINFACTORY_USER_REPOSITORY_MOCK.findByFirebaseUid).toHaveBeenCalledWith('fb-creator-1', 'test-request-id');
       expect(MINPOKER_GAME_REPOSITORY_MOCK.findAllByCreator).toHaveBeenCalledWith('creator-1', 'test-request-id');
       expect(MINPOKER_GAME_REPOSITORY_MOCK.findAllPublic).not.toHaveBeenCalled();
     });
@@ -161,7 +161,7 @@ describe('MinPokerGameService', () => {
 
       await service.deleteGame('game-id', firebaseUser, 'test-request-id');
 
-      expect(MINFACTORY_USER_REPOSITORY_MOCK.findByFirebaseUid).toHaveBeenCalledWith('fb-creator-1');
+      expect(MINFACTORY_USER_REPOSITORY_MOCK.findByFirebaseUid).toHaveBeenCalledWith('fb-creator-1', 'test-request-id');
       expect(MINPOKER_GAME_REPOSITORY_MOCK.findOne).toHaveBeenCalledWith('game-id', 'test-request-id');
       expect(MINPOKER_GAME_REPOSITORY_MOCK.delete).toHaveBeenCalledWith('game-id', 'test-request-id');
     });
@@ -183,7 +183,7 @@ describe('MinPokerGameService', () => {
         'You are not authorized to delete this game',
       );
 
-      expect(MINFACTORY_USER_REPOSITORY_MOCK.findByFirebaseUid).toHaveBeenCalledWith('fb-user-2');
+      expect(MINFACTORY_USER_REPOSITORY_MOCK.findByFirebaseUid).toHaveBeenCalledWith('fb-user-2', 'test-request-id');
       expect(MINPOKER_GAME_REPOSITORY_MOCK.findOne).toHaveBeenCalledWith('game-id', 'test-request-id');
       expect(MINPOKER_GAME_REPOSITORY_MOCK.delete).not.toHaveBeenCalled();
     });
@@ -204,7 +204,7 @@ describe('MinPokerGameService', () => {
 
       await service.deleteGame('game-id', firebaseUser, 'test-request-id');
 
-      expect(MINFACTORY_USER_REPOSITORY_MOCK.findByFirebaseUid).toHaveBeenCalledWith('fb-admin-1');
+      expect(MINFACTORY_USER_REPOSITORY_MOCK.findByFirebaseUid).toHaveBeenCalledWith('fb-admin-1', 'test-request-id');
       expect(MINPOKER_GAME_REPOSITORY_MOCK.findOne).toHaveBeenCalledWith('game-id', 'test-request-id');
       expect(MINPOKER_GAME_REPOSITORY_MOCK.delete).toHaveBeenCalledWith('game-id', 'test-request-id');
     });

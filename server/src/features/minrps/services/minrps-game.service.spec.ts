@@ -50,12 +50,12 @@ describe('MinRpsGameService', () => {
 
       MINRPS_GAME_REPOSITORY_MOCK.save.mockResolvedValue(savedEntity);
 
-      const result = await service.createGame(createDto);
+      const result = await service.createGame(createDto, 'test-request-id');
 
       expect(result).toBeDefined();
       expect(result.name).toBe('Test Game');
       expect(result.id).toBe('test-id');
-      expect(MINRPS_GAME_REPOSITORY_MOCK.save).toHaveBeenCalledWith(expect.objectContaining({ name: 'Test Game' }));
+      expect(MINRPS_GAME_REPOSITORY_MOCK.save).toHaveBeenCalledWith(expect.objectContaining({ name: 'Test Game' }), 'test-request-id');
     });
   });
 
@@ -63,9 +63,9 @@ describe('MinRpsGameService', () => {
     it('should delete a game by id', async () => {
       MINRPS_GAME_REPOSITORY_MOCK.delete.mockResolvedValue(undefined);
 
-      await service.deleteGame('test-id');
+      await service.deleteGame('test-id', 'test-request-id');
 
-      expect(MINRPS_GAME_REPOSITORY_MOCK.delete).toHaveBeenCalledWith('test-id');
+      expect(MINRPS_GAME_REPOSITORY_MOCK.delete).toHaveBeenCalledWith('test-id', 'test-request-id');
     });
   });
 
@@ -87,7 +87,7 @@ describe('MinRpsGameService', () => {
       MINRPS_GAME_REPOSITORY_MOCK.findAll.mockResolvedValue(entities);
       MINRPS_MATCH_REPOSITORY_MOCK.findOne.mockReturnValue(null);
 
-      const result = await service.getAllGames();
+      const result = await service.getAllGames('test-request-id');
 
       expect(result).toHaveLength(2);
       expect(result[0].name).toBe('Game 1');
@@ -112,7 +112,7 @@ describe('MinRpsGameService', () => {
       MINRPS_GAME_REPOSITORY_MOCK.findAll.mockResolvedValue([entity]);
       MINRPS_MATCH_REPOSITORY_MOCK.findOne.mockReturnValue(match);
 
-      const result = await service.getAllGames();
+      const result = await service.getAllGames('test-request-id');
 
       expect(result).toHaveLength(1);
       expect(result[0].observerCount).toBe(2);
@@ -123,7 +123,7 @@ describe('MinRpsGameService', () => {
     it('should return empty array when no games exist', async () => {
       MINRPS_GAME_REPOSITORY_MOCK.findAll.mockResolvedValue([]);
 
-      const result = await service.getAllGames();
+      const result = await service.getAllGames('test-request-id');
 
       expect(result).toEqual([]);
     });
@@ -139,12 +139,12 @@ describe('MinRpsGameService', () => {
       MINRPS_GAME_REPOSITORY_MOCK.findOne.mockResolvedValue(entity);
       MINRPS_MATCH_REPOSITORY_MOCK.findOne.mockReturnValue(null);
 
-      const result = await service.getGame('test-id');
+      const result = await service.getGame('test-id', 'test-request-id');
 
       expect(result).toBeDefined();
       expect(result.id).toBe('test-id');
       expect(result.name).toBe('Test Game');
-      expect(MINRPS_GAME_REPOSITORY_MOCK.findOne).toHaveBeenCalledWith('test-id');
+      expect(MINRPS_GAME_REPOSITORY_MOCK.findOne).toHaveBeenCalledWith('test-id', 'test-request-id');
     });
 
     it('should map observer and player counts from match repository in getGame', async () => {
@@ -162,7 +162,7 @@ describe('MinRpsGameService', () => {
       MINRPS_GAME_REPOSITORY_MOCK.findOne.mockResolvedValue(entity);
       MINRPS_MATCH_REPOSITORY_MOCK.findOne.mockReturnValue(match);
 
-      const result = await service.getGame('test-id');
+      const result = await service.getGame('test-id', 'test-request-id');
 
       expect(result.observerCount).toBe(1);
       expect(result.playerCount).toBe(2);

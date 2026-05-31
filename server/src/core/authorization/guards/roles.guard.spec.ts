@@ -60,7 +60,7 @@ describe('RolesGuard', () => {
     const result = await guard.canActivate(createExecutionContext());
 
     expect(result).toBe(true);
-    expect(MINFACTORY_USER_REPOSITORY_MOCK.findByFirebaseUid).toHaveBeenCalledWith('firebase-uid-123');
+    expect(MINFACTORY_USER_REPOSITORY_MOCK.findByFirebaseUid).toHaveBeenCalledWith('firebase-uid-123', '');
   });
 
   it('should allow access when user has required User role', async () => {

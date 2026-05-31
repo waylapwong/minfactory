@@ -1,5 +1,5 @@
 import { Injectable, Signal, WritableSignal, computed, signal } from '@angular/core';
-import { MinPokerGameDto } from '../../../core/generated';
+import { MinPokerGameDto, MinPokerGameVisibility } from '../../../core/generated';
 import { LoggerService } from '../../../core/logging/services/logger.service';
 import { MinPokerDomainMapper } from '../mapper/minpoker-domain.mapper';
 import { MinPokerDtoMapper } from '../mapper/minpoker-dto.mapper';
@@ -18,10 +18,10 @@ export class MinPokerGameService {
 
   constructor(private readonly gameRepository: MinPokerGameRepository) {}
 
-  public async createGame(name: string, isPublic: boolean = false): Promise<void> {
-    this.logger.debug(`START createGame(name: ${name}, isPublic: ${isPublic})`);
+  public async createGame(name: string, visibility: MinPokerGameVisibility): Promise<void> {
+    this.logger.debug(`START createGame(name: ${name}, visibility: ${visibility})`);
     try {
-      const dto: MinPokerGameDto = await this.gameRepository.create({ name, isPublic });
+      const dto: MinPokerGameDto = await this.gameRepository.create(name, visibility);
       const domain: MinPokerGame = MinPokerDtoMapper.toDomain(dto);
       this.cachedPokerGames.update((games: MinPokerGame[]) =>
         [domain, ...games].sort((a: MinPokerGame, b: MinPokerGame) => b.createdAt.getTime() - a.createdAt.getTime()),
@@ -45,11 +45,11 @@ export class MinPokerGameService {
     }
   }
 
-  public async loadGames(): Promise<void> {
-    this.logger.debug(`START loadGames()`);
+  public async loadGames(visibility: MinPokerGameVisibility): Promise<void> {
+    this.logger.debug(`START loadGames(visibility: ${visibility})`);
     try {
       // Get DTOs
-      const dtos: MinPokerGameDto[] = await this.gameRepository.getAll();
+      const dtos: MinPokerGameDto[] = await this.gameRepository.getAll(visibility);
       // Map to Domains and sort by Date
       const domains: MinPokerGame[] = dtos
         .map(MinPokerDtoMapper.toDomain)
