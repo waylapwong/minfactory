@@ -4,6 +4,7 @@ import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { MinPokerGameVisibility } from '../../../../core/generated';
 import { LoggerService } from '../../../../core/logging/services/logger.service';
 import { RoutingService } from '../../../../core/routing/services/routing.service';
+import { BadgeComponent } from '../../../../shared/components/badge/badge.component';
 import { ButtonComponent } from '../../../../shared/components/button/button.component';
 import { ToggleComponent } from '../../../../shared/components/toggle/toggle.component';
 import { CardButtonComponent } from '../../../../shared/components/card-button/card-button.component';
@@ -19,7 +20,17 @@ import { MinPokerGameService } from '../../services/minpoker-game.service';
   templateUrl: './minpoker-my-games.component.html',
   styleUrls: ['./minpoker-my-games.component.scss'],
   host: { class: 'block h-full w-full' },
-  imports: [CardButtonComponent, H2Component, ButtonComponent, DialogComponent, InputComponent, ToggleComponent, ReactiveFormsModule, DatePipe],
+  imports: [
+    BadgeComponent,
+    CardButtonComponent,
+    H2Component,
+    ButtonComponent,
+    DialogComponent,
+    InputComponent,
+    ToggleComponent,
+    ReactiveFormsModule,
+    DatePipe,
+  ],
 })
 export class MinPokerMyGamesComponent implements OnInit {
   public readonly Color: typeof Color = Color;

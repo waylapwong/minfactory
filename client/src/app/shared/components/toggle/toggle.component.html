@@ -1,20 +1,20 @@
 <div class="flex w-full flex-col">
   <!-- LABEL -->
   @if (label()) {
-    <label class="font-bold" [id]="id() + '-label'">{{ label() }}:</label>
+    <span class="font-bold" [id]="id() + '-label'">{{ label() }}:</span>
   }
 
   <!-- TOGGLE CONTAINER -->
   <div
     role="group"
     [attr.aria-labelledby]="label() ? id() + '-label' : null"
-    class="flex w-full overflow-hidden rounded-lg border-4 border-black shadow-2xl focus-within:ring-2 focus-within:ring-black focus-within:ring-offset-1"
+    class="flex w-full overflow-hidden rounded-lg border-4 border-black shadow-2xl"
   >
     <!-- LEFT OPTION (false) -->
     <button
       type="button"
       class="flex min-h-10 flex-1 cursor-pointer items-center justify-center border-r-2 border-black px-3 py-1 text-sm font-bold transition-colors duration-150 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
-      [class]="!formControlInput().value ? 'bg-green-300 cursor-default' : 'bg-gray-300 hover:bg-gray-400'"
+      [class]="!formControlInput().value ? 'cursor-default bg-blue-300' : 'bg-gray-300 hover:bg-gray-400'"
       [attr.aria-pressed]="!formControlInput().value"
       [disabled]="formControlInput().disabled || null"
       (click)="setValue(false)"
@@ -26,7 +26,7 @@
     <button
       type="button"
       class="flex min-h-10 flex-1 cursor-pointer items-center justify-center px-3 py-1 text-sm font-bold transition-colors duration-150 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
-      [class]="formControlInput().value ? 'bg-green-300 cursor-default' : 'bg-gray-300 hover:bg-gray-400'"
+      [class]="formControlInput().value ? 'cursor-default bg-blue-300' : 'bg-gray-300 hover:bg-gray-400'"
       [attr.aria-pressed]="formControlInput().value"
       [disabled]="formControlInput().disabled || null"
       (click)="setValue(true)"

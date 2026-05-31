@@ -43,12 +43,8 @@ export class MinPokerGameService {
     try {
       await this.gameRepository.delete(id);
       const sortFn = (a: MinPokerGame, b: MinPokerGame) => b.createdAt.getTime() - a.createdAt.getTime();
-      this.cachedMyGames.update((games: MinPokerGame[]) =>
-        games.filter((game: MinPokerGame) => game.id !== id).sort(sortFn),
-      );
-      this.cachedPublicGames.update((games: MinPokerGame[]) =>
-        games.filter((game: MinPokerGame) => game.id !== id).sort(sortFn),
-      );
+      this.cachedMyGames.update((games: MinPokerGame[]) => games.filter((game: MinPokerGame) => game.id !== id).sort(sortFn));
+      this.cachedPublicGames.update((games: MinPokerGame[]) => games.filter((game: MinPokerGame) => game.id !== id).sort(sortFn));
     } finally {
       this.logger.debug(`END deleteGame(...)`);
     }
