@@ -6,7 +6,10 @@ import { MinPokerDomainMapper } from '../mapper/minpoker-domain.mapper';
 import { MinPokerEntityMapper } from '../mapper/minpoker-entity.mapper';
 import { MinPokerJoinCommand } from '../models/commands/minpoker-join.command';
 import { MinPokerLeaveCommand } from '../models/commands/minpoker-leave.command';
+import { MinPokerPauseCommand } from '../models/commands/minpoker-pause.command';
+import { MinPokerResumeCommand } from '../models/commands/minpoker-resume.command';
 import { MinPokerSeatCommand } from '../models/commands/minpoker-seat.command';
+import { MinPokerStartCommand } from '../models/commands/minpoker-start.command';
 import { MinPokerDeck } from '../models/domains/minpoker-deck';
 import { MinPokerGame } from '../models/domains/minpoker-game';
 import { MinPokerPlayer } from '../models/domains/minpoker-player';
@@ -31,6 +34,11 @@ export interface MinPokerSeatResult {
   updatedEvent: MinPokerUpdatedEvent;
 }
 
+export interface MinPokerStartResult {
+  hands: Map<string, MinPokerHandDealtEvent> | null;
+  updatedEvent: MinPokerUpdatedEvent;
+}
+
 @Injectable()
 export class MinPokerTournamentService {
   constructor(
@@ -44,7 +52,7 @@ export class MinPokerTournamentService {
 
   public async handleConnectionCommand(clientSocket: Socket, firebaseUid: string): Promise<MinPokerConnectedEvent> {
     // GET USER ID
-    const userEntity: MinFactoryUserEntity = await this.userRepository.findByFirebaseUid(firebaseUid);
+    const userEntity: MinFactoryUserEntity = await this.userRepository.findByFirebaseUid(firebaseUid, '');
     const userId: string = userEntity.id;
     // BIND SOCKET ID TO USER ID
     clientSocket.data.playerId = userId;
@@ -100,7 +108,7 @@ export class MinPokerTournamentService {
     // ADD SOCKET TO MATCH ROOM
     this.roomSystem.addPlayerToRoom(clientSocket, command.matchId);
     // GET MATCH
-    const match: MinPokerGame = await this.findOrCreateMatch(command.matchId);
+    const match: MinPokerGame = await this.findOrCreateMatch(command.matchId, command.requestId);
     // UPDATE MATCH
     match.addObserver(playerId);
     // SAVE MATCH
@@ -144,12 +152,84 @@ export class MinPokerTournamentService {
       name: command.playerName,
     });
     // GET MATCH
-    const match: MinPokerGame = await this.findOrCreateMatch(command.matchId);
+    const match: MinPokerGame = await this.findOrCreateMatch(command.matchId, command.requestId);
     // UPDATE MATCH
     match.seatPlayer(player, command.seat);
     // DEAL HANDS, ONLY WHEN ROUND STARTS FOR THE FIRST TIME (no deck yet)
     let hands: Map<string, MinPokerHandDealtEvent> | null = null;
-    if (match.canStartRound() && !this.deckRepository.findOne(match.id)) {
+    if (match.isActive() && match.canStartRound() && !this.deckRepository.findOne(match.id)) {
+      const deck: MinPokerDeck = new MinPokerDeck();
+      deck.shuffle();
+      this.deckRepository.save(match.id, deck);
+      match.dealHands(deck);
+      hands = this.buildHandDealtEvents(match);
+    }
+    // SAVE MATCH
+    const updatedMatch: MinPokerGame = this.matchRepository.save(match);
+    // RETURN EVENT
+    return {
+      updatedEvent: MinPokerDomainMapper.toUpdatedEvent(updatedMatch),
+      hands,
+    };
+  }
+
+  public handlePauseCommand(clientSocket: Socket, command: MinPokerPauseCommand): MinPokerUpdatedEvent {
+    // GET PLAYER ID
+    const playerId: string = this.resolvePlayerId(clientSocket, command.playerId);
+    // GET MATCH
+    const match: MinPokerGame | null = this.matchRepository.findOne(command.matchId);
+    if (!match) {
+      throw new ForbiddenException('Match not found');
+    }
+    // AUTHORIZE: only creator can pause
+    if (match.creatorId !== playerId) {
+      throw new ForbiddenException('Only the game owner can pause the game');
+    }
+    // UPDATE MATCH
+    match.pause();
+    // SAVE MATCH
+    const updatedMatch: MinPokerGame = this.matchRepository.save(match);
+    // RETURN EVENT
+    return MinPokerDomainMapper.toUpdatedEvent(updatedMatch);
+  }
+
+  public handleResumeCommand(clientSocket: Socket, command: MinPokerResumeCommand): MinPokerUpdatedEvent {
+    // GET PLAYER ID
+    const playerId: string = this.resolvePlayerId(clientSocket, command.playerId);
+    // GET MATCH
+    const match: MinPokerGame | null = this.matchRepository.findOne(command.matchId);
+    if (!match) {
+      throw new ForbiddenException('Match not found');
+    }
+    // AUTHORIZE: only creator can resume
+    if (match.creatorId !== playerId) {
+      throw new ForbiddenException('Only the game owner can resume the game');
+    }
+    // UPDATE MATCH
+    match.resume();
+    // SAVE MATCH
+    const updatedMatch: MinPokerGame = this.matchRepository.save(match);
+    // RETURN EVENT
+    return MinPokerDomainMapper.toUpdatedEvent(updatedMatch);
+  }
+
+  public handleStartCommand(clientSocket: Socket, command: MinPokerStartCommand): MinPokerStartResult {
+    // GET PLAYER ID
+    const playerId: string = this.resolvePlayerId(clientSocket, command.playerId);
+    // GET MATCH
+    const match: MinPokerGame | null = this.matchRepository.findOne(command.matchId);
+    if (!match) {
+      throw new ForbiddenException('Match not found');
+    }
+    // AUTHORIZE: only creator can start
+    if (match.creatorId !== playerId) {
+      throw new ForbiddenException('Only the game owner can start the game');
+    }
+    // UPDATE MATCH
+    match.start();
+    // DEAL HANDS IF NO DECK EXISTS YET (start() already asserts ≥2 players and Waiting status)
+    let hands: Map<string, MinPokerHandDealtEvent> | null = null;
+    if (!this.deckRepository.findOne(match.id)) {
       const deck: MinPokerDeck = new MinPokerDeck();
       deck.shuffle();
       this.deckRepository.save(match.id, deck);
@@ -169,18 +249,18 @@ export class MinPokerTournamentService {
     const hands: Map<string, MinPokerHandDealtEvent> = new Map<string, MinPokerHandDealtEvent>();
     for (const player of match.players) {
       if (player && player.hand.length > 0) {
-        hands.set(player.id, MinPokerDomainMapper.domainToHandDealtEvent(player.hand));
+        hands.set(player.id, MinPokerDomainMapper.toHandDealtEvent(player.hand));
       }
     }
     return hands;
   }
 
-  private async findOrCreateMatch(matchId: string): Promise<MinPokerGame> {
+  private async findOrCreateMatch(matchId: string, requestId: string): Promise<MinPokerGame> {
     const cachedMatch: MinPokerGame | null = this.matchRepository.findOne(matchId);
     if (cachedMatch) {
       return cachedMatch;
     } else {
-      const entity: MinPokerGameEntity = await this.gameRepository.findOne(matchId);
+      const entity: MinPokerGameEntity = await this.gameRepository.findOne(matchId, requestId);
       const match: MinPokerGame = MinPokerEntityMapper.toDomain(entity);
       if (match.players.length !== match.tableSize) {
         match.players = Array.from({ length: match.tableSize }, () => null);

@@ -22,6 +22,8 @@ import { Observable }                                        from 'rxjs';
 import { MinPokerCreateGameDto } from '../model/min-poker-create-game-dto';
 // @ts-ignore
 import { MinPokerGameDto } from '../model/min-poker-game-dto';
+// @ts-ignore
+import { MinPokerGameVisibility } from '../model/min-poker-game-visibility';
 
 // @ts-ignore
 import { BASE_PATH, COLLECTION_FORMATS }                     from '../variables';
@@ -95,19 +97,26 @@ export class MinPokerApiService {
 
     /**
      * 
+     * @param xRequestId Unique request ID
      * @param minPokerCreateGameDto 
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public createMinPokerGame(minPokerCreateGameDto: MinPokerCreateGameDto, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<MinPokerGameDto>;
-    public createMinPokerGame(minPokerCreateGameDto: MinPokerCreateGameDto, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpResponse<MinPokerGameDto>>;
-    public createMinPokerGame(minPokerCreateGameDto: MinPokerCreateGameDto, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpEvent<MinPokerGameDto>>;
-    public createMinPokerGame(minPokerCreateGameDto: MinPokerCreateGameDto, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<any> {
+    public createMinPokerGame(xRequestId: string, minPokerCreateGameDto: MinPokerCreateGameDto, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<MinPokerGameDto>;
+    public createMinPokerGame(xRequestId: string, minPokerCreateGameDto: MinPokerCreateGameDto, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpResponse<MinPokerGameDto>>;
+    public createMinPokerGame(xRequestId: string, minPokerCreateGameDto: MinPokerCreateGameDto, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpEvent<MinPokerGameDto>>;
+    public createMinPokerGame(xRequestId: string, minPokerCreateGameDto: MinPokerCreateGameDto, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<any> {
+        if (xRequestId === null || xRequestId === undefined) {
+            throw new Error('Required parameter xRequestId was null or undefined when calling createMinPokerGame.');
+        }
         if (minPokerCreateGameDto === null || minPokerCreateGameDto === undefined) {
             throw new Error('Required parameter minPokerCreateGameDto was null or undefined when calling createMinPokerGame.');
         }
 
         let localVarHeaders = this.defaultHeaders;
+        if (xRequestId !== undefined && xRequestId !== null) {
+            localVarHeaders = localVarHeaders.set('X-Request-Id', String(xRequestId));
+        }
 
         let localVarHttpHeaderAcceptSelected: string | undefined = options && options.httpHeaderAccept;
         if (localVarHttpHeaderAcceptSelected === undefined) {
@@ -163,19 +172,26 @@ export class MinPokerApiService {
 
     /**
      * 
-     * @param id UUID of resource
+     * @param xRequestId Unique request ID
+     * @param id Unique ID of resource
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public deleteMinPokerGame(id: string, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext}): Observable<any>;
-    public deleteMinPokerGame(id: string, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext}): Observable<HttpResponse<any>>;
-    public deleteMinPokerGame(id: string, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext}): Observable<HttpEvent<any>>;
-    public deleteMinPokerGame(id: string, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: undefined, context?: HttpContext}): Observable<any> {
+    public deleteMinPokerGame(xRequestId: string, id: string, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext}): Observable<any>;
+    public deleteMinPokerGame(xRequestId: string, id: string, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext}): Observable<HttpResponse<any>>;
+    public deleteMinPokerGame(xRequestId: string, id: string, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext}): Observable<HttpEvent<any>>;
+    public deleteMinPokerGame(xRequestId: string, id: string, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: undefined, context?: HttpContext}): Observable<any> {
+        if (xRequestId === null || xRequestId === undefined) {
+            throw new Error('Required parameter xRequestId was null or undefined when calling deleteMinPokerGame.');
+        }
         if (id === null || id === undefined) {
             throw new Error('Required parameter id was null or undefined when calling deleteMinPokerGame.');
         }
 
         let localVarHeaders = this.defaultHeaders;
+        if (xRequestId !== undefined && xRequestId !== null) {
+            localVarHeaders = localVarHeaders.set('X-Request-Id', String(xRequestId));
+        }
 
         let localVarHttpHeaderAcceptSelected: string | undefined = options && options.httpHeaderAccept;
         if (localVarHttpHeaderAcceptSelected === undefined) {
@@ -220,15 +236,32 @@ export class MinPokerApiService {
 
     /**
      * 
+     * @param xRequestId Unique request ID
+     * @param visibility public &#x3D; alle öffentlichen Spiele. Ohne Parameter &#x3D; eigene Spiele.
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public getAllMinPokerGames(observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<Array<MinPokerGameDto>>;
-    public getAllMinPokerGames(observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpResponse<Array<MinPokerGameDto>>>;
-    public getAllMinPokerGames(observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpEvent<Array<MinPokerGameDto>>>;
-    public getAllMinPokerGames(observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<any> {
+    public getAllMinPokerGames(xRequestId: string, visibility: MinPokerGameVisibility, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<Array<MinPokerGameDto>>;
+    public getAllMinPokerGames(xRequestId: string, visibility: MinPokerGameVisibility, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpResponse<Array<MinPokerGameDto>>>;
+    public getAllMinPokerGames(xRequestId: string, visibility: MinPokerGameVisibility, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpEvent<Array<MinPokerGameDto>>>;
+    public getAllMinPokerGames(xRequestId: string, visibility: MinPokerGameVisibility, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<any> {
+        if (xRequestId === null || xRequestId === undefined) {
+            throw new Error('Required parameter xRequestId was null or undefined when calling getAllMinPokerGames.');
+        }
+        if (visibility === null || visibility === undefined) {
+            throw new Error('Required parameter visibility was null or undefined when calling getAllMinPokerGames.');
+        }
+
+        let localVarQueryParameters = new HttpParams({encoder: this.encoder});
+        if (visibility !== undefined && visibility !== null) {
+          localVarQueryParameters = this.addToHttpParams(localVarQueryParameters,
+            <any>visibility, 'visibility');
+        }
 
         let localVarHeaders = this.defaultHeaders;
+        if (xRequestId !== undefined && xRequestId !== null) {
+            localVarHeaders = localVarHeaders.set('X-Request-Id', String(xRequestId));
+        }
 
         let localVarHttpHeaderAcceptSelected: string | undefined = options && options.httpHeaderAccept;
         if (localVarHttpHeaderAcceptSelected === undefined) {
@@ -263,6 +296,7 @@ export class MinPokerApiService {
         return this.httpClient.request<Array<MinPokerGameDto>>('get', `${this.configuration.basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
+                params: localVarQueryParameters,
                 responseType: <any>responseType_,
                 withCredentials: this.configuration.withCredentials,
                 headers: localVarHeaders,

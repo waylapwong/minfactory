@@ -6,16 +6,6 @@
         "operationId": "deleteMinPokerGame",
         "parameters": [
           {
-            "name": "id",
-            "required": true,
-            "in": "path",
-            "description": "Unique ID of resource",
-            "schema": {
-              "example": "550e8400-e29b-41d4-a716-446655440000",
-              "type": "string"
-            }
-          },
-          {
             "name": "X-Request-Id",
             "required": true,
             "in": "header",
@@ -23,6 +13,16 @@
             "schema": {
               "type": "string",
               "example": "80210e8c-9688-4369-a20a-4d69d1187dd7"
+            }
+          },
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Unique ID of resource",
+            "schema": {
+              "example": "550e8400-e29b-41d4-a716-446655440000",
+              "type": "string"
             }
           }
         ],
@@ -62,6 +62,15 @@
             "schema": {
               "type": "string",
               "example": "80210e8c-9688-4369-a20a-4d69d1187dd7"
+            }
+          },
+          {
+            "name": "visibility",
+            "required": true,
+            "in": "query",
+            "description": "public = alle öffentlichen Spiele. Ohne Parameter = eigene Spiele.",
+            "schema": {
+              "$ref": "#/components/schemas/MinPokerGameVisibility"
             }
           }
         ],
@@ -512,6 +521,10 @@
   "servers": [],
   "components": {
     "schemas": {
+      "MinPokerGameVisibility": {
+        "type": "string",
+        "enum": ["private", "public"]
+      },
       "MinPokerGameDto": {
         "type": "object",
         "properties": {
@@ -526,9 +539,14 @@
             "type": "string",
             "example": "2026-03-24T18:45:30.000Z"
           },
-          "id": {
+          "creatorId": {
             "type": "string",
             "example": "550e8400-e29b-41d4-a716-446655440000",
+            "format": "uuid"
+          },
+          "id": {
+            "type": "string",
+            "example": "0d82d524-adfe-4403-8872-0c3899c727be",
             "format": "uuid"
           },
           "name": {
@@ -559,13 +577,40 @@
             "example": 6,
             "minimum": 6,
             "maximum": 6
+          },
+          "visibility": {
+            "example": "public",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/MinPokerGameVisibility"
+              }
+            ]
           }
         },
-        "required": ["bigBlind", "createdAt", "id", "name", "observerCount", "playerCount", "smallBlind", "tableSize"]
+        "required": [
+          "bigBlind",
+          "createdAt",
+          "creatorId",
+          "id",
+          "name",
+          "observerCount",
+          "playerCount",
+          "smallBlind",
+          "tableSize",
+          "visibility"
+        ]
       },
       "MinPokerCreateGameDto": {
         "type": "object",
         "properties": {
+          "visibility": {
+            "example": "public",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/MinPokerGameVisibility"
+              }
+            ]
+          },
           "name": {
             "type": "string",
             "example": "Test Name",
@@ -573,7 +618,7 @@
             "minLength": 2
           }
         },
-        "required": ["name"]
+        "required": ["visibility", "name"]
       },
       "MinFactoryUserDto": {
         "type": "object",

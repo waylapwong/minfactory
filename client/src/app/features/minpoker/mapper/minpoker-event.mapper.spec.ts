@@ -1,20 +1,23 @@
+import { MinPokerGameStatus } from '../models/enums/minpoker-game-status.enum';
 import { MinPokerMatchUpdatedEvent } from '../models/events/minpoker-match-updated.event';
 import { MinPokerEventMapper } from './minpoker-event.mapper';
 
 describe('MinPokerEventMapper', () => {
-  describe('matchUpdatedEventToDomain()', () => {
+  describe('toDomain()', () => {
     it('should map event fields to domain', () => {
       const event: MinPokerMatchUpdatedEvent = {
         bigBlind: 20,
+        creatorId: 'creator-1',
         matchId: 'match-1',
         name: 'Evening Table',
         observerIds: ['obs-1', 'obs-2'],
         players: [],
         smallBlind: 10,
+        status: MinPokerGameStatus.Waiting,
         tableSize: 6,
       };
 
-      const domain = MinPokerEventMapper.matchUpdatedEventToDomain(event);
+      const domain = MinPokerEventMapper.toDomain(event);
 
       expect(domain.bigBlind).toBe(20);
       expect(domain.id).toBe('match-1');
@@ -27,15 +30,17 @@ describe('MinPokerEventMapper', () => {
     it('should create a players array of tableSize length filled with null', () => {
       const event: MinPokerMatchUpdatedEvent = {
         bigBlind: 20,
+        creatorId: 'creator-1',
         matchId: 'match-1',
         name: 'Table',
         observerIds: [],
         players: [],
         smallBlind: 10,
+        status: MinPokerGameStatus.Waiting,
         tableSize: 4,
       };
 
-      const domain = MinPokerEventMapper.matchUpdatedEventToDomain(event);
+      const domain = MinPokerEventMapper.toDomain(event);
 
       expect(domain.players.length).toBe(4);
       expect(domain.players.every((p) => p === null)).toBeTrue();
@@ -44,6 +49,7 @@ describe('MinPokerEventMapper', () => {
     it('should place players at the correct seat index', () => {
       const event: MinPokerMatchUpdatedEvent = {
         bigBlind: 20,
+        creatorId: 'creator-1',
         matchId: 'match-1',
         name: 'Table',
         observerIds: [],
@@ -52,10 +58,11 @@ describe('MinPokerEventMapper', () => {
           { avatar: 'woman-2.svg', id: 'p2', name: 'Bob', seat: 3, stack: 150 },
         ],
         smallBlind: 10,
+        status: MinPokerGameStatus.Waiting,
         tableSize: 6,
       };
 
-      const domain = MinPokerEventMapper.matchUpdatedEventToDomain(event);
+      const domain = MinPokerEventMapper.toDomain(event);
 
       expect(domain.players[0]).toEqual(jasmine.objectContaining({ id: 'p1', name: 'Alice', seat: 0, stack: 200 }));
       expect(domain.players[1]).toBeNull();
@@ -69,15 +76,17 @@ describe('MinPokerEventMapper', () => {
       const observerIds = ['obs-1'];
       const event: MinPokerMatchUpdatedEvent = {
         bigBlind: 0,
+        creatorId: '',
         matchId: '',
         name: '',
         observerIds,
         players: [],
         smallBlind: 0,
+        status: MinPokerGameStatus.Waiting,
         tableSize: 2,
       };
 
-      const domain = MinPokerEventMapper.matchUpdatedEventToDomain(event);
+      const domain = MinPokerEventMapper.toDomain(event);
       observerIds.push('obs-2');
 
       expect(domain.observerIds).toEqual(['obs-1']);

@@ -12,6 +12,68 @@
     </min-button>
   </div>
 
+  <!-- OWNER CONTROLS / STATUS STRIP -->
+  <div class="flex min-h-9 flex-row items-center justify-center">
+    @if (isOwner()) {
+      <div aria-label="Spielsteuerung" class="flex flex-row gap-2">
+        @if (gameStatus() === MinPokerGameStatus.Waiting) {
+          <div class="w-36">
+            <min-button [color]="Color.Green" (clicked)="onStartGame()" ariaLabel="Spiel starten">
+              <span class="flex items-center justify-center gap-1.5">
+                <img src="assets/svgs/minpoker/play.svg" alt="" class="h-4 w-4" aria-hidden="true" />
+                Starten
+              </span>
+            </min-button>
+          </div>
+        }
+
+        @if (gameStatus() === MinPokerGameStatus.Active) {
+          <div class="w-36">
+            <min-button [color]="Color.Yellow" (clicked)="onPauseGame()" ariaLabel="Spiel pausieren – wirkt nach der laufenden Hand">
+              <span class="flex items-center justify-center gap-1.5">
+                <img src="assets/svgs/minpoker/pause.svg" alt="" class="h-4 w-4" aria-hidden="true" />
+                Pause
+              </span>
+            </min-button>
+          </div>
+        }
+
+        @if (gameStatus() === MinPokerGameStatus.Paused) {
+          <div class="w-36">
+            <min-button [color]="Color.Green" (clicked)="onResumeGame()" ariaLabel="Spiel fortsetzen">
+              <span class="flex items-center justify-center gap-1.5">
+                <img src="assets/svgs/minpoker/play.svg" alt="" class="h-4 w-4" aria-hidden="true" />
+                Fortsetzen
+              </span>
+            </min-button>
+          </div>
+        }
+      </div>
+    } @else {
+      @if (gameStatus() === MinPokerGameStatus.Waiting) {
+        <output
+          class="flex items-center gap-1.5 rounded-lg border-2 border-amber-500 bg-amber-900/40 px-3 py-1 text-sm font-bold text-amber-300"
+          aria-live="polite"
+          aria-label="Spielstatus: Warte auf Host"
+        >
+          <img src="assets/svgs/minpoker/clock.svg" alt="" class="h-4 w-4" aria-hidden="true" />
+          Warte auf Host
+        </output>
+      }
+
+      @if (gameStatus() === MinPokerGameStatus.Paused) {
+        <output
+          class="flex animate-pulse items-center gap-1.5 rounded-lg border-2 border-yellow-500 bg-yellow-900/40 px-3 py-1 text-sm font-bold text-yellow-300"
+          aria-live="polite"
+          aria-label="Spielstatus: Spiel pausiert"
+        >
+          <img src="assets/svgs/minpoker/pause.svg" alt="" class="h-4 w-4" aria-hidden="true" />
+          Spiel pausiert
+        </output>
+      }
+    }
+  </div>
+
   <!-- TOP SIDE -->
   <div class="grid gap-2" [class.grid-cols-3]="isObserver()" [class.grid-cols-5]="!isObserver()">
     @for (seat of topSeats(); track seat.player?.id ?? seat.seatIndex) {

@@ -277,5 +277,35 @@ describe('MinRpsSingleplayerService', () => {
       expect(game.player2Move).toBe(MinRpsMove.Rock);
       expect(game.result).toBe(MinRpsResult.Player2);
     });
+
+    it('should not add to history when result is None', async () => {
+      const mockResult: MinRpsPlayResultDto = {
+        player1Move: MinRpsMove.None,
+        player2Move: MinRpsMove.None,
+        result: MinRpsResult.None,
+      };
+      MINRPS_PLAY_REPOSITORY_MOCK.play.and.returnValue(Promise.resolve(mockResult));
+
+      await service.playGame(MinRpsMove.Rock);
+
+      expect(service.game().resultHistory).toEqual([]);
+    });
+  });
+
+  describe('setupNewGame() without reset', () => {
+    it('should keep result history when called without true', async () => {
+      const mockResult: MinRpsPlayResultDto = {
+        player1Move: MinRpsMove.Rock,
+        player2Move: MinRpsMove.Scissors,
+        result: MinRpsResult.Player1,
+      };
+      MINRPS_PLAY_REPOSITORY_MOCK.play.and.returnValue(Promise.resolve(mockResult));
+
+      await service.playGame(MinRpsMove.Rock);
+
+      service.setupNewGame();
+
+      expect(service.game().resultHistory).toEqual([MinRpsResult.Player1]);
+    });
   });
 });

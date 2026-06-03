@@ -6,6 +6,7 @@ import { AuthenticationService } from '../../../core/authentication/services/aut
 import { MINPOKER_GAME_SERVICE_MOCK } from '../mocks/minpoker-game.service.mock';
 import { MinPokerCreateGameDto } from '../models/dtos/minpoker-create-game.dto';
 import { MinPokerGameDto } from '../models/dtos/minpoker-game.dto';
+import { MinPokerGameVisibility } from '../models/enums/minpoker-game-visibility.enum';
 import { MinPokerGameService } from '../services/minpoker-game.service';
 import { MinPokerGameController } from './minpoker-game.controller';
 
@@ -16,7 +17,9 @@ describe('MinPokerGameController', () => {
     {
       bigBlind: 2,
       createdAt: new Date('2026-03-24T18:45:30.000Z'),
+      creatorId: '2f647dc3-2290-4a9e-839f-9792d0d711d1',
       id: '550e8400-e29b-41d4-a716-446655440000',
+      visibility: MinPokerGameVisibility.Private,
       tableSize: 6,
       name: 'Evening Table',
       observerCount: 2,
@@ -26,7 +29,9 @@ describe('MinPokerGameController', () => {
     {
       bigBlind: 2,
       createdAt: new Date('2026-03-24T19:10:00.000Z'),
+      creatorId: '744f9336-461b-4b87-a8f8-e6033b0fbfb0',
       id: '660e8400-e29b-41d4-a716-446655440000',
+      visibility: MinPokerGameVisibility.Public,
       tableSize: 6,
       name: 'Turbo Sit and Go',
       observerCount: 1,
@@ -45,6 +50,7 @@ describe('MinPokerGameController', () => {
         createdAt: new Date(),
       }),
     );
+    MINPOKER_GAME_SERVICE_MOCK.deleteGame.mockResolvedValue(undefined);
   });
 
   beforeEach(async () => {
@@ -65,33 +71,44 @@ describe('MinPokerGameController', () => {
   });
 
   describe('getAll()', () => {
-    it('should return mock game dtos', async () => {
+    it('should return own games when no visibility parameter is given', async () => {
       const fakeUser = { firebaseUid: 'fb-1', email: 'u@e.com' } as any;
-      const result = await controller.getAll(fakeUser, 'test-request-id');
+      const result = await controller.getAll(fakeUser, 'test-request-id', undefined as any);
 
       expect(result).toHaveLength(2);
-      expect(result[0]).toMatchObject({
-        bigBlind: 2,
-        id: '550e8400-e29b-41d4-a716-446655440000',
-        name: 'Evening Table',
-        observerCount: 2,
-        playerCount: 4,
-        smallBlind: 1,
-        tableSize: 6,
-      });
-      expect(MINPOKER_GAME_SERVICE_MOCK.getAllGames).toHaveBeenCalledWith(fakeUser);
+      expect(MINPOKER_GAME_SERVICE_MOCK.getAllGames).toHaveBeenCalledWith(fakeUser, undefined, 'test-request-id');
+    });
+
+    it('should return public games when visibility=public', async () => {
+      const fakeUser = { firebaseUid: 'fb-1', email: 'u@e.com' } as any;
+      const result = await controller.getAll(fakeUser, 'test-request-id', MinPokerGameVisibility.Public);
+
+      expect(result).toHaveLength(2);
+      expect(MINPOKER_GAME_SERVICE_MOCK.getAllGames).toHaveBeenCalledWith(fakeUser, MinPokerGameVisibility.Public, 'test-request-id');
     });
   });
 
   describe('create()', () => {
     it('should create a new game via service and return dto', async () => {
-      const dto: MinPokerCreateGameDto = { name: 'New Table' } as MinPokerCreateGameDto;
+      const dto: MinPokerCreateGameDto = { name: 'New Table', visibility: MinPokerGameVisibility.Public } as MinPokerCreateGameDto;
 
       const fakeUser = { firebaseUid: 'fb-1', email: 'u@e.com' } as any;
       const result = await controller.create(dto, fakeUser, 'test-request-id');
 
       expect(result).toMatchObject({ name: 'New Table', id: 'new-id' });
-      expect(MINPOKER_GAME_SERVICE_MOCK.createGame).toHaveBeenCalledWith(dto, fakeUser);
+      expect(MINPOKER_GAME_SERVICE_MOCK.createGame).toHaveBeenCalledWith(dto, fakeUser, 'test-request-id');
+    });
+  });
+
+  describe('delete()', () => {
+    it('should call service.deleteGame and return void', async () => {
+      const fakeUser = { firebaseUid: 'fb-1', email: 'u@e.com' } as any;
+      const id = '550e8400-e29b-41d4-a716-446655440000';
+
+      const result = await controller.delete(fakeUser, 'test-request-id', id);
+
+      expect(result).toBeUndefined();
+      expect(MINPOKER_GAME_SERVICE_MOCK.deleteGame).toHaveBeenCalledWith(id, fakeUser, 'test-request-id');
     });
   });
 });

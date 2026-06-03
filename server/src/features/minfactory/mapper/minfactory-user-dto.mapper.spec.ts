@@ -6,19 +6,19 @@ describe('MinFactoryUserDtoMapper', () => {
   describe('dtoToDomain', () => {
     it('should map firebase user dto to domain correctly', () => {
       const dto: FirebaseUserDto = {
-        firebaseUid: 'firebase-uid-123',
+        uid: 'firebase-uid-123',
         email: 'user@example.com',
       };
 
       const domain: MinFactoryUser = MinFactoryUserDtoMapper.dtoToDomain(dto);
 
-      expect(domain.firebaseUid).toBe(dto.firebaseUid);
+      expect(domain.firebaseUid).toBe(dto.uid);
       expect(domain.email).toBe(dto.email);
     });
 
     it('should return a new domain instance', () => {
       const dto: FirebaseUserDto = {
-        firebaseUid: 'firebase-uid-123',
+        uid: 'firebase-uid-123',
         email: 'user@example.com',
       };
 

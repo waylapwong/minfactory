@@ -34,7 +34,7 @@ describe('MinRpsGameRepository', () => {
 
       MINRPS_GAME_TYPEORM_REPOSITORY_MOCK.save.mockResolvedValue(entity);
 
-      const result = await repository.save(entity);
+      const result = await repository.save(entity, 'test-request-id');
 
       expect(result).toBe(entity);
       expect(MINRPS_GAME_TYPEORM_REPOSITORY_MOCK.save).toHaveBeenCalledWith(entity);
@@ -50,7 +50,7 @@ describe('MinRpsGameRepository', () => {
 
       MINRPS_GAME_TYPEORM_REPOSITORY_MOCK.find.mockResolvedValue(entities);
 
-      const result = await repository.findAll();
+      const result = await repository.findAll('test-request-id');
 
       expect(result).toBe(entities);
       expect(MINRPS_GAME_TYPEORM_REPOSITORY_MOCK.find).toHaveBeenCalledWith({
@@ -67,7 +67,7 @@ describe('MinRpsGameRepository', () => {
 
       MINRPS_GAME_TYPEORM_REPOSITORY_MOCK.findOne.mockResolvedValue(entity);
 
-      const result = await repository.findOne('test-id');
+      const result = await repository.findOne('test-id', 'test-request-id');
 
       expect(result).toBe(entity);
       expect(MINRPS_GAME_TYPEORM_REPOSITORY_MOCK.findOne).toHaveBeenCalledWith({
@@ -78,8 +78,10 @@ describe('MinRpsGameRepository', () => {
     it('should throw NotFoundException when entity not found', async () => {
       MINRPS_GAME_TYPEORM_REPOSITORY_MOCK.findOne.mockResolvedValue(null);
 
-      await expect(repository.findOne('non-existent-id')).rejects.toThrow(NotFoundException);
-      await expect(repository.findOne('non-existent-id')).rejects.toThrow('minRPS game with ID non-existent-id not found');
+      await expect(repository.findOne('non-existent-id', 'test-request-id')).rejects.toThrow(NotFoundException);
+      await expect(repository.findOne('non-existent-id', 'test-request-id')).rejects.toThrow(
+        'minRPS game with ID non-existent-id not found',
+      );
     });
   });
 
@@ -91,7 +93,7 @@ describe('MinRpsGameRepository', () => {
       MINRPS_GAME_TYPEORM_REPOSITORY_MOCK.findOne.mockResolvedValue(entity);
       MINRPS_GAME_TYPEORM_REPOSITORY_MOCK.delete.mockResolvedValue({} as any);
 
-      await repository.delete('test-id');
+      await repository.delete('test-id', 'test-request-id');
 
       expect(MINRPS_GAME_TYPEORM_REPOSITORY_MOCK.findOne).toHaveBeenCalledWith({
         where: { id: 'test-id' },
@@ -102,7 +104,7 @@ describe('MinRpsGameRepository', () => {
     it('should throw NotFoundException when entity not found for deletion', async () => {
       MINRPS_GAME_TYPEORM_REPOSITORY_MOCK.findOne.mockResolvedValue(null);
 
-      await expect(repository.delete('non-existent-id')).rejects.toThrow(NotFoundException);
+      await expect(repository.delete('non-existent-id', 'test-request-id')).rejects.toThrow(NotFoundException);
     });
   });
 });

@@ -25,6 +25,12 @@ describe('roleGuard', () => {
     MINFACTORY_USER_SERVICE_MOCK.loadProfile.calls.reset();
     MINFACTORY_USER_SERVICE_MOCK.clearUserCache.calls.reset();
     MINFACTORY_USER_SERVICE_MOCK.setProfile(null);
+    MINFACTORY_USER_SERVICE_MOCK.ensureProfileLoaded.and.callFake(async (): Promise<void> => {
+      if (MINFACTORY_USER_SERVICE_MOCK.profileViewModel()) {
+        return;
+      }
+      await MINFACTORY_USER_SERVICE_MOCK.loadProfile();
+    });
   });
 
   it('should allow route when no role is required', async () => {
@@ -109,5 +115,15 @@ describe('roleGuard', () => {
     await TestBed.runInInjectionContext(() => roleGuard(route, {} as never));
 
     expect(MINFACTORY_USER_SERVICE_MOCK.ensureProfileLoaded).toHaveBeenCalled();
+  });
+
+  it('should redirect to root when ensureProfileLoaded throws', async () => {
+    MINFACTORY_USER_SERVICE_MOCK.ensureProfileLoaded.and.returnValue(Promise.reject(new Error('load failed')));
+    const route = { data: { role: MinFactoryRole.Admin } } as unknown as ActivatedRouteSnapshot;
+
+    const result = await TestBed.runInInjectionContext(() => roleGuard(route, {} as never));
+
+    expect(result instanceof UrlTree).toBeTrue();
+    expect(router.serializeUrl(result as UrlTree)).toBe('/');
   });
 });

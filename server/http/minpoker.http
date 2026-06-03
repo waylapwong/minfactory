@@ -1,12 +1,13 @@
 @BASE_PATH = http://localhost:3000/minpoker
 @GAMES = games
+@REQUEST_ID = d6a850d8-8977-466e-b710-edbd6513dd0d
 @TOKEN = _____
-
 
 ### GET /games
 GET {{BASE_PATH}}/{{GAMES}}
 Accept: application/json
 Authorization: Bearer {{TOKEN}}
+X-Request-Id: {{REQUEST_ID}}
 
 
 ### POST /games
@@ -14,6 +15,7 @@ POST {{BASE_PATH}}/{{GAMES}}
 Accept: application/json
 Content-Type: application/json
 Authorization: Bearer {{TOKEN}}
+X-Request-Id: {{REQUEST_ID}}
 
 {
   "name": "Test"

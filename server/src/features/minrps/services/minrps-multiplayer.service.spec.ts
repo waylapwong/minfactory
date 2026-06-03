@@ -1,3 +1,4 @@
+import { NotFoundException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { Socket } from 'socket.io';
 import { MinRpsResult } from '../models/enums/minrps-game-result.enum';
@@ -13,6 +14,8 @@ import { MinRpsMultiplayerService } from './minrps-multiplayer.service';
 
 describe('MinRpsMultiplayerService', () => {
   let service: MinRpsMultiplayerService;
+  let playerIdRepository: MinRpsPlayerIdRepository;
+  let roomSystem: MinRpsRoomSystem;
   let mockSocket: jest.Mocked<Socket>;
 
   beforeEach(async () => {
@@ -21,6 +24,8 @@ describe('MinRpsMultiplayerService', () => {
     }).compile();
 
     service = module.get<MinRpsMultiplayerService>(MinRpsMultiplayerService);
+    playerIdRepository = module.get<MinRpsPlayerIdRepository>(MinRpsPlayerIdRepository);
+    roomSystem = module.get<MinRpsRoomSystem>(MinRpsRoomSystem);
 
     mockSocket = {
       id: 'test-socket-id',
@@ -75,6 +80,15 @@ describe('MinRpsMultiplayerService', () => {
 
       expect(result).toBeDefined();
       expect(result.matchId).toBe('match-1');
+    });
+
+    it('should throw NotFoundException when match does not exist', () => {
+      const leavePayload: MinRpsMatchLeavePayload = {
+        matchId: 'non-existent-match',
+        playerId: 'player-1',
+      };
+
+      expect(() => service.leaveMatch(mockSocket, leavePayload)).toThrow(NotFoundException);
     });
   });
 
@@ -218,7 +232,7 @@ describe('MinRpsMultiplayerService', () => {
         playerMove: MinRpsMove.Rock,
       };
 
-      expect(() => service.playMatch(playPayload)).toThrow();
+      expect(() => service.playMatch(playPayload)).toThrow(NotFoundException);
     });
   });
 
@@ -292,12 +306,15 @@ describe('MinRpsMultiplayerService', () => {
 
       expect(finalResult.resultHistory.length).toBe(10);
     });
+
+    it('should throw NotFoundException when match does not exist', () => {
+      expect(() => service.resetMatch('non-existent-match')).toThrow(NotFoundException);
+    });
   });
 
   describe('handleDisconnect', () => {
     it('should return null when player is not in a room', () => {
       service.handleConnection(mockSocket);
-
       const result = service.handleDisconnect(mockSocket);
 
       expect(result).toBeNull();
@@ -319,6 +336,17 @@ describe('MinRpsMultiplayerService', () => {
       const result = service.handleDisconnect(mockSocket);
 
       expect(result === null || result.matchId === 'match-1').toBeTruthy();
+    });
+
+    it('should remove player from room when match is not found during disconnect', () => {
+      const playerId = 'manual-player-id';
+      playerIdRepository.save(mockSocket.id, playerId);
+      roomSystem.addPlayerToRoom(mockSocket, 'match-without-data');
+
+      const result = service.handleDisconnect(mockSocket);
+
+      expect(result).toBeNull();
+      expect(roomSystem.getPlayerRoomName(mockSocket)).toBeNull();
     });
   });
 });

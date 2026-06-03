@@ -164,4 +164,45 @@ describe('HeaderComponent', () => {
       expect(icon?.getAttribute('src')).toContain('assets/svgs/minfactory/account.svg');
     });
   });
+
+  describe('accountRouterLink', () => {
+    it('should return login route when user is not authenticated', () => {
+      AUTHENTICATION_SERVICE_MOCK.setCurrentUser(null);
+      fixture.detectChanges();
+      expect(component.accountRouterLink()).toEqual(['', 'login']);
+    });
+
+    it('should return profile route when user is authenticated', () => {
+      AUTHENTICATION_SERVICE_MOCK.setCurrentUser({
+        getIdToken: jasmine.createSpy('getIdToken').and.resolveTo('token'),
+      } as unknown as FirebaseUser);
+      fixture.detectChanges();
+      expect(component.accountRouterLink()).toEqual(['', 'profile']);
+    });
+  });
+
+  describe('appVersion', () => {
+    it('should reflect MinFactory version', () => {
+      contextService.app.set(AppName.MinFactory);
+      expect(component.appVersion()).toContain(AppName.MinFactory);
+    });
+  });
+
+  describe('isInProfile', () => {
+    it('should return false when not on profile route', () => {
+      expect(component.isInProfile()).toBeFalse();
+    });
+  });
+
+  describe('isInRegister', () => {
+    it('should return false when not on register route', () => {
+      expect(component.isInRegister()).toBeFalse();
+    });
+  });
+
+  describe('isInLogin', () => {
+    it('should return false when not on login route', () => {
+      expect(component.isInLogin()).toBeFalse();
+    });
+  });
 });
