@@ -11,6 +11,7 @@ import { MinPokerLeaveCommand } from '../models/commands/minpoker-leave.command'
 import { MinPokerSeatCommand } from '../models/commands/minpoker-seat.command';
 import { MinPokerGame } from '../models/domains/minpoker-game';
 import { MinPokerPlayer } from '../models/domains/minpoker-player';
+import { MinPokerGameStatus } from '../models/enums/minpoker-game-status.enum';
 import { MinFactoryUserEntity } from '../../minfactory/models/entities/minfactory-user.entity';
 import { MinPokerGameEntity } from '../models/entities/minpoker-game.entity';
 import { MinPokerDeckRepository } from '../repositories/minpoker-deck.repository';
@@ -170,8 +171,7 @@ describe('MinpokerTournamentService', () => {
 
     it('should deal hands to all players when 2 or more are seated', async () => {
       const socket = { data: { playerId: 'player-2' }, id: 'socket-2' } as any;
-      const match = new MinPokerGame({ id: 'match-1', name: 'Table 1' });
-      match.start();
+      const match = new MinPokerGame({ id: 'match-1', name: 'Table 1', status: MinPokerGameStatus.Active });
       match.seatPlayer(new MinPokerPlayer({ avatar: 'man-1.svg', id: 'player-1', name: 'Alice' }), 0);
       match.addObserver('player-2');
       const command: MinPokerSeatCommand = {

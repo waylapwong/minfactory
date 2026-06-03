@@ -1,3 +1,4 @@
+import { MinPokerGameStatus } from '../models/enums/minpoker-game-status.enum';
 import { MinPokerMatchUpdatedEvent } from '../models/events/minpoker-match-updated.event';
 import { MinPokerEventMapper } from './minpoker-event.mapper';
 
@@ -12,7 +13,7 @@ describe('MinPokerEventMapper', () => {
         observerIds: ['obs-1', 'obs-2'],
         players: [],
         smallBlind: 10,
-        status: 'active',
+        status: MinPokerGameStatus.Waiting,
         tableSize: 6,
       };
 
@@ -35,7 +36,7 @@ describe('MinPokerEventMapper', () => {
         observerIds: [],
         players: [],
         smallBlind: 10,
-        status: 'waiting',
+        status: MinPokerGameStatus.Waiting,
         tableSize: 4,
       };
 
@@ -57,7 +58,7 @@ describe('MinPokerEventMapper', () => {
           { avatar: 'woman-2.svg', id: 'p2', name: 'Bob', seat: 3, stack: 150 },
         ],
         smallBlind: 10,
-        status: 'waiting',
+        status: MinPokerGameStatus.Waiting,
         tableSize: 6,
       };
 
@@ -81,7 +82,7 @@ describe('MinPokerEventMapper', () => {
         observerIds,
         players: [],
         smallBlind: 0,
-        status: 'waiting',
+        status: MinPokerGameStatus.Waiting,
         tableSize: 2,
       };
 

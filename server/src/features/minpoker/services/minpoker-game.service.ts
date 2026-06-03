@@ -67,7 +67,7 @@ export class MinPokerGameService {
     this.logger.debug(`START getAllGames(firebaseUser: ${firebaseUser.uid}, visibility: ${visibility})`, requestId);
     let entities: MinPokerGameEntity[] = [];
     // CHECK VISIBILITY FLAG
-    if (visibility && visibility === MinPokerGameVisibility.Public) {
+    if (visibility === MinPokerGameVisibility.Public) {
       // GET ALL PUBLIC GAMES
       entities = await this.gameRepository.findAllPublic(requestId);
     } else {

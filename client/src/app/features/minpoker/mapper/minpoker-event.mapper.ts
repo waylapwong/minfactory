@@ -1,7 +1,6 @@
 import { LoggerService } from '../../../core/logging/services/logger.service';
 import { MinPokerMatch } from '../models/domains/minpoker-match';
 import { MinPokerMatchPlayer } from '../models/domains/minpoker-match-player';
-import { MinPokerGameStatus } from '../models/enums/minpoker-game-status.enum';
 import { MinPokerMatchUpdatedEvent, MinPokerMatchUpdatedPlayerEvent } from '../models/events/minpoker-match-updated.event';
 
 export class MinPokerEventMapper {
@@ -18,7 +17,7 @@ export class MinPokerEventMapper {
       domain.name = event.name;
       domain.observerIds = [...event.observerIds];
       domain.smallBlind = event.smallBlind;
-      domain.status = event.status as MinPokerGameStatus;
+      domain.status = event.status;
       domain.tableSize = event.tableSize;
 
       domain.players = new Array(event.tableSize).fill(null);

@@ -1,4 +1,5 @@
 import { GameRuleException } from '../../../../shared/exceptions/game-rule.exception';
+import { MinPokerGameStatus } from '../enums/minpoker-game-status.enum';
 import { MinPokerDeck } from './minpoker-deck';
 import { MinPokerGame } from './minpoker-game';
 import { MinPokerPlayer } from './minpoker-player';
@@ -186,6 +187,85 @@ describe('MinPokerGame', () => {
 
       expect(domain.players[0]?.hand).toHaveLength(2);
       expect(domain.players[1]).toBeNull();
+    });
+  });
+
+  describe('start()', () => {
+    it('should set status to Active when game is Waiting and has 2+ players', () => {
+      const domain = new MinPokerGame();
+      domain.seatPlayer(new MinPokerPlayer({ id: 'player-1', name: 'Alice' }), 0);
+      domain.seatPlayer(new MinPokerPlayer({ id: 'player-2', name: 'Bob' }), 1);
+
+      domain.start();
+
+      expect(domain.status).toBe(MinPokerGameStatus.Active);
+    });
+
+    it('should throw when fewer than 2 players are seated', () => {
+      const domain = new MinPokerGame();
+      domain.seatPlayer(new MinPokerPlayer({ id: 'player-1', name: 'Alice' }), 0);
+
+      expect(() => domain.start()).toThrow(GameRuleException);
+    });
+
+    it('should throw when game is already Active', () => {
+      const domain = new MinPokerGame({ status: MinPokerGameStatus.Active });
+      domain.seatPlayer(new MinPokerPlayer({ id: 'player-1', name: 'Alice' }), 0);
+      domain.seatPlayer(new MinPokerPlayer({ id: 'player-2', name: 'Bob' }), 1);
+
+      expect(() => domain.start()).toThrow(GameRuleException);
+    });
+
+    it('should throw when game is Paused', () => {
+      const domain = new MinPokerGame({ status: MinPokerGameStatus.Paused });
+      domain.seatPlayer(new MinPokerPlayer({ id: 'player-1', name: 'Alice' }), 0);
+      domain.seatPlayer(new MinPokerPlayer({ id: 'player-2', name: 'Bob' }), 1);
+
+      expect(() => domain.start()).toThrow(GameRuleException);
+    });
+  });
+
+  describe('pause()', () => {
+    it('should set status to Paused when game is Active', () => {
+      const domain = new MinPokerGame({ status: MinPokerGameStatus.Active });
+
+      domain.pause();
+
+      expect(domain.status).toBe(MinPokerGameStatus.Paused);
+    });
+
+    it('should throw when game is Waiting', () => {
+      const domain = new MinPokerGame();
+
+      expect(() => domain.pause()).toThrow(GameRuleException);
+    });
+
+    it('should throw when game is already Paused', () => {
+      const domain = new MinPokerGame({ status: MinPokerGameStatus.Paused });
+
+      expect(() => domain.pause()).toThrow(GameRuleException);
+    });
+  });
+
+  describe('resume()', () => {
+    it('should set status to Active when game is Paused', () => {
+      const domain = new MinPokerGame({ status: MinPokerGameStatus.Paused });
+
+      domain.resume();
+
+      expect(domain.status).toBe(MinPokerGameStatus.Active);
+    });
+
+    it('should throw when game is Waiting', () => {
+      const domain = new MinPokerGame();
+
+      expect(() => domain.resume()).toThrow(GameRuleException);
+    });
+
+    it('should throw when game is Active', () => {
+      const domain = new MinPokerGame({ status: MinPokerGameStatus.Active });
+
+      expect(() => domain.resume()).toThrow(GameRuleException);
     });
   });
 });

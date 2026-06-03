@@ -227,9 +227,9 @@ export class MinPokerTournamentService {
     }
     // UPDATE MATCH
     match.start();
-    // DEAL HANDS, IF ROUND CAN START AND NO DECK EXISTS YET
+    // DEAL HANDS IF NO DECK EXISTS YET (start() already asserts ≥2 players and Waiting status)
     let hands: Map<string, MinPokerHandDealtEvent> | null = null;
-    if (match.isActive() && match.canStartRound() && !this.deckRepository.findOne(match.id)) {
+    if (!this.deckRepository.findOne(match.id)) {
       const deck: MinPokerDeck = new MinPokerDeck();
       deck.shuffle();
       this.deckRepository.save(match.id, deck);

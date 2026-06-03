@@ -1,3 +1,5 @@
+import { MinPokerGameStatus } from '../enums/minpoker-game-status.enum';
+
 export interface MinPokerMatchUpdatedPlayerEvent {
   avatar: string;
   id: string;
@@ -14,6 +16,6 @@ export class MinPokerMatchUpdatedEvent {
   public observerIds!: string[];
   public players!: MinPokerMatchUpdatedPlayerEvent[];
   public smallBlind!: number;
-  public status!: string;
+  public status!: MinPokerGameStatus;
   public tableSize!: number;
 }

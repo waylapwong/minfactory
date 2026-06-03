@@ -63,6 +63,7 @@ export class MinPokerGame {
   }
 
   public pause(): void {
+    this.assertIsActive();
     this.status = MinPokerGameStatus.Paused;
   }
 
@@ -81,6 +82,7 @@ export class MinPokerGame {
   }
 
   public resume(): void {
+    this.assertIsPaused();
     this.status = MinPokerGameStatus.Active;
   }
 
@@ -103,7 +105,33 @@ export class MinPokerGame {
   }
 
   public start(): void {
+    this.assertIsWaiting();
+    this.assertCanStart();
     this.status = MinPokerGameStatus.Active;
+  }
+
+  private assertCanStart(): void {
+    if (!this.canStartRound()) {
+      throw new GameRuleException('At least 2 players are required to start the game');
+    }
+  }
+
+  private assertIsActive(): void {
+    if (this.status !== MinPokerGameStatus.Active) {
+      throw new GameRuleException(`Cannot pause a game that is not active (current status: ${this.status})`);
+    }
+  }
+
+  private assertIsPaused(): void {
+    if (this.status !== MinPokerGameStatus.Paused) {
+      throw new GameRuleException(`Cannot resume a game that is not paused (current status: ${this.status})`);
+    }
+  }
+
+  private assertIsWaiting(): void {
+    if (this.status !== MinPokerGameStatus.Waiting) {
+      throw new GameRuleException(`Cannot start a game that is not waiting (current status: ${this.status})`);
+    }
   }
 
   private assertSeatExists(seat: number): void {
