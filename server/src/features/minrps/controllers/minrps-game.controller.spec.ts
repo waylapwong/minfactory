@@ -44,7 +44,7 @@ describe('MinRpsGameController', () => {
       const result = await controller.create(createDto, 'test-request-id');
 
       expect(result).toBe(gameDto);
-      expect(MINRPS_GAME_SERVICE_MOCK.createGame).toHaveBeenCalledWith(createDto);
+      expect(MINRPS_GAME_SERVICE_MOCK.createGame).toHaveBeenCalledWith(createDto, 'test-request-id');
     });
   });
 
@@ -54,7 +54,7 @@ describe('MinRpsGameController', () => {
 
       await controller.delete('test-id', 'test-request-id');
 
-      expect(MINRPS_GAME_SERVICE_MOCK.deleteGame).toHaveBeenCalledWith('test-id');
+      expect(MINRPS_GAME_SERVICE_MOCK.deleteGame).toHaveBeenCalledWith('test-id', 'test-request-id');
     });
   });
 
@@ -85,7 +85,7 @@ describe('MinRpsGameController', () => {
       const result = await controller.get('test-id', 'test-request-id');
 
       expect(result).toBe(gameDto);
-      expect(MINRPS_GAME_SERVICE_MOCK.getGame).toHaveBeenCalledWith('test-id');
+      expect(MINRPS_GAME_SERVICE_MOCK.getGame).toHaveBeenCalledWith('test-id', 'test-request-id');
     });
   });
 });

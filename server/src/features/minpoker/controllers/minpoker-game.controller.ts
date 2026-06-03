@@ -1,5 +1,5 @@
-import { Body, Controller, Delete, Get, Headers, HttpCode, Param, ParseUUIDPipe, Post, UseGuards } from '@nestjs/common';
-import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { Body, Controller, Delete, Get, Headers, HttpCode, Param, ParseUUIDPipe, Post, Query, UseGuards } from '@nestjs/common';
+import { ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { FirebaseUser } from '../../../core/authentication/decorators/firebase-user.decorator';
 import { AuthenticationGuard } from '../../../core/authentication/guards/authentication.guard';
 import type { FirebaseUserDto } from '../../../core/authentication/models/firebase-user.dto';
@@ -17,6 +17,7 @@ import { API_HEADER_REQUEST_ID } from '../../../shared/decorators/api-request-id
 import { MinApp } from '../../../shared/enums/minapp.enum';
 import { MinPokerCreateGameDto } from '../models/dtos/minpoker-create-game.dto';
 import { MinPokerGameDto } from '../models/dtos/minpoker-game.dto';
+import { MinPokerGameVisibility } from '../models/enums/minpoker-game-visibility.enum';
 import { MinPokerGameService } from '../services/minpoker-game.service';
 
 @Controller('minpoker/games')
@@ -39,17 +40,26 @@ export class MinPokerGameController {
   @API_404()
   @API_500()
   public async delete(
-    @Param('id', new ParseUUIDPipe()) id: string,
     @FirebaseUser() firebaseUser: FirebaseUserDto,
     @Headers('X-Request-Id') requestId: string,
+    @Param('id', new ParseUUIDPipe()) id: string,
   ): Promise<void> {
-    this.logger.log(`Incoming request DELETE /minpoker/games/${id}`, requestId);
-    await this.gameService.deleteGame(id, firebaseUser);
+    this.logger.debug(`START delete(id: ${id}, firebaseUser: ${firebaseUser.uid})`, requestId);
+    await this.gameService.deleteGame(id, firebaseUser, requestId);
+    this.logger.debug(`END delete(...)`, requestId);
   }
 
   @Get()
   @HttpCode(200)
   @ApiOperation({ operationId: 'getAllMinPokerGames' })
+  @ApiQuery({
+    description: 'public = alle öffentlichen Spiele. private = alle selbst erstellen Spiele.',
+    enum: MinPokerGameVisibility,
+    enumName: 'MinPokerGameVisibility',
+    example: MinPokerGameVisibility.Public,
+    name: 'visibility',
+    required: true,
+  })
   @API_HEADER_REQUEST_ID()
   @API_200({ isArray: true, type: MinPokerGameDto })
   @API_401()
@@ -59,9 +69,12 @@ export class MinPokerGameController {
   public async getAll(
     @FirebaseUser() firebaseUser: FirebaseUserDto,
     @Headers('X-Request-Id') requestId: string,
+    @Query('visibility') visibility: MinPokerGameVisibility,
   ): Promise<MinPokerGameDto[]> {
-    this.logger.log(`Incoming request GET /minpoker/games`, requestId);
-    return await this.gameService.getAllGames(firebaseUser);
+    this.logger.debug(`START getAll(firebaseUser: ${firebaseUser.uid}, visibility: ${visibility})`, requestId);
+    const response: MinPokerGameDto[] = await this.gameService.getAllGames(firebaseUser, visibility, requestId);
+    this.logger.debug(`END getAll(...)`, requestId);
+    return response;
   }
 
   @Post()
@@ -79,7 +92,9 @@ export class MinPokerGameController {
     @FirebaseUser() firebaseUser: FirebaseUserDto,
     @Headers('X-Request-Id') requestId: string,
   ): Promise<MinPokerGameDto> {
-    this.logger.log(`Incoming request POST /minpoker/games`, requestId);
-    return await this.gameService.createGame(dto, firebaseUser);
+    this.logger.debug(`START create(dto: ${JSON.stringify(dto)}, firebaseUser: ${firebaseUser.uid})`, requestId);
+    const response: MinPokerGameDto = await this.gameService.createGame(dto, firebaseUser, requestId);
+    this.logger.debug(`END create(...)`, requestId);
+    return response;
   }
 }

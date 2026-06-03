@@ -99,19 +99,26 @@ export class MinRPSApiService {
 
     /**
      * 
+     * @param xRequestId Unique request ID
      * @param minRpsCreateGameDto 
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public createMinRpsGame(minRpsCreateGameDto: MinRpsCreateGameDto, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<MinRpsGameDto>;
-    public createMinRpsGame(minRpsCreateGameDto: MinRpsCreateGameDto, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpResponse<MinRpsGameDto>>;
-    public createMinRpsGame(minRpsCreateGameDto: MinRpsCreateGameDto, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpEvent<MinRpsGameDto>>;
-    public createMinRpsGame(minRpsCreateGameDto: MinRpsCreateGameDto, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<any> {
+    public createMinRpsGame(xRequestId: string, minRpsCreateGameDto: MinRpsCreateGameDto, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<MinRpsGameDto>;
+    public createMinRpsGame(xRequestId: string, minRpsCreateGameDto: MinRpsCreateGameDto, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpResponse<MinRpsGameDto>>;
+    public createMinRpsGame(xRequestId: string, minRpsCreateGameDto: MinRpsCreateGameDto, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpEvent<MinRpsGameDto>>;
+    public createMinRpsGame(xRequestId: string, minRpsCreateGameDto: MinRpsCreateGameDto, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<any> {
+        if (xRequestId === null || xRequestId === undefined) {
+            throw new Error('Required parameter xRequestId was null or undefined when calling createMinRpsGame.');
+        }
         if (minRpsCreateGameDto === null || minRpsCreateGameDto === undefined) {
             throw new Error('Required parameter minRpsCreateGameDto was null or undefined when calling createMinRpsGame.');
         }
 
         let localVarHeaders = this.defaultHeaders;
+        if (xRequestId !== undefined && xRequestId !== null) {
+            localVarHeaders = localVarHeaders.set('X-Request-Id', String(xRequestId));
+        }
 
         let localVarHttpHeaderAcceptSelected: string | undefined = options && options.httpHeaderAccept;
         if (localVarHttpHeaderAcceptSelected === undefined) {
@@ -167,19 +174,26 @@ export class MinRPSApiService {
 
     /**
      * 
-     * @param id UUID of resource
+     * @param id Unique ID of resource
+     * @param xRequestId Unique request ID
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public deleteMinRpsGame(id: string, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext}): Observable<any>;
-    public deleteMinRpsGame(id: string, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext}): Observable<HttpResponse<any>>;
-    public deleteMinRpsGame(id: string, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext}): Observable<HttpEvent<any>>;
-    public deleteMinRpsGame(id: string, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: undefined, context?: HttpContext}): Observable<any> {
+    public deleteMinRpsGame(id: string, xRequestId: string, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext}): Observable<any>;
+    public deleteMinRpsGame(id: string, xRequestId: string, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext}): Observable<HttpResponse<any>>;
+    public deleteMinRpsGame(id: string, xRequestId: string, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext}): Observable<HttpEvent<any>>;
+    public deleteMinRpsGame(id: string, xRequestId: string, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: undefined, context?: HttpContext}): Observable<any> {
         if (id === null || id === undefined) {
             throw new Error('Required parameter id was null or undefined when calling deleteMinRpsGame.');
         }
+        if (xRequestId === null || xRequestId === undefined) {
+            throw new Error('Required parameter xRequestId was null or undefined when calling deleteMinRpsGame.');
+        }
 
         let localVarHeaders = this.defaultHeaders;
+        if (xRequestId !== undefined && xRequestId !== null) {
+            localVarHeaders = localVarHeaders.set('X-Request-Id', String(xRequestId));
+        }
 
         let localVarHttpHeaderAcceptSelected: string | undefined = options && options.httpHeaderAccept;
         if (localVarHttpHeaderAcceptSelected === undefined) {
@@ -224,15 +238,22 @@ export class MinRPSApiService {
 
     /**
      * 
+     * @param xRequestId Unique request ID
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public getAllMinRpsGames(observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<Array<MinRpsGameDto>>;
-    public getAllMinRpsGames(observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpResponse<Array<MinRpsGameDto>>>;
-    public getAllMinRpsGames(observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpEvent<Array<MinRpsGameDto>>>;
-    public getAllMinRpsGames(observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<any> {
+    public getAllMinRpsGames(xRequestId: string, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<Array<MinRpsGameDto>>;
+    public getAllMinRpsGames(xRequestId: string, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpResponse<Array<MinRpsGameDto>>>;
+    public getAllMinRpsGames(xRequestId: string, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpEvent<Array<MinRpsGameDto>>>;
+    public getAllMinRpsGames(xRequestId: string, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<any> {
+        if (xRequestId === null || xRequestId === undefined) {
+            throw new Error('Required parameter xRequestId was null or undefined when calling getAllMinRpsGames.');
+        }
 
         let localVarHeaders = this.defaultHeaders;
+        if (xRequestId !== undefined && xRequestId !== null) {
+            localVarHeaders = localVarHeaders.set('X-Request-Id', String(xRequestId));
+        }
 
         let localVarHttpHeaderAcceptSelected: string | undefined = options && options.httpHeaderAccept;
         if (localVarHttpHeaderAcceptSelected === undefined) {
@@ -279,18 +300,25 @@ export class MinRPSApiService {
     /**
      * 
      * @param id 
+     * @param xRequestId Unique request ID
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public getMinRpsGame(id: string, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<MinRpsGameDto>;
-    public getMinRpsGame(id: string, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpResponse<MinRpsGameDto>>;
-    public getMinRpsGame(id: string, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpEvent<MinRpsGameDto>>;
-    public getMinRpsGame(id: string, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<any> {
+    public getMinRpsGame(id: string, xRequestId: string, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<MinRpsGameDto>;
+    public getMinRpsGame(id: string, xRequestId: string, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpResponse<MinRpsGameDto>>;
+    public getMinRpsGame(id: string, xRequestId: string, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpEvent<MinRpsGameDto>>;
+    public getMinRpsGame(id: string, xRequestId: string, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<any> {
         if (id === null || id === undefined) {
             throw new Error('Required parameter id was null or undefined when calling getMinRpsGame.');
         }
+        if (xRequestId === null || xRequestId === undefined) {
+            throw new Error('Required parameter xRequestId was null or undefined when calling getMinRpsGame.');
+        }
 
         let localVarHeaders = this.defaultHeaders;
+        if (xRequestId !== undefined && xRequestId !== null) {
+            localVarHeaders = localVarHeaders.set('X-Request-Id', String(xRequestId));
+        }
 
         let localVarHttpHeaderAcceptSelected: string | undefined = options && options.httpHeaderAccept;
         if (localVarHttpHeaderAcceptSelected === undefined) {
@@ -336,19 +364,26 @@ export class MinRPSApiService {
 
     /**
      * 
+     * @param xRequestId Unique request ID
      * @param minRpsPlayDto 
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public playMinRpsGame(minRpsPlayDto: MinRpsPlayDto, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<MinRpsPlayResultDto>;
-    public playMinRpsGame(minRpsPlayDto: MinRpsPlayDto, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpResponse<MinRpsPlayResultDto>>;
-    public playMinRpsGame(minRpsPlayDto: MinRpsPlayDto, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpEvent<MinRpsPlayResultDto>>;
-    public playMinRpsGame(minRpsPlayDto: MinRpsPlayDto, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<any> {
+    public playMinRpsGame(xRequestId: string, minRpsPlayDto: MinRpsPlayDto, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<MinRpsPlayResultDto>;
+    public playMinRpsGame(xRequestId: string, minRpsPlayDto: MinRpsPlayDto, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpResponse<MinRpsPlayResultDto>>;
+    public playMinRpsGame(xRequestId: string, minRpsPlayDto: MinRpsPlayDto, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpEvent<MinRpsPlayResultDto>>;
+    public playMinRpsGame(xRequestId: string, minRpsPlayDto: MinRpsPlayDto, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<any> {
+        if (xRequestId === null || xRequestId === undefined) {
+            throw new Error('Required parameter xRequestId was null or undefined when calling playMinRpsGame.');
+        }
         if (minRpsPlayDto === null || minRpsPlayDto === undefined) {
             throw new Error('Required parameter minRpsPlayDto was null or undefined when calling playMinRpsGame.');
         }
 
         let localVarHeaders = this.defaultHeaders;
+        if (xRequestId !== undefined && xRequestId !== null) {
+            localVarHeaders = localVarHeaders.set('X-Request-Id', String(xRequestId));
+        }
 
         let localVarHttpHeaderAcceptSelected: string | undefined = options && options.httpHeaderAccept;
         if (localVarHttpHeaderAcceptSelected === undefined) {

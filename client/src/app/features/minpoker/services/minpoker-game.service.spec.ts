@@ -11,6 +11,7 @@ describe('MinPokerGameService', () => {
   beforeEach(() => {
     MINPOKER_GAME_REPOSITORY_MOCK.getAll.calls.reset();
     MINPOKER_GAME_REPOSITORY_MOCK.create.calls.reset();
+    MINPOKER_GAME_REPOSITORY_MOCK.delete.calls.reset();
 
     TestBed.configureTestingModule({
       providers: [
@@ -33,35 +34,39 @@ describe('MinPokerGameService', () => {
         {
           bigBlind: 20,
           createdAt: new Date('2026-01-01T18:00:00.000Z').toISOString(),
+          creatorId: 'creator-id',
           id: 'id-1',
           tableSize: 6,
           name: 'Game 1',
           observerCount: 0,
           playerCount: 2,
           smallBlind: 10,
+          visibility: 'private',
         },
         {
           bigBlind: 50,
           createdAt: new Date('2026-01-02T18:00:00.000Z').toISOString(),
+          creatorId: 'creator-id',
           id: 'id-2',
           tableSize: 6,
           name: 'Game 2',
           observerCount: 1,
           playerCount: 4,
           smallBlind: 25,
+          visibility: 'public',
         },
       ];
 
       MINPOKER_GAME_REPOSITORY_MOCK.getAll.and.returnValue(Promise.resolve(mockDtos));
 
-      await service.loadGames();
+      await service.loadGames('public');
 
       expect(MINPOKER_GAME_REPOSITORY_MOCK.getAll).toHaveBeenCalled();
-      expect(service.lobbyViewModels().length).toBe(2);
-      expect(service.lobbyViewModels()[0].id).toBe('id-2');
-      expect(service.lobbyViewModels()[1].id).toBe('id-1');
-      expect(service.lobbyViewModels()[0].smallBlind).toBe(25);
-      expect(service.lobbyViewModels()[0].bigBlind).toBe(50);
+      expect(service.publicGamesVm().games.length).toBe(2);
+      expect(service.publicGamesVm().games[0].id).toBe('id-2');
+      expect(service.publicGamesVm().games[1].id).toBe('id-1');
+      expect(service.publicGamesVm().games[0].smallBlind).toBe(25);
+      expect(service.publicGamesVm().games[0].bigBlind).toBe(50);
     });
   });
 
@@ -70,21 +75,23 @@ describe('MinPokerGameService', () => {
       const mockDto: MinPokerGameDto = {
         bigBlind: 50,
         createdAt: new Date().toISOString(),
+        creatorId: 'creator-id',
         id: 'new-id',
         tableSize: 6,
         name: 'New Game',
         observerCount: 0,
         playerCount: 1,
         smallBlind: 25,
+        visibility: 'private',
       };
 
       MINPOKER_GAME_REPOSITORY_MOCK.create.and.returnValue(Promise.resolve(mockDto));
 
-      await service.createGame('New Game');
+      await service.createGame('New Game', 'private');
 
-      expect(MINPOKER_GAME_REPOSITORY_MOCK.create).toHaveBeenCalledWith({ name: 'New Game' });
-      expect(service.lobbyViewModels().length).toBe(1);
-      expect(service.lobbyViewModels()[0].id).toBe('new-id');
+      expect(MINPOKER_GAME_REPOSITORY_MOCK.create).toHaveBeenCalledWith('New Game', 'private');
+      expect(service.myGamesVm().games.length).toBe(1);
+      expect(service.myGamesVm().games[0].id).toBe('new-id');
     });
 
     it('should sort created game against already cached games', async () => {
@@ -93,12 +100,14 @@ describe('MinPokerGameService', () => {
           {
             bigBlind: 20,
             createdAt: new Date('2026-01-01T18:00:00.000Z').toISOString(),
+            creatorId: 'creator-id',
             id: 'older-id',
             tableSize: 6,
             name: 'Older Game',
             observerCount: 0,
             playerCount: 2,
             smallBlind: 10,
+            visibility: 'private',
           },
         ]),
       );
@@ -106,19 +115,62 @@ describe('MinPokerGameService', () => {
         Promise.resolve({
           bigBlind: 50,
           createdAt: new Date('2026-01-02T18:00:00.000Z').toISOString(),
+          creatorId: 'creator-id',
           id: 'newer-id',
           tableSize: 6,
           name: 'Newer Game',
           observerCount: 0,
           playerCount: 1,
           smallBlind: 25,
+          visibility: 'private',
         }),
       );
 
-      await service.loadGames();
-      await service.createGame('Newer Game');
+      await service.loadGames('private');
+      await service.createGame('Newer Game', 'private');
 
-      expect(service.lobbyViewModels().map((game) => game.id)).toEqual(['newer-id', 'older-id']);
+      expect(service.myGamesVm().games.map((game) => game.id)).toEqual(['newer-id', 'older-id']);
+    });
+  });
+
+  describe('deleteGame()', () => {
+    it('should delete a game and remove it from cached games', async () => {
+      const mockDtos: MinPokerGameDto[] = [
+        {
+          bigBlind: 20,
+          createdAt: new Date('2026-01-01T18:00:00.000Z').toISOString(),
+          creatorId: 'creator-id',
+          id: 'id-1',
+          tableSize: 6,
+          name: 'Game 1',
+          observerCount: 0,
+          playerCount: 2,
+          smallBlind: 10,
+          visibility: 'private',
+        },
+        {
+          bigBlind: 50,
+          createdAt: new Date('2026-01-02T18:00:00.000Z').toISOString(),
+          creatorId: 'creator-id',
+          id: 'id-2',
+          tableSize: 6,
+          name: 'Game 2',
+          observerCount: 1,
+          playerCount: 4,
+          smallBlind: 25,
+          visibility: 'public',
+        },
+      ];
+
+      MINPOKER_GAME_REPOSITORY_MOCK.getAll.and.returnValue(Promise.resolve(mockDtos));
+      MINPOKER_GAME_REPOSITORY_MOCK.delete.and.returnValue(Promise.resolve());
+
+      await service.loadGames('public');
+      await service.deleteGame('id-1');
+
+      expect(MINPOKER_GAME_REPOSITORY_MOCK.delete).toHaveBeenCalledWith('id-1');
+      expect(service.publicGamesVm().games.length).toBe(1);
+      expect(service.publicGamesVm().games[0].id).toBe('id-2');
     });
   });
 });

@@ -33,28 +33,32 @@ describe('MinPokerGameRepository', () => {
         {
           bigBlind: 20,
           createdAt: new Date('2026-01-01T18:00:00.000Z').toISOString(),
+          creatorId: 'creator-id',
           id: 'id-1',
           tableSize: 6,
           name: 'Game 1',
           observerCount: 0,
           playerCount: 2,
           smallBlind: 10,
+          visibility: 'private',
         },
         {
           bigBlind: 50,
           createdAt: new Date('2026-01-02T18:00:00.000Z').toISOString(),
+          creatorId: 'creator-id',
           id: 'id-2',
           tableSize: 6,
           name: 'Game 2',
           observerCount: 1,
           playerCount: 4,
           smallBlind: 25,
+          visibility: 'public',
         },
       ];
 
       MINPOKER_API_SERVICE_MOCK.getAllMinPokerGames.and.returnValue(of(mockDtos) as any);
 
-      const result = await repository.getAll();
+      const result = await repository.getAll('public');
 
       expect(result).toEqual(mockDtos);
       expect(MINPOKER_API_SERVICE_MOCK.getAllMinPokerGames).toHaveBeenCalled();
@@ -66,20 +70,32 @@ describe('MinPokerGameRepository', () => {
       const mockDto: MinPokerGameDto = {
         bigBlind: 20,
         createdAt: new Date().toISOString(),
+        creatorId: 'creator-id',
         id: 'new-id',
         tableSize: 6,
         name: 'New Game',
         observerCount: 0,
         playerCount: 1,
         smallBlind: 10,
+        visibility: 'private',
       };
 
       MINPOKER_API_SERVICE_MOCK.createMinPokerGame.and.returnValue(of(mockDto) as any);
 
-      const result = await repository.create({ name: 'New Game' });
+      const result = await repository.create('New Game', 'private');
 
       expect(MINPOKER_API_SERVICE_MOCK.createMinPokerGame).toHaveBeenCalled();
       expect(result).toEqual(mockDto);
+    });
+  });
+
+  describe('delete()', () => {
+    it('should call API delete with game id', async () => {
+      MINPOKER_API_SERVICE_MOCK.deleteMinPokerGame.and.returnValue(of(undefined) as any);
+
+      await repository.delete('game-id-1');
+
+      expect(MINPOKER_API_SERVICE_MOCK.deleteMinPokerGame).toHaveBeenCalledWith('', 'game-id-1');
     });
   });
 });

@@ -1,17 +1,21 @@
+import { GameRuleException } from '../../../../shared/exceptions/game-rule.exception';
+import { MinPokerGameStatus } from '../enums/minpoker-game-status.enum';
+import { MinPokerGameVisibility } from '../enums/minpoker-game-visibility.enum';
 import { MinPokerDeck } from './minpoker-deck';
 import { MinPokerPlayer } from './minpoker-player';
-import { GameRuleException } from '../../../../shared/exceptions/game-rule.exception';
 
 export class MinPokerGame {
   public bigBlind: number = 2;
-  public createdAt: Date = new Date(0);
+  public createdAt: Date = new Date();
   public creatorId: string = '';
-  public id: string = '';
+  public id: string = crypto.randomUUID();
   public name: string = '';
   public observers: Map<string, MinPokerPlayer> = new Map<string, MinPokerPlayer>();
   public players: Array<MinPokerPlayer | null> = Array.from({ length: 6 }, () => null);
   public smallBlind: number = 1;
+  public status: MinPokerGameStatus = MinPokerGameStatus.Waiting;
   public tableSize: number = 6;
+  public visibility: MinPokerGameVisibility = MinPokerGameVisibility.Public;
 
   constructor(init?: Partial<MinPokerGame>) {
     if (init) {
@@ -46,12 +50,21 @@ export class MinPokerGame {
     return this.getPlayerCount() > 0 || this.observers.size > 0;
   }
 
+  public isActive(): boolean {
+    return this.status === MinPokerGameStatus.Active;
+  }
+
   public isObserver(observerId: string): boolean {
     return this.observers.has(observerId);
   }
 
   public isPlayer(playerId: string): boolean {
     return this.players.some((player: MinPokerPlayer | null) => player?.id === playerId);
+  }
+
+  public pause(): void {
+    this.assertIsActive();
+    this.status = MinPokerGameStatus.Paused;
   }
 
   public removeObserver(observerId: string): void {
@@ -66,6 +79,11 @@ export class MinPokerGame {
     }
 
     this.removeObserver(playerId);
+  }
+
+  public resume(): void {
+    this.assertIsPaused();
+    this.status = MinPokerGameStatus.Active;
   }
 
   public seatPlayer(player: MinPokerPlayer, seat: number): void {
@@ -84,6 +102,36 @@ export class MinPokerGame {
     player.seat = seat;
     this.players[seat] = player;
     this.removeObserver(player.id);
+  }
+
+  public start(): void {
+    this.assertIsWaiting();
+    this.assertCanStart();
+    this.status = MinPokerGameStatus.Active;
+  }
+
+  private assertCanStart(): void {
+    if (!this.canStartRound()) {
+      throw new GameRuleException('At least 2 players are required to start the game');
+    }
+  }
+
+  private assertIsActive(): void {
+    if (this.status !== MinPokerGameStatus.Active) {
+      throw new GameRuleException(`Cannot pause a game that is not active (current status: ${this.status})`);
+    }
+  }
+
+  private assertIsPaused(): void {
+    if (this.status !== MinPokerGameStatus.Paused) {
+      throw new GameRuleException(`Cannot resume a game that is not paused (current status: ${this.status})`);
+    }
+  }
+
+  private assertIsWaiting(): void {
+    if (this.status !== MinPokerGameStatus.Waiting) {
+      throw new GameRuleException(`Cannot start a game that is not waiting (current status: ${this.status})`);
+    }
   }
 
   private assertSeatExists(seat: number): void {

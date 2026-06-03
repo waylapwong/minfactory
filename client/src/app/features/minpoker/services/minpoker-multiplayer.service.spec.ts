@@ -8,6 +8,7 @@ import { MinPokerMatchLeaveCommand } from '../models/commands/minpoker-match-lea
 import { MinPokerMatchSeatCommand } from '../models/commands/minpoker-match-seat.command';
 import { MinPokerMatchCommand } from '../models/enums/minpoker-match-command.enum';
 import { MinPokerMatchEvent } from '../models/enums/minpoker-match-event.enum';
+import { MinPokerGameStatus } from '../models/enums/minpoker-game-status.enum';
 import { MinPokerMatchConnectedEvent } from '../models/events/minpoker-match-connected.event';
 import { MinPokerMatchHandDealtEvent } from '../models/events/minpoker-match-hand-dealt.event';
 import { MinPokerMatchUpdatedEvent } from '../models/events/minpoker-match-updated.event';
@@ -202,11 +203,13 @@ describe('MinPokerMultiplayerService', () => {
     it('should update seats when match updated event fires', async () => {
       const updatedEvent: MinPokerMatchUpdatedEvent = {
         bigBlind: 20,
+        creatorId: 'creator-1',
         matchId: 'game-1',
         name: 'Test Table',
         observerIds: [],
         players: [{ avatar: 'man-1.svg', id: 'player-1', name: 'Chris', seat: 0, stack: 200 }],
         smallBlind: 10,
+        status: MinPokerGameStatus.Waiting,
         tableSize: 6,
       };
 
@@ -225,11 +228,13 @@ describe('MinPokerMultiplayerService', () => {
       const handDealtEvent: MinPokerMatchHandDealtEvent = { hand: ['Ah', 'Ks'] };
       const updatedEvent: MinPokerMatchUpdatedEvent = {
         bigBlind: 20,
+        creatorId: 'creator-1',
         matchId: 'game-1',
         name: 'Test Table',
         observerIds: [],
         players: [{ avatar: 'man-1.svg', id: 'player-1', name: 'Chris', seat: 0, stack: 200 }],
         smallBlind: 10,
+        status: MinPokerGameStatus.Waiting,
         tableSize: 6,
       };
 
@@ -251,11 +256,13 @@ describe('MinPokerMultiplayerService', () => {
       const handDealtEvent: MinPokerMatchHandDealtEvent = { hand: ['Ah', 'Ks'] };
       const updatedEventOtherMatch: MinPokerMatchUpdatedEvent = {
         bigBlind: 20,
+        creatorId: 'creator-1',
         matchId: 'game-2',
         name: 'Other Table',
         observerIds: [],
         players: [],
         smallBlind: 10,
+        status: MinPokerGameStatus.Waiting,
         tableSize: 6,
       };
 

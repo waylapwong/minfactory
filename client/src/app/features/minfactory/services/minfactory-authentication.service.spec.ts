@@ -30,6 +30,8 @@ describe('MinFactoryAuthenticationService', () => {
       createdAt: '2026-03-19T10:00:00.000Z',
       email: 'user@example.com',
     }));
+    MINFACTORY_USER_REPOSITORY_MOCK.delete.calls.reset();
+    MINFACTORY_USER_REPOSITORY_MOCK.delete.and.resolveTo();
 
     TestBed.configureTestingModule({
       providers: [
@@ -134,6 +136,15 @@ describe('MinFactoryAuthenticationService', () => {
       AUTHENTICATION_SERVICE_MOCK.signOut.and.returnValue(Promise.reject(new Error('Sign out failed.')));
 
       await expectAsync(service.logoutUser()).toBeRejectedWithError('Sign out failed.');
+    });
+  });
+
+  describe('deleteAccount()', () => {
+    it('should delete user from repository and then sign out', async () => {
+      await service.deleteAccount();
+
+      expect(MINFACTORY_USER_REPOSITORY_MOCK.delete).toHaveBeenCalled();
+      expect(AUTHENTICATION_SERVICE_MOCK.signOut).toHaveBeenCalled();
     });
   });
 });

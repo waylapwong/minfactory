@@ -1,3 +1,5 @@
+import { MinPokerGameVisibility } from '../../../../core/generated';
+
 export class MinPokerGame {
   public bigBlind: number = 0;
   public createdAt: Date = new Date(0);
@@ -7,6 +9,7 @@ export class MinPokerGame {
   public playerCount: number = 0;
   public smallBlind: number = 0;
   public tableSize: number = 0;
+  public visibility: MinPokerGameVisibility = MinPokerGameVisibility.Private;
 
   constructor(init?: Partial<MinPokerGame>) {
     if (init) {

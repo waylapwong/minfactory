@@ -93,15 +93,22 @@ export class MinFactoryApiService {
 
     /**
      * 
+     * @param xRequestId Unique request ID
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public createMinFactoryUser(observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<MinFactoryUserDto>;
-    public createMinFactoryUser(observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpResponse<MinFactoryUserDto>>;
-    public createMinFactoryUser(observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpEvent<MinFactoryUserDto>>;
-    public createMinFactoryUser(observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<any> {
+    public createMinFactoryUser(xRequestId: string, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<MinFactoryUserDto>;
+    public createMinFactoryUser(xRequestId: string, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpResponse<MinFactoryUserDto>>;
+    public createMinFactoryUser(xRequestId: string, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpEvent<MinFactoryUserDto>>;
+    public createMinFactoryUser(xRequestId: string, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<any> {
+        if (xRequestId === null || xRequestId === undefined) {
+            throw new Error('Required parameter xRequestId was null or undefined when calling createMinFactoryUser.');
+        }
 
         let localVarHeaders = this.defaultHeaders;
+        if (xRequestId !== undefined && xRequestId !== null) {
+            localVarHeaders = localVarHeaders.set('X-Request-Id', String(xRequestId));
+        }
 
         let localVarHttpHeaderAcceptSelected: string | undefined = options && options.httpHeaderAccept;
         if (localVarHttpHeaderAcceptSelected === undefined) {
@@ -147,15 +154,22 @@ export class MinFactoryApiService {
 
     /**
      * 
+     * @param xRequestId Unique request ID
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public deleteMinFactoryUserMe(observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext}): Observable<any>;
-    public deleteMinFactoryUserMe(observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext}): Observable<HttpResponse<any>>;
-    public deleteMinFactoryUserMe(observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext}): Observable<HttpEvent<any>>;
-    public deleteMinFactoryUserMe(observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: undefined, context?: HttpContext}): Observable<any> {
+    public deleteMinFactoryUserMe(xRequestId: string, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext}): Observable<any>;
+    public deleteMinFactoryUserMe(xRequestId: string, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext}): Observable<HttpResponse<any>>;
+    public deleteMinFactoryUserMe(xRequestId: string, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext}): Observable<HttpEvent<any>>;
+    public deleteMinFactoryUserMe(xRequestId: string, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: undefined, context?: HttpContext}): Observable<any> {
+        if (xRequestId === null || xRequestId === undefined) {
+            throw new Error('Required parameter xRequestId was null or undefined when calling deleteMinFactoryUserMe.');
+        }
 
         let localVarHeaders = this.defaultHeaders;
+        if (xRequestId !== undefined && xRequestId !== null) {
+            localVarHeaders = localVarHeaders.set('X-Request-Id', String(xRequestId));
+        }
 
         let localVarHttpHeaderAcceptSelected: string | undefined = options && options.httpHeaderAccept;
         if (localVarHttpHeaderAcceptSelected === undefined) {
@@ -200,15 +214,22 @@ export class MinFactoryApiService {
 
     /**
      * 
+     * @param xRequestId Unique request ID
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public getMinFactoryUserMe(observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<MinFactoryUserDto>;
-    public getMinFactoryUserMe(observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpResponse<MinFactoryUserDto>>;
-    public getMinFactoryUserMe(observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpEvent<MinFactoryUserDto>>;
-    public getMinFactoryUserMe(observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<any> {
+    public getMinFactoryUserMe(xRequestId: string, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<MinFactoryUserDto>;
+    public getMinFactoryUserMe(xRequestId: string, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpResponse<MinFactoryUserDto>>;
+    public getMinFactoryUserMe(xRequestId: string, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpEvent<MinFactoryUserDto>>;
+    public getMinFactoryUserMe(xRequestId: string, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<any> {
+        if (xRequestId === null || xRequestId === undefined) {
+            throw new Error('Required parameter xRequestId was null or undefined when calling getMinFactoryUserMe.');
+        }
 
         let localVarHeaders = this.defaultHeaders;
+        if (xRequestId !== undefined && xRequestId !== null) {
+            localVarHeaders = localVarHeaders.set('X-Request-Id', String(xRequestId));
+        }
 
         let localVarHttpHeaderAcceptSelected: string | undefined = options && options.httpHeaderAccept;
         if (localVarHttpHeaderAcceptSelected === undefined) {

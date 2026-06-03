@@ -27,7 +27,7 @@ export class MinRpsSingleplayerController {
   @API_409()
   @API_500()
   public play(@Body() dto: MinRpsPlayDto, @Headers('X-Request-Id') requestId: string): MinRpsPlayResultDto {
-    this.logger.log(`Incoming request POST /minrps/play`, requestId);
+    this.logger.debug(`Incoming request POST /minrps/play`, requestId);
     return this.singleplayerService.playGame(dto);
   }
 }

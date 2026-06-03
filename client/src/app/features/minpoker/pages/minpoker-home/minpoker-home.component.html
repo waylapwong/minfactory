@@ -7,15 +7,15 @@
 
   <!-- MENU -->
   <div class="flex grow flex-col gap-2">
-    <!-- PROFILE -->
-    <min-card-button>
-      <min-h2>Profil</min-h2>
-      <p class="text-gray-500">Verwalte dein Profil</p>
+    <!-- MY GAMES -->
+    <min-card-button (clicked)="routingService.navigateToMinPokerMyGames()">
+      <min-h2>Meine Spiele</min-h2>
+      <p class="text-gray-500">Deine eigenen Pokerspiele</p>
     </min-card-button>
-    <!-- LOBBY -->
-    <min-card-button (clicked)="routingService.navigateToMinPokerLobby()">
-      <min-h2>Lobby</min-h2>
-      <p class="text-gray-500">Pokerturniere</p>
+    <!-- PUBLIC GAMES -->
+    <min-card-button (clicked)="routingService.navigateToMinPokerPublicGames()">
+      <min-h2>Öffentliche Spiele</min-h2>
+      <p class="text-gray-500">Alle öffentlichen Pokerspiele</p>
     </min-card-button>
   </div>
 </div>

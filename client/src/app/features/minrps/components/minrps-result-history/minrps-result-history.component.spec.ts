@@ -43,4 +43,18 @@ describe('MinRpsResultHistoryComponent', () => {
 
     expect(fixture.nativeElement.textContent).toContain('Noch keine Ergebnisse');
   });
+
+  describe('getAriaLabel()', () => {
+    it('should return "Unbekannt" for MinRpsResult.None (default case)', () => {
+      const label = component.getAriaLabel(MinRpsResult.None, 0);
+      expect(label).toBe('Ergebnis 1: Unbekannt');
+    });
+  });
+
+  describe('getStateCssClass()', () => {
+    it('should return "bg-gray-300" for MinRpsResult.None (default case)', () => {
+      const cssClass = component.getStateCssClass(MinRpsResult.None);
+      expect(cssClass).toBe('bg-gray-300');
+    });
+  });
 });

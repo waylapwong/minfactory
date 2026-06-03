@@ -6,36 +6,35 @@ import { MinPokerHandDealtEvent } from '../models/events/minpoker-hand-dealt.eve
 import { MinPokerUpdatedEvent } from '../models/events/minpoker-updated.event';
 
 export class MinPokerDomainMapper {
-  public static domainToDto(domain: MinPokerGame): MinPokerGameDto {
+  public static toDto(domain: MinPokerGame): MinPokerGameDto {
     const dto: MinPokerGameDto = new MinPokerGameDto();
 
     dto.bigBlind = domain.bigBlind;
     dto.createdAt = domain.createdAt;
+    dto.creatorId = domain.creatorId;
     dto.id = domain.id;
     dto.name = domain.name;
     dto.observerCount = domain.observers?.size ?? 0;
     dto.playerCount = domain.getPlayerCount();
     dto.smallBlind = domain.smallBlind;
     dto.tableSize = domain.tableSize;
+    dto.visibility = domain.visibility;
 
     return dto;
   }
 
-  public static domainToEntity(domain: MinPokerGame): MinPokerGameEntity {
+  public static toEntity(domain: MinPokerGame): MinPokerGameEntity {
     const entity: MinPokerGameEntity = new MinPokerGameEntity();
 
     entity.bigBlind = domain.bigBlind;
-    if (domain.createdAt.getTime() !== new Date(0).getTime()) {
-      entity.createdAt = domain.createdAt;
-    }
-    if (domain.creatorId && domain.creatorId !== '') {
+    entity.createdAt = domain.createdAt;
+    if (domain.creatorId) {
       const creator: MinFactoryUserEntity = new MinFactoryUserEntity();
       creator.id = domain.creatorId;
       entity.creator = creator;
     }
-    if (domain.id !== '') {
-      entity.id = domain.id;
-    }
+    entity.id = domain.id;
+    entity.visibility = domain.visibility;
     entity.name = domain.name;
     entity.smallBlind = domain.smallBlind;
     entity.tableSize = domain.tableSize;
@@ -43,7 +42,7 @@ export class MinPokerDomainMapper {
     return entity;
   }
 
-  public static domainToHandDealtEvent(hand: string[]): MinPokerHandDealtEvent {
+  public static toHandDealtEvent(hand: string[]): MinPokerHandDealtEvent {
     const event: MinPokerHandDealtEvent = new MinPokerHandDealtEvent();
     event.hand = [...hand];
     return event;
@@ -53,6 +52,7 @@ export class MinPokerDomainMapper {
     const event: MinPokerUpdatedEvent = new MinPokerUpdatedEvent();
 
     event.bigBlind = domain.bigBlind;
+    event.creatorId = domain.creatorId;
     event.matchId = domain.id;
     event.name = domain.name;
     event.observerIds = [...domain.observers.keys()];
@@ -66,6 +66,7 @@ export class MinPokerDomainMapper {
         stack: player.stack,
       }));
     event.smallBlind = domain.smallBlind;
+    event.status = domain.status;
     event.tableSize = domain.tableSize;
 
     return event;

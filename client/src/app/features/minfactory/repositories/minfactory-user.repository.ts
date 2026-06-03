@@ -9,14 +9,14 @@ export class MinFactoryUserRepository {
   constructor(private readonly apiService: MinFactoryApiService) {}
 
   public async create(): Promise<MinFactoryUserDto> {
-    return await firstValueFrom(this.apiService.createMinFactoryUser());
+    return await firstValueFrom(this.apiService.createMinFactoryUser(''));
   }
 
   public async delete(): Promise<void> {
-    await firstValueFrom(this.apiService.deleteMinFactoryUserMe());
+    await firstValueFrom(this.apiService.deleteMinFactoryUserMe(''));
   }
 
   public async get(): Promise<MinFactoryUserDto> {
-    return await firstValueFrom(this.apiService.getMinFactoryUserMe());
+    return await firstValueFrom(this.apiService.getMinFactoryUserMe(''));
   }
 }

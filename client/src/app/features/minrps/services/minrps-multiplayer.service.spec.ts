@@ -238,4 +238,48 @@ describe('MinRpsMultiplayerService', () => {
       expect(service.game().resultHistory).toEqual([MinRpsResult.Player2, MinRpsResult.Draw]);
     });
   });
+
+  describe('setGameId()', () => {
+    it('should update the game id', () => {
+      service.setGameId('new-game-id');
+      expect(service.game().gameId).toBe('new-game-id');
+    });
+  });
+
+  describe('playGame() with player2', () => {
+    it('should emit Play command using player2 id when player is player2', () => {
+      const updatedPayload: MinRpsMatchUpdatedPayload = {
+        matchId: 'game-1',
+        observers: [],
+        player1HasSelectedMove: false,
+        player1Id: 'player-1',
+        player1Move: MinRpsMove.None,
+        player1Name: 'Player 1',
+        player2HasSelectedMove: false,
+        player2Id: 'player-2',
+        player2Move: MinRpsMove.None,
+        player2Name: 'Player 2',
+        resultHistory: [],
+        result: MinRpsResult.None,
+      };
+
+      const connectedPayload: MinRpsMatchConnectedPayload = { playerId: 'player-2' } as MinRpsMatchConnectedPayload;
+
+      service.connect();
+
+      const connectedCb = MINRPS_SOCKET_REPOSITORY_MOCK.on.calls.all().find((c) => c.args[0] === MinRpsMatchEvent.Connected)!.args[1];
+      connectedCb(connectedPayload);
+
+      const updatedCb = MINRPS_SOCKET_REPOSITORY_MOCK.on.calls.all().find((c) => c.args[0] === MinRpsMatchEvent.Updated)!.args[1];
+      updatedCb(updatedPayload);
+
+      MINRPS_SOCKET_REPOSITORY_MOCK.emit.calls.reset();
+      service.playGame(MinRpsMove.Rock);
+
+      const emitArgs = MINRPS_SOCKET_REPOSITORY_MOCK.emit.calls.mostRecent().args;
+      expect(emitArgs[0]).toBe(MinRpsMatchCommand.Play);
+      const payload = emitArgs[1] as MinRpsMatchPlayPayload;
+      expect(payload.playerId).toBe('player-2');
+    });
+  });
 });
