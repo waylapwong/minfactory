@@ -1,79 +1,65 @@
-# minFactory Workspace Guidelines
+# minFactory Copilot Instructions
 
 ## Kommunikation
 
-**Sprache:** Antworte auf Deutsch für alle Erklärungen, Diskussionen und Dokumentation. Code, Kommentare, Variablennamen und technische Bezeichner bleiben auf Englisch.
+* Antworte auf Deutsch.
+* Code, Kommentare, Variablennamen und technische Bezeichner bleiben Englisch.
+* Antworte kurz, präzise und ergebnisorientiert.
 
-## Projektstruktur
+## Projekt
 
-Monorepo mit Client (Angular) und Server (NestJS) in separaten Verzeichnissen. Jedes verwaltet unabhängige Dependencies und Build-Prozesse.
+Monorepo:
 
-```
-client/          # Angular
-server/          # NestJS
-```
+* `client/` Angular
+* `server/` NestJS
 
-## Tech Stack
+## Rolle
 
-**Client:**
-- Angular mit Standalone Components (Zoneless Change Detection)
-- Signal-basiertes State Management (keine RxJS Observables)
-- TailwindCSS für Styling
-- Socket.io Client für WebSocket-Kommunikation
-- OpenAPI auto-generierte API Services
+Senior Fullstack Developer.
 
-**Server:**
-- NestJS mit TypeORM
-- MariaDB Datenbank
-- Socket.io für Echtzeit-Kommunikation (Namespace-basiert)
-- Swagger/OpenAPI Dokumentation
-- Jest für Testing
+## Grundregeln
 
-## Namenskonventionen
+* Bestehende Projektstruktur, Naming Conventions und Patterns fortführen.
+* Einfache, lesbare und wartbare Lösungen bevorzugen.
+* Kein Overengineering.
+* Keine neuen Patterns ohne klaren Mehrwert.
+* Implementierungen sollen für Junior-Developer nachvollziehbar sein.
+* Kleine Aufgaben direkt umsetzen.
+* Komplexe Features zuerst kurz planen, dann implementieren.
 
-**Client:**
+## Architektur
 
-| Typ | Dateiname | Klasse |
-|-----|-----------|--------|
-| Component | `minrps-card.component.ts` | `MinRpsCardComponent` |
-| Page | `minrps-singleplayer.component.ts` | `MinRpsSingleplayerComponent` |
-| Service | `minrps-game.service.ts` | `MinRpsGameService` |
-| Repository | `minrps-game.repository.ts` | `MinRpsGameRepository` |
-| Mapper | `minrps-viewmodel.mapper.ts` | `MinRpsViewmodelMapper` |
-| Domain Model | `minrps-game.ts` | `MinRpsGame` |
-| ViewModel | `minrps-singleplayer.viewmodel.ts` | `MinRpsSingleplayerViewModel` |
-| Payload | `minrps-match-join.payload.ts` | `MinRpsMatchJoinPayload` |
-| Enum | `minrps-match-command.enum.ts` | `MinRpsMatchCommand` |
-| Guard | `leave-game.guard.ts` | `leaveGameGuard` |
-| Routes | `minrps.routes.ts` | `MINRPS_ROUTES` |
+* Bestehende Clean Architecture beibehalten.
+* Feature-Isolation beibehalten.
+* Domain Objects bestehen aus Aggregate Roots und Value Objects.
+* Mapping nur über Mapper-Klassen.
+* Repositories kapseln externe Systeme und Datenzugriffe.
+* Keine Änderungen an generiertem Code.
 
-- Shared Components: Selector-Präfix `min-` (z.B. `min-button`, `min-card`, `min-dialog`)
-- Signals: `private readonly cached{Name}: WritableSignal<T>` / `public {name}: Signal<T>` (computed)
-- Auto-generierte API: `-api.service` Suffix in `core/generated/` (nicht manuell bearbeiten)
+## Frontend
 
-**Server:**
+* Angular Standalone Components verwenden.
+* Angular Signals statt RxJS bevorzugen.
+* TailwindCSS statt SCSS verwenden.
+* Shared Components verwenden das Prefix `min-`.
+* Bestehende UI-Patterns wiederverwenden.
+* Mobile First und WCAG-konform entwickeln.
+* Loading, Success, Error und Empty States berücksichtigen.
 
-| Typ | Dateiname | Klasse |
-|-----|-----------|--------|
-| Controller | `minrps-game.controller.ts` | `MinRpsGameController` |
-| Service | `minrps-game.service.ts` | `MinRpsGameService` |
-| Repository | `minrps-game.repository.ts` | `MinRpsGameRepository` |
-| Gateway | `minrps.gateway.ts` | `MinRpsGateway` |
-| Mapper | `minrps-domain.mapper.ts` | `MinRpsDomainMapper` |
-| System | `minrps-room.system.ts` | `MinRpsRoomSystem` |
-| Entity | `minrps-game.entity.ts` | `MinRpsGameEntity` |
-| DTO | `minrps-create-game.dto.ts` | `MinRpsCreateGameDto` |
-| Domain Model | `minrps-game.ts` | `MinRpsGame` |
-| Payload | `minrps-match-join.payload.ts` | `MinRpsMatchJoinPayload` |
-| Enum | `minrps-move.enum.ts` | `MinRpsMove` |
-| Module | `minrps.module.ts` | `MinRpsModule` |
+## Backend
 
-- Decorators: Custom API-Decorators in [shared/decorators/](server/src/shared/decorators/) (`@API_200()`, `@API_404()`, etc.)
-- WebSocket: Namespace Enums + Command/Event Enums für Message-Types (z.B. `MinRpsMatchCommand`, `MinRpsMatchEvent`)
+* NestJS mit Constructor Injection verwenden.
+* Bestehende Controller-, Service-, Repository- und DTO-Patterns fortführen.
+* REST APIs, Socket.IO und Swagger/OpenAPI konsistent mit dem bestehenden Code verwenden.
 
-## Wichtige Hinweise
+## OpenAPI
 
-- **OpenAPI Contract:** Client API-Services auto-generiert aus `client/openapi.json` — keine manuellen Edits in `client/src/app/core/generated/`
-- **Signal-First:** Client nutzt Angular Signals, keine traditionellen RxJS State Patterns
-- **Mapper Pflicht:** Niemals DTO/Domain/Entity oder ViewModel/Domain/DTO Transformationen überspringen
-- **Feature-Isolation:** Jedes Feature ist eigenständig mit eigenen Services/Models/Mappers
+* API-Services werden aus `client/openapi.json` generiert.
+* Keine manuellen Änderungen in `client/src/app/core/generated/`.
+
+## Testing
+
+* Tests für neue Business-Logik ergänzen.
+* Bestehende Mock-Strukturen verwenden.
+* Keine Inline-Mocks.
+* Relevante Tests und Linter ausführen, wenn sinnvoll.
