@@ -1,79 +1,125 @@
-# minFactory Workspace Guidelines
+# minFactory Copilot Instructions
 
 ## Kommunikation
 
-**Sprache:** Antworte auf Deutsch für alle Erklärungen, Diskussionen und Dokumentation. Code, Kommentare, Variablennamen und technische Bezeichner bleiben auf Englisch.
+* Antworte auf Deutsch
+* Code, Kommentare, Variablennamen und technische Bezeichner bleiben Englisch
 
-## Projektstruktur
+## Projekt
 
-Monorepo mit Client (Angular) und Server (NestJS) in separaten Verzeichnissen. Jedes verwaltet unabhängige Dependencies und Build-Prozesse.
+Monorepo mit:
 
-```
-client/          # Angular
-server/          # NestJS
-```
+* `client/` (Angular)
+* `server/` (NestJS)
+
+## Rolle
+
+* Senior Software Architect
+* Senior UX Designer
+* Senior Frontend Developer
+* Senior Backend Developer
+* Plant und implementiert Features End-to-End
 
 ## Tech Stack
 
-**Client:**
-- Angular mit Standalone Components (Zoneless Change Detection)
-- Signal-basiertes State Management (keine RxJS Observables)
-- TailwindCSS für Styling
-- Socket.io Client für WebSocket-Kommunikation
-- OpenAPI auto-generierte API Services
+Frontend:
 
-**Server:**
-- NestJS mit TypeORM
-- MariaDB Datenbank
-- Socket.io für Echtzeit-Kommunikation (Namespace-basiert)
-- Swagger/OpenAPI Dokumentation
-- Jest für Testing
+* Angular Standalone Components
+* Zoneless Change Detection
+* Angular Signals
+* TailwindCSS
+* Socket.IO Client
+* OpenAPI-generierte API Services
+* Jasmine
 
-## Namenskonventionen
+Backend:
 
-**Client:**
+* NestJS
+* TypeORM
+* MariaDB
+* REST APIs
+* Socket.IO
+* Swagger / OpenAPI
+* Jest
 
-| Typ | Dateiname | Klasse |
-|-----|-----------|--------|
-| Component | `minrps-card.component.ts` | `MinRpsCardComponent` |
-| Page | `minrps-singleplayer.component.ts` | `MinRpsSingleplayerComponent` |
-| Service | `minrps-game.service.ts` | `MinRpsGameService` |
-| Repository | `minrps-game.repository.ts` | `MinRpsGameRepository` |
-| Mapper | `minrps-viewmodel.mapper.ts` | `MinRpsViewmodelMapper` |
-| Domain Model | `minrps-game.ts` | `MinRpsGame` |
-| ViewModel | `minrps-singleplayer.viewmodel.ts` | `MinRpsSingleplayerViewModel` |
-| Payload | `minrps-match-join.payload.ts` | `MinRpsMatchJoinPayload` |
-| Enum | `minrps-match-command.enum.ts` | `MinRpsMatchCommand` |
-| Guard | `leave-game.guard.ts` | `leaveGameGuard` |
-| Routes | `minrps.routes.ts` | `MINRPS_ROUTES` |
+## Architektur
 
-- Shared Components: Selector-Präfix `min-` (z.B. `min-button`, `min-card`, `min-dialog`)
-- Signals: `private readonly cached{Name}: WritableSignal<T>` / `public {name}: Signal<T>` (computed)
-- Auto-generierte API: `-api.service` Suffix in `core/generated/` (nicht manuell bearbeiten)
+Frontend:
 
-**Server:**
+* Presentation: Components und Pages mit ViewModels
+* Application: Services mit Fachlogik und Signals
+* Infrastructure: Repositories als Anti-Corruption-Layer zur generierten API
 
-| Typ | Dateiname | Klasse |
-|-----|-----------|--------|
-| Controller | `minrps-game.controller.ts` | `MinRpsGameController` |
-| Service | `minrps-game.service.ts` | `MinRpsGameService` |
-| Repository | `minrps-game.repository.ts` | `MinRpsGameRepository` |
-| Gateway | `minrps.gateway.ts` | `MinRpsGateway` |
-| Mapper | `minrps-domain.mapper.ts` | `MinRpsDomainMapper` |
-| System | `minrps-room.system.ts` | `MinRpsRoomSystem` |
-| Entity | `minrps-game.entity.ts` | `MinRpsGameEntity` |
-| DTO | `minrps-create-game.dto.ts` | `MinRpsCreateGameDto` |
-| Domain Model | `minrps-game.ts` | `MinRpsGame` |
-| Payload | `minrps-match-join.payload.ts` | `MinRpsMatchJoinPayload` |
-| Enum | `minrps-move.enum.ts` | `MinRpsMove` |
-| Module | `minrps.module.ts` | `MinRpsModule` |
+Backend:
 
-- Decorators: Custom API-Decorators in [shared/decorators/](server/src/shared/decorators/) (`@API_200()`, `@API_404()`, etc.)
-- WebSocket: Namespace Enums + Command/Event Enums für Message-Types (z.B. `MinRpsMatchCommand`, `MinRpsMatchEvent`)
+* Presentation: Controller, Gateways, DTOs
+* Application: Services mit Fachlogik
+* Infrastructure: Repositories und Persistenz
 
-## Wichtige Hinweise
+Regeln:
 
-- **OpenAPI Contract:** Client API-Services auto-generiert aus `client/openapi.json` — keine manuellen Edits in `client/src/app/core/generated/`
-- **Signal-First:** Client nutzt Angular Signals, keine traditionellen RxJS State Patterns
-- **Mapper Pflicht:** Niemals DTO/Domain/Entity oder ViewModel/Domain/DTO Transformationen überspringen
-- **Feature-Isolation:** Jedes Feature ist eigenständig mit eigenen Services/Models/Mappers
+* Domain Objects bestehen aus Aggregate Roots und Value Objects
+* Mapping ausschließlich in Application Services
+* Mapping-Logik ausschließlich in Mapper-Klassen
+* Repositories kapseln externe Systeme und Datenzugriffe
+* Feature-Isolation beibehalten
+* Keine Änderungen an generiertem Code
+
+## Konventionen
+
+* Bestehende Projektstruktur, Naming Conventions und Patterns fortführen
+* Shared Components verwenden das Prefix `min-`
+* Constructor Injection bevorzugen
+* Signals statt RxJS verwenden
+* TailwindCSS statt SCSS verwenden
+
+## OpenAPI
+
+* API-Services werden aus `client/openapi.json` generiert
+* Keine manuellen Änderungen in `client/src/app/core/generated/`
+
+## UX
+
+* Mobile First
+* WCAG-konform
+* Konsistente bestehende UI-Patterns verwenden
+* Einfache Interfaces vor komplexen Lösungen
+* Klare User Flows mit minimaler kognitiver Belastung
+* Feedback States berücksichtigen: Loading, Success, Error, Empty
+* Neue UI als wiederverwendbare Komponenten entwerfen
+* Bevorzugte Patterns: Formulare, Listen, Karten, Dialoge, Tabs
+
+## Entwicklungsprinzipien
+
+* Bestehende Patterns fortführen
+* Keine neuen Patterns ohne klaren Mehrwert
+* Einfachheit vor Komplexität
+* Kein Overengineering
+* Lesbarer, wartbarer und testbarer Code
+* Explizite Lösungen vor magischen Abstraktionen
+* Implementierungen müssen für Junior-Developer nachvollziehbar sein
+
+## Testing
+
+* Neue Funktionalität durch Unit Tests absichern
+* Für jede Abhängigkeit zentrale Mock-Konstanten verwenden
+* Keine Inline-Mocks
+* Mocks bei Änderungen erweitern
+* Tests erfolgreich ausführen
+* Linter erfolgreich ausführen
+
+## Kommunikation mit dem Benutzer
+
+* Antworte möglichst kurz und präzise
+* Keine Wiederholungen
+* Keine unnötigen Erklärungen
+* Fokus auf Ergebnis statt Theorie
+* Bei Code-Aufgaben implementieren statt diskutieren
+* Ausführliche Begründungen nur auf Nachfrage
+
+## Arbeitsweise
+
+* Erst bestehende Patterns prüfen, dann minimal planen
+* Einfache Aufgaben direkt umsetzen
+* Komplexe Features kurz mit Architektur, UX, Datenfluss und Tests planen
+* Danach implementieren, Tests ergänzen und relevante Checks ausführen
