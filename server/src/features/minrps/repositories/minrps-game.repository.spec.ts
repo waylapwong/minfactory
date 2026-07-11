@@ -1,9 +1,10 @@
+import { NotFoundException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { NotFoundException } from '@nestjs/common';
-import { MinRpsGameRepository } from './minrps-game.repository';
-import { MinRpsGameEntity } from '../models/entities/minrps-game.entity';
+import { MinRpsGameNotFoundException } from '../errors/exceptions/minfactory-user-not-found.exceptions';
 import { MINRPS_GAME_TYPEORM_REPOSITORY_MOCK } from '../mocks/minrps-game.typeorm-repository.mock';
+import { MinRpsGameEntity } from '../models/entities/minrps-game.entity';
+import { MinRpsGameRepository } from './minrps-game.repository';
 
 describe('MinRpsGameRepository', () => {
   let repository: MinRpsGameRepository;
@@ -26,7 +27,7 @@ describe('MinRpsGameRepository', () => {
     jest.clearAllMocks();
   });
 
-  describe('save', () => {
+  describe('save()', () => {
     it('should save entity and return it', async () => {
       const entity = new MinRpsGameEntity();
       entity.id = 'test-id';
@@ -41,7 +42,7 @@ describe('MinRpsGameRepository', () => {
     });
   });
 
-  describe('findAll', () => {
+  describe('findAll()', () => {
     it('should return all entities ordered by createdAt DESC', async () => {
       const entities = [
         Object.assign(new MinRpsGameEntity(), { id: '1', name: 'Game 1' }),
@@ -59,7 +60,7 @@ describe('MinRpsGameRepository', () => {
     });
   });
 
-  describe('findOne', () => {
+  describe('findOne()', () => {
     it('should return entity when found', async () => {
       const entity = new MinRpsGameEntity();
       entity.id = 'test-id';
@@ -75,17 +76,14 @@ describe('MinRpsGameRepository', () => {
       });
     });
 
-    it('should throw NotFoundException when entity not found', async () => {
+    it('should throw MinRpsGameNotFoundException when entity not found', async () => {
       MINRPS_GAME_TYPEORM_REPOSITORY_MOCK.findOne.mockResolvedValue(null);
 
-      await expect(repository.findOne('non-existent-id', 'test-request-id')).rejects.toThrow(NotFoundException);
-      await expect(repository.findOne('non-existent-id', 'test-request-id')).rejects.toThrow(
-        'minRPS game with ID non-existent-id not found',
-      );
+      await expect(repository.findOne('non-existent-id', 'test-request-id')).rejects.toThrow(MinRpsGameNotFoundException);
     });
   });
 
-  describe('delete', () => {
+  describe('delete()', () => {
     it('should delete entity when found', async () => {
       const entity = new MinRpsGameEntity();
       entity.id = 'test-id';

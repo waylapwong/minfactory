@@ -1,7 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { LoggerService } from '../../../core/logging/services/logger.service';
+import { MinRpsGameNotFoundException } from '../errors/exceptions/minfactory-user-not-found.exceptions';
 import { MinRpsGameEntity } from '../models/entities/minrps-game.entity';
 
 @Injectable()
@@ -28,7 +29,7 @@ export class MinRpsGameRepository {
     this.logger.debug(`START findOne(id: ${id})`, requestId);
     const entity: MinRpsGameEntity | null = await this.repository.findOne({ where: { id } });
     if (!entity) {
-      throw new NotFoundException(`minRPS game with ID ${id} not found`);
+      throw new MinRpsGameNotFoundException(id, requestId);
     }
     this.logger.debug(`END findOne(...)`, requestId);
     return entity;

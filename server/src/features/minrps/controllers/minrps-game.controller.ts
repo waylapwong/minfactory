@@ -31,8 +31,9 @@ export class MinRpsGameController {
   @API_404()
   @API_500()
   public async delete(@Param('id', new ParseUUIDPipe()) id: string, @Headers('X-Request-Id') requestId: string): Promise<void> {
-    this.logger.debug(`Incoming request DELETE /minrps/games/${id}`, requestId);
+    this.logger.debug(`START delete(id: ${id})`, requestId);
     await this.gameService.deleteGame(id, requestId);
+    this.logger.debug(`END delete(...)`, requestId);
   }
 
   @Get(':id')
@@ -44,8 +45,10 @@ export class MinRpsGameController {
   @API_404()
   @API_500()
   public async get(@Param('id', new ParseUUIDPipe()) id: string, @Headers('X-Request-Id') requestId: string): Promise<MinRpsGameDto> {
-    this.logger.debug(`Incoming request GET /minrps/games/${id}`, requestId);
-    return await this.gameService.getGame(id, requestId);
+    this.logger.debug(`START get(id: ${id})`, requestId);
+    const result: MinRpsGameDto = await this.gameService.getGame(id, requestId);
+    this.logger.debug(`END get(...)`, requestId);
+    return result;
   }
 
   @Get()
@@ -55,8 +58,10 @@ export class MinRpsGameController {
   @API_200({ isArray: true, type: MinRpsGameDto })
   @API_500()
   public async getAll(@Headers('X-Request-Id') requestId: string): Promise<MinRpsGameDto[]> {
-    this.logger.debug(`Incoming request GET /minrps/games`, requestId);
-    return await this.gameService.getAllGames(requestId);
+    this.logger.debug(`START getAll()`, requestId);
+    const result: MinRpsGameDto[] = await this.gameService.getAllGames(requestId);
+    this.logger.debug(`END getAll(...)`, requestId);
+    return result;
   }
 
   @Post()
@@ -67,7 +72,9 @@ export class MinRpsGameController {
   @API_400()
   @API_500()
   public async create(@Body() dto: MinRpsCreateGameDto, @Headers('X-Request-Id') requestId: string): Promise<MinRpsGameDto> {
-    this.logger.debug(`Incoming request POST /minrps/games`, requestId);
-    return await this.gameService.createGame(dto, requestId);
+    this.logger.debug(`START create(dto: ${JSON.stringify(dto)})`, requestId);
+    const result: MinRpsGameDto = await this.gameService.createGame(dto, requestId);
+    this.logger.debug(`END create(...)`, requestId);
+    return result;
   }
 }
