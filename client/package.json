@@ -2,9 +2,9 @@
   "name": "client",
   "version": "0.0.0",
   "scripts": {
-    "all": "npm run format:all && npm run lint:ci && npm run test:ci && npm run build",
     "api": "rimraf src/app/core/generated && openapi-generator-cli generate -c openapi.config.json -o src/app/core/generated",
     "build": "npm run clean && ng build --configuration prod",
+    "check": "npm run format:all && npm run lint:ci && npm run test:ci && npm run build",
     "clean": "rimraf dist",
     "format": "onchange \"**/*\" -- prettier --write --ignore-unknown {{changed}}",
     "format:all": "npx prettier --write .",
