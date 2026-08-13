@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { LoggerService } from '../../../core/logging/services/logger.service';
 import { MinRpsDomainMapper } from '../mapper/minrps-domain.mapper';
 import { MinRpsDtoMapper } from '../mapper/minrps-dto.mapper';
 import { MinRpsEntityMapper } from '../mapper/minrps-entity.mapper';
@@ -11,6 +12,8 @@ import { MinRpsMatchRepository } from '../repositories/minrps-match.repository';
 
 @Injectable()
 export class MinRpsGameService {
+  private readonly logger: LoggerService = new LoggerService(MinRpsGameService.name);
+
   constructor(
     private readonly gameRepository: MinRpsGameRepository,
     private readonly matchRepository: MinRpsMatchRepository,
@@ -34,24 +37,36 @@ export class MinRpsGameService {
   }
 
   public async getAllGames(requestId: string): Promise<MinRpsGameDto[]> {
-    // Fetch from DB
+    // Log start
+    this.logger.debug(`START getAllGames()`, requestId);
+    // Get entities from DB
     const entities: MinRpsGameEntity[] = await this.gameRepository.findAll(requestId);
-    // Mapping
-    const domains: MinRpsGame[] = entities
-      .map((entity: MinRpsGameEntity) => MinRpsEntityMapper.entityToDomain(entity))
-      .map((domain: MinRpsGame) => this.applyMatchState(domain));
+    // Map entities to domains
+    let domains: MinRpsGame[] = entities.map((entity: MinRpsGameEntity) => MinRpsEntityMapper.entityToDomain(entity));
+    // Apply match state
+    domains = domains.map((domain: MinRpsGame) => this.applyMatchState(domain));
+    // Map domains to DTOs
     const dtos: MinRpsGameDto[] = domains.map((domain: MinRpsGame) => MinRpsDomainMapper.domainToDto(domain));
-
+    // Log end
+    this.logger.debug(`END getAllGames(...)`, requestId);
+    // Return DTOs
     return dtos;
   }
 
   public async getGame(id: string, requestId: string): Promise<MinRpsGameDto> {
-    // Fetch from DB
+    // Log start
+    this.logger.debug(`START getGame(id: ${id})`, requestId);
+    // Get Entity from DB
     const entity = await this.gameRepository.findOne(id, requestId);
-    // Mapping
-    const domain: MinRpsGame = this.applyMatchState(MinRpsEntityMapper.entityToDomain(entity));
+    // Map Entity to Domain
+    let domain: MinRpsGame = MinRpsEntityMapper.entityToDomain(entity);
+    // Apply Match State
+    domain = this.applyMatchState(domain);
+    // Map Domain to DTO
     const dto: MinRpsGameDto = MinRpsDomainMapper.domainToDto(domain);
-
+    // Log end
+    this.logger.debug(`END getGame(...)`, requestId);
+    // Return DTO
     return dto;
   }
 

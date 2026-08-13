@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { LoggerService } from '../../../core/logging/services/logger.service';
-import { MinRpsGameNotFoundException } from '../errors/exceptions/minfactory-user-not-found.exceptions';
+import { MinRpsGameNotFoundException } from '../errors/exceptions/minrps-game-not-found.exceptions';
 import { MinRpsGameEntity } from '../models/entities/minrps-game.entity';
 
 @Injectable()

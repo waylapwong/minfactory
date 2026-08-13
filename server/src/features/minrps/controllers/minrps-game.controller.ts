@@ -11,6 +11,7 @@ import { API_PARAM_ID } from '../../../shared/decorators/api-param-id.decorator'
 import { API_HEADER_REQUEST_ID } from '../../../shared/decorators/api-request-id.decorator';
 import { MinApp } from '../../../shared/enums/minapp.enum';
 import { MinRpsCreateGameDto } from '../models/dtos/minrps-create-game.dto';
+import { MinRpsErrorDto } from '../models/dtos/minrps-error.dto';
 import { MinRpsGameDto } from '../models/dtos/minrps-game.dto';
 import { MinRpsGameService } from '../services/minrps-game.service';
 
@@ -28,7 +29,7 @@ export class MinRpsGameController {
   @API_PARAM_ID()
   @API_204()
   @API_400()
-  @API_404()
+  @API_404({ description: 'minRPS game not found', type: MinRpsErrorDto })
   @API_500()
   public async delete(@Param('id', new ParseUUIDPipe()) id: string, @Headers('X-Request-Id') requestId: string): Promise<void> {
     this.logger.debug(`START delete(id: ${id})`, requestId);
@@ -42,7 +43,7 @@ export class MinRpsGameController {
   @API_HEADER_REQUEST_ID()
   @API_200({ type: MinRpsGameDto })
   @API_400()
-  @API_404()
+  @API_404({ type: MinRpsErrorDto })
   @API_500()
   public async get(@Param('id', new ParseUUIDPipe()) id: string, @Headers('X-Request-Id') requestId: string): Promise<MinRpsGameDto> {
     this.logger.debug(`START get(id: ${id})`, requestId);
@@ -56,6 +57,7 @@ export class MinRpsGameController {
   @ApiOperation({ operationId: 'getAllMinRpsGames' })
   @API_HEADER_REQUEST_ID()
   @API_200({ isArray: true, type: MinRpsGameDto })
+  @API_400()
   @API_500()
   public async getAll(@Headers('X-Request-Id') requestId: string): Promise<MinRpsGameDto[]> {
     this.logger.debug(`START getAll()`, requestId);
