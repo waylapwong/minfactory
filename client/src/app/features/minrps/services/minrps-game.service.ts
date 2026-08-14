@@ -31,11 +31,8 @@ export class MinRpsGameService {
     try {
       await this.gameRepository.delete(id);
     } catch (error: unknown) {
-      if (error instanceof HttpErrorResponse) {
-        const errorDto: MinRpsErrorDto = error.error;
-        if (errorDto.statusCode === HttpStatusCode.NotFound) {
-          this.logger.error(`Game with ID ${id} does not exist.`);
-        }
+      if (!this.handleHttpError(error, id)) {
+        throw error;
       }
     }
     this.cachedGames.update((games: MinRpsGame[]) =>
@@ -50,13 +47,10 @@ export class MinRpsGameService {
       const dto: MinRpsGameDto = await this.gameRepository.get(id);
       return !!dto;
     } catch (error: unknown) {
-      if (error instanceof HttpErrorResponse) {
-        const errorDto: MinRpsErrorDto = error.error;
-        if (errorDto.statusCode === HttpStatusCode.NotFound) {
-          this.logger.error(`Game with ID ${id} does not exist.`);
-        }
+      if (this.handleHttpError(error, id)) {
+        return false;
       }
-      return false;
+      throw error;
     }
   }
 
@@ -64,5 +58,23 @@ export class MinRpsGameService {
     const dtos: MinRpsGameDto[] = await this.gameRepository.getAll();
     const domains: MinRpsGame[] = dtos.map(MinRpsDtoMapper.gameDtoToDomain);
     this.cachedGames.set(domains);
+  }
+
+  private handleHttpError(error: unknown, id: string): boolean {
+    if (!(error instanceof HttpErrorResponse)) {
+      return false;
+    }
+    if (!this.isMinRpsErrorDto(error.error)) {
+      return false;
+    }
+    if (error.error.statusCode !== HttpStatusCode.NotFound) {
+      return false;
+    }
+    this.logger.error(`Game with ID ${id} does not exist.`);
+    return true;
+  }
+
+  private isMinRpsErrorDto(error: unknown): error is MinRpsErrorDto {
+    return typeof error === 'object' && error !== null && 'statusCode' in error && typeof (error as MinRpsErrorDto).statusCode === 'number';
   }
 }

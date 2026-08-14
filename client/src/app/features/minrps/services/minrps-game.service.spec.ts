@@ -17,6 +17,14 @@ describe('MinRpsGameService', () => {
       },
     });
 
+  const createInternalServerError = (): HttpErrorResponse =>
+    new HttpErrorResponse({
+      status: HttpStatusCode.InternalServerError,
+      error: {
+        statusCode: HttpStatusCode.InternalServerError,
+      },
+    });
+
   beforeEach(() => {
     MINRPS_GAME_REPOSITORY_MOCK.create.calls.reset();
     MINRPS_GAME_REPOSITORY_MOCK.delete.calls.reset();
@@ -153,6 +161,23 @@ describe('MinRpsGameService', () => {
       expect(MINRPS_GAME_REPOSITORY_MOCK.delete).toHaveBeenCalledWith('test-id');
       expect(service.games().length).toBe(0);
     });
+
+    it('should rethrow non-not-found errors', async () => {
+      const mockDto: MinRpsGameDto = {
+        id: 'test-id',
+        name: 'Test Game',
+        createdAt: new Date().toISOString(),
+        observerCount: 0,
+        playerCount: 0,
+      };
+      MINRPS_GAME_REPOSITORY_MOCK.create.and.returnValue(Promise.resolve(mockDto));
+      MINRPS_GAME_REPOSITORY_MOCK.delete.and.returnValue(Promise.reject(createInternalServerError()));
+
+      await service.createGame('Test Game');
+
+      await expectAsync(service.deleteGame('test-id')).toBeRejected();
+      expect(service.games().length).toBe(1);
+    });
   });
 
   describe('gameExistByID()', () => {
@@ -177,6 +202,12 @@ describe('MinRpsGameService', () => {
       const exists = await service.gameExistByID('test-id');
 
       expect(exists).toBe(false);
+    });
+
+    it('should rethrow non-not-found errors', async () => {
+      MINRPS_GAME_REPOSITORY_MOCK.get.and.returnValue(Promise.reject(createInternalServerError()));
+
+      await expectAsync(service.gameExistByID('test-id')).toBeRejected();
     });
   });
 

@@ -15,6 +15,7 @@ import { API_HEADER_REQUEST_ID } from '../../../shared/decorators/api-request-id
 import { MinApp } from '../../../shared/enums/minapp.enum';
 import { MinFactoryUserDto } from '../models/dtos/minfactory-user.dto';
 import { MinFactoryUserService } from '../services/minfactory-user.service';
+import { API_400 } from '../../../shared/decorators/api-400.decorator';
 
 @Controller('minfactory/users')
 @ApiTags(MinApp.MinFactory)
@@ -29,6 +30,7 @@ export class MinFactoryUserController {
   @ApiOperation({ operationId: 'deleteMinFactoryUserMe' })
   @API_HEADER_REQUEST_ID()
   @API_204()
+  @API_400()
   @API_401()
   @API_404()
   @API_500()
@@ -42,6 +44,7 @@ export class MinFactoryUserController {
   @ApiOperation({ operationId: 'getMinFactoryUserMe' })
   @API_HEADER_REQUEST_ID()
   @API_200({ type: MinFactoryUserDto })
+  @API_400()
   @API_401()
   @API_404()
   @API_500()
@@ -56,6 +59,7 @@ export class MinFactoryUserController {
   @ApiOperation({ operationId: 'createMinFactoryUser' })
   @API_HEADER_REQUEST_ID()
   @API_201({ type: MinFactoryUserDto })
+  @API_400()
   @API_401()
   @API_409()
   @API_500()

@@ -62,6 +62,7 @@ export class MinPokerGameController {
   })
   @API_HEADER_REQUEST_ID()
   @API_200({ isArray: true, type: MinPokerGameDto })
+  @API_400()
   @API_401()
   @API_403()
   @API_404()
