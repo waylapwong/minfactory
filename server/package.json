@@ -5,9 +5,9 @@
     "node": "24.14.0"
   },
   "scripts": {
-    "all": "npm run format:all && npm run lint:ci && npm run test:ci && npm run build",
     "build": "npm run clean && nest build",
     "clean": "rimraf dist",
+    "check": "npm run format:all && npm run lint:ci && npm run test:ci && npm run build",
     "format": "onchange \"**/*\" -- prettier --write --ignore-unknown {{changed}}",
     "format:all": "npx prettier --write .",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",

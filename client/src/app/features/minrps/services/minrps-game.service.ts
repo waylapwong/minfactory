@@ -1,5 +1,6 @@
+import { HttpErrorResponse, HttpStatusCode } from '@angular/common/http';
 import { Injectable, Signal, WritableSignal, computed, signal } from '@angular/core';
-import { MinRpsGameDto } from '../../../core/generated';
+import { MinRpsErrorDto, MinRpsGameDto } from '../../../core/generated';
 import { LoggerService } from '../../../core/logging/services/logger.service';
 import { MinRpsDomainMapper } from '../mapper/minrps-domain.mapper';
 import { MinRpsDtoMapper } from '../mapper/minrps-dto.mapper';
@@ -27,7 +28,13 @@ export class MinRpsGameService {
   }
 
   public async deleteGame(id: string): Promise<void> {
-    await this.gameRepository.delete(id);
+    try {
+      await this.gameRepository.delete(id);
+    } catch (error: unknown) {
+      if (!this.handleHttpError(error, id)) {
+        throw error;
+      }
+    }
     this.cachedGames.update((games: MinRpsGame[]) =>
       games
         .filter((game: MinRpsGame) => game.id !== id)
@@ -40,8 +47,10 @@ export class MinRpsGameService {
       const dto: MinRpsGameDto = await this.gameRepository.get(id);
       return !!dto;
     } catch (error: unknown) {
-      this.logger.error(String(error));
-      return false;
+      if (this.handleHttpError(error, id)) {
+        return false;
+      }
+      throw error;
     }
   }
 
@@ -49,5 +58,23 @@ export class MinRpsGameService {
     const dtos: MinRpsGameDto[] = await this.gameRepository.getAll();
     const domains: MinRpsGame[] = dtos.map(MinRpsDtoMapper.gameDtoToDomain);
     this.cachedGames.set(domains);
+  }
+
+  private handleHttpError(error: unknown, id: string): boolean {
+    if (!(error instanceof HttpErrorResponse)) {
+      return false;
+    }
+    if (!this.isMinRpsErrorDto(error.error)) {
+      return false;
+    }
+    if (error.error.statusCode !== HttpStatusCode.NotFound) {
+      return false;
+    }
+    this.logger.error(`Game with ID ${id} does not exist.`);
+    return true;
+  }
+
+  private isMinRpsErrorDto(error: unknown): error is MinRpsErrorDto {
+    return typeof error === 'object' && error !== null && 'statusCode' in error && typeof (error as MinRpsErrorDto).statusCode === 'number';
   }
 }

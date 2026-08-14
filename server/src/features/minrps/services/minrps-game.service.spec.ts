@@ -8,6 +8,8 @@ import { MINRPS_GAME_REPOSITORY_MOCK } from '../mocks/minrps-game.repository.moc
 import { MinRpsMatchRepository } from '../repositories/minrps-match.repository';
 import { MINRPS_MATCH_REPOSITORY_MOCK } from '../mocks/minrps-match.repository.mock';
 import { MinRpsGameService } from './minrps-game.service';
+import { MinRpsGameNotFoundException } from '../errors/exceptions/minrps-game-not-found.exceptions';
+import { MinRpsGameSaveFailedException } from '../errors/exceptions/minrps-game-save-failed.exceptions';
 
 describe('MinRpsGameService', () => {
   let service: MinRpsGameService;
@@ -57,15 +59,32 @@ describe('MinRpsGameService', () => {
       expect(result.id).toBe('test-id');
       expect(MINRPS_GAME_REPOSITORY_MOCK.save).toHaveBeenCalledWith(expect.objectContaining({ name: 'Test Game' }), 'test-request-id');
     });
+
+    it('should throw when save fails', async () => {
+      const createDto = new MinRpsCreateGameDto();
+      createDto.name = 'Test Game';
+
+      MINRPS_GAME_REPOSITORY_MOCK.save.mockResolvedValue(null);
+
+      await expect(service.createGame(createDto, 'test-request-id')).rejects.toThrow(MinRpsGameSaveFailedException);
+      expect(MINRPS_GAME_REPOSITORY_MOCK.save).toHaveBeenCalledWith(expect.objectContaining({ name: 'Test Game' }), 'test-request-id');
+    });
   });
 
   describe('deleteGame', () => {
     it('should delete a game by id', async () => {
-      MINRPS_GAME_REPOSITORY_MOCK.delete.mockResolvedValue(undefined);
+      MINRPS_GAME_REPOSITORY_MOCK.delete.mockResolvedValue(true);
 
       await service.deleteGame('test-id', 'test-request-id');
 
       expect(MINRPS_GAME_REPOSITORY_MOCK.delete).toHaveBeenCalledWith('test-id', 'test-request-id');
+    });
+
+    it('should throw when game does not exist', async () => {
+      MINRPS_GAME_REPOSITORY_MOCK.delete.mockResolvedValue(false);
+
+      await expect(service.deleteGame('missing-id', 'test-request-id')).rejects.toThrow(MinRpsGameNotFoundException);
+      expect(MINRPS_GAME_REPOSITORY_MOCK.delete).toHaveBeenCalledWith('missing-id', 'test-request-id');
     });
   });
 
@@ -145,6 +164,12 @@ describe('MinRpsGameService', () => {
       expect(result.id).toBe('test-id');
       expect(result.name).toBe('Test Game');
       expect(MINRPS_GAME_REPOSITORY_MOCK.findOne).toHaveBeenCalledWith('test-id', 'test-request-id');
+    });
+
+    it('should throw when game does not exist', async () => {
+      MINRPS_GAME_REPOSITORY_MOCK.findOne.mockResolvedValue(null);
+
+      await expect(service.getGame('test-id', 'test-request-id')).rejects.toThrow(MinRpsGameNotFoundException);
     });
 
     it('should map observer and player counts from match repository in getGame', async () => {

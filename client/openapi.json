@@ -31,7 +31,7 @@
             "description": "Deleted"
           },
           "400": {
-            "description": "Bad Request\n\nBad Request"
+            "description": "Bad Request"
           },
           "401": {
             "description": "Unauthorized"
@@ -68,7 +68,7 @@
             "name": "visibility",
             "required": true,
             "in": "query",
-            "description": "public = alle öffentlichen Spiele. Ohne Parameter = eigene Spiele.",
+            "description": "public = alle öffentlichen Spiele. private = alle selbst erstellten Spiele.",
             "schema": {
               "$ref": "#/components/schemas/MinPokerGameVisibility"
             }
@@ -143,7 +143,7 @@
             }
           },
           "400": {
-            "description": "Bad Request\n\nBad Request"
+            "description": "Bad Request"
           },
           "401": {
             "description": "Unauthorized"
@@ -312,10 +312,17 @@
             "description": "Deleted"
           },
           "400": {
-            "description": "Bad Request\n\nBad Request"
+            "description": "Bad Request"
           },
           "404": {
-            "description": "Not Found"
+            "description": "minRPS game not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MinRpsErrorDto"
+                }
+              }
+            }
           },
           "500": {
             "description": "Internal Server Error"
@@ -358,10 +365,17 @@
             }
           },
           "400": {
-            "description": "Bad Request\n\nBad Request"
+            "description": "Bad Request"
           },
           "404": {
-            "description": "Not Found"
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MinRpsErrorDto"
+                }
+              }
+            }
           },
           "500": {
             "description": "Internal Server Error"
@@ -446,7 +460,7 @@
             }
           },
           "400": {
-            "description": "Bad Request\n\nBad Request"
+            "description": "Bad Request"
           },
           "500": {
             "description": "Internal Server Error"
@@ -493,7 +507,7 @@
             }
           },
           "400": {
-            "description": "Bad Request\n\nBad Request"
+            "description": "Bad Request"
           },
           "409": {
             "description": "Conflict"
@@ -644,22 +658,48 @@
         },
         "required": ["id", "createdAt", "email", "role"]
       },
+      "MinRpsErrorDto": {
+        "type": "object",
+        "properties": {
+          "errorCode": {
+            "type": "string",
+            "example": "XXX.XXX.XXX"
+          },
+          "requestId": {
+            "type": "string",
+            "example": "XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX",
+            "format": "uuid"
+          },
+          "statusCode": {
+            "type": "number",
+            "example": 500
+          },
+          "properties": {
+            "type": "object",
+            "example": {
+              "lorem": "ipsum"
+            },
+            "additionalProperties": true
+          }
+        },
+        "required": ["errorCode", "requestId", "statusCode"]
+      },
       "MinRpsGameDto": {
         "type": "object",
         "properties": {
           "createdAt": {
             "format": "date-time",
             "type": "string",
-            "example": "2025-10-21T18:45:30.000Z"
+            "example": "2000-01-01T00:00:00.000Z"
           },
           "id": {
             "type": "string",
-            "example": "550e8400-e29b-41d4-a716-446655440000",
+            "example": "XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX",
             "format": "uuid"
           },
           "name": {
             "type": "string",
-            "example": "Test Game",
+            "example": "Lorem ipsum",
             "maxLength": 16,
             "minLength": 2
           },
@@ -681,22 +721,19 @@
         "properties": {
           "name": {
             "type": "string",
-            "description": "Game name",
-            "example": "Test Game"
+            "example": "Lorem ipsum"
           }
         },
         "required": ["name"]
       },
       "MinRpsMove": {
         "type": "string",
-        "enum": ["none", "rock", "paper", "scissors"],
-        "description": "Player move"
+        "enum": ["none", "rock", "paper", "scissors"]
       },
       "MinRpsPlayDto": {
         "type": "object",
         "properties": {
           "player1Move": {
-            "description": "Player move",
             "example": "rock",
             "allOf": [
               {

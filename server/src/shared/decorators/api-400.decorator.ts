@@ -1,6 +1,6 @@
 import { applyDecorators } from '@nestjs/common';
-import { ApiBadRequestResponse } from '@nestjs/swagger';
+import { ApiBadRequestResponse, ApiResponseOptions } from '@nestjs/swagger';
 
-export function API_400() {
-  return applyDecorators(ApiBadRequestResponse({ description: 'Bad Request' }));
+export function API_400(options?: ApiResponseOptions) {
+  return applyDecorators(ApiBadRequestResponse({ description: 'Bad Request', ...options }));
 }

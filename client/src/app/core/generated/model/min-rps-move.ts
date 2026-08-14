@@ -11,9 +11,6 @@
  */
 
 
-/**
- * Player move
- */
 export type MinRpsMove = 'none' | 'rock' | 'paper' | 'scissors';
 
 export const MinRpsMove = {
