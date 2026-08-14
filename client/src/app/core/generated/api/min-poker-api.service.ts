@@ -237,7 +237,7 @@ export class MinPokerApiService {
     /**
      * 
      * @param xRequestId Unique request ID
-     * @param visibility public &#x3D; alle öffentlichen Spiele. private &#x3D; alle selbst erstellen Spiele.
+     * @param visibility public &#x3D; alle öffentlichen Spiele. private &#x3D; alle selbst erstellten Spiele.
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */

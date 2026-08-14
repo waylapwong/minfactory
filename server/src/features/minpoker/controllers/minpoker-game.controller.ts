@@ -53,7 +53,7 @@ export class MinPokerGameController {
   @HttpCode(200)
   @ApiOperation({ operationId: 'getAllMinPokerGames' })
   @ApiQuery({
-    description: 'public = alle öffentlichen Spiele. private = alle selbst erstellen Spiele.',
+    description: 'public = alle öffentlichen Spiele. private = alle selbst erstellten Spiele.',
     enum: MinPokerGameVisibility,
     enumName: 'MinPokerGameVisibility',
     example: MinPokerGameVisibility.Public,

@@ -8,6 +8,6 @@ export class MinRpsErrorDto extends HttpException {
   public requestId!: string;
   @ApiProperty({ example: HttpStatus.INTERNAL_SERVER_ERROR })
   public statusCode!: number;
-  @ApiPropertyOptional({ example: { id: 'XXXXXX' }, additionalProperties: true })
+  @ApiPropertyOptional({ example: { lorem: 'ipsum' }, additionalProperties: true })
   public properties?: Record<string, string>;
 }

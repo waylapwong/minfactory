@@ -68,7 +68,7 @@
             "name": "visibility",
             "required": true,
             "in": "query",
-            "description": "public = alle öffentlichen Spiele. private = alle selbst erstellen Spiele.",
+            "description": "public = alle öffentlichen Spiele. private = alle selbst erstellten Spiele.",
             "schema": {
               "$ref": "#/components/schemas/MinPokerGameVisibility"
             }
@@ -87,6 +87,9 @@
                 }
               }
             }
+          },
+          "400": {
+            "description": "Bad Request"
           },
           "401": {
             "description": "Unauthorized"
@@ -178,6 +181,9 @@
           "204": {
             "description": "Deleted"
           },
+          "400": {
+            "description": "Bad Request"
+          },
           "401": {
             "description": "Unauthorized"
           },
@@ -215,6 +221,9 @@
                 }
               }
             }
+          },
+          "400": {
+            "description": "Bad Request"
           },
           "401": {
             "description": "Unauthorized"
@@ -255,6 +264,9 @@
                 }
               }
             }
+          },
+          "400": {
+            "description": "Bad Request"
           },
           "401": {
             "description": "Unauthorized"
@@ -665,7 +677,7 @@
           "properties": {
             "type": "object",
             "example": {
-              "id": "XXXXXX"
+              "lorem": "ipsum"
             },
             "additionalProperties": true
           }
