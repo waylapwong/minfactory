@@ -3,6 +3,7 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 import { MINRPS_GAME_TYPEORM_REPOSITORY_MOCK } from '../mocks/minrps-game.typeorm-repository.mock';
 import { MinRpsGameEntity } from '../models/entities/minrps-game.entity';
 import { MinRpsGameRepository } from './minrps-game.repository';
+import { MinRpsGameSaveFailedException } from '../errors/exceptions/minrps-game-save-failed.exceptions';
 
 describe('MinRpsGameRepository', () => {
   let repository: MinRpsGameRepository;
@@ -36,6 +37,17 @@ describe('MinRpsGameRepository', () => {
       const result = await repository.save(entity, 'test-request-id');
 
       expect(result).toBe(entity);
+      expect(MINRPS_GAME_TYPEORM_REPOSITORY_MOCK.save).toHaveBeenCalledWith(entity);
+    });
+
+    it('should throw when save fails', async () => {
+      const entity = new MinRpsGameEntity();
+      entity.id = 'test-id';
+      entity.name = 'Test Game';
+
+      MINRPS_GAME_TYPEORM_REPOSITORY_MOCK.save.mockRejectedValue(new Error('db error'));
+
+      await expect(repository.save(entity, 'test-request-id')).rejects.toThrow(MinRpsGameSaveFailedException);
       expect(MINRPS_GAME_TYPEORM_REPOSITORY_MOCK.save).toHaveBeenCalledWith(entity);
     });
   });

@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { LoggerService } from '../../../core/logging/services/logger.service';
+import { MinRpsGameNotFoundException } from '../errors/exceptions/minrps-game-not-found.exceptions';
 import { MinRpsDomainMapper } from '../mapper/minrps-domain.mapper';
 import { MinRpsDtoMapper } from '../mapper/minrps-dto.mapper';
 import { MinRpsEntityMapper } from '../mapper/minrps-entity.mapper';
@@ -9,7 +10,6 @@ import { MinRpsGameDto } from '../models/dtos/minrps-game.dto';
 import { MinRpsGameEntity } from '../models/entities/minrps-game.entity';
 import { MinRpsGameRepository } from '../repositories/minrps-game.repository';
 import { MinRpsMatchRepository } from '../repositories/minrps-match.repository';
-import { MinRpsGameNotFoundException } from '../errors/exceptions/minrps-game-not-found.exceptions';
 
 @Injectable()
 export class MinRpsGameService {
@@ -21,24 +21,34 @@ export class MinRpsGameService {
   ) {}
 
   public async createGame(dto: MinRpsCreateGameDto, requestId: string): Promise<MinRpsGameDto> {
-    // Mapping
+    // Log start
+    this.logger.debug(`START createGame(dto: ${JSON.stringify(dto)})`, requestId);
+    // Map to Domain
     const domain: MinRpsGame = MinRpsDtoMapper.createDtoToDomain(dto);
+    // Map to Entity
     const entity: MinRpsGameEntity = MinRpsDomainMapper.domainToEntity(domain);
     // Save to DB
     const savedEntity: MinRpsGameEntity = await this.gameRepository.save(entity, requestId);
-    // Mapping
+    // Map saved Entity to Domain
     const savedDomain: MinRpsGame = MinRpsEntityMapper.entityToDomain(savedEntity);
+    // Map saved Domain to DTO
     const savedDto: MinRpsGameDto = MinRpsDomainMapper.domainToDto(savedDomain);
-
+    // Log end
+    this.logger.debug(`END createGame(...)`, requestId);
+    // Return saved DTO
     return savedDto;
   }
 
   public async deleteGame(id: string, requestId: string): Promise<void> {
+    // Log start
     this.logger.debug(`START deleteGame(id: ${id})`, requestId);
+    // Delete Entity from DB
     const deleted: boolean = await this.gameRepository.delete(id, requestId);
+    // Check if Entity was deleted
     if (!deleted) {
       throw new MinRpsGameNotFoundException(id, requestId);
     }
+    // Log end
     this.logger.debug(`END deleteGame(...)`, requestId);
   }
 
@@ -47,9 +57,9 @@ export class MinRpsGameService {
     this.logger.debug(`START getAllGames()`, requestId);
     // Get entities from DB
     const entities: MinRpsGameEntity[] = await this.gameRepository.findAll(requestId);
-    // Map entities to domains
+    // Map entities to Domains
     let domains: MinRpsGame[] = entities.map((entity: MinRpsGameEntity) => MinRpsEntityMapper.entityToDomain(entity));
-    // Apply match state
+    // Apply Match State
     domains = domains.map((domain: MinRpsGame) => this.applyMatchState(domain));
     // Map domains to DTOs
     const dtos: MinRpsGameDto[] = domains.map((domain: MinRpsGame) => MinRpsDomainMapper.domainToDto(domain));
