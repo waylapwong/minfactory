@@ -1,11 +1,11 @@
-import { MinRpsDtoMapper } from './minrps-dto.mapper';
 import { MinRpsGame } from '../models/domains/minrps-game';
 import { MinRpsCreateGameDto } from '../models/dtos/minrps-create-game.dto';
 import { MinRpsPlayDto } from '../models/dtos/minrps-play.dto';
 import { MinRpsMove } from '../models/enums/minrps-move.enum';
+import { MinRpsDtoMapper } from './minrps-dto.mapper';
 
 describe('MinRpsDtoMapper', () => {
-  describe('createDtoToDomain', () => {
+  describe('createDtoToDomain()', () => {
     it('should map create DTO to domain', () => {
       const dto = new MinRpsCreateGameDto();
       dto.name = 'Test Game';
@@ -27,7 +27,7 @@ describe('MinRpsDtoMapper', () => {
     });
   });
 
-  describe('playDtoToDomain', () => {
+  describe('playDtoToDomain()', () => {
     it('should map play DTO to domain with Rock move', () => {
       const dto = new MinRpsPlayDto();
       dto.player1Move = MinRpsMove.Rock;

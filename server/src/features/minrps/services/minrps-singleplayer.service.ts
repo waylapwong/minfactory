@@ -22,7 +22,7 @@ export class MinRpsSingleplayerService {
     // Game result
     const result: MinRpsResult = domain.getResult();
     // Mapping
-    const responseDto: MinRpsPlayResultDto = MinRpsDomainMapper.domainToPlayResultDto(domain);
+    const responseDto: MinRpsPlayResultDto = MinRpsDomainMapper.toPlayResultDto(domain);
     responseDto.result = result;
 
     return responseDto;

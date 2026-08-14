@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DeleteResult, Repository } from 'typeorm';
 import { LoggerService } from '../../../core/logging/services/logger.service';
-import { MinRpsGameSaveFailedException } from '../errors/exceptions/minrps-game-save-failed.exceptions';
 import { MinRpsGameEntity } from '../models/entities/minrps-game.entity';
 
 @Injectable()
@@ -50,7 +49,7 @@ export class MinRpsGameRepository {
     }
   }
 
-  public async save(entity: MinRpsGameEntity, requestId: string): Promise<MinRpsGameEntity> {
+  public async save(entity: MinRpsGameEntity, requestId: string): Promise<MinRpsGameEntity | null> {
     this.logger.debug(`START save(entity: ${JSON.stringify(entity)})`, requestId);
     try {
       const savedEntity: MinRpsGameEntity = await this.repository.save(entity);
@@ -59,7 +58,7 @@ export class MinRpsGameRepository {
     } catch (error: unknown) {
       const errorMessage: string = error instanceof Error ? error.message : String(error);
       this.logger.error(`FAILED save(entity: ${entity.id}): ${errorMessage}`, requestId);
-      throw new MinRpsGameSaveFailedException(entity.id, requestId);
+      return null;
     }
   }
 }

@@ -9,6 +9,7 @@ import { MinRpsMatchRepository } from '../repositories/minrps-match.repository';
 import { MINRPS_MATCH_REPOSITORY_MOCK } from '../mocks/minrps-match.repository.mock';
 import { MinRpsGameService } from './minrps-game.service';
 import { MinRpsGameNotFoundException } from '../errors/exceptions/minrps-game-not-found.exceptions';
+import { MinRpsGameSaveFailedException } from '../errors/exceptions/minrps-game-save-failed.exceptions';
 
 describe('MinRpsGameService', () => {
   let service: MinRpsGameService;
@@ -56,6 +57,16 @@ describe('MinRpsGameService', () => {
       expect(result).toBeDefined();
       expect(result.name).toBe('Test Game');
       expect(result.id).toBe('test-id');
+      expect(MINRPS_GAME_REPOSITORY_MOCK.save).toHaveBeenCalledWith(expect.objectContaining({ name: 'Test Game' }), 'test-request-id');
+    });
+
+    it('should throw when save fails', async () => {
+      const createDto = new MinRpsCreateGameDto();
+      createDto.name = 'Test Game';
+
+      MINRPS_GAME_REPOSITORY_MOCK.save.mockResolvedValue(null);
+
+      await expect(service.createGame(createDto, 'test-request-id')).rejects.toThrow(MinRpsGameSaveFailedException);
       expect(MINRPS_GAME_REPOSITORY_MOCK.save).toHaveBeenCalledWith(expect.objectContaining({ name: 'Test Game' }), 'test-request-id');
     });
   });

@@ -1,16 +1,16 @@
-import { MinRpsEntityMapper } from './minrps-entity.mapper';
 import { MinRpsGame } from '../models/domains/minrps-game';
 import { MinRpsGameEntity } from '../models/entities/minrps-game.entity';
+import { MinRpsEntityMapper } from './minrps-entity.mapper';
 
 describe('MinRpsEntityMapper', () => {
-  describe('entityToDomain', () => {
+  describe('toDomain()', () => {
     it('should map entity to domain', () => {
       const entity = new MinRpsGameEntity();
       entity.id = 'test-id';
       entity.name = 'Test Game';
       entity.createdAt = new Date('2024-01-01');
 
-      const domain: MinRpsGame = MinRpsEntityMapper.entityToDomain(entity);
+      const domain: MinRpsGame = MinRpsEntityMapper.toDomain(entity);
 
       expect(domain).toBeInstanceOf(MinRpsGame);
       expect(domain.id).toBe('test-id');
@@ -24,7 +24,7 @@ describe('MinRpsEntityMapper', () => {
       entity.name = '';
       entity.createdAt = new Date('2024-01-01');
 
-      const domain: MinRpsGame = MinRpsEntityMapper.entityToDomain(entity);
+      const domain: MinRpsGame = MinRpsEntityMapper.toDomain(entity);
 
       expect(domain.name).toBe('');
     });

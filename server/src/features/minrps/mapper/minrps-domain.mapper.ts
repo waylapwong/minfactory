@@ -7,7 +7,7 @@ import { MinRpsMove } from '../models/enums/minrps-move.enum';
 import { MinRpsMatchUpdatedPayload } from '../models/payloads/minrps-match-updated.payload';
 
 export class MinRpsDomainMapper {
-  public static domainToDto(domain: MinRpsGame): MinRpsGameDto {
+  public static toDto(domain: MinRpsGame): MinRpsGameDto {
     const dto: MinRpsGameDto = new MinRpsGameDto();
 
     dto.createdAt = domain.createdAt;
@@ -19,7 +19,7 @@ export class MinRpsDomainMapper {
     return dto;
   }
 
-  public static domainToEntity(domain: MinRpsGame): MinRpsGameEntity {
+  public static toEntity(domain: MinRpsGame): MinRpsGameEntity {
     const entity: MinRpsGameEntity = new MinRpsGameEntity();
 
     entity.createdAt = domain.createdAt;
@@ -29,7 +29,7 @@ export class MinRpsDomainMapper {
     return entity;
   }
 
-  public static domainToMatchUpdatedPayload(domain: MinRpsGame): MinRpsMatchUpdatedPayload {
+  public static toMatchUpdatedPayload(domain: MinRpsGame): MinRpsMatchUpdatedPayload {
     const payload: MinRpsMatchUpdatedPayload = new MinRpsMatchUpdatedPayload();
 
     payload.matchId = domain.id;
@@ -49,7 +49,7 @@ export class MinRpsDomainMapper {
     return payload;
   }
 
-  public static domainToPlayResultDto(domain: MinRpsGame): MinRpsPlayResultDto {
+  public static toPlayResultDto(domain: MinRpsGame): MinRpsPlayResultDto {
     const dto: MinRpsPlayResultDto = new MinRpsPlayResultDto();
 
     dto.player1Move = domain.player1.move;

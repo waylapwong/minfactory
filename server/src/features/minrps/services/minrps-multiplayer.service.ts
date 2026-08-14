@@ -45,7 +45,7 @@ export class MinRpsMultiplayerService {
         this.matchRepository.save(match);
         this.roomSystem.removePlayerFromRoom(client, roomName);
         this.playerIdRepository.delete(client.id);
-        return MinRpsDomainMapper.domainToMatchUpdatedPayload(match);
+        return MinRpsDomainMapper.toMatchUpdatedPayload(match);
       }
       this.roomSystem.removePlayerFromRoom(client, roomName);
     }
@@ -64,7 +64,7 @@ export class MinRpsMultiplayerService {
     // Update match
     const updatedMatch: MinRpsGame = this.matchRepository.save(game);
     // Return match state
-    return MinRpsDomainMapper.domainToMatchUpdatedPayload(updatedMatch);
+    return MinRpsDomainMapper.toMatchUpdatedPayload(updatedMatch);
   }
 
   public leaveMatch(client: Socket, command: MinRpsMatchLeavePayload): MinRpsMatchUpdatedPayload {
@@ -80,7 +80,7 @@ export class MinRpsMultiplayerService {
     // Update match
     const updatedMatch: MinRpsGame = this.matchRepository.save(match);
     // Return match state
-    return MinRpsDomainMapper.domainToMatchUpdatedPayload(updatedMatch);
+    return MinRpsDomainMapper.toMatchUpdatedPayload(updatedMatch);
   }
 
   public playMatch(command: MinRpsMatchPlayPayload): MinRpsMatchUpdatedPayload {
@@ -107,7 +107,7 @@ export class MinRpsMultiplayerService {
 
     // Update match
     const updatedMatch: MinRpsGame = this.matchRepository.save(match);
-    const payload: MinRpsMatchUpdatedPayload = MinRpsDomainMapper.domainToMatchUpdatedPayload(updatedMatch);
+    const payload: MinRpsMatchUpdatedPayload = MinRpsDomainMapper.toMatchUpdatedPayload(updatedMatch);
     // Hide all moves until both players have played
     if (!updatedMatch.isGameReady()) {
       payload.player1Move = MinRpsMove.None;
@@ -128,7 +128,7 @@ export class MinRpsMultiplayerService {
     // Update match
     const updatedMatch: MinRpsGame = this.matchRepository.save(match);
     // Return match state
-    return MinRpsDomainMapper.domainToMatchUpdatedPayload(updatedMatch);
+    return MinRpsDomainMapper.toMatchUpdatedPayload(updatedMatch);
   }
 
   public seatPlayer(command: MinRpsMatchSeatPayload): MinRpsMatchUpdatedPayload {
@@ -142,6 +142,6 @@ export class MinRpsMultiplayerService {
     // Update match
     const updatedMatch: MinRpsGame = this.matchRepository.save(match);
     // Return match state
-    return MinRpsDomainMapper.domainToMatchUpdatedPayload(updatedMatch);
+    return MinRpsDomainMapper.toMatchUpdatedPayload(updatedMatch);
   }
 }
