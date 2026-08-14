@@ -1,6 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { MinRpsGameNotFoundException } from '../errors/exceptions/minrps-game-not-found.exceptions';
 import { MINRPS_GAME_TYPEORM_REPOSITORY_MOCK } from '../mocks/minrps-game.typeorm-repository.mock';
 import { MinRpsGameEntity } from '../models/entities/minrps-game.entity';
 import { MinRpsGameRepository } from './minrps-game.repository';
@@ -75,10 +74,10 @@ describe('MinRpsGameRepository', () => {
       });
     });
 
-    it('should throw MinRpsGameNotFoundException when entity not found', async () => {
+    it('should return null when entity not found', async () => {
       MINRPS_GAME_TYPEORM_REPOSITORY_MOCK.findOne.mockResolvedValue(null);
 
-      await expect(repository.findOne('non-existent-id', 'test-request-id')).rejects.toThrow(MinRpsGameNotFoundException);
+      await expect(repository.findOne('non-existent-id', 'test-request-id')).resolves.toBeNull();
     });
   });
 
@@ -92,16 +91,15 @@ describe('MinRpsGameRepository', () => {
 
       await repository.delete('test-id', 'test-request-id');
 
-      expect(MINRPS_GAME_TYPEORM_REPOSITORY_MOCK.findOne).toHaveBeenCalledWith({
-        where: { id: 'test-id' },
-      });
       expect(MINRPS_GAME_TYPEORM_REPOSITORY_MOCK.delete).toHaveBeenCalledWith({ id: 'test-id' });
     });
 
-    it('should throw MinRpsGameNotFoundException when entity not found for deletion', async () => {
+    it('should not throw when entity not found for deletion', async () => {
       MINRPS_GAME_TYPEORM_REPOSITORY_MOCK.findOne.mockResolvedValue(null);
+      MINRPS_GAME_TYPEORM_REPOSITORY_MOCK.delete.mockResolvedValue({} as any);
 
-      await expect(repository.delete('non-existent-id', 'test-request-id')).rejects.toThrow(MinRpsGameNotFoundException);
+      await expect(repository.delete('non-existent-id', 'test-request-id')).resolves.toBeUndefined();
+      expect(MINRPS_GAME_TYPEORM_REPOSITORY_MOCK.delete).toHaveBeenCalledWith({ id: 'non-existent-id' });
     });
   });
 });

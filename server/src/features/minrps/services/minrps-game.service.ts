@@ -9,6 +9,7 @@ import { MinRpsGameDto } from '../models/dtos/minrps-game.dto';
 import { MinRpsGameEntity } from '../models/entities/minrps-game.entity';
 import { MinRpsGameRepository } from '../repositories/minrps-game.repository';
 import { MinRpsMatchRepository } from '../repositories/minrps-match.repository';
+import { MinRpsGameNotFoundException } from '../errors/exceptions/minrps-game-not-found.exceptions';
 
 @Injectable()
 export class MinRpsGameService {
@@ -33,7 +34,14 @@ export class MinRpsGameService {
   }
 
   public async deleteGame(id: string, requestId: string): Promise<void> {
+    this.logger.debug(`START deleteGame(id: ${id})`, requestId);
+    const entity: MinRpsGameEntity | null = await this.gameRepository.findOne(id, requestId);
+    if (!entity) {
+      throw new MinRpsGameNotFoundException(id, requestId);
+    }
+
     await this.gameRepository.delete(id, requestId);
+    this.logger.debug(`END deleteGame(...)`, requestId);
   }
 
   public async getAllGames(requestId: string): Promise<MinRpsGameDto[]> {
@@ -57,7 +65,10 @@ export class MinRpsGameService {
     // Log start
     this.logger.debug(`START getGame(id: ${id})`, requestId);
     // Get Entity from DB
-    const entity = await this.gameRepository.findOne(id, requestId);
+    const entity: MinRpsGameEntity | null = await this.gameRepository.findOne(id, requestId);
+    if (!entity) {
+      throw new MinRpsGameNotFoundException(id, requestId);
+    }
     // Map Entity to Domain
     let domain: MinRpsGame = MinRpsEntityMapper.entityToDomain(entity);
     // Apply Match State

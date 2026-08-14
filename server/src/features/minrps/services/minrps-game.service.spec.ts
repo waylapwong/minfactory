@@ -8,6 +8,7 @@ import { MINRPS_GAME_REPOSITORY_MOCK } from '../mocks/minrps-game.repository.moc
 import { MinRpsMatchRepository } from '../repositories/minrps-match.repository';
 import { MINRPS_MATCH_REPOSITORY_MOCK } from '../mocks/minrps-match.repository.mock';
 import { MinRpsGameService } from './minrps-game.service';
+import { MinRpsGameNotFoundException } from '../errors/exceptions/minrps-game-not-found.exceptions';
 
 describe('MinRpsGameService', () => {
   let service: MinRpsGameService;
@@ -61,11 +62,23 @@ describe('MinRpsGameService', () => {
 
   describe('deleteGame', () => {
     it('should delete a game by id', async () => {
+      const entity = new MinRpsGameEntity();
+      entity.id = 'test-id';
+
+      MINRPS_GAME_REPOSITORY_MOCK.findOne.mockResolvedValue(entity);
       MINRPS_GAME_REPOSITORY_MOCK.delete.mockResolvedValue(undefined);
 
       await service.deleteGame('test-id', 'test-request-id');
 
+      expect(MINRPS_GAME_REPOSITORY_MOCK.findOne).toHaveBeenCalledWith('test-id', 'test-request-id');
       expect(MINRPS_GAME_REPOSITORY_MOCK.delete).toHaveBeenCalledWith('test-id', 'test-request-id');
+    });
+
+    it('should throw when game does not exist', async () => {
+      MINRPS_GAME_REPOSITORY_MOCK.findOne.mockResolvedValue(null);
+
+      await expect(service.deleteGame('missing-id', 'test-request-id')).rejects.toThrow(MinRpsGameNotFoundException);
+      expect(MINRPS_GAME_REPOSITORY_MOCK.delete).not.toHaveBeenCalled();
     });
   });
 
@@ -145,6 +158,12 @@ describe('MinRpsGameService', () => {
       expect(result.id).toBe('test-id');
       expect(result.name).toBe('Test Game');
       expect(MINRPS_GAME_REPOSITORY_MOCK.findOne).toHaveBeenCalledWith('test-id', 'test-request-id');
+    });
+
+    it('should throw when game does not exist', async () => {
+      MINRPS_GAME_REPOSITORY_MOCK.findOne.mockResolvedValue(null);
+
+      await expect(service.getGame('test-id', 'test-request-id')).rejects.toThrow(MinRpsGameNotFoundException);
     });
 
     it('should map observer and player counts from match repository in getGame', async () => {

@@ -7,9 +7,9 @@ export class MinRpsGameNotFoundException extends MinRpsErrorDto {
     super(
       {
         errorCode: MinRpsErrorCode.Game.NotFound,
-        message: `minRPS game with ID ${gameId} not found`,
-        requestId: requestId,
+        requestId,
         statusCode: HttpStatus.NOT_FOUND,
+        properties: { gameId },
       },
       HttpStatus.NOT_FOUND,
     );
