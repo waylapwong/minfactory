@@ -62,23 +62,18 @@ describe('MinRpsGameService', () => {
 
   describe('deleteGame', () => {
     it('should delete a game by id', async () => {
-      const entity = new MinRpsGameEntity();
-      entity.id = 'test-id';
-
-      MINRPS_GAME_REPOSITORY_MOCK.findOne.mockResolvedValue(entity);
-      MINRPS_GAME_REPOSITORY_MOCK.delete.mockResolvedValue(undefined);
+      MINRPS_GAME_REPOSITORY_MOCK.delete.mockResolvedValue(true);
 
       await service.deleteGame('test-id', 'test-request-id');
 
-      expect(MINRPS_GAME_REPOSITORY_MOCK.findOne).toHaveBeenCalledWith('test-id', 'test-request-id');
       expect(MINRPS_GAME_REPOSITORY_MOCK.delete).toHaveBeenCalledWith('test-id', 'test-request-id');
     });
 
     it('should throw when game does not exist', async () => {
-      MINRPS_GAME_REPOSITORY_MOCK.findOne.mockResolvedValue(null);
+      MINRPS_GAME_REPOSITORY_MOCK.delete.mockResolvedValue(false);
 
       await expect(service.deleteGame('missing-id', 'test-request-id')).rejects.toThrow(MinRpsGameNotFoundException);
-      expect(MINRPS_GAME_REPOSITORY_MOCK.delete).not.toHaveBeenCalled();
+      expect(MINRPS_GAME_REPOSITORY_MOCK.delete).toHaveBeenCalledWith('missing-id', 'test-request-id');
     });
   });
 

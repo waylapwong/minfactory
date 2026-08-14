@@ -35,12 +35,10 @@ export class MinRpsGameService {
 
   public async deleteGame(id: string, requestId: string): Promise<void> {
     this.logger.debug(`START deleteGame(id: ${id})`, requestId);
-    const entity: MinRpsGameEntity | null = await this.gameRepository.findOne(id, requestId);
-    if (!entity) {
+    const deleted: boolean = await this.gameRepository.delete(id, requestId);
+    if (!deleted) {
       throw new MinRpsGameNotFoundException(id, requestId);
     }
-
-    await this.gameRepository.delete(id, requestId);
     this.logger.debug(`END deleteGame(...)`, requestId);
   }
 

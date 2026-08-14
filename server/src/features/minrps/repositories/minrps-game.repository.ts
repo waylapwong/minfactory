@@ -10,10 +10,11 @@ export class MinRpsGameRepository {
 
   constructor(@InjectRepository(MinRpsGameEntity) private readonly repository: Repository<MinRpsGameEntity>) {}
 
-  public async delete(id: string, requestId: string): Promise<void> {
+  public async delete(id: string, requestId: string): Promise<boolean> {
     this.logger.debug(`START delete(id: ${id})`, requestId);
-    await this.repository.delete({ id });
+    const result = await this.repository.delete({ id });
     this.logger.debug(`END delete(...)`, requestId);
+    return result.affected === 1;
   }
 
   public async findAll(requestId: string): Promise<MinRpsGameEntity[]> {

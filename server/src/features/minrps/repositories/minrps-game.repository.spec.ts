@@ -83,22 +83,18 @@ describe('MinRpsGameRepository', () => {
 
   describe('delete()', () => {
     it('should delete entity when found', async () => {
-      const entity = new MinRpsGameEntity();
-      entity.id = 'test-id';
+      MINRPS_GAME_TYPEORM_REPOSITORY_MOCK.delete.mockResolvedValue({ affected: 1 } as any);
 
-      MINRPS_GAME_TYPEORM_REPOSITORY_MOCK.findOne.mockResolvedValue(entity);
-      MINRPS_GAME_TYPEORM_REPOSITORY_MOCK.delete.mockResolvedValue({} as any);
+      const result = await repository.delete('test-id', 'test-request-id');
 
-      await repository.delete('test-id', 'test-request-id');
-
+      expect(result).toBe(true);
       expect(MINRPS_GAME_TYPEORM_REPOSITORY_MOCK.delete).toHaveBeenCalledWith({ id: 'test-id' });
     });
 
     it('should not throw when entity not found for deletion', async () => {
-      MINRPS_GAME_TYPEORM_REPOSITORY_MOCK.findOne.mockResolvedValue(null);
-      MINRPS_GAME_TYPEORM_REPOSITORY_MOCK.delete.mockResolvedValue({} as any);
+      MINRPS_GAME_TYPEORM_REPOSITORY_MOCK.delete.mockResolvedValue({ affected: 0 } as any);
 
-      await expect(repository.delete('non-existent-id', 'test-request-id')).resolves.toBeUndefined();
+      await expect(repository.delete('non-existent-id', 'test-request-id')).resolves.toBe(false);
       expect(MINRPS_GAME_TYPEORM_REPOSITORY_MOCK.delete).toHaveBeenCalledWith({ id: 'non-existent-id' });
     });
   });
