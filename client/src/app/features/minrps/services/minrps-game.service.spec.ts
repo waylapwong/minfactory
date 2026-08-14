@@ -1,3 +1,4 @@
+import { HttpErrorResponse, HttpStatusCode } from '@angular/common/http';
 import { provideZonelessChangeDetection } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { MinRpsGameDto } from '../../../core/generated';
@@ -7,6 +8,14 @@ import { MinRpsGameService } from './minrps-game.service';
 
 describe('MinRpsGameService', () => {
   let service: MinRpsGameService;
+
+  const createNotFoundError = (): HttpErrorResponse =>
+    new HttpErrorResponse({
+      status: HttpStatusCode.NotFound,
+      error: {
+        statusCode: HttpStatusCode.NotFound,
+      },
+    });
 
   beforeEach(() => {
     MINRPS_GAME_REPOSITORY_MOCK.create.calls.reset();
@@ -126,6 +135,24 @@ describe('MinRpsGameService', () => {
       expect(games[0].id).toBe('test-id-3');
       expect(games[1].id).toBe('test-id-1');
     });
+
+    it('should handle not found errors in the catch branch', async () => {
+      const mockDto: MinRpsGameDto = {
+        id: 'test-id',
+        name: 'Test Game',
+        createdAt: new Date().toISOString(),
+        observerCount: 0,
+        playerCount: 0,
+      };
+      MINRPS_GAME_REPOSITORY_MOCK.create.and.returnValue(Promise.resolve(mockDto));
+      MINRPS_GAME_REPOSITORY_MOCK.delete.and.returnValue(Promise.reject(createNotFoundError()));
+
+      await service.createGame('Test Game');
+      await service.deleteGame('test-id');
+
+      expect(MINRPS_GAME_REPOSITORY_MOCK.delete).toHaveBeenCalledWith('test-id');
+      expect(service.games().length).toBe(0);
+    });
   });
 
   describe('gameExistByID()', () => {
@@ -145,7 +172,7 @@ describe('MinRpsGameService', () => {
     });
 
     it('should return false if game does not exist', async () => {
-      MINRPS_GAME_REPOSITORY_MOCK.get.and.returnValue(Promise.reject(new Error('Not found')));
+      MINRPS_GAME_REPOSITORY_MOCK.get.and.returnValue(Promise.reject(createNotFoundError()));
 
       const exists = await service.gameExistByID('test-id');
 

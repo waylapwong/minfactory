@@ -3,6 +3,7 @@ export * from './min-poker-create-game-dto';
 export * from './min-poker-game-dto';
 export * from './min-poker-game-visibility';
 export * from './min-rps-create-game-dto';
+export * from './min-rps-error-dto';
 export * from './min-rps-game-dto';
 export * from './min-rps-move';
 export * from './min-rps-play-dto';

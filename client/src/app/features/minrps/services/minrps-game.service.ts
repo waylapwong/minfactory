@@ -1,5 +1,6 @@
+import { HttpErrorResponse, HttpStatusCode } from '@angular/common/http';
 import { Injectable, Signal, WritableSignal, computed, signal } from '@angular/core';
-import { MinRpsGameDto } from '../../../core/generated';
+import { MinRpsErrorDto, MinRpsGameDto } from '../../../core/generated';
 import { LoggerService } from '../../../core/logging/services/logger.service';
 import { MinRpsDomainMapper } from '../mapper/minrps-domain.mapper';
 import { MinRpsDtoMapper } from '../mapper/minrps-dto.mapper';
@@ -27,7 +28,16 @@ export class MinRpsGameService {
   }
 
   public async deleteGame(id: string): Promise<void> {
-    await this.gameRepository.delete(id);
+    try {
+      await this.gameRepository.delete(id);
+    } catch (error: unknown) {
+      if (error instanceof HttpErrorResponse) {
+        const errorDto: MinRpsErrorDto = error.error;
+        if (errorDto.statusCode === HttpStatusCode.NotFound) {
+          this.logger.error(`Game with ID ${id} does not exist.`);
+        }
+      }
+    }
     this.cachedGames.update((games: MinRpsGame[]) =>
       games
         .filter((game: MinRpsGame) => game.id !== id)
@@ -40,7 +50,12 @@ export class MinRpsGameService {
       const dto: MinRpsGameDto = await this.gameRepository.get(id);
       return !!dto;
     } catch (error: unknown) {
-      this.logger.error(String(error));
+      if (error instanceof HttpErrorResponse) {
+        const errorDto: MinRpsErrorDto = error.error;
+        if (errorDto.statusCode === HttpStatusCode.NotFound) {
+          this.logger.error(`Game with ID ${id} does not exist.`);
+        }
+      }
       return false;
     }
   }

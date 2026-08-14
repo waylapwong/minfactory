@@ -11,7 +11,10 @@
  */
 
 
-export interface MinRpsCreateGameDto { 
-    name: string;
+export interface MinRpsErrorDto { 
+    errorCode: string;
+    requestId: string;
+    statusCode: number;
+    properties?: { [key: string]: any; };
 }
 
