@@ -12,9 +12,9 @@
     "lint:ci": "ng lint",
     "ng": "ng",
     "prebuild": "npm --prefix ../shared run build",
-    "start": "ng serve --open --watch",
-    "test": "ng test --code-coverage --watch",
-    "test:ci": "ng test --browsers=ChromeHeadless --watch=false"
+    "start": "npm run prebuild && ng serve --open --watch",
+    "test": "npm run prebuild && ng test --code-coverage --watch",
+    "test:ci": "npm run prebuild && ng test --browsers=ChromeHeadless --watch=false"
   },
   "dependencies": {
     "@angular/animations": "^20.3.1",

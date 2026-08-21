@@ -13,11 +13,11 @@
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
     "lint:ci": "eslint \"{src,apps,libs,test}/**/*.ts\"",
     "prebuild": "npm --prefix ../shared run build",
-    "start": "nest start --watch",
+    "start": "npm run prebuild && nest start --watch",
     "start:prod": "node dist/src/main.js",
-    "test": "jest --config ./jest.config.json --colors --coverage --watchAll",
-    "test:ci": "jest --config ./jest.config.json --ci --colors",
-    "test:e2e": "jest --config ./test/jest-e2e.json"
+    "test": "npm run prebuild && jest --config ./jest.config.json --colors --coverage --watchAll",
+    "test:ci": "npm run prebuild && jest --config ./jest.config.json --ci --colors",
+    "test:e2e": "npm run prebuild && jest --config ./test/jest-e2e.json"
   },
   "dependencies": {
     "@minfactory/shared": "file:../shared",
