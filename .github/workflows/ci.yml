@@ -9,8 +9,34 @@ permissions:
   actions: write
 
 jobs:
+  shared:
+    name: CI Shared
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+      - name: Set up NodeJS
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: shared/package-lock.json
+      - name: Install Dependencies
+        run: npm ci
+        working-directory: shared
+      - name: Build
+        run: npm run build
+        working-directory: shared
+      - name: Upload Shared Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: shared-dist
+          path: shared/dist
+          retention-days: 7
+
   integration:
     name: CI ${{ matrix.app.name }}
+    needs: shared
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -50,11 +76,14 @@ jobs:
             libgtk-3-0 \
             fonts-liberation
       - name: Install Dependencies
-        run: |
-          npm ci --prefix ../shared
-          npm ci
-      - name: Build Shared Package
-        run: npm run build --prefix ../shared
+        run: npm ci --prefix ../shared
+      - name: Download Shared Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: shared-dist
+          path: shared/dist
+      - name: Install App Dependencies
+        run: npm ci
       - name: Lint
         run: npm run lint:ci
       - name: Test

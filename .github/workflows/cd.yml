@@ -33,8 +33,36 @@ jobs:
         run: |
           git remote remove heroku || true
           git remote add heroku "$HEROKU_GIT_URL"
+      - name: Prepare Backend Deploy Context
+        run: |
+          mkdir -p "${{ runner.temp }}/heroku-backend"
+          cp -R server "${{ runner.temp }}/heroku-backend/server"
+          cp -R shared "${{ runner.temp }}/heroku-backend/shared"
+          cat > "${{ runner.temp }}/heroku-backend/package.json" <<'EOF'
+          {
+            "name": "minfactory-backend-deploy",
+            "private": true,
+            "engines": {
+              "node": "24.14.0"
+            },
+            "scripts": {
+              "build": "npm ci --prefix shared && npm run build --prefix shared && npm ci --prefix server && npm run build --prefix server",
+              "start": "npm --prefix server run start:prod"
+            }
+          }
+          EOF
+          cat > "${{ runner.temp }}/heroku-backend/Procfile" <<'EOF'
+          web: npm --prefix server run start:prod
+          EOF
+          git -C "${{ runner.temp }}/heroku-backend" init
+          git -C "${{ runner.temp }}/heroku-backend" config user.name "github-actions[bot]"
+          git -C "${{ runner.temp }}/heroku-backend" config user.email "github-actions[bot]@users.noreply.github.com"
+          git -C "${{ runner.temp }}/heroku-backend" add .
+          git -C "${{ runner.temp }}/heroku-backend" commit -m "Deploy backend"
       - name: Deploy Backend
-        run: git push heroku `git subtree split --prefix server HEAD`:main --force
+        run: git -C "${{ runner.temp }}/heroku-backend" push "$HEROKU_GIT_URL" HEAD:main --force
+        env:
+          HEROKU_GIT_URL: ${{ secrets.HEROKU_GIT_URL }}
 
   deployment-frontend:
     name: CD Frontend
