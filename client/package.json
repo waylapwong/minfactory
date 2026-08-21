@@ -11,9 +11,10 @@
     "lint": "ng lint",
     "lint:ci": "ng lint",
     "ng": "ng",
-    "start": "ng serve --open --watch",
-    "test": "ng test --code-coverage --watch",
-    "test:ci": "ng test --browsers=ChromeHeadless --watch=false"
+    "prebuild": "npm --prefix ../shared run build",
+    "start": "npm run prebuild && ng serve --open --watch",
+    "test": "npm run prebuild && ng test --code-coverage --watch",
+    "test:ci": "npm run prebuild && ng test --browsers=ChromeHeadless --watch=false"
   },
   "dependencies": {
     "@angular/animations": "^20.3.1",
@@ -24,6 +25,7 @@
     "@angular/forms": "^20.3.0",
     "@angular/platform-browser": "^20.3.0",
     "@angular/router": "^20.3.0",
+    "@minfactory/shared": "file:../shared",
     "@ngx-translate/core": "^17.0.0",
     "@tailwindcss/postcss": "^4.1.13",
     "firebase": "^12.10.0",

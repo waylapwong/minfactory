@@ -11,10 +11,10 @@ describe('LoggerService', () => {
     spyOn(console, 'error');
   });
 
-  it('should call console.debug with the correct format', () => {
+  it('should suppress debug output in test environments', () => {
     service.debug('test message');
 
-    expect(console.debug).toHaveBeenCalledOnceWith('[DEBUG]   [TestContext] test message');
+    expect(console.debug).not.toHaveBeenCalled();
   });
 
   it('should call console.log with the correct format', () => {

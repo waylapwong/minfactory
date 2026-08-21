@@ -1,3 +1,4 @@
+import { MinRpsMatchJoinPayload } from '@minfactory/shared';
 import {
   ConnectedSocket,
   MessageBody,
@@ -13,7 +14,6 @@ import { MinRpsMatchCommand } from '../models/enums/minrps-match-command.enum';
 import { MinRpsMatchEvent } from '../models/enums/minrps-match-event.enum';
 import { MinRpsMove } from '../models/enums/minrps-move.enum';
 import { MinRpsMatchConnectedPayload } from '../models/payloads/minrps-match-connected.payload';
-import type { MinRpsMatchJoinPayload } from '../models/payloads/minrps-match-join.payload';
 import type { MinRpsMatchLeavePayload } from '../models/payloads/minrps-match-leave.payload';
 import { MinRpsMatchPlayPayload } from '../models/payloads/minrps-match-play.payload';
 import { MinRpsMatchSeatPayload } from '../models/payloads/minrps-match-seat.payload';

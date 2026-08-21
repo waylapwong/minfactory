@@ -18,6 +18,7 @@
     "^src/(.*)$": "<rootDir>/$1"
   },
   "rootDir": "./src",
+  "setupFilesAfterEnv": ["<rootDir>/../test-console-silencer.ts"],
   "testEnvironment": "node",
   "testRegex": ".*\\.spec\\.ts$",
   "transform": {
