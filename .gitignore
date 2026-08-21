@@ -13,6 +13,10 @@ server/docs
 server/node_modules
 server/.env
 
+# SHARED IGNORES
+shared/dist
+shared/node_modules
+
 # VISUAL STUDIO CODE
 .vscode/
 .history/
