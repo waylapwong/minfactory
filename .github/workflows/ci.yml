@@ -30,6 +30,7 @@ jobs:
           node-version: 24
           cache: npm
           cache-dependency-path: |
+            shared/package-lock.json
             ${{ matrix.app.path }}/package-lock.json
       - name: Set up Chrome
         if: matrix.app.name == 'Frontend'
@@ -49,7 +50,11 @@ jobs:
             libgtk-3-0 \
             fonts-liberation
       - name: Install Dependencies
-        run: npm ci
+        run: |
+          npm ci --prefix ../shared
+          npm ci
+      - name: Build Shared Package
+        run: npm run build --prefix ../shared
       - name: Lint
         run: npm run lint:ci
       - name: Test

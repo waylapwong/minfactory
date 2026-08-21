@@ -63,11 +63,14 @@ jobs:
         with:
           node-version: 24
           cache: npm
-          cache-dependency-path: client/package-lock.json
+          cache-dependency-path: |
+            shared/package-lock.json
+            client/package-lock.json
       - name: Build Frontend (manual)
         if: github.event_name == 'workflow_dispatch'
         working-directory: client
         run: |
+          npm ci --prefix ../shared
           npm ci
           npm run build
       - name: Set up FTP
