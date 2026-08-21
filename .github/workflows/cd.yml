@@ -99,6 +99,7 @@ jobs:
         working-directory: client
         run: |
           npm ci --prefix ../shared
+          npm run build --prefix ../shared
           npm ci
           npm run build
       - name: Set up FTP
