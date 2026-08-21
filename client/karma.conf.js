@@ -9,6 +9,7 @@ module.exports = function (config) {
       require('karma-coverage'),
       require('karma-spec-reporter'),
     ],
+    files: [{ pattern: 'test-console-silencer.js', watched: false, included: true, served: true }],
     client: {
       jasmine: {},
     },

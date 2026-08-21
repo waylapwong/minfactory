@@ -1,4 +1,5 @@
 import { Injectable, Signal, WritableSignal, computed, signal } from '@angular/core';
+import { MinRpsMatchJoinPayload } from '@minfactory/shared';
 import { MinRpsMove } from '../../../core/generated';
 import { LoggerService } from '../../../core/logging/services/logger.service';
 import { MinRpsDomainMapper } from '../mapper/minrps-domain.mapper';
@@ -7,7 +8,6 @@ import { MinRpsGame } from '../models/domains/minrps-game';
 import { MinRpsMatchCommand } from '../models/enums/minrps-match-command.enum';
 import { MinRpsMatchEvent } from '../models/enums/minrps-match-event.enum';
 import { MinRpsMatchConnectedPayload } from '../models/payloads/minrps-match-connected.payload';
-import { MinRpsMatchJoinPayload } from '../models/payloads/minrps-match-join.payload';
 import { MinRpsMatchLeavePayload } from '../models/payloads/minrps-match-leave.payload';
 import { MinRpsMatchPlayPayload } from '../models/payloads/minrps-match-play.payload';
 import { MinRpsMatchSeatPayload } from '../models/payloads/minrps-match-seat.payload';
@@ -26,9 +26,9 @@ export class MinRpsMultiplayerService {
 
   private readonly cachedGame: WritableSignal<MinRpsGame> = signal(new MinRpsGame());
   private readonly cachedPlayerId: WritableSignal<string> = signal('');
+  private readonly logger: LoggerService = new LoggerService('MinRpsMultiplayerService');
 
   private isSubscribed: boolean = false;
-  private readonly logger: LoggerService = new LoggerService('MinRpsMultiplayerService');
 
   constructor(private readonly socketRepository: MinRpsSocketRepository) {}
 

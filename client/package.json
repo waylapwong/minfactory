@@ -11,6 +11,7 @@
     "lint": "ng lint",
     "lint:ci": "ng lint",
     "ng": "ng",
+    "prebuild": "npm --prefix ../shared run build",
     "start": "ng serve --open --watch",
     "test": "ng test --code-coverage --watch",
     "test:ci": "ng test --browsers=ChromeHeadless --watch=false"
@@ -24,6 +25,7 @@
     "@angular/forms": "^20.3.0",
     "@angular/platform-browser": "^20.3.0",
     "@angular/router": "^20.3.0",
+    "@minfactory/shared": "file:../shared",
     "@ngx-translate/core": "^17.0.0",
     "@tailwindcss/postcss": "^4.1.13",
     "firebase": "^12.10.0",
