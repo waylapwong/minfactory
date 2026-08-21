@@ -2,6 +2,10 @@ export class LoggerService {
   constructor(private readonly context: string) {}
 
   public debug(message: string): void {
+    if (this.isTestEnvironment()) {
+      return;
+    }
+
     console.debug(`[DEBUG]   [${this.context}] ${message}`);
   }
 
@@ -15,5 +19,9 @@ export class LoggerService {
 
   public warn(message: string): void {
     console.warn(`[WARN]    [${this.context}] ${message}`);
+  }
+
+  private isTestEnvironment(): boolean {
+    return typeof window !== 'undefined' && '__karma__' in window;
   }
 }
