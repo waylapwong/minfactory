@@ -17,10 +17,10 @@
   "types": "./dist/index.d.ts",
   "version": "0.0.0",
   "scripts": {
-    "clean": "rimraf dist",
+    "build": "npm run clean && npm run build:js && npm run build:types",
     "build:js": "tsup src/index.ts --format esm,cjs",
     "build:types": "tsc --emitDeclarationOnly",
-    "build": "npm run clean && npm run build:js && npm run build:types"
+    "clean": "rimraf dist"
   },
   "devDependencies": {
     "rimraf": "^6.1.3",
