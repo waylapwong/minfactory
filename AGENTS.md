@@ -63,7 +63,7 @@ Senior Fullstack Developer.
 * Tests für neue Business-Logik ergänzen.
 * Bestehende Mock-Strukturen verwenden.
 * Keine Inline-Mocks.
-* Nach jeder Änderung die betroffenen Tests ausführen (Client: `npm test` im Ordner `client/`, Server: `npm test` im Ordner `server/`) und den Linter für geänderte Dateien ausführen.
+* Nach jeder Änderung die betroffenen Tests ausführen (Client: `npm test:ci` im Ordner `client/`, Server: `npm test:ci` im Ordner `server/`) und den Linter für geänderte Dateien ausführen.
 * Wenn Tests oder Linter fehlschlagen, die Ursache beheben, erneut ausführen und das Ergebnis in einem Satz melden. Wenn sie nicht ausgeführt werden können, dies explizit angeben.
 
 ## Agent Memory
