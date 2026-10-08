@@ -12,7 +12,6 @@
 ```bash
 cd client/ && npm install
 cd server/ && npm install
-cd shared/ && npm install
 ```
 
 ## Start

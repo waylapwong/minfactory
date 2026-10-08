@@ -1,4 +1,3 @@
-import { MinRpsMatchJoinPayload } from '@minfactory/shared';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { Socket } from 'socket.io';
 import { GameRuleException } from '../../../shared/exceptions/game-rule.exception';
@@ -7,6 +6,7 @@ import { MinRpsGame } from '../models/domains/minrps-game';
 import { MinRpsPlayer } from '../models/domains/minrps-player';
 import { MinRpsMove } from '../models/enums/minrps-move.enum';
 import { MinRpsMatchConnectedPayload } from '../models/payloads/minrps-match-connected.payload';
+import { MinRpsMatchJoinPayload } from '../models/payloads/minrps-match-join.payload';
 import { MinRpsMatchLeavePayload } from '../models/payloads/minrps-match-leave.payload';
 import { MinRpsMatchPlayPayload } from '../models/payloads/minrps-match-play.payload';
 import { MinRpsMatchSeatPayload } from '../models/payloads/minrps-match-seat.payload';
