@@ -4,6 +4,7 @@ import { AUTHENTICATION_GUARD_MOCK } from '../../../core/authentication/mocks/au
 import { AUTHENTICATION_SERVICE_MOCK } from '../../../core/authentication/mocks/authentication.service.mock';
 import { AuthenticationService } from '../../../core/authentication/services/authentication.service';
 import { MINPOKER_GAME_SERVICE_MOCK } from '../mocks/minpoker-game.service.mock';
+import { MinPokerCreateGameDto } from '../models/dtos/minpoker-create-game.dto';
 import { MinPokerGameDto } from '../models/dtos/minpoker-game.dto';
 import { MinPokerGameVisibility } from '../models/enums/minpoker-game-visibility.enum';
 import { MinPokerGameService } from '../services/minpoker-game.service';
@@ -89,7 +90,7 @@ describe('MinPokerGameController', () => {
 
   describe('create()', () => {
     it('should create a new game via service and return dto', async () => {
-      const dto = { name: 'New Table', visibility: MinPokerGameVisibility.Public };
+      const dto: MinPokerCreateGameDto = { name: 'New Table', visibility: MinPokerGameVisibility.Public };
 
       const fakeUser = { firebaseUid: 'fb-1', email: 'u@e.com' } as any;
       const result = await controller.create(dto, fakeUser, 'test-request-id');
