@@ -37,7 +37,6 @@ jobs:
         run: |
           mkdir -p "${{ runner.temp }}/heroku-backend"
           cp -R server "${{ runner.temp }}/heroku-backend/server"
-          cp -R shared "${{ runner.temp }}/heroku-backend/shared"
           cat > "${{ runner.temp }}/heroku-backend/package.json" <<'EOF'
           {
             "name": "minfactory-backend-deploy",
@@ -46,7 +45,7 @@ jobs:
               "node": "24.14.0"
             },
             "scripts": {
-              "build": "npm ci --include=dev --prefix shared && npm run build --prefix shared && npm ci --include=dev --prefix server && npm run build --prefix server",
+              "build": "npm ci --include=dev --prefix server && npm run build --prefix server",
               "start": "npm --prefix server run start:prod"
             }
           }
@@ -91,17 +90,11 @@ jobs:
         with:
           node-version: 24
           cache: npm
-          cache-dependency-path: |
-            shared/package-lock.json
-            client/package-lock.json
+          cache-dependency-path: client/package-lock.json
       - name: Build Frontend (manual)
         if: github.event_name == 'workflow_dispatch'
         working-directory: client
-        run: |
-          npm ci --prefix ../shared
-          npm run build --prefix ../shared
-          npm ci
-          npm run build
+        run: npm ci && npm run build
       - name: Set up FTP
         run: |
           sudo apt-get update

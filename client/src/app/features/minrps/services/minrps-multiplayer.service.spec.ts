@@ -201,6 +201,7 @@ describe('MinRpsMultiplayerService', () => {
   describe('onMatchConnectedEvent', () => {
     it('should set playerId and call joinGame on connected event', () => {
       const connectedPayload: MinRpsMatchConnectedPayload = { playerId: 'player-42' } as MinRpsMatchConnectedPayload;
+      service.setGameId('match-42');
 
       service.connect();
 
@@ -208,7 +209,13 @@ describe('MinRpsMultiplayerService', () => {
       connectedCb(connectedPayload);
 
       expect(service.playerId()).toBe('player-42');
-      expect(MINRPS_SOCKET_REPOSITORY_MOCK.emit).toHaveBeenCalledWith(MinRpsMatchCommand.Join, jasmine.any(Object));
+      expect(MINRPS_SOCKET_REPOSITORY_MOCK.emit).toHaveBeenCalledWith(
+        MinRpsMatchCommand.Join,
+        jasmine.objectContaining({
+          matchId: 'match-42',
+          playerId: 'player-42',
+        }),
+      );
     });
   });
 
