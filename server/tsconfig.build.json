@@ -1,4 +1,7 @@
 {
+  "compilerOptions": {
+    "rootDir": "."
+  },
   "exclude": ["node_modules", "test", "dist", "docs", "**/*spec.ts", "**/*mock.ts"],
   "extends": "./tsconfig.json"
 }

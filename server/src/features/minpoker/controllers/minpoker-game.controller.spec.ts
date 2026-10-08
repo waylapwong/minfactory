@@ -90,7 +90,7 @@ describe('MinPokerGameController', () => {
 
   describe('create()', () => {
     it('should create a new game via service and return dto', async () => {
-      const dto: MinPokerCreateGameDto = { name: 'New Table', visibility: MinPokerGameVisibility.Public } as MinPokerCreateGameDto;
+      const dto: MinPokerCreateGameDto = { name: 'New Table', visibility: MinPokerGameVisibility.Public };
 
       const fakeUser = { firebaseUid: 'fb-1', email: 'u@e.com' } as any;
       const result = await controller.create(dto, fakeUser, 'test-request-id');
