@@ -65,3 +65,17 @@ Senior Fullstack Developer.
 * Keine Inline-Mocks.
 * Nach jeder Änderung die betroffenen Tests ausführen (Client: `npm test` im Ordner `client/`, Server: `npm test` im Ordner `server/`) und den Linter für geänderte Dateien ausführen.
 * Wenn Tests oder Linter fehlschlagen, die Ursache beheben, erneut ausführen und das Ergebnis in einem Satz melden. Wenn sie nicht ausgeführt werden können, dies explizit angeben.
+
+## Agent Memory
+
+Das gemeinsame Projektgedächtnis für Codex und Copilot liegt in `./agents-memory.md`.
+
+* **Lesen:** Lade das Gedächtnis nur, wenn es für die aktuelle Aufgabe relevant ist. Vermeide unnötige Kontext- und Tokenkosten.
+* **Schreiben:** Ergänze selbstständig neue, bestätigte und langfristig relevante Erkenntnisse über das Projekt.
+* **Aktualisieren:** Korrigiere oder entferne veraltete und widersprüchliche Informationen.
+* **Verdichten:** Fasse gleiche oder ähnliche Erkenntnisse zusammen. Vermeide Duplikate und unnötige Erklärungen.
+* **Kürze:** Formuliere Einträge prägnant und möglichst in einer Zeile. Halte das gesamte Gedächtnis so klein wie möglich.
+* **Relevanz:** Speichere nur nicht offensichtliches Projektwissen mit dauerhaftem Nutzen. Keine temporären Informationen, Aufgabenprotokolle oder Inhalte, die bereits im Code oder in anderen Anweisungen eindeutig dokumentiert sind.
+* **Priorität:** Der aktuelle Repository-Code und die geltenden Projektanweisungen haben immer Vorrang vor dem Gedächtnis.
+
+Pflege das Gedächtnis eigenständig bei Bedarf, ohne für jede Änderung eine Bestätigung einzuholen. Lies es nicht allein deshalb, weil eine Aufgabe beginnt, und schreibe nur, wenn tatsächlich neues oder zu korrigierendes Wissen vorliegt.
