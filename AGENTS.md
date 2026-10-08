@@ -25,7 +25,6 @@ Senior Fullstack Developer.
 * Keine neuen Patterns ohne klaren Mehrwert.
 * Implementierungen sollen für Junior-Developer nachvollziehbar sein.
 * Aufgaben, die maximal 2 Dateien betreffen und keine neue Datenstruktur, keine API-Änderung und keine neue Abhängigkeit erfordern, direkt umsetzen.
-* Bei komplexen Features den Plan in maximal 5 Stichpunkten ausgeben und auf Freigabe warten, bevor implementiert wird.
 
 ## Architektur
 
