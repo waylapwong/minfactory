@@ -15,10 +15,12 @@
     "outDir": "./dist",
     "removeComments": true,
     "resolvePackageJsonExports": true,
+    "rootDir": ".",
     "skipLibCheck": true,
     "sourceMap": true,
     "strictBindCallApply": false,
     "strictNullChecks": true,
+    "strictPropertyInitialization": false,
     "target": "ES2023",
     "types": ["node", "jest"]
   }
