@@ -1,8 +1,8 @@
 import { Body, Controller, Delete, Get, Headers, HttpCode, Param, ParseUUIDPipe, Post, Query, UseGuards } from '@nestjs/common';
+import { AuthorizationGuard, Can } from '@nestjs/authorization';
 import { ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
-import { FirebaseUser } from '../../../core/authentication/decorators/firebase-user.decorator';
+import { User } from '../../../core/authentication/decorators/user.decorator';
 import { AuthenticationGuard } from '../../../core/authentication/guards/authentication.guard';
-import type { FirebaseUserDto } from '../../../core/authentication/models/firebase-user.dto';
 import { LoggerService } from '../../../core/logging/services/logger.service';
 import { API_200 } from '../../../shared/decorators/api-200.decorator';
 import { API_201 } from '../../../shared/decorators/api-201.decorator';
@@ -15,6 +15,9 @@ import { API_500 } from '../../../shared/decorators/api-500.decorator';
 import { API_PARAM_ID } from '../../../shared/decorators/api-param-id.decorator';
 import { API_HEADER_REQUEST_ID } from '../../../shared/decorators/api-request-id.decorator';
 import { MinApp } from '../../../shared/enums/minapp.enum';
+import { MinFactoryUser } from '../../minfactory/models/domains/minfactory-user';
+import { MinFactoryUserGuard } from '../../minfactory/guards/minfactory-user.guard';
+import { MinFactoryRolePolicy } from '../../minfactory/policies/minfactory-role.policy';
 import { MinPokerCreateGameDto } from '../models/dtos/minpoker-create-game.dto';
 import { MinPokerGameDto } from '../models/dtos/minpoker-game.dto';
 import { MinPokerGameVisibility } from '../models/enums/minpoker-game-visibility.enum';
@@ -22,7 +25,8 @@ import { MinPokerGameService } from '../services/minpoker-game.service';
 
 @Controller('minpoker/games')
 @ApiTags(MinApp.MinPoker)
-@UseGuards(AuthenticationGuard)
+@UseGuards(AuthenticationGuard, MinFactoryUserGuard, AuthorizationGuard)
+@Can(MinFactoryRolePolicy, 'user')
 export class MinPokerGameController {
   private readonly logger: LoggerService = new LoggerService(MinPokerGameController.name);
 
@@ -40,12 +44,12 @@ export class MinPokerGameController {
   @API_404()
   @API_500()
   public async delete(
-    @FirebaseUser() firebaseUser: FirebaseUserDto,
+    @User() user: MinFactoryUser,
     @Headers('X-Request-Id') requestId: string,
     @Param('id', new ParseUUIDPipe()) id: string,
   ): Promise<void> {
-    this.logger.debug(`START delete(id: ${id}, firebaseUser: ${firebaseUser.uid})`, requestId);
-    await this.gameService.deleteGame(id, firebaseUser, requestId);
+    this.logger.debug(`START delete(id: ${id}, userId: ${user.id})`, requestId);
+    await this.gameService.deleteGame(id, user, requestId);
     this.logger.debug(`END delete(...)`, requestId);
   }
 
@@ -68,12 +72,12 @@ export class MinPokerGameController {
   @API_404()
   @API_500()
   public async getAll(
-    @FirebaseUser() firebaseUser: FirebaseUserDto,
+    @User() user: MinFactoryUser,
     @Headers('X-Request-Id') requestId: string,
     @Query('visibility') visibility: MinPokerGameVisibility,
   ): Promise<MinPokerGameDto[]> {
-    this.logger.debug(`START getAll(firebaseUser: ${firebaseUser.uid}, visibility: ${visibility})`, requestId);
-    const response: MinPokerGameDto[] = await this.gameService.getAllGames(firebaseUser, visibility, requestId);
+    this.logger.debug(`START getAll(userId: ${user.id}, visibility: ${visibility})`, requestId);
+    const response: MinPokerGameDto[] = await this.gameService.getAllGames(user, visibility, requestId);
     this.logger.debug(`END getAll(...)`, requestId);
     return response;
   }
@@ -90,11 +94,11 @@ export class MinPokerGameController {
   @API_500()
   public async create(
     @Body() dto: MinPokerCreateGameDto,
-    @FirebaseUser() firebaseUser: FirebaseUserDto,
+    @User() user: MinFactoryUser,
     @Headers('X-Request-Id') requestId: string,
   ): Promise<MinPokerGameDto> {
-    this.logger.debug(`START create(dto: ${JSON.stringify(dto)}, firebaseUser: ${firebaseUser.uid})`, requestId);
-    const response: MinPokerGameDto = await this.gameService.createGame(dto, firebaseUser, requestId);
+    this.logger.debug(`START create(dto: ${JSON.stringify(dto)}, userId: ${user.id})`, requestId);
+    const response: MinPokerGameDto = await this.gameService.createGame(dto, user, requestId);
     this.logger.debug(`END create(...)`, requestId);
     return response;
   }

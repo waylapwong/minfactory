@@ -1,8 +1,9 @@
 import { Controller, Delete, Get, Headers, HttpCode, Post, UseGuards } from '@nestjs/common';
+import { Can } from '@nestjs/authorization';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
-import { FirebaseUser } from '../../../core/authentication/decorators/firebase-user.decorator';
+import { AuthorizationGuard } from '@nestjs/authorization';
 import { AuthenticationGuard } from '../../../core/authentication/guards/authentication.guard';
-import type { FirebaseUserDto } from '../../../core/authentication/models/firebase-user.dto';
+import { User } from '../../../core/authentication/decorators/user.decorator';
 import { LoggerService } from '../../../core/logging/services/logger.service';
 import { API_200 } from '../../../shared/decorators/api-200.decorator';
 import { API_201 } from '../../../shared/decorators/api-201.decorator';
@@ -13,12 +14,18 @@ import { API_409 } from '../../../shared/decorators/api-409.decorator';
 import { API_500 } from '../../../shared/decorators/api-500.decorator';
 import { API_HEADER_REQUEST_ID } from '../../../shared/decorators/api-request-id.decorator';
 import { MinApp } from '../../../shared/enums/minapp.enum';
+import { AllowUnregisteredUser } from '../decorators/allow-unregistered-user.decorator';
+import { MinFactoryUser } from '../models/domains/minfactory-user';
 import { MinFactoryUserDto } from '../models/dtos/minfactory-user.dto';
+import { MinFactoryUserGuard } from '../guards/minfactory-user.guard';
+import { MinFactoryRolePolicy } from '../policies/minfactory-role.policy';
 import { MinFactoryUserService } from '../services/minfactory-user.service';
 import { API_400 } from '../../../shared/decorators/api-400.decorator';
 
 @Controller('minfactory/users')
 @ApiTags(MinApp.MinFactory)
+@UseGuards(AuthenticationGuard, MinFactoryUserGuard, AuthorizationGuard)
+@Can(MinFactoryRolePolicy, 'user')
 export class MinFactoryUserController {
   private readonly logger: LoggerService = new LoggerService(MinFactoryUserController.name);
 
@@ -26,7 +33,6 @@ export class MinFactoryUserController {
 
   @Delete('me')
   @HttpCode(204)
-  @UseGuards(AuthenticationGuard)
   @ApiOperation({ operationId: 'deleteMinFactoryUserMe' })
   @API_HEADER_REQUEST_ID()
   @API_204()
@@ -34,13 +40,12 @@ export class MinFactoryUserController {
   @API_401()
   @API_404()
   @API_500()
-  public async deleteMe(@FirebaseUser() user: FirebaseUserDto, @Headers('X-Request-Id') requestId: string): Promise<void> {
+  public async deleteMe(@User() user: MinFactoryUser, @Headers('X-Request-Id') requestId: string): Promise<void> {
     this.logger.debug(`Incoming request DELETE /minfactory/users/me`, requestId);
     return await this.userService.deleteMe(user, requestId);
   }
 
   @Get('me')
-  @UseGuards(AuthenticationGuard)
   @ApiOperation({ operationId: 'getMinFactoryUserMe' })
   @API_HEADER_REQUEST_ID()
   @API_200({ type: MinFactoryUserDto })
@@ -48,22 +53,22 @@ export class MinFactoryUserController {
   @API_401()
   @API_404()
   @API_500()
-  public async getMe(@FirebaseUser() user: FirebaseUserDto, @Headers('X-Request-Id') requestId: string): Promise<MinFactoryUserDto> {
+  public getMe(@User() user: MinFactoryUser, @Headers('X-Request-Id') requestId: string): MinFactoryUserDto {
     this.logger.debug(`Incoming request GET /minfactory/users/me`, requestId);
-    return await this.userService.getMe(user, requestId);
+    return this.userService.getMe(user);
   }
 
   @Post()
   @HttpCode(201)
-  @UseGuards(AuthenticationGuard)
   @ApiOperation({ operationId: 'createMinFactoryUser' })
+  @AllowUnregisteredUser()
   @API_HEADER_REQUEST_ID()
   @API_201({ type: MinFactoryUserDto })
   @API_400()
   @API_401()
   @API_409()
   @API_500()
-  public async create(@FirebaseUser() user: FirebaseUserDto, @Headers('X-Request-Id') requestId: string): Promise<MinFactoryUserDto> {
+  public async create(@User() user: MinFactoryUser, @Headers('X-Request-Id') requestId: string): Promise<MinFactoryUserDto> {
     this.logger.debug(`Incoming request POST /minfactory/users`, requestId);
     return await this.userService.createUser(user, requestId);
   }

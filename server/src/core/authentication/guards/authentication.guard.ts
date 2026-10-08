@@ -27,7 +27,7 @@ export class AuthenticationGuard implements CanActivate {
       throw new UnauthorizedException('Firebase token is missing required claims');
     }
 
-    (request as AuthenticatedRequest).firebaseUser = { uid: firebaseUid, email };
+    (request as AuthenticatedRequest).firebaseIdentity = { uid: firebaseUid, email };
 
     return true;
   }

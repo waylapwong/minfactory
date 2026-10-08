@@ -27,7 +27,7 @@ describe('AuthenticationGuard', () => {
     jest.clearAllMocks();
   });
 
-  it('should allow request and attach firebaseUser when token is valid', async () => {
+  it('should allow request and attach Firebase identity when token is valid', async () => {
     const context = createExecutionContext('Bearer valid-token');
     AUTHENTICATION_SERVICE_MOCK.verifyFirebaseIdToken.mockResolvedValue({
       uid: 'firebase-uid-123',
@@ -40,7 +40,7 @@ describe('AuthenticationGuard', () => {
     expect(AUTHENTICATION_SERVICE_MOCK.verifyFirebaseIdToken).toHaveBeenCalledWith('valid-token');
 
     const request = context.switchToHttp().getRequest();
-    expect(request.firebaseUser).toEqual({
+    expect(request.firebaseIdentity).toEqual({
       uid: 'firebase-uid-123',
       email: 'user@example.com',
     });

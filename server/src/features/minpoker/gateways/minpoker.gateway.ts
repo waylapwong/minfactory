@@ -10,6 +10,7 @@ import {
 import { Server, Socket } from 'socket.io';
 import { AuthenticationService } from '../../../core/authentication/services/authentication.service';
 import { LoggerService } from '../../../core/logging/services/logger.service';
+import { MinFactoryUserService } from '../../minfactory/services/minfactory-user.service';
 import { Namespace } from '../../../shared/enums/namespace.enum';
 import { MinPokerJoinCommand } from '../models/commands/minpoker-join.command';
 import { MinPokerLeaveCommand } from '../models/commands/minpoker-leave.command';
@@ -44,6 +45,7 @@ export class MinPokerGateway implements OnGatewayConnection, OnGatewayDisconnect
 
   constructor(
     private readonly authenticationService: AuthenticationService,
+    private readonly userService: MinFactoryUserService,
     private readonly playerIdRepository: MinPokerPlayerIdRepository,
     private readonly tournamentService: MinPokerTournamentService,
   ) {}
@@ -113,7 +115,8 @@ export class MinPokerGateway implements OnGatewayConnection, OnGatewayDisconnect
         return;
       }
       const decodedFirebaseIdToken: DecodedIdToken = await this.authenticationService.verifyFirebaseIdToken(firebaseIdToken);
-      const event: MinPokerConnectedEvent = await this.tournamentService.handleConnectionCommand(clientSocket, decodedFirebaseIdToken.uid);
+      const user = await this.userService.findByFirebaseUid(decodedFirebaseIdToken.uid, '');
+      const event: MinPokerConnectedEvent = this.tournamentService.handleConnectionCommand(clientSocket, user);
       this.sendClientEvent(clientSocket, MinPokerEvent.MatchConnected, event);
     } catch (error: unknown) {
       this.logger.error(`MinPoker connection authentication failed: ${error instanceof Error ? error.message : String(error)}`);

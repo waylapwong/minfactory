@@ -13,11 +13,10 @@ export class MinFactoryUserRepository {
     private readonly repository: Repository<MinFactoryUserEntity>,
   ) {}
 
-  public async deleteByFirebaseUid(firebaseUid: string, requestId: string): Promise<void> {
-    this.logger.debug(`START deleteByFirebaseUid(firebaseUid: ${firebaseUid})`, requestId);
-    const entity: MinFactoryUserEntity = await this.findByFirebaseUid(firebaseUid, requestId);
-    await this.repository.remove(entity);
-    this.logger.debug(`END deleteByFirebaseUid(...)`, requestId);
+  public async deleteById(id: string, requestId: string): Promise<void> {
+    this.logger.debug(`START deleteById(id: ${id})`, requestId);
+    await this.repository.delete(id);
+    this.logger.debug(`END deleteById(...)`, requestId);
   }
 
   public async findByEmail(email: string, requestId: string): Promise<MinFactoryUserEntity> {
