@@ -85,7 +85,7 @@ describe('AuthenticationService', () => {
       const decodedToken = { uid: 'firebase-uid', email: 'user@example.com' };
       mockAuth.verifyIdToken.mockResolvedValue(decodedToken);
 
-      const result = await service.verifyFirebaseIdToken('test-token');
+      const result = await service.verifyIdToken('test-token');
 
       expect(mockAuth.verifyIdToken).toHaveBeenCalledWith('test-token');
       expect(result).toBe(decodedToken);

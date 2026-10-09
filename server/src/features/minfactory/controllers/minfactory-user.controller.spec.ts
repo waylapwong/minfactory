@@ -1,11 +1,15 @@
 import { ConflictException, NotFoundException } from '@nestjs/common';
+import { AuthorizationModule } from '@nestjs/authorization';
 import { Test, TestingModule } from '@nestjs/testing';
-import { AuthenticationGuard } from '../../../core/authentication/guards/authentication.guard';
+import { FirebaseGuard } from '../../../core/authentication/guards/firebase.guard';
 import { AUTHENTICATION_GUARD_MOCK } from '../../../core/authentication/mocks/authentication.guard.mock';
 import { AUTHENTICATION_SERVICE_MOCK } from '../../../core/authentication/mocks/authentication.service.mock';
-import { FirebaseUserDto } from '../../../core/authentication/models/firebase-user.dto';
 import { AuthenticationService } from '../../../core/authentication/services/authentication.service';
 import { MINFACTORY_USER_SERVICE_MOCK } from '../mocks/minfactory-user.service.mock';
+import { MinFactoryUser } from '../models/domains/minfactory-user';
+import { MinFactoryRole } from '../../../shared/enums/minfactory-role.enum';
+import { MinFactoryUserGuard } from '../guards/minfactory-user.guard';
+import { MinFactoryRolePolicy } from '../policies/minfactory-role.policy';
 import { MinFactoryUserDto } from '../models/dtos/minfactory-user.dto';
 import { MinFactoryUserService } from '../services/minfactory-user.service';
 import { MinFactoryUserController } from './minfactory-user.controller';
@@ -15,11 +19,14 @@ describe('MinFactoryUserController', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
+      imports: [AuthorizationModule.forRoot({ globalGuard: false })],
       controllers: [MinFactoryUserController],
       providers: [
         { provide: MinFactoryUserService, useValue: MINFACTORY_USER_SERVICE_MOCK },
-        { provide: AuthenticationGuard, useValue: AUTHENTICATION_GUARD_MOCK },
+        { provide: FirebaseGuard, useValue: AUTHENTICATION_GUARD_MOCK },
         { provide: AuthenticationService, useValue: AUTHENTICATION_SERVICE_MOCK },
+        MinFactoryUserGuard,
+        MinFactoryRolePolicy,
       ],
     }).compile();
 
@@ -31,10 +38,12 @@ describe('MinFactoryUserController', () => {
   });
 
   describe('deleteMe()', () => {
-    const user: FirebaseUserDto = {
-      uid: 'firebase-uid-123',
+    const user: MinFactoryUser = Object.assign(new MinFactoryUser(), {
+      firebaseUid: 'firebase-uid-123',
       email: 'user@example.com',
-    };
+      id: 'user-id',
+      role: MinFactoryRole.User,
+    });
 
     it('should call deleteMe on service with the given user', async () => {
       MINFACTORY_USER_SERVICE_MOCK.deleteMe.mockResolvedValue(undefined);
@@ -52,10 +61,12 @@ describe('MinFactoryUserController', () => {
   });
 
   describe('create()', () => {
-    const user: FirebaseUserDto = {
-      uid: 'firebase-uid-123',
+    const user: MinFactoryUser = Object.assign(new MinFactoryUser(), {
+      firebaseUid: 'firebase-uid-123',
       email: 'user@example.com',
-    };
+      id: 'user-id',
+      role: MinFactoryRole.User,
+    });
 
     it('should return user dto on success', async () => {
       const dto: MinFactoryUserDto = new MinFactoryUserDto();
@@ -78,28 +89,24 @@ describe('MinFactoryUserController', () => {
   });
 
   describe('getMe()', () => {
-    const user: FirebaseUserDto = {
-      uid: 'firebase-uid-123',
+    const user: MinFactoryUser = Object.assign(new MinFactoryUser(), {
+      firebaseUid: 'firebase-uid-123',
       email: 'user@example.com',
-    };
+      id: 'user-id',
+      role: MinFactoryRole.User,
+    });
 
-    it('should return user dto on success', async () => {
+    it('should return user dto on success', () => {
       const dto: MinFactoryUserDto = new MinFactoryUserDto();
       dto.email = 'user@example.com';
       dto.createdAt = new Date();
 
-      MINFACTORY_USER_SERVICE_MOCK.getMe.mockResolvedValue(dto);
+      MINFACTORY_USER_SERVICE_MOCK.getMe.mockReturnValue(dto);
 
-      const result = await userController.getMe(user, 'test-request-id');
+      const result = userController.getMe(user, 'test-request-id');
 
       expect(result).toBe(dto);
-      expect(MINFACTORY_USER_SERVICE_MOCK.getMe).toHaveBeenCalledWith(user, 'test-request-id');
-    });
-
-    it('should propagate NotFoundException from service', async () => {
-      MINFACTORY_USER_SERVICE_MOCK.getMe.mockRejectedValue(new NotFoundException());
-
-      await expect(userController.getMe(user, 'test-request-id')).rejects.toThrow(NotFoundException);
+      expect(MINFACTORY_USER_SERVICE_MOCK.getMe).toHaveBeenCalledWith(user);
     });
   });
 });

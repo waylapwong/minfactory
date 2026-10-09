@@ -1,6 +1,4 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { MinFactoryUserRepository } from '../../minfactory/repositories/minfactory-user.repository';
-import { MINFACTORY_USER_REPOSITORY_MOCK } from '../mocks/minfactory-user.repository.mock';
 import { MINPOKER_DECK_REPOSITORY_MOCK } from '../mocks/minpoker-deck.repository.mock';
 import { MINPOKER_GAME_REPOSITORY_MOCK } from '../mocks/minpoker-game.repository.mock';
 import { MINPOKER_MATCH_REPOSITORY_MOCK } from '../mocks/minpoker-match.repository.mock';
@@ -13,6 +11,8 @@ import { MinPokerGame } from '../models/domains/minpoker-game';
 import { MinPokerPlayer } from '../models/domains/minpoker-player';
 import { MinPokerGameStatus } from '../models/enums/minpoker-game-status.enum';
 import { MinFactoryUserEntity } from '../../minfactory/models/entities/minfactory-user.entity';
+import { MinFactoryUser } from '../../minfactory/models/domains/minfactory-user';
+import { MinFactoryRole } from '../../../shared/enums/minfactory-role.enum';
 import { MinPokerGameEntity } from '../models/entities/minpoker-game.entity';
 import { MinPokerDeckRepository } from '../repositories/minpoker-deck.repository';
 import { MinPokerGameRepository } from '../repositories/minpoker-game.repository';
@@ -37,7 +37,6 @@ describe('MinpokerTournamentService', () => {
         { provide: MinPokerMatchRepository, useValue: MINPOKER_MATCH_REPOSITORY_MOCK },
         { provide: MinPokerPlayerIdRepository, useValue: MINPOKER_PLAYER_ID_REPOSITORY_MOCK },
         { provide: MinPokerRoomSystem, useValue: MINPOKER_ROOM_SYSTEM_MOCK },
-        { provide: MinFactoryUserRepository, useValue: MINFACTORY_USER_REPOSITORY_MOCK },
       ],
     }).compile();
 
@@ -50,15 +49,14 @@ describe('MinpokerTournamentService', () => {
   });
 
   describe('handleConnectionCommand()', () => {
-    it('should register user id as player id for socket', async () => {
+    it('should register the loaded user id as player id for socket', () => {
       const socket = { data: {}, id: 'socket-1' } as any;
-      MINFACTORY_USER_REPOSITORY_MOCK.findByFirebaseUid.mockResolvedValue({ id: 'user-1' });
+      const user = Object.assign(new MinFactoryUser(), { id: 'user-1', role: MinFactoryRole.User });
 
-      const result = await service.handleConnectionCommand(socket, 'firebase-uid');
+      const result = service.handleConnectionCommand(socket, user);
 
       expect(result.playerId).toBe('user-1');
       expect(socket.data.playerId).toBe('user-1');
-      expect(MINFACTORY_USER_REPOSITORY_MOCK.findByFirebaseUid).toHaveBeenCalledWith('firebase-uid', '');
       expect(MINPOKER_PLAYER_ID_REPOSITORY_MOCK.save).toHaveBeenCalledWith('socket-1', 'user-1');
     });
   });

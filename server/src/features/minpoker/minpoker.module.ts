@@ -12,6 +12,7 @@ import { MinPokerGameService } from './services/minpoker-game.service';
 import { MinPokerTournamentService } from './services/minpoker-tournament.service';
 import { MinPokerRoomSystem } from './systems/minpoker-room.system';
 import { MinFactoryModule } from '../minfactory/minfactory.module';
+import { MinPokerGamePolicy } from './policies/minpoker-game.policy';
 
 @Module({
   imports: [TypeOrmModule.forFeature([MinPokerGameEntity]), MinFactoryModule],
@@ -19,6 +20,7 @@ import { MinFactoryModule } from '../minfactory/minfactory.module';
   providers: [
     MinPokerDeckRepository,
     MinPokerGameService,
+    MinPokerGamePolicy,
     MinPokerGameRepository,
     MinPokerMatchRepository,
     MinPokerPlayerIdRepository,

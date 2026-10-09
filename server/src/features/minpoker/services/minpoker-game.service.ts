@@ -1,9 +1,7 @@
-import { ForbiddenException, Injectable } from '@nestjs/common';
-import { FirebaseUserDto } from '../../../core/authentication/models/firebase-user.dto';
+import { Injectable } from '@nestjs/common';
+import { AuthorizationService } from '@nestjs/authorization';
 import { LoggerService } from '../../../core/logging/services/logger.service';
-import { MinFactoryRole } from '../../../shared/enums/minfactory-role.enum';
-import { MinFactoryUserEntity } from '../../minfactory/models/entities/minfactory-user.entity';
-import { MinFactoryUserRepository } from '../../minfactory/repositories/minfactory-user.repository';
+import { MinFactoryUser } from '../../minfactory/models/domains/minfactory-user';
 import { MinPokerDomainMapper } from '../mapper/minpoker-domain.mapper';
 import { MinPokerDtoMapper } from '../mapper/minpoker-dto.mapper';
 import { MinPokerEntityMapper } from '../mapper/minpoker-entity.mapper';
@@ -12,6 +10,7 @@ import { MinPokerCreateGameDto } from '../models/dtos/minpoker-create-game.dto';
 import { MinPokerGameDto } from '../models/dtos/minpoker-game.dto';
 import { MinPokerGameEntity } from '../models/entities/minpoker-game.entity';
 import { MinPokerGameVisibility } from '../models/enums/minpoker-game-visibility.enum';
+import { MinPokerGamePolicy } from '../policies/minpoker-game.policy';
 import { MinPokerGameRepository } from '../repositories/minpoker-game.repository';
 
 @Injectable()
@@ -20,17 +19,15 @@ export class MinPokerGameService {
 
   constructor(
     private readonly gameRepository: MinPokerGameRepository,
-    private readonly userRepository: MinFactoryUserRepository,
+    private readonly authorizationService: AuthorizationService,
   ) {}
 
-  public async createGame(dto: MinPokerCreateGameDto, firebaseUser: FirebaseUserDto, requestId: string): Promise<MinPokerGameDto> {
-    this.logger.debug(`START createGame(dto: ${JSON.stringify(dto)}, firebaseUser: ${firebaseUser.uid})`, requestId);
-    // FIND USER
-    const userEntity: MinFactoryUserEntity = await this.userRepository.findByFirebaseUid(firebaseUser.uid, requestId);
+  public async createGame(dto: MinPokerCreateGameDto, user: MinFactoryUser, requestId: string): Promise<MinPokerGameDto> {
+    this.logger.debug(`START createGame(dto: ${JSON.stringify(dto)}, userId: ${user.id})`, requestId);
     // MAP TO DOMAIN
     const domain: MinPokerGame = MinPokerDtoMapper.toDomain(dto);
     // UPDATE DOMAIN
-    domain.creatorId = userEntity.id;
+    domain.creatorId = user.id;
     // SAVE TO DATABASE
     const entity: MinPokerGameEntity = MinPokerDomainMapper.toEntity(domain);
     const savedEntity: MinPokerGameEntity = await this.gameRepository.save(entity, requestId);
@@ -42,29 +39,17 @@ export class MinPokerGameService {
     return savedDto;
   }
 
-  public async deleteGame(id: string, firebaseUser: FirebaseUserDto, requestId: string): Promise<void> {
-    this.logger.debug(`START deleteGame(id: ${id}, firebaseUser: ${firebaseUser.uid})`, requestId);
-    // FIND USER
-    const userEntity: MinFactoryUserEntity = await this.userRepository.findByFirebaseUid(firebaseUser.uid, requestId);
+  public async deleteGame(id: string, user: MinFactoryUser, requestId: string): Promise<void> {
+    this.logger.debug(`START deleteGame(id: ${id}, userId: ${user.id})`, requestId);
     // FIND GAME
     const gameEntity: MinPokerGameEntity = await this.gameRepository.findOne(id, requestId);
-    // CHECK PERMISSIONS
-    if (userEntity.id === gameEntity.creator.id || userEntity.role === MinFactoryRole.Admin) {
-      // IF: DELETE GAME
-      await this.gameRepository.delete(id, requestId);
-      this.logger.debug(`END deleteGame(...)`, requestId);
-    } else {
-      // ELSE: THROW ERROR
-      throw new ForbiddenException('You are not authorized to delete this game');
-    }
+    await this.authorizationService.authorize(MinPokerGamePolicy, 'delete', user, gameEntity.creator.id);
+    await this.gameRepository.delete(id, requestId);
+    this.logger.debug(`END deleteGame(...)`, requestId);
   }
 
-  public async getAllGames(
-    firebaseUser: FirebaseUserDto,
-    visibility: MinPokerGameVisibility,
-    requestId: string,
-  ): Promise<MinPokerGameDto[]> {
-    this.logger.debug(`START getAllGames(firebaseUser: ${firebaseUser.uid}, visibility: ${visibility})`, requestId);
+  public async getAllGames(user: MinFactoryUser, visibility: MinPokerGameVisibility, requestId: string): Promise<MinPokerGameDto[]> {
+    this.logger.debug(`START getAllGames(userId: ${user.id}, visibility: ${visibility})`, requestId);
     let entities: MinPokerGameEntity[] = [];
     // CHECK VISIBILITY FLAG
     if (visibility === MinPokerGameVisibility.Public) {
@@ -72,8 +57,7 @@ export class MinPokerGameService {
       entities = await this.gameRepository.findAllPublic(requestId);
     } else {
       // GET ALL USER CREATED GAMES
-      const userEntity: MinFactoryUserEntity = await this.userRepository.findByFirebaseUid(firebaseUser.uid, requestId);
-      entities = await this.gameRepository.findAllByCreator(userEntity.id, requestId);
+      entities = await this.gameRepository.findAllByCreator(user.id, requestId);
     }
     // MAP TO DTO
     const domains: MinPokerGame[] = entities.map(MinPokerEntityMapper.toDomain);

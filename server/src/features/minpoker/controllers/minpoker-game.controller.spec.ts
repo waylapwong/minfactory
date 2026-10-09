@@ -1,8 +1,15 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { AuthenticationGuard } from '../../../core/authentication/guards/authentication.guard';
+import { AuthorizationModule } from '@nestjs/authorization';
+import { FirebaseGuard } from '../../../core/authentication/guards/firebase.guard';
 import { AUTHENTICATION_GUARD_MOCK } from '../../../core/authentication/mocks/authentication.guard.mock';
 import { AUTHENTICATION_SERVICE_MOCK } from '../../../core/authentication/mocks/authentication.service.mock';
 import { AuthenticationService } from '../../../core/authentication/services/authentication.service';
+import { MinFactoryRole } from '../../../shared/enums/minfactory-role.enum';
+import { MinFactoryUser } from '../../minfactory/models/domains/minfactory-user';
+import { MinFactoryUserGuard } from '../../minfactory/guards/minfactory-user.guard';
+import { MINFACTORY_USER_SERVICE_MOCK } from '../../minfactory/mocks/minfactory-user.service.mock';
+import { MinFactoryUserService } from '../../minfactory/services/minfactory-user.service';
+import { MinFactoryRolePolicy } from '../../minfactory/policies/minfactory-role.policy';
 import { MINPOKER_GAME_SERVICE_MOCK } from '../mocks/minpoker-game.service.mock';
 import { MinPokerCreateGameDto } from '../models/dtos/minpoker-create-game.dto';
 import { MinPokerGameDto } from '../models/dtos/minpoker-game.dto';
@@ -55,10 +62,14 @@ describe('MinPokerGameController', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
+      imports: [AuthorizationModule.forRoot({ globalGuard: false })],
       controllers: [MinPokerGameController],
       providers: [
-        { provide: AuthenticationGuard, useValue: AUTHENTICATION_GUARD_MOCK },
+        { provide: FirebaseGuard, useValue: AUTHENTICATION_GUARD_MOCK },
         { provide: AuthenticationService, useValue: AUTHENTICATION_SERVICE_MOCK },
+        { provide: MinFactoryUserService, useValue: MINFACTORY_USER_SERVICE_MOCK },
+        MinFactoryUserGuard,
+        MinFactoryRolePolicy,
         { provide: MinPokerGameService, useValue: MINPOKER_GAME_SERVICE_MOCK },
       ],
     }).compile();
@@ -72,7 +83,12 @@ describe('MinPokerGameController', () => {
 
   describe('getAll()', () => {
     it('should return own games when no visibility parameter is given', async () => {
-      const fakeUser = { firebaseUid: 'fb-1', email: 'u@e.com' } as any;
+      const fakeUser = Object.assign(new MinFactoryUser(), {
+        firebaseUid: 'fb-1',
+        email: 'u@e.com',
+        id: 'user-1',
+        role: MinFactoryRole.User,
+      });
       const result = await controller.getAll(fakeUser, 'test-request-id', undefined as any);
 
       expect(result).toHaveLength(2);
@@ -80,7 +96,12 @@ describe('MinPokerGameController', () => {
     });
 
     it('should return public games when visibility=public', async () => {
-      const fakeUser = { firebaseUid: 'fb-1', email: 'u@e.com' } as any;
+      const fakeUser = Object.assign(new MinFactoryUser(), {
+        firebaseUid: 'fb-1',
+        email: 'u@e.com',
+        id: 'user-1',
+        role: MinFactoryRole.User,
+      });
       const result = await controller.getAll(fakeUser, 'test-request-id', MinPokerGameVisibility.Public);
 
       expect(result).toHaveLength(2);
@@ -92,7 +113,12 @@ describe('MinPokerGameController', () => {
     it('should create a new game via service and return dto', async () => {
       const dto: MinPokerCreateGameDto = { name: 'New Table', visibility: MinPokerGameVisibility.Public };
 
-      const fakeUser = { firebaseUid: 'fb-1', email: 'u@e.com' } as any;
+      const fakeUser = Object.assign(new MinFactoryUser(), {
+        firebaseUid: 'fb-1',
+        email: 'u@e.com',
+        id: 'user-1',
+        role: MinFactoryRole.User,
+      });
       const result = await controller.create(dto, fakeUser, 'test-request-id');
 
       expect(result).toMatchObject({ name: 'New Table', id: 'new-id' });
@@ -102,7 +128,12 @@ describe('MinPokerGameController', () => {
 
   describe('delete()', () => {
     it('should call service.deleteGame and return void', async () => {
-      const fakeUser = { firebaseUid: 'fb-1', email: 'u@e.com' } as any;
+      const fakeUser = Object.assign(new MinFactoryUser(), {
+        firebaseUid: 'fb-1',
+        email: 'u@e.com',
+        id: 'user-1',
+        role: MinFactoryRole.User,
+      });
       const id = '550e8400-e29b-41d4-a716-446655440000';
 
       const result = await controller.delete(fakeUser, 'test-request-id', id);

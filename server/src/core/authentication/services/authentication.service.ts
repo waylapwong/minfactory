@@ -1,20 +1,21 @@
-import * as admin from 'firebase-admin';
+import * as firebase from 'firebase-admin';
 import { Injectable } from '@nestjs/common';
+import { DecodedIdToken } from 'firebase-admin/auth';
 
 @Injectable()
 export class AuthenticationService {
-  private readonly app: admin.app.App;
+  private readonly firebaseApp: firebase.app.App;
 
   constructor() {
     const projectId: string = this.getRequiredEnvironmentVariable('FIREBASE_PROJECT_ID');
     const clientEmail: string = this.getRequiredEnvironmentVariable('FIREBASE_CLIENT_EMAIL');
     const privateKey: string = this.getRequiredPrivateKey();
 
-    this.app =
-      admin.apps.length > 0
-        ? admin.app()
-        : admin.initializeApp({
-            credential: admin.credential.cert({
+    this.firebaseApp =
+      firebase.apps.length > 0
+        ? firebase.app()
+        : firebase.initializeApp({
+            credential: firebase.credential.cert({
               projectId,
               clientEmail,
               privateKey,
@@ -23,11 +24,11 @@ export class AuthenticationService {
   }
 
   public async deleteUser(uid: string): Promise<void> {
-    await this.app.auth().deleteUser(uid);
+    await this.firebaseApp.auth().deleteUser(uid);
   }
 
-  public async verifyFirebaseIdToken(firebaseIdToken: string): Promise<admin.auth.DecodedIdToken> {
-    return await this.app.auth().verifyIdToken(firebaseIdToken);
+  public async verifyIdToken(firebaseIdToken: string): Promise<DecodedIdToken> {
+    return await this.firebaseApp.auth().verifyIdToken(firebaseIdToken);
   }
 
   private getRequiredEnvironmentVariable(name: string): string {

@@ -1,12 +1,10 @@
 import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { MinFactoryUserDomainMapper } from '../mapper/minfactory-user-domain.mapper';
-import { MinFactoryUserDtoMapper } from '../mapper/minfactory-user-dto.mapper';
 import { MinFactoryUserEntityMapper } from '../mapper/minfactory-user-entity.mapper';
 import { MinFactoryUser } from '../models/domains/minfactory-user';
 import { MinFactoryUserDto } from '../models/dtos/minfactory-user.dto';
 import { MinFactoryUserEntity } from '../models/entities/minfactory-user.entity';
 import { MinFactoryUserRepository } from '../repositories/minfactory-user.repository';
-import { FirebaseUserDto } from '../../../core/authentication/models/firebase-user.dto';
 import { AuthenticationService } from '../../../core/authentication/services/authentication.service';
 
 @Injectable()
@@ -16,12 +14,10 @@ export class MinFactoryUserService {
     private readonly authenticationService: AuthenticationService,
   ) {}
 
-  public async createUser(user: FirebaseUserDto, requestId: string): Promise<MinFactoryUserDto> {
-    const { uid: firebaseUid, email } = user;
-    const existingUserByFirebaseUid: MinFactoryUserEntity | null = await this.findByFirebaseUidOrNull(firebaseUid, requestId);
-
-    if (existingUserByFirebaseUid) {
-      return this.entityToDto(existingUserByFirebaseUid);
+  public async createUser(user: MinFactoryUser, requestId: string): Promise<MinFactoryUserDto> {
+    const { firebaseUid, email } = user;
+    if (user.id) {
+      return MinFactoryUserDomainMapper.domainToDto(user);
     }
 
     const existingUserByEmail: MinFactoryUserEntity | null = await this.findByEmailOrNull(email, requestId);
@@ -30,8 +26,7 @@ export class MinFactoryUserService {
       throw new ConflictException('User already registered');
     }
 
-    const domain: MinFactoryUser = MinFactoryUserDtoMapper.dtoToDomain(user);
-    const entity: MinFactoryUserEntity = MinFactoryUserDomainMapper.domainToEntity(domain);
+    const entity: MinFactoryUserEntity = MinFactoryUserDomainMapper.domainToEntity(user);
 
     try {
       const savedEntity: MinFactoryUserEntity = await this.userRepository.save(entity, requestId);
@@ -57,14 +52,8 @@ export class MinFactoryUserService {
     }
   }
 
-  public async deleteMe(user: FirebaseUserDto, requestId: string): Promise<void> {
-    const { uid: firebaseUid } = user;
-
-    const entity: MinFactoryUserEntity | null = await this.findByFirebaseUidOrNull(firebaseUid, requestId);
-
-    if (!entity) {
-      throw new NotFoundException('User not found');
-    }
+  public async deleteMe(user: MinFactoryUser, requestId: string): Promise<void> {
+    const { firebaseUid } = user;
 
     try {
       await this.authenticationService.deleteUser(firebaseUid);
@@ -74,14 +63,16 @@ export class MinFactoryUserService {
       }
     }
 
-    await this.userRepository.deleteByFirebaseUid(firebaseUid, requestId);
+    await this.userRepository.deleteById(user.id, requestId);
   }
 
-  public async getMe(user: FirebaseUserDto, requestId: string): Promise<MinFactoryUserDto> {
-    const { uid: firebaseUid } = user;
-    const entity: MinFactoryUserEntity = await this.userRepository.findByFirebaseUid(firebaseUid, requestId);
+  public getMe(user: MinFactoryUser): MinFactoryUserDto {
+    return MinFactoryUserDomainMapper.domainToDto(user);
+  }
 
-    return this.entityToDto(entity);
+  public async findByFirebaseUid(firebaseUid: string, requestId: string): Promise<MinFactoryUser> {
+    const entity: MinFactoryUserEntity = await this.userRepository.findByFirebaseUid(firebaseUid, requestId);
+    return MinFactoryUserEntityMapper.entityToDomain(entity);
   }
 
   private entityToDto(entity: MinFactoryUserEntity): MinFactoryUserDto {
