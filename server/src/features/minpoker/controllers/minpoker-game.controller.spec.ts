@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { AuthorizationModule } from '@nestjs/authorization';
-import { AuthenticationGuard } from '../../../core/authentication/guards/authentication.guard';
+import { FirebaseGuard } from '../../../core/authentication/guards/firebase.guard';
 import { AUTHENTICATION_GUARD_MOCK } from '../../../core/authentication/mocks/authentication.guard.mock';
 import { AUTHENTICATION_SERVICE_MOCK } from '../../../core/authentication/mocks/authentication.service.mock';
 import { AuthenticationService } from '../../../core/authentication/services/authentication.service';
@@ -65,7 +65,7 @@ describe('MinPokerGameController', () => {
       imports: [AuthorizationModule.forRoot({ globalGuard: false })],
       controllers: [MinPokerGameController],
       providers: [
-        { provide: AuthenticationGuard, useValue: AUTHENTICATION_GUARD_MOCK },
+        { provide: FirebaseGuard, useValue: AUTHENTICATION_GUARD_MOCK },
         { provide: AuthenticationService, useValue: AUTHENTICATION_SERVICE_MOCK },
         { provide: MinFactoryUserService, useValue: MINFACTORY_USER_SERVICE_MOCK },
         MinFactoryUserGuard,

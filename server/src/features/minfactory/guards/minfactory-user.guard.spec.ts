@@ -1,15 +1,15 @@
 import { ExecutionContext, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
+import { MinFactoryRole } from '../../../shared/enums/minfactory-role.enum';
+import { ALLOW_UNREGISTERED_USER } from '../decorators/allow-unregistered-user.decorator';
 import { MINFACTORY_USER_SERVICE_MOCK } from '../mocks/minfactory-user.service.mock';
 import { MinFactoryUser } from '../models/domains/minfactory-user';
-import { MinFactoryRole } from '../../../shared/enums/minfactory-role.enum';
 import { MinFactoryUserService } from '../services/minfactory-user.service';
-import { ALLOW_UNREGISTERED_USER } from '../decorators/allow-unregistered-user.decorator';
 import { MinFactoryUserGuard } from './minfactory-user.guard';
 
-function createExecutionContext(firebaseIdentity?: { email: string; uid: string }): ExecutionContext {
+function createExecutionContext(firebaseUser?: { email: string; uid: string }): ExecutionContext {
   const request = {
-    firebaseIdentity,
+    firebaseUser,
     headers: { 'x-request-id': 'test-request-id' },
   };
   return {

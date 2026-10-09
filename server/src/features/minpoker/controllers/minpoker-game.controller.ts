@@ -2,7 +2,7 @@ import { Body, Controller, Delete, Get, Headers, HttpCode, Param, ParseUUIDPipe,
 import { AuthorizationGuard, Can } from '@nestjs/authorization';
 import { ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { User } from '../../../core/authentication/decorators/user.decorator';
-import { AuthenticationGuard } from '../../../core/authentication/guards/authentication.guard';
+import { FirebaseGuard } from '../../../core/authentication/guards/firebase.guard';
 import { LoggerService } from '../../../core/logging/services/logger.service';
 import { API_200 } from '../../../shared/decorators/api-200.decorator';
 import { API_201 } from '../../../shared/decorators/api-201.decorator';
@@ -25,7 +25,7 @@ import { MinPokerGameService } from '../services/minpoker-game.service';
 
 @Controller('minpoker/games')
 @ApiTags(MinApp.MinPoker)
-@UseGuards(AuthenticationGuard, MinFactoryUserGuard, AuthorizationGuard)
+@UseGuards(FirebaseGuard, MinFactoryUserGuard, AuthorizationGuard)
 @Can(MinFactoryRolePolicy, 'user')
 export class MinPokerGameController {
   private readonly logger: LoggerService = new LoggerService(MinPokerGameController.name);

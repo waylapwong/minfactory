@@ -114,7 +114,7 @@ export class MinPokerGateway implements OnGatewayConnection, OnGatewayDisconnect
         clientSocket.disconnect();
         return;
       }
-      const decodedFirebaseIdToken: DecodedIdToken = await this.authenticationService.verifyFirebaseIdToken(firebaseIdToken);
+      const decodedFirebaseIdToken: DecodedIdToken = await this.authenticationService.verifyIdToken(firebaseIdToken);
       const user = await this.userService.findByFirebaseUid(decodedFirebaseIdToken.uid, '');
       const event: MinPokerConnectedEvent = this.tournamentService.handleConnectionCommand(clientSocket, user);
       this.sendClientEvent(clientSocket, MinPokerEvent.MatchConnected, event);

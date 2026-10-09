@@ -65,14 +65,14 @@ describe('MinpokerGateway', () => {
   describe('handleConnection()', () => {
     it('should emit connected event for authenticated socket', async () => {
       mockSocket.handshake.auth = { token: 'valid-token' };
-      AUTHENTICATION_SERVICE_MOCK.verifyFirebaseIdToken.mockResolvedValue({ uid: 'firebase-uid' });
+      AUTHENTICATION_SERVICE_MOCK.verifyIdToken.mockResolvedValue({ uid: 'firebase-uid' });
       const user = Object.assign(new MinFactoryUser(), { id: 'user-1', role: MinFactoryRole.User });
       MINFACTORY_USER_SERVICE_MOCK.findByFirebaseUid.mockResolvedValue(user);
       MINPOKER_TOURNAMENT_SERVICE_MOCK.handleConnectionCommand.mockReturnValue({ playerId: 'user-1' });
 
       await gateway.handleConnection(mockSocket);
 
-      expect(AUTHENTICATION_SERVICE_MOCK.verifyFirebaseIdToken).toHaveBeenCalledWith('valid-token');
+      expect(AUTHENTICATION_SERVICE_MOCK.verifyIdToken).toHaveBeenCalledWith('valid-token');
       expect(MINFACTORY_USER_SERVICE_MOCK.findByFirebaseUid).toHaveBeenCalledWith('firebase-uid', '');
       expect(MINPOKER_TOURNAMENT_SERVICE_MOCK.handleConnectionCommand).toHaveBeenCalledWith(mockSocket, user);
       expect(mockSocket.emit).toHaveBeenCalledWith(MinPokerEvent.MatchConnected, { playerId: 'user-1' });
@@ -89,7 +89,7 @@ describe('MinpokerGateway', () => {
 
     it('should disconnect socket when authentication fails', async () => {
       mockSocket.handshake.auth = { token: 'invalid-token' };
-      AUTHENTICATION_SERVICE_MOCK.verifyFirebaseIdToken.mockRejectedValue(new Error('Invalid token'));
+      AUTHENTICATION_SERVICE_MOCK.verifyIdToken.mockRejectedValue(new Error('Invalid token'));
 
       await gateway.handleConnection(mockSocket);
 
