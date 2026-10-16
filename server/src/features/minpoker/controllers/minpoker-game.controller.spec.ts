@@ -4,12 +4,12 @@ import { FirebaseGuard } from '../../../core/authentication/guards/firebase.guar
 import { AUTHENTICATION_GUARD_MOCK } from '../../../core/authentication/mocks/authentication.guard.mock';
 import { AUTHENTICATION_SERVICE_MOCK } from '../../../core/authentication/mocks/authentication.service.mock';
 import { AuthenticationService } from '../../../core/authentication/services/authentication.service';
-import { MinFactoryRole } from '../../../core/authorization/minfactory-role.enum';
+import { UserRole } from '../../../core/authorization/enums/user-role.enum';
 import { MinFactoryUser } from '../../minfactory/models/domains/minfactory-user';
 import { MinFactoryUserGuard } from '../../minfactory/guards/minfactory-user.guard';
 import { MINFACTORY_USER_SERVICE_MOCK } from '../../minfactory/mocks/minfactory-user.service.mock';
 import { MinFactoryUserService } from '../../minfactory/services/minfactory-user.service';
-import { MinFactoryRolePolicy } from '../../minfactory/policies/minfactory-role.policy';
+import { UserRolePolicy } from '../../../core/authorization/policies/user-role.policy';
 import { MINPOKER_GAME_SERVICE_MOCK } from '../mocks/minpoker-game.service.mock';
 import { MinPokerCreateGameDto } from '../models/dtos/minpoker-create-game.dto';
 import { MinPokerGameDto } from '../models/dtos/minpoker-game.dto';
@@ -69,7 +69,7 @@ describe('MinPokerGameController', () => {
         { provide: AuthenticationService, useValue: AUTHENTICATION_SERVICE_MOCK },
         { provide: MinFactoryUserService, useValue: MINFACTORY_USER_SERVICE_MOCK },
         MinFactoryUserGuard,
-        MinFactoryRolePolicy,
+        UserRolePolicy,
         { provide: MinPokerGameService, useValue: MINPOKER_GAME_SERVICE_MOCK },
       ],
     }).compile();
@@ -87,7 +87,7 @@ describe('MinPokerGameController', () => {
         firebaseUid: 'fb-1',
         email: 'u@e.com',
         id: 'user-1',
-        role: MinFactoryRole.User,
+        role: UserRole.User,
       });
       const result = await controller.getAll(fakeUser, 'test-request-id', undefined as any);
 
@@ -100,7 +100,7 @@ describe('MinPokerGameController', () => {
         firebaseUid: 'fb-1',
         email: 'u@e.com',
         id: 'user-1',
-        role: MinFactoryRole.User,
+        role: UserRole.User,
       });
       const result = await controller.getAll(fakeUser, 'test-request-id', MinPokerGameVisibility.Public);
 
@@ -117,7 +117,7 @@ describe('MinPokerGameController', () => {
         firebaseUid: 'fb-1',
         email: 'u@e.com',
         id: 'user-1',
-        role: MinFactoryRole.User,
+        role: UserRole.User,
       });
       const result = await controller.create(dto, fakeUser, 'test-request-id');
 
@@ -132,7 +132,7 @@ describe('MinPokerGameController', () => {
         firebaseUid: 'fb-1',
         email: 'u@e.com',
         id: 'user-1',
-        role: MinFactoryRole.User,
+        role: UserRole.User,
       });
       const id = '550e8400-e29b-41d4-a716-446655440000';
 

@@ -4,7 +4,7 @@ import { AUTHENTICATION_SERVICE_MOCK } from '../../../core/authentication/mocks/
 import { AuthenticationService } from '../../../core/authentication/services/authentication.service';
 import { MINFACTORY_USER_SERVICE_MOCK } from '../../minfactory/mocks/minfactory-user.service.mock';
 import { MinFactoryUser } from '../../minfactory/models/domains/minfactory-user';
-import { MinFactoryRole } from '../../../core/authorization/minfactory-role.enum';
+import { UserRole } from '../../../core/authorization/enums/user-role.enum';
 import { MinFactoryUserService } from '../../minfactory/services/minfactory-user.service';
 import { MINPOKER_PLAYER_ID_REPOSITORY_MOCK } from '../mocks/minpoker-player-id.repository.mock';
 import { MINPOKER_SERVER_MOCK, MINPOKER_SERVER_TO_EMIT_MOCK } from '../mocks/minpoker-server.mock';
@@ -66,7 +66,7 @@ describe('MinpokerGateway', () => {
     it('should emit connected event for authenticated socket', async () => {
       mockSocket.handshake.auth = { token: 'valid-token' };
       AUTHENTICATION_SERVICE_MOCK.verifyIdToken.mockResolvedValue({ uid: 'firebase-uid' });
-      const user = Object.assign(new MinFactoryUser(), { id: 'user-1', role: MinFactoryRole.User });
+      const user = Object.assign(new MinFactoryUser(), { id: 'user-1', role: UserRole.User });
       MINFACTORY_USER_SERVICE_MOCK.findByFirebaseUid.mockResolvedValue(user);
       MINPOKER_TOURNAMENT_SERVICE_MOCK.handleConnectionCommand.mockReturnValue({ playerId: 'user-1' });
 

@@ -1,5 +1,5 @@
 import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn } from 'typeorm';
-import { MinFactoryRole } from '../../../../core/authorization/minfactory-role.enum';
+import { UserRole } from '../../../../core/authorization/enums/user-role.enum';
 
 @Entity({ name: 'minfactory_users' })
 export class MinFactoryUserEntity {
@@ -7,8 +7,8 @@ export class MinFactoryUserEntity {
   public email!: string;
   @Column({ unique: true })
   public firebaseUid!: string;
-  @Column({ default: MinFactoryRole.User })
-  public role!: MinFactoryRole;
+  @Column({ default: UserRole.User })
+  public role!: UserRole;
   @CreateDateColumn()
   public createdAt!: Date;
   @PrimaryGeneratedColumn('uuid')

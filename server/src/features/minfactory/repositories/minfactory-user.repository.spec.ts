@@ -2,7 +2,7 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 import { NotFoundException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { MinFactoryUserEntity } from '../models/entities/minfactory-user.entity';
-import { MinFactoryRole } from '../../../core/authorization/minfactory-role.enum';
+import { UserRole } from '../../../core/authorization/enums/user-role.enum';
 import { MINFACTORY_USER_TYPEORM_REPOSITORY_MOCK } from '../mocks/minfactory-user.typeorm-repository.mock';
 import { MinFactoryUserRepository } from './minfactory-user.repository';
 
@@ -33,7 +33,7 @@ describe('MinFactoryUserRepository', () => {
         id: 'user-id',
         firebaseUid: 'firebase-uid-123',
         email: 'user@example.com',
-        role: MinFactoryRole.User,
+        role: UserRole.User,
         createdAt: new Date('2025-01-01T00:00:00.000Z'),
       };
       MINFACTORY_USER_TYPEORM_REPOSITORY_MOCK.findOne.mockResolvedValue(entity);
@@ -59,7 +59,7 @@ describe('MinFactoryUserRepository', () => {
         id: 'user-id',
         firebaseUid: 'firebase-uid-123',
         email: 'user@example.com',
-        role: MinFactoryRole.User,
+        role: UserRole.User,
         createdAt: new Date('2025-01-01T00:00:00.000Z'),
       };
       MINFACTORY_USER_TYPEORM_REPOSITORY_MOCK.findOne.mockResolvedValue(entity);

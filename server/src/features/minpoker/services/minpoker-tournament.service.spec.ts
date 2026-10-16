@@ -12,7 +12,7 @@ import { MinPokerPlayer } from '../models/domains/minpoker-player';
 import { MinPokerGameStatus } from '../models/enums/minpoker-game-status.enum';
 import { MinFactoryUserEntity } from '../../minfactory/models/entities/minfactory-user.entity';
 import { MinFactoryUser } from '../../minfactory/models/domains/minfactory-user';
-import { MinFactoryRole } from '../../../core/authorization/minfactory-role.enum';
+import { UserRole } from '../../../core/authorization/enums/user-role.enum';
 import { MinPokerGameEntity } from '../models/entities/minpoker-game.entity';
 import { MinPokerDeckRepository } from '../repositories/minpoker-deck.repository';
 import { MinPokerGameRepository } from '../repositories/minpoker-game.repository';
@@ -51,7 +51,7 @@ describe('MinpokerTournamentService', () => {
   describe('handleConnectionCommand()', () => {
     it('should register the loaded user id as player id for socket', () => {
       const socket = { data: {}, id: 'socket-1' } as any;
-      const user = Object.assign(new MinFactoryUser(), { id: 'user-1', role: MinFactoryRole.User });
+      const user = Object.assign(new MinFactoryUser(), { id: 'user-1', role: UserRole.User });
 
       const result = service.handleConnectionCommand(socket, user);
 

@@ -7,9 +7,9 @@ import { AUTHENTICATION_SERVICE_MOCK } from '../../../core/authentication/mocks/
 import { AuthenticationService } from '../../../core/authentication/services/authentication.service';
 import { MINFACTORY_USER_SERVICE_MOCK } from '../mocks/minfactory-user.service.mock';
 import { MinFactoryUser } from '../models/domains/minfactory-user';
-import { MinFactoryRole } from '../../../core/authorization/minfactory-role.enum';
+import { UserRole } from '../../../core/authorization/enums/user-role.enum';
 import { MinFactoryUserGuard } from '../guards/minfactory-user.guard';
-import { MinFactoryRolePolicy } from '../policies/minfactory-role.policy';
+import { UserRolePolicy } from '../../../core/authorization/policies/user-role.policy';
 import { MinFactoryUserDto } from '../models/dtos/minfactory-user.dto';
 import { MinFactoryUserService } from '../services/minfactory-user.service';
 import { MinFactoryUserController } from './minfactory-user.controller';
@@ -26,7 +26,7 @@ describe('MinFactoryUserController', () => {
         { provide: FirebaseGuard, useValue: AUTHENTICATION_GUARD_MOCK },
         { provide: AuthenticationService, useValue: AUTHENTICATION_SERVICE_MOCK },
         MinFactoryUserGuard,
-        MinFactoryRolePolicy,
+        UserRolePolicy,
       ],
     }).compile();
 
@@ -42,7 +42,7 @@ describe('MinFactoryUserController', () => {
       firebaseUid: 'firebase-uid-123',
       email: 'user@example.com',
       id: 'user-id',
-      role: MinFactoryRole.User,
+      role: UserRole.User,
     });
 
     it('should call deleteMe on service with the given user', async () => {
@@ -65,7 +65,7 @@ describe('MinFactoryUserController', () => {
       firebaseUid: 'firebase-uid-123',
       email: 'user@example.com',
       id: 'user-id',
-      role: MinFactoryRole.User,
+      role: UserRole.User,
     });
 
     it('should return user dto on success', async () => {
@@ -93,7 +93,7 @@ describe('MinFactoryUserController', () => {
       firebaseUid: 'firebase-uid-123',
       email: 'user@example.com',
       id: 'user-id',
-      role: MinFactoryRole.User,
+      role: UserRole.User,
     });
 
     it('should return user dto on success', () => {

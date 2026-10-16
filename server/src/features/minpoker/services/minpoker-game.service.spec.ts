@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { AuthorizationService } from '@nestjs/authorization';
-import { MinFactoryRole } from '../../../core/authorization/minfactory-role.enum';
+import { UserRole } from '../../../core/authorization/enums/user-role.enum';
 import { MinFactoryUser } from '../../minfactory/models/domains/minfactory-user';
 import { AUTHORIZATION_SERVICE_MOCK } from '../mocks/authorization.service.mock';
 import { MINPOKER_GAME_REPOSITORY_MOCK } from '../mocks/minpoker-game.repository.mock';
@@ -39,7 +39,7 @@ describe('MinPokerGameService', () => {
       const createDto = new MinPokerCreateGameDto();
       createDto.name = 'Test Poker Table';
       createDto.visibility = MinPokerGameVisibility.Private;
-      const user = Object.assign(new MinFactoryUser(), { id: 'creator-1', role: MinFactoryRole.User });
+      const user = Object.assign(new MinFactoryUser(), { id: 'creator-1', role: UserRole.User });
 
       const savedEntity = new MinPokerGameEntity();
       savedEntity.id = 'poker-id';
@@ -73,7 +73,7 @@ describe('MinPokerGameService', () => {
 
   describe('getAllGames()', () => {
     it('should return only own games when no visibility parameter is given', async () => {
-      const user = Object.assign(new MinFactoryUser(), { id: 'creator-1', role: MinFactoryRole.User });
+      const user = Object.assign(new MinFactoryUser(), { id: 'creator-1', role: UserRole.User });
       const entities = [
         Object.assign(new MinPokerGameEntity(), {
           id: '1',
@@ -140,7 +140,7 @@ describe('MinPokerGameService', () => {
 
   describe('deleteGame()', () => {
     it('should delete a game by id when user is the creator', async () => {
-      const user = Object.assign(new MinFactoryUser(), { id: 'creator-1', role: MinFactoryRole.User });
+      const user = Object.assign(new MinFactoryUser(), { id: 'creator-1', role: UserRole.User });
       const gameEntity = Object.assign(new MinPokerGameEntity(), {
         id: 'game-id',
         name: 'Test Table',
@@ -158,7 +158,7 @@ describe('MinPokerGameService', () => {
     });
 
     it('should throw ForbiddenException when user is not the creator', async () => {
-      const user = Object.assign(new MinFactoryUser(), { id: 'user-2', role: MinFactoryRole.User });
+      const user = Object.assign(new MinFactoryUser(), { id: 'user-2', role: UserRole.User });
       const creatorEntity = { id: 'creator-1' };
       const gameEntity = Object.assign(new MinPokerGameEntity(), {
         id: 'game-id',
@@ -177,7 +177,7 @@ describe('MinPokerGameService', () => {
     });
 
     it('should allow Admin to delete any game regardless of ownership', async () => {
-      const admin = Object.assign(new MinFactoryUser(), { id: 'admin-1', role: MinFactoryRole.Admin });
+      const admin = Object.assign(new MinFactoryUser(), { id: 'admin-1', role: UserRole.Admin });
       const creatorEntity = { id: 'creator-1' };
       const gameEntity = Object.assign(new MinPokerGameEntity(), {
         id: 'game-id',

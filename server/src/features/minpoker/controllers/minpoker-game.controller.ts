@@ -17,7 +17,7 @@ import { API_HEADER_REQUEST_ID } from '../../../shared/decorators/api-request-id
 import { MinApp } from '../../../shared/enums/minapp.enum';
 import { MinFactoryUser } from '../../minfactory/models/domains/minfactory-user';
 import { MinFactoryUserGuard } from '../../minfactory/guards/minfactory-user.guard';
-import { MinFactoryRolePolicy } from '../../minfactory/policies/minfactory-role.policy';
+import { UserRolePolicy } from '../../../core/authorization/policies/user-role.policy';
 import { MinPokerCreateGameDto } from '../models/dtos/minpoker-create-game.dto';
 import { MinPokerGameDto } from '../models/dtos/minpoker-game.dto';
 import { MinPokerGameVisibility } from '../models/enums/minpoker-game-visibility.enum';
@@ -26,7 +26,7 @@ import { MinPokerGameService } from '../services/minpoker-game.service';
 @Controller('minpoker/games')
 @ApiTags(MinApp.MinPoker)
 @UseGuards(FirebaseGuard, MinFactoryUserGuard, AuthorizationGuard)
-@Can(MinFactoryRolePolicy, 'isUser')
+@Can(UserRolePolicy, 'isUser')
 export class MinPokerGameController {
   private readonly logger: LoggerService = new LoggerService(MinPokerGameController.name);
 

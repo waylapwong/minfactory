@@ -2,7 +2,7 @@ import { ConflictException, NotFoundException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { AUTHENTICATION_SERVICE_MOCK } from '../../../core/authentication/mocks/authentication.service.mock';
 import { AuthenticationService } from '../../../core/authentication/services/authentication.service';
-import { MinFactoryRole } from '../../../core/authorization/minfactory-role.enum';
+import { UserRole } from '../../../core/authorization/enums/user-role.enum';
 import { MINFACTORY_USER_REPOSITORY_MOCK } from '../mocks/minfactory-user.repository.mock';
 import { MinFactoryUser } from '../models/domains/minfactory-user';
 import { MinFactoryUserEntity } from '../models/entities/minfactory-user.entity';
@@ -38,7 +38,7 @@ describe('MinFactoryUserService', () => {
       id: '550e8400-e29b-41d4-a716-446655440000',
       firebaseUid: 'firebase-uid-123',
       email: 'user@example.com',
-      role: MinFactoryRole.User,
+      role: UserRole.User,
       createdAt: new Date('2025-01-01T00:00:00.000Z'),
     };
 
@@ -125,7 +125,7 @@ describe('MinFactoryUserService', () => {
         id: '550e8400-e29b-41d4-a716-446655440001',
         firebaseUid: 'other-uid',
         email: 'user@example.com',
-        role: MinFactoryRole.User,
+        role: UserRole.User,
         createdAt: new Date(),
       };
       MINFACTORY_USER_REPOSITORY_MOCK.findByFirebaseUid.mockRejectedValue(new NotFoundException('User not found'));
@@ -151,7 +151,7 @@ describe('MinFactoryUserService', () => {
       id: '550e8400-e29b-41d4-a716-446655440000',
       firebaseUid: 'firebase-uid-123',
       email: 'user@example.com',
-      role: MinFactoryRole.User,
+      role: UserRole.User,
       createdAt: new Date('2025-01-01T00:00:00.000Z'),
     });
 
@@ -170,7 +170,7 @@ describe('MinFactoryUserService', () => {
         id: 'user-id',
         firebaseUid: 'firebase-uid-123',
         email: 'user@example.com',
-        role: MinFactoryRole.Admin,
+        role: UserRole.Admin,
         createdAt: new Date('2025-01-01T00:00:00.000Z'),
       };
       MINFACTORY_USER_REPOSITORY_MOCK.findByFirebaseUid.mockResolvedValue(entity);
@@ -193,7 +193,7 @@ describe('MinFactoryUserService', () => {
       id: '550e8400-e29b-41d4-a716-446655440000',
       firebaseUid: 'firebase-uid-123',
       email: 'user@example.com',
-      role: MinFactoryRole.User,
+      role: UserRole.User,
     });
 
     it('should delete Firebase identity and the loaded database user by id', async () => {

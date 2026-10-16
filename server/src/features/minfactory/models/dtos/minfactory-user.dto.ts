@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { MinFactoryRole } from '../../../../core/authorization/minfactory-role.enum';
+import { UserRole } from '../../../../core/authorization/enums/user-role.enum';
 
 export class MinFactoryUserDto {
   @ApiProperty({ example: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890' })
@@ -8,6 +8,6 @@ export class MinFactoryUserDto {
   public createdAt!: Date;
   @ApiProperty({ example: 'user@example.com' })
   public email!: string;
-  @ApiProperty({ enum: MinFactoryRole, example: MinFactoryRole.User })
-  public role!: MinFactoryRole;
+  @ApiProperty({ enum: UserRole, example: UserRole.User })
+  public role!: UserRole;
 }

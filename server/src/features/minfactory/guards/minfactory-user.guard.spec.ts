@@ -1,6 +1,6 @@
 import { ExecutionContext, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
-import { MinFactoryRole } from '../../../core/authorization/minfactory-role.enum';
+import { UserRole } from '../../../core/authorization/enums/user-role.enum';
 import { ALLOW_UNREGISTERED_USER } from '../decorators/allow-unregistered-user.decorator';
 import { MINFACTORY_USER_SERVICE_MOCK } from '../mocks/minfactory-user.service.mock';
 import { MinFactoryUser } from '../models/domains/minfactory-user';
@@ -35,7 +35,7 @@ describe('MinFactoryUserGuard', () => {
   });
 
   it('loads the domain user once and attaches it to request.user', async () => {
-    const user = Object.assign(new MinFactoryUser(), { id: 'user-1', role: MinFactoryRole.User });
+    const user = Object.assign(new MinFactoryUser(), { id: 'user-1', role: UserRole.User });
     MINFACTORY_USER_SERVICE_MOCK.findByFirebaseUid.mockResolvedValue(user);
     const context = createExecutionContext({ email: 'user@example.com', uid: 'firebase-uid' });
 
@@ -56,7 +56,7 @@ describe('MinFactoryUserGuard', () => {
     expect(context.switchToHttp().getRequest().user).toMatchObject({
       email: 'user@example.com',
       firebaseUid: 'firebase-uid',
-      role: MinFactoryRole.User,
+      role: UserRole.User,
     });
   });
 

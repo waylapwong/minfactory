@@ -3,6 +3,7 @@ import { Controller, Delete, Get, Headers, HttpCode, Post, UseGuards } from '@ne
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { User } from '../../../core/authentication/decorators/user.decorator';
 import { FirebaseGuard } from '../../../core/authentication/guards/firebase.guard';
+import { UserRolePolicy } from '../../../core/authorization/policies/user-role.policy';
 import { LoggerService } from '../../../core/logging/services/logger.service';
 import { API_200 } from '../../../shared/decorators/api-200.decorator';
 import { API_201 } from '../../../shared/decorators/api-201.decorator';
@@ -18,13 +19,12 @@ import { AllowUnregisteredUser } from '../decorators/allow-unregistered-user.dec
 import { MinFactoryUserGuard } from '../guards/minfactory-user.guard';
 import { MinFactoryUser } from '../models/domains/minfactory-user';
 import { MinFactoryUserDto } from '../models/dtos/minfactory-user.dto';
-import { MinFactoryRolePolicy } from '../policies/minfactory-role.policy';
 import { MinFactoryUserService } from '../services/minfactory-user.service';
 
 @Controller('minfactory/users')
 @ApiTags(MinApp.MinFactory)
 @UseGuards(FirebaseGuard, MinFactoryUserGuard, AuthorizationGuard)
-@Can(MinFactoryRolePolicy, 'isUser')
+@Can(UserRolePolicy, 'isUser')
 export class MinFactoryUserController {
   private readonly logger: LoggerService = new LoggerService(MinFactoryUserController.name);
 
@@ -40,8 +40,9 @@ export class MinFactoryUserController {
   @API_404()
   @API_500()
   public async deleteMe(@User() user: MinFactoryUser, @Headers('X-Request-Id') requestId: string): Promise<void> {
-    this.logger.debug(`Incoming request DELETE /minfactory/users/me`, requestId);
-    return await this.userService.deleteMe(user, requestId);
+    this.logger.debug(`START deleteMe(userId: ${user.id})`, requestId);
+    await this.userService.deleteMe(user, requestId);
+    this.logger.debug(`END deleteMe(...)`, requestId);
   }
 
   @Get('me')
@@ -53,8 +54,10 @@ export class MinFactoryUserController {
   @API_404()
   @API_500()
   public getMe(@User() user: MinFactoryUser, @Headers('X-Request-Id') requestId: string): MinFactoryUserDto {
-    this.logger.debug(`Incoming request GET /minfactory/users/me`, requestId);
-    return this.userService.getMe(user);
+    this.logger.debug(`START getMe(userId: ${user.id})`, requestId);
+    const response: MinFactoryUserDto = this.userService.getMe(user);
+    this.logger.debug(`END getMe(...)`, requestId);
+    return response;
   }
 
   @Post()
@@ -68,7 +71,9 @@ export class MinFactoryUserController {
   @API_409()
   @API_500()
   public async create(@User() user: MinFactoryUser, @Headers('X-Request-Id') requestId: string): Promise<MinFactoryUserDto> {
-    this.logger.debug(`Incoming request POST /minfactory/users`, requestId);
-    return await this.userService.createUser(user, requestId);
+    this.logger.debug(`START create(userId: ${user.id})`, requestId);
+    const response: MinFactoryUserDto = await this.userService.createUser(user, requestId);
+    this.logger.debug(`END create(...)`, requestId);
+    return response;
   }
 }

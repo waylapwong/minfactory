@@ -1,25 +1,25 @@
-import { Controller, Get, INestApplication, UseGuards } from '@nestjs/common';
 import { AuthorizationGuard, AuthorizationModule, Can } from '@nestjs/authorization';
+import { Controller, Get, INestApplication, UseGuards } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { NextFunction, Request, Response } from 'express';
 import request from 'supertest';
-import { MinFactoryRole } from './minfactory-role.enum';
 import { MinFactoryUser } from '../../features/minfactory/models/domains/minfactory-user';
-import { MinFactoryRolePolicy } from '../../features/minfactory/policies/minfactory-role.policy';
+import { UserRole } from './enums/user-role.enum';
+import { UserRolePolicy } from './policies/user-role.policy';
 
 @Controller('authorization-check')
 @UseGuards(AuthorizationGuard)
 class AuthorizationTestController {
-  @Get('user')
-  @Can(MinFactoryRolePolicy, 'isUser')
-  public userRoute(): string {
-    return 'user';
-  }
-
   @Get('admin')
-  @Can(MinFactoryRolePolicy, 'isAdmin')
+  @Can(UserRolePolicy, 'isAdmin')
   public adminRoute(): string {
     return 'admin';
+  }
+
+  @Get('user')
+  @Can(UserRolePolicy, 'isUser')
+  public userRoute(): string {
+    return 'user';
   }
 }
 
@@ -35,13 +35,13 @@ describe('NestJS authorization integration', () => {
         }),
       ],
       controllers: [AuthorizationTestController],
-      providers: [MinFactoryRolePolicy],
+      providers: [UserRolePolicy],
     }).compile();
 
     app = module.createNestApplication();
     app.use((request: Request & { user?: MinFactoryUser }, _response: Response, next: NextFunction) => {
       const role = request.headers['x-role'];
-      if (role === MinFactoryRole.User || role === MinFactoryRole.Admin) {
+      if (role === UserRole.User || role === UserRole.Admin) {
         request.user = Object.assign(new MinFactoryUser(), { role });
       }
       next();
@@ -58,10 +58,10 @@ describe('NestJS authorization integration', () => {
   });
 
   it('returns 403 when an authenticated user lacks the required role', async () => {
-    await request(app.getHttpServer()).get('/authorization-check/admin').set('x-role', MinFactoryRole.User).expect(403);
+    await request(app.getHttpServer()).get('/authorization-check/admin').set('x-role', UserRole.User).expect(403);
   });
 
   it('allows the user policy to be inherited by Admin', async () => {
-    await request(app.getHttpServer()).get('/authorization-check/user').set('x-role', MinFactoryRole.Admin).expect(200);
+    await request(app.getHttpServer()).get('/authorization-check/user').set('x-role', UserRole.Admin).expect(200);
   });
 });
