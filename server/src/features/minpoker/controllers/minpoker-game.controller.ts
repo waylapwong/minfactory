@@ -26,7 +26,7 @@ import { MinPokerGameService } from '../services/minpoker-game.service';
 @Controller('minpoker/games')
 @ApiTags(MinApp.MinPoker)
 @UseGuards(FirebaseGuard, MinFactoryUserGuard, AuthorizationGuard)
-@Can(MinFactoryRolePolicy, 'user')
+@Can(MinFactoryRolePolicy, 'isUser')
 export class MinPokerGameController {
   private readonly logger: LoggerService = new LoggerService(MinPokerGameController.name);
 

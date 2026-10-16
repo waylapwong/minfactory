@@ -3,7 +3,7 @@ import { AuthorizationGuard, AuthorizationModule, Can } from '@nestjs/authorizat
 import { Test, TestingModule } from '@nestjs/testing';
 import { NextFunction, Request, Response } from 'express';
 import request from 'supertest';
-import { MinFactoryRole } from '../../shared/enums/minfactory-role.enum';
+import { MinFactoryRole } from './minfactory-role.enum';
 import { MinFactoryUser } from '../../features/minfactory/models/domains/minfactory-user';
 import { MinFactoryRolePolicy } from '../../features/minfactory/policies/minfactory-role.policy';
 
@@ -11,13 +11,13 @@ import { MinFactoryRolePolicy } from '../../features/minfactory/policies/minfact
 @UseGuards(AuthorizationGuard)
 class AuthorizationTestController {
   @Get('user')
-  @Can(MinFactoryRolePolicy, 'user')
+  @Can(MinFactoryRolePolicy, 'isUser')
   public userRoute(): string {
     return 'user';
   }
 
   @Get('admin')
-  @Can(MinFactoryRolePolicy, 'admin')
+  @Can(MinFactoryRolePolicy, 'isAdmin')
   public adminRoute(): string {
     return 'admin';
   }

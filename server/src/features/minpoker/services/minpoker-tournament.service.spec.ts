@@ -12,7 +12,7 @@ import { MinPokerPlayer } from '../models/domains/minpoker-player';
 import { MinPokerGameStatus } from '../models/enums/minpoker-game-status.enum';
 import { MinFactoryUserEntity } from '../../minfactory/models/entities/minfactory-user.entity';
 import { MinFactoryUser } from '../../minfactory/models/domains/minfactory-user';
-import { MinFactoryRole } from '../../../shared/enums/minfactory-role.enum';
+import { MinFactoryRole } from '../../../core/authorization/minfactory-role.enum';
 import { MinPokerGameEntity } from '../models/entities/minpoker-game.entity';
 import { MinPokerDeckRepository } from '../repositories/minpoker-deck.repository';
 import { MinPokerGameRepository } from '../repositories/minpoker-game.repository';

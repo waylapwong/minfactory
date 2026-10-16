@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { AuthorizationService } from '@nestjs/authorization';
-import { MinFactoryRole } from '../../../shared/enums/minfactory-role.enum';
+import { MinFactoryRole } from '../../../core/authorization/minfactory-role.enum';
 import { MinFactoryUser } from '../../minfactory/models/domains/minfactory-user';
 import { AUTHORIZATION_SERVICE_MOCK } from '../mocks/authorization.service.mock';
 import { MINPOKER_GAME_REPOSITORY_MOCK } from '../mocks/minpoker-game.repository.mock';

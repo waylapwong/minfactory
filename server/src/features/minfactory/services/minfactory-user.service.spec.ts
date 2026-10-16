@@ -2,7 +2,7 @@ import { ConflictException, NotFoundException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { AUTHENTICATION_SERVICE_MOCK } from '../../../core/authentication/mocks/authentication.service.mock';
 import { AuthenticationService } from '../../../core/authentication/services/authentication.service';
-import { MinFactoryRole } from '../../../shared/enums/minfactory-role.enum';
+import { MinFactoryRole } from '../../../core/authorization/minfactory-role.enum';
 import { MINFACTORY_USER_REPOSITORY_MOCK } from '../mocks/minfactory-user.repository.mock';
 import { MinFactoryUser } from '../models/domains/minfactory-user';
 import { MinFactoryUserEntity } from '../models/entities/minfactory-user.entity';

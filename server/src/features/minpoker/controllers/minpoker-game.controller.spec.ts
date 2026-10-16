@@ -4,7 +4,7 @@ import { FirebaseGuard } from '../../../core/authentication/guards/firebase.guar
 import { AUTHENTICATION_GUARD_MOCK } from '../../../core/authentication/mocks/authentication.guard.mock';
 import { AUTHENTICATION_SERVICE_MOCK } from '../../../core/authentication/mocks/authentication.service.mock';
 import { AuthenticationService } from '../../../core/authentication/services/authentication.service';
-import { MinFactoryRole } from '../../../shared/enums/minfactory-role.enum';
+import { MinFactoryRole } from '../../../core/authorization/minfactory-role.enum';
 import { MinFactoryUser } from '../../minfactory/models/domains/minfactory-user';
 import { MinFactoryUserGuard } from '../../minfactory/guards/minfactory-user.guard';
 import { MINFACTORY_USER_SERVICE_MOCK } from '../../minfactory/mocks/minfactory-user.service.mock';

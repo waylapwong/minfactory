@@ -1,4 +1,4 @@
-import { MinFactoryRole } from '../../../shared/enums/minfactory-role.enum';
+import { MinFactoryRole } from '../../../core/authorization/minfactory-role.enum';
 import { MinFactoryUser } from '../../minfactory/models/domains/minfactory-user';
 import { MinPokerGamePolicy } from './minpoker-game.policy';
 

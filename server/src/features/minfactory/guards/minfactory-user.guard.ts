@@ -2,10 +2,10 @@ import { CanActivate, ExecutionContext, Injectable, NotFoundException, Unauthori
 import { Reflector } from '@nestjs/core';
 import { Request } from 'express';
 import { RequestWithFirebaseUser } from '../../../core/authentication/models/request-with-firebase-user';
-import { MinFactoryUser } from '../models/domains/minfactory-user';
-import { MinFactoryUserIdentityMapper } from '../mapper/minfactory-user-identity.mapper';
-import { MinFactoryUserService } from '../services/minfactory-user.service';
 import { ALLOW_UNREGISTERED_USER } from '../decorators/allow-unregistered-user.decorator';
+import { MinFactoryUserIdentityMapper } from '../mapper/minfactory-user-identity.mapper';
+import { MinFactoryUser } from '../models/domains/minfactory-user';
+import { MinFactoryUserService } from '../services/minfactory-user.service';
 
 @Injectable()
 export class MinFactoryUserGuard implements CanActivate {

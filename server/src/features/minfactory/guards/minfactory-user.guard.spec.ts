@@ -1,6 +1,6 @@
 import { ExecutionContext, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
-import { MinFactoryRole } from '../../../shared/enums/minfactory-role.enum';
+import { MinFactoryRole } from '../../../core/authorization/minfactory-role.enum';
 import { ALLOW_UNREGISTERED_USER } from '../decorators/allow-unregistered-user.decorator';
 import { MINFACTORY_USER_SERVICE_MOCK } from '../mocks/minfactory-user.service.mock';
 import { MinFactoryUser } from '../models/domains/minfactory-user';

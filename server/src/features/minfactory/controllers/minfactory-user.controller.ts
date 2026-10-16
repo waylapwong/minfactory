@@ -23,9 +23,8 @@ import { MinFactoryUserService } from '../services/minfactory-user.service';
 
 @Controller('minfactory/users')
 @ApiTags(MinApp.MinFactory)
-// ! Order of Guards is very important: FirebaseGuard -> MinFactoryUserGuard -> AuthorizationGuard
 @UseGuards(FirebaseGuard, MinFactoryUserGuard, AuthorizationGuard)
-@Can(MinFactoryRolePolicy, 'user')
+@Can(MinFactoryRolePolicy, 'isUser')
 export class MinFactoryUserController {
   private readonly logger: LoggerService = new LoggerService(MinFactoryUserController.name);
 

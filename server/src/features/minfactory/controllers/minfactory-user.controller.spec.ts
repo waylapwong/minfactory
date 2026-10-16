@@ -7,7 +7,7 @@ import { AUTHENTICATION_SERVICE_MOCK } from '../../../core/authentication/mocks/
 import { AuthenticationService } from '../../../core/authentication/services/authentication.service';
 import { MINFACTORY_USER_SERVICE_MOCK } from '../mocks/minfactory-user.service.mock';
 import { MinFactoryUser } from '../models/domains/minfactory-user';
-import { MinFactoryRole } from '../../../shared/enums/minfactory-role.enum';
+import { MinFactoryRole } from '../../../core/authorization/minfactory-role.enum';
 import { MinFactoryUserGuard } from '../guards/minfactory-user.guard';
 import { MinFactoryRolePolicy } from '../policies/minfactory-role.policy';
 import { MinFactoryUserDto } from '../models/dtos/minfactory-user.dto';
