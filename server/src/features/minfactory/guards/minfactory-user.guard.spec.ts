@@ -1,7 +1,7 @@
 import { ExecutionContext, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
+import { ALLOW_WITHOUT_ACCOUNT } from '../../../core/authorization/decorators/allow-unregistered-user.decorator';
 import { UserRole } from '../../../core/authorization/enums/user-role.enum';
-import { ALLOW_UNREGISTERED_USER } from '../decorators/allow-unregistered-user.decorator';
 import { MINFACTORY_USER_SERVICE_MOCK } from '../mocks/minfactory-user.service.mock';
 import { MinFactoryUser } from '../models/domains/minfactory-user';
 import { MinFactoryUserService } from '../services/minfactory-user.service';
@@ -52,7 +52,7 @@ describe('MinFactoryUserGuard', () => {
 
     await expect(guard.canActivate(context)).resolves.toBe(true);
 
-    expect(reflector.getAllAndOverride).toHaveBeenCalledWith(ALLOW_UNREGISTERED_USER, [
+    expect(reflector.getAllAndOverride).toHaveBeenCalledWith(ALLOW_WITHOUT_ACCOUNT, [
       context.getHandler(),
       context.getClass(),
     ]);

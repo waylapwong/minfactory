@@ -15,7 +15,7 @@ import { API_409 } from '../../../shared/decorators/api-409.decorator';
 import { API_500 } from '../../../shared/decorators/api-500.decorator';
 import { API_HEADER_REQUEST_ID } from '../../../shared/decorators/api-request-id.decorator';
 import { MinApp } from '../../../shared/enums/minapp.enum';
-import { AllowUnregisteredUser } from '../decorators/allow-unregistered-user.decorator';
+import { AllowWithoutAccount } from '../../../core/authorization/decorators/allow-unregistered-user.decorator';
 import { MinFactoryUserGuard } from '../guards/minfactory-user.guard';
 import { MinFactoryUser } from '../models/domains/minfactory-user';
 import { MinFactoryUserDto } from '../models/dtos/minfactory-user.dto';
@@ -46,6 +46,7 @@ export class MinFactoryUserController {
   }
 
   @Get('me')
+  @HttpCode(200)
   @ApiOperation({ operationId: 'getMinFactoryUserMe' })
   @API_HEADER_REQUEST_ID()
   @API_200({ type: MinFactoryUserDto })
@@ -63,7 +64,7 @@ export class MinFactoryUserController {
   @Post()
   @HttpCode(201)
   @ApiOperation({ operationId: 'createMinFactoryUser' })
-  @AllowUnregisteredUser()
+  @AllowWithoutAccount()
   @API_HEADER_REQUEST_ID()
   @API_201({ type: MinFactoryUserDto })
   @API_400()

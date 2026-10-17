@@ -2,7 +2,7 @@ import { CanActivate, ExecutionContext, Injectable, NotFoundException, Unauthori
 import { Reflector } from '@nestjs/core';
 import { Request } from 'express';
 import { RequestWithFirebaseUser } from '../../../core/authentication/models/request-with-firebase-user';
-import { ALLOW_UNREGISTERED_USER } from '../decorators/allow-unregistered-user.decorator';
+import { ALLOW_WITHOUT_ACCOUNT } from '../../../core/authorization/decorators/allow-unregistered-user.decorator';
 import { MinFactoryUserIdentityMapper } from '../mapper/minfactory-user-identity.mapper';
 import { MinFactoryUser } from '../models/domains/minfactory-user';
 import { MinFactoryUserService } from '../services/minfactory-user.service';
@@ -28,11 +28,11 @@ export class MinFactoryUserGuard implements CanActivate {
         request.headers['x-request-id']?.toString() ?? '',
       );
     } catch (error) {
-      const allowUnregisteredUser: boolean | undefined = this.reflector.getAllAndOverride<boolean>(
-        ALLOW_UNREGISTERED_USER,
+      const allowWithoutAccount: boolean | undefined = this.reflector.getAllAndOverride<boolean>(
+        ALLOW_WITHOUT_ACCOUNT,
         [context.getHandler(), context.getClass()],
       );
-      if (!(error instanceof NotFoundException) || !allowUnregisteredUser) {
+      if (!(error instanceof NotFoundException) || !allowWithoutAccount) {
         throw error;
       }
       request.user = MinFactoryUserIdentityMapper.identityToDomain(request.firebaseUser);
