@@ -105,7 +105,11 @@ describe('MinPokerGameController', () => {
       const result = await controller.getAll(fakeUser, 'test-request-id', MinPokerGameVisibility.Public);
 
       expect(result).toHaveLength(2);
-      expect(MINPOKER_GAME_SERVICE_MOCK.getAllGames).toHaveBeenCalledWith(fakeUser, MinPokerGameVisibility.Public, 'test-request-id');
+      expect(MINPOKER_GAME_SERVICE_MOCK.getAllGames).toHaveBeenCalledWith(
+        fakeUser,
+        MinPokerGameVisibility.Public,
+        'test-request-id',
+      );
     });
   });
 

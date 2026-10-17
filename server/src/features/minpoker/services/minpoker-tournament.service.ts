@@ -63,7 +63,8 @@ export class MinPokerTournamentService {
 
   public handleDisconnectCommand(clientSocket: Socket): MinPokerDisconnectResult | null {
     // GET PLAYER ID & MATCH ID
-    const playerId: string | null = this.playerIdRepository.findOne(clientSocket.id) ?? clientSocket.data?.playerId ?? null;
+    const playerId: string | null =
+      this.playerIdRepository.findOne(clientSocket.id) ?? clientSocket.data?.playerId ?? null;
     const matchId: string | null = this.roomSystem.getPlayerRoomName(clientSocket);
     // REMOVE CLIENT SOCKET FROM ALL ROOMS
     this.roomSystem.removePlayerFromAllRooms(clientSocket);
@@ -266,7 +267,8 @@ export class MinPokerTournamentService {
   }
 
   private resolvePlayerId(clientSocket: Socket, playerId: string): string {
-    const socketPlayerId: string | null = this.playerIdRepository.findOne(clientSocket.id) ?? clientSocket.data?.playerId ?? null;
+    const socketPlayerId: string | null =
+      this.playerIdRepository.findOne(clientSocket.id) ?? clientSocket.data?.playerId ?? null;
     if (!socketPlayerId) {
       throw new ForbiddenException('Socket is not bound to a player');
     }

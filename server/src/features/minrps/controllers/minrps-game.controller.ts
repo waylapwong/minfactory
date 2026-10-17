@@ -31,7 +31,10 @@ export class MinRpsGameController {
   @API_400()
   @API_404({ description: 'minRPS game not found', type: MinRpsErrorDto })
   @API_500()
-  public async delete(@Param('id', new ParseUUIDPipe()) id: string, @Headers('X-Request-Id') requestId: string): Promise<void> {
+  public async delete(
+    @Param('id', new ParseUUIDPipe()) id: string,
+    @Headers('X-Request-Id') requestId: string,
+  ): Promise<void> {
     this.logger.debug(`START delete(id: ${id})`, requestId);
     await this.gameService.deleteGame(id, requestId);
     this.logger.debug(`END delete(...)`, requestId);
@@ -45,7 +48,10 @@ export class MinRpsGameController {
   @API_400()
   @API_404({ type: MinRpsErrorDto })
   @API_500()
-  public async get(@Param('id', new ParseUUIDPipe()) id: string, @Headers('X-Request-Id') requestId: string): Promise<MinRpsGameDto> {
+  public async get(
+    @Param('id', new ParseUUIDPipe()) id: string,
+    @Headers('X-Request-Id') requestId: string,
+  ): Promise<MinRpsGameDto> {
     this.logger.debug(`START get(id: ${id})`, requestId);
     const result: MinRpsGameDto = await this.gameService.getGame(id, requestId);
     this.logger.debug(`END get(...)`, requestId);
@@ -73,7 +79,10 @@ export class MinRpsGameController {
   @API_201({ type: MinRpsGameDto })
   @API_400()
   @API_500()
-  public async create(@Body() dto: MinRpsCreateGameDto, @Headers('X-Request-Id') requestId: string): Promise<MinRpsGameDto> {
+  public async create(
+    @Body() dto: MinRpsCreateGameDto,
+    @Headers('X-Request-Id') requestId: string,
+  ): Promise<MinRpsGameDto> {
     this.logger.debug(`START create(dto: ${JSON.stringify(dto)})`, requestId);
     const result: MinRpsGameDto = await this.gameService.createGame(dto, requestId);
     this.logger.debug(`END create(...)`, requestId);

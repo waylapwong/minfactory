@@ -15,18 +15,23 @@ export class MinFactoryUserGuard implements CanActivate {
   ) {}
 
   public async canActivate(context: ExecutionContext): Promise<boolean> {
-    const request = context.switchToHttp().getRequest<Request & { user?: MinFactoryUser } & Partial<RequestWithFirebaseUser>>();
+    const request = context
+      .switchToHttp()
+      .getRequest<Request & { user?: MinFactoryUser } & Partial<RequestWithFirebaseUser>>();
     if (!request.firebaseUser) {
       throw new UnauthorizedException('Authentication required');
     }
 
     try {
-      request.user = await this.userService.findByFirebaseUid(request.firebaseUser.uid, request.headers['x-request-id']?.toString() ?? '');
+      request.user = await this.userService.findByFirebaseUid(
+        request.firebaseUser.uid,
+        request.headers['x-request-id']?.toString() ?? '',
+      );
     } catch (error) {
-      const allowUnregisteredUser: boolean | undefined = this.reflector.getAllAndOverride<boolean>(ALLOW_UNREGISTERED_USER, [
-        context.getHandler(),
-        context.getClass(),
-      ]);
+      const allowUnregisteredUser: boolean | undefined = this.reflector.getAllAndOverride<boolean>(
+        ALLOW_UNREGISTERED_USER,
+        [context.getHandler(), context.getClass()],
+      );
       if (!(error instanceof NotFoundException) || !allowUnregisteredUser) {
         throw error;
       }

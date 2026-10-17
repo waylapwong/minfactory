@@ -184,7 +184,10 @@ describe('MinFactoryUserService', () => {
         role: entity.role,
         createdAt: entity.createdAt,
       });
-      expect(MINFACTORY_USER_REPOSITORY_MOCK.findByFirebaseUid).toHaveBeenCalledWith(entity.firebaseUid, 'test-request-id');
+      expect(MINFACTORY_USER_REPOSITORY_MOCK.findByFirebaseUid).toHaveBeenCalledWith(
+        entity.firebaseUid,
+        'test-request-id',
+      );
     });
   });
 

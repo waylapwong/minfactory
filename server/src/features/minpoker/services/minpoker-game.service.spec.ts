@@ -153,7 +153,12 @@ describe('MinPokerGameService', () => {
       await service.deleteGame('game-id', user, 'test-request-id');
 
       expect(MINPOKER_GAME_REPOSITORY_MOCK.findOne).toHaveBeenCalledWith('game-id', 'test-request-id');
-      expect(AUTHORIZATION_SERVICE_MOCK.authorize).toHaveBeenCalledWith(MinPokerGamePolicy, 'delete', user, 'creator-1');
+      expect(AUTHORIZATION_SERVICE_MOCK.authorize).toHaveBeenCalledWith(
+        MinPokerGamePolicy,
+        'delete',
+        user,
+        'creator-1',
+      );
       expect(MINPOKER_GAME_REPOSITORY_MOCK.delete).toHaveBeenCalledWith('game-id', 'test-request-id');
     });
 
@@ -172,7 +177,12 @@ describe('MinPokerGameService', () => {
       await expect(service.deleteGame('game-id', user, 'test-request-id')).rejects.toThrow('Forbidden');
 
       expect(MINPOKER_GAME_REPOSITORY_MOCK.findOne).toHaveBeenCalledWith('game-id', 'test-request-id');
-      expect(AUTHORIZATION_SERVICE_MOCK.authorize).toHaveBeenCalledWith(MinPokerGamePolicy, 'delete', user, 'creator-1');
+      expect(AUTHORIZATION_SERVICE_MOCK.authorize).toHaveBeenCalledWith(
+        MinPokerGamePolicy,
+        'delete',
+        user,
+        'creator-1',
+      );
       expect(MINPOKER_GAME_REPOSITORY_MOCK.delete).not.toHaveBeenCalled();
     });
 
@@ -191,7 +201,12 @@ describe('MinPokerGameService', () => {
       await service.deleteGame('game-id', admin, 'test-request-id');
 
       expect(MINPOKER_GAME_REPOSITORY_MOCK.findOne).toHaveBeenCalledWith('game-id', 'test-request-id');
-      expect(AUTHORIZATION_SERVICE_MOCK.authorize).toHaveBeenCalledWith(MinPokerGamePolicy, 'delete', admin, 'creator-1');
+      expect(AUTHORIZATION_SERVICE_MOCK.authorize).toHaveBeenCalledWith(
+        MinPokerGamePolicy,
+        'delete',
+        admin,
+        'creator-1',
+      );
       expect(MINPOKER_GAME_REPOSITORY_MOCK.delete).toHaveBeenCalledWith('game-id', 'test-request-id');
     });
   });

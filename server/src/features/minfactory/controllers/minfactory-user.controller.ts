@@ -70,7 +70,10 @@ export class MinFactoryUserController {
   @API_401()
   @API_409()
   @API_500()
-  public async create(@User() user: MinFactoryUser, @Headers('X-Request-Id') requestId: string): Promise<MinFactoryUserDto> {
+  public async create(
+    @User() user: MinFactoryUser,
+    @Headers('X-Request-Id') requestId: string,
+  ): Promise<MinFactoryUserDto> {
     this.logger.debug(`START create(userId: ${user.id})`, requestId);
     const response: MinFactoryUserDto = await this.userService.createUser(user, requestId);
     this.logger.debug(`END create(...)`, requestId);

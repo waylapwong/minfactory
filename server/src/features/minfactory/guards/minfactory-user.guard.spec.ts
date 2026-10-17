@@ -52,7 +52,10 @@ describe('MinFactoryUserGuard', () => {
 
     await expect(guard.canActivate(context)).resolves.toBe(true);
 
-    expect(reflector.getAllAndOverride).toHaveBeenCalledWith(ALLOW_UNREGISTERED_USER, [context.getHandler(), context.getClass()]);
+    expect(reflector.getAllAndOverride).toHaveBeenCalledWith(ALLOW_UNREGISTERED_USER, [
+      context.getHandler(),
+      context.getClass(),
+    ]);
     expect(context.switchToHttp().getRequest().user).toMatchObject({
       email: 'user@example.com',
       firebaseUid: 'firebase-uid',

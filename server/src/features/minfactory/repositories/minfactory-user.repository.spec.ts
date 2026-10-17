@@ -49,7 +49,9 @@ describe('MinFactoryUserRepository', () => {
     it('should throw NotFoundException when user is not found', async () => {
       MINFACTORY_USER_TYPEORM_REPOSITORY_MOCK.findOne.mockResolvedValue(null);
 
-      await expect(userRepository.findByEmail('missing@example.com', 'test-request-id')).rejects.toThrow(NotFoundException);
+      await expect(userRepository.findByEmail('missing@example.com', 'test-request-id')).rejects.toThrow(
+        NotFoundException,
+      );
     });
   });
 
@@ -75,7 +77,9 @@ describe('MinFactoryUserRepository', () => {
     it('should throw NotFoundException when user is not found', async () => {
       MINFACTORY_USER_TYPEORM_REPOSITORY_MOCK.findOne.mockResolvedValue(null);
 
-      await expect(userRepository.findByFirebaseUid('firebase-uid-123', 'test-request-id')).rejects.toThrow(NotFoundException);
+      await expect(userRepository.findByFirebaseUid('firebase-uid-123', 'test-request-id')).rejects.toThrow(
+        NotFoundException,
+      );
     });
   });
 

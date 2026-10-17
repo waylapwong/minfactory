@@ -22,7 +22,10 @@ export class MinPokerGameRepository {
 
   public async findAll(requestId: string): Promise<MinPokerGameEntity[]> {
     this.logger.debug(`START findAll()`, requestId);
-    const entities: MinPokerGameEntity[] = await this.repository.find({ relations: ['creator'], order: { createdAt: 'DESC' } });
+    const entities: MinPokerGameEntity[] = await this.repository.find({
+      relations: ['creator'],
+      order: { createdAt: 'DESC' },
+    });
     this.logger.debug(`END findAll(...)`, requestId);
     return entities;
   }

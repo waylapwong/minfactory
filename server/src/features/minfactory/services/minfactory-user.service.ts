@@ -36,7 +36,10 @@ export class MinFactoryUserService {
         throw error;
       }
 
-      const duplicatedUserByFirebaseUid: MinFactoryUserEntity | null = await this.findByFirebaseUidOrNull(firebaseUid, requestId);
+      const duplicatedUserByFirebaseUid: MinFactoryUserEntity | null = await this.findByFirebaseUidOrNull(
+        firebaseUid,
+        requestId,
+      );
 
       if (duplicatedUserByFirebaseUid) {
         return this.entityToDto(duplicatedUserByFirebaseUid);

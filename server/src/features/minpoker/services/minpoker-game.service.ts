@@ -22,7 +22,11 @@ export class MinPokerGameService {
     private readonly authorizationService: AuthorizationService,
   ) {}
 
-  public async createGame(dto: MinPokerCreateGameDto, user: MinFactoryUser, requestId: string): Promise<MinPokerGameDto> {
+  public async createGame(
+    dto: MinPokerCreateGameDto,
+    user: MinFactoryUser,
+    requestId: string,
+  ): Promise<MinPokerGameDto> {
     this.logger.debug(`START createGame(dto: ${JSON.stringify(dto)}, userId: ${user.id})`, requestId);
     // MAP TO DOMAIN
     const domain: MinPokerGame = MinPokerDtoMapper.toDomain(dto);
@@ -48,7 +52,11 @@ export class MinPokerGameService {
     this.logger.debug(`END deleteGame(...)`, requestId);
   }
 
-  public async getAllGames(user: MinFactoryUser, visibility: MinPokerGameVisibility, requestId: string): Promise<MinPokerGameDto[]> {
+  public async getAllGames(
+    user: MinFactoryUser,
+    visibility: MinPokerGameVisibility,
+    requestId: string,
+  ): Promise<MinPokerGameDto[]> {
     this.logger.debug(`START getAllGames(userId: ${user.id}, visibility: ${visibility})`, requestId);
     let entities: MinPokerGameEntity[] = [];
     // CHECK VISIBILITY FLAG

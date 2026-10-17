@@ -30,7 +30,10 @@ describe('RequestIdGuard', () => {
   });
 
   it('should allow request when first value of array header is a valid UUID v4', () => {
-    const context = createExecutionContext(['550e8400-e29b-4d4a-a716-446655440000', '660e8400-e29b-4d4a-a716-446655440000']);
+    const context = createExecutionContext([
+      '550e8400-e29b-4d4a-a716-446655440000',
+      '660e8400-e29b-4d4a-a716-446655440000',
+    ]);
 
     const result = guard.canActivate(context);
 
