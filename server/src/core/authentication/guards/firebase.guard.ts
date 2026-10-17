@@ -1,6 +1,6 @@
 import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/common';
 import { Request } from 'express';
-import { RequestWithFirebaseUser } from '../models/request-with-firebase-user';
+import { RequestWithIdentity } from '../models/request-with-identity';
 import { AuthenticationService } from '../services/authentication.service';
 import { DecodedIdToken } from 'firebase-admin/auth';
 
@@ -11,23 +11,19 @@ export class FirebaseGuard implements CanActivate {
   public async canActivate(context: ExecutionContext): Promise<boolean> {
     const request: Request = context.switchToHttp().getRequest<Request>();
     const bearerToken: string = this.extractBearerToken(request.headers.authorization);
-
-    let firebaseUid: string;
-    let firebaseEmail: string;
+    let decodedIdToken: DecodedIdToken | null = null;
 
     try {
-      const decodedIdToken: DecodedIdToken = await this.authenticationService.verifyIdToken(bearerToken);
-      firebaseUid = decodedIdToken.uid ?? '';
-      firebaseEmail = decodedIdToken.email ?? '';
+      decodedIdToken = await this.authenticationService.verifyIdToken(bearerToken);
     } catch {
       throw new UnauthorizedException('Invalid or expired Firebase token');
     }
 
-    if (!firebaseUid || !firebaseEmail) {
-      throw new UnauthorizedException('Firebase token is missing required claims');
+    if (!decodedIdToken.uid || !decodedIdToken.email) {
+      throw new UnauthorizedException('Missing identity token claims');
     }
 
-    (request as RequestWithFirebaseUser).firebaseUser = { uid: firebaseUid, email: firebaseEmail };
+    (request as RequestWithIdentity).identity = { uid: decodedIdToken.uid, email: decodedIdToken.email ?? '' };
 
     return true;
   }

@@ -40,7 +40,7 @@ describe('FirebaseGuard', () => {
     expect(AUTHENTICATION_SERVICE_MOCK.verifyIdToken).toHaveBeenCalledWith('valid-token');
 
     const request = context.switchToHttp().getRequest();
-    expect(request.firebaseUser).toEqual({
+    expect(request.identity).toEqual({
       uid: 'firebase-uid-123',
       email: 'user@example.com',
     });

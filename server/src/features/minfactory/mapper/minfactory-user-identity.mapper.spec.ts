@@ -1,10 +1,10 @@
-import { FirebaseUserDto } from '../../../core/authentication/models/firebase-user.dto';
+import { FirebaseIdentityDto } from '../../../core/authentication/models/firebase-identity.dto';
 import { MinFactoryUser } from '../models/domains/minfactory-user';
 import { MinFactoryUserIdentityMapper } from './minfactory-user-identity.mapper';
 
 describe('MinFactoryUserIdentityMapper', () => {
   it('maps Firebase identity claims to a domain user', () => {
-    const identity: FirebaseUserDto = {
+    const identity: FirebaseIdentityDto = {
       email: 'user@example.com',
       uid: 'firebase-uid-123',
     };
@@ -17,7 +17,7 @@ describe('MinFactoryUserIdentityMapper', () => {
   });
 
   it('returns a new domain instance for each identity', () => {
-    const identity: FirebaseUserDto = {
+    const identity: FirebaseIdentityDto = {
       email: 'user@example.com',
       uid: 'firebase-uid-123',
     };

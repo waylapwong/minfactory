@@ -7,9 +7,9 @@ import { MinFactoryUser } from '../models/domains/minfactory-user';
 import { MinFactoryUserService } from '../services/minfactory-user.service';
 import { MinFactoryUserGuard } from './minfactory-user.guard';
 
-function createExecutionContext(firebaseUser?: { email: string; uid: string }): ExecutionContext {
+function createExecutionContext(identity?: { email: string; uid: string }): ExecutionContext {
   const request = {
-    firebaseUser,
+    identity,
     headers: { 'x-request-id': 'test-request-id' },
   };
   return {
