@@ -27,6 +27,10 @@ export class RoutingService {
     this.router.navigate([AppPath.MinPoker]);
   }
 
+  public navigateToMinAdvent(): void {
+    void this.router.navigate([AppPath.MinAdvent]);
+  }
+
   public navigateToMinPokerGame(id: string): void {
     this.router.navigate([AppPath.MinPoker, MinPokerPath.Game, id]);
   }

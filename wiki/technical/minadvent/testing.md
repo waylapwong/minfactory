@@ -2,61 +2,37 @@
 
 > **Geplanter Soll-Zustand v1.0.0** · [Übersicht](minadvent-home.md)
 
-## 1. Testwerkzeuge und Ebenen
+## 1. Testwerkzeuge und Umfang
 
-Backend verwendet bestehendes Jest/ts-jest und Supertest, Frontend Jasmine/Karma mit ChromeHeadless. Nach Umsetzung `npm --prefix server run test:ci`, `npm --prefix client run test:ci` und passende `lint:ci`-Skripte ausführen. Transaktions-/Race-Tests gegen **echtes MySQL**, nicht nur In-Memory-Mocks. Vorhandene Mock-Verzeichnisse der Features verwenden; keine Inline-Mocks. Dokumentationsänderungen dieses Tickets führen keine Code-Tests aus.
+Für v1.0.0 sind ausschließlich Unit-Tests vorgesehen: Backend mit Jest/ts-jest, Frontend mit Jasmine/Karma. Datenbankzugriffe, Guards, Zeitquellen und externe Dienste werden über wiederverwendbare Feature-Mocks ersetzt; keine API-, Integrations-, Datenbank-, E2E-, Last-, Security- oder Regressionstestläufe. Bestehende Mock-Verzeichnisse verwenden, keine Inline-Mocks. Die Produktivregeln bleiben serverseitig maßgeblich.
 
 ## 2. Fachliche und technische Szenarien
 
 | Ausgangslage | Aktion | Erwartung / Ebene |
 | --- | --- | --- |
-| Neuer Kalender | Mit Jahr in Vergangenheit/Zukunft anlegen | Genau 24 EMPTY, Jahr bleibt unveränderlich; API/DB/UI |
-| Create-Form | Aktuelles Kalenderjahr anzeigen | Pflichtfeld mit Default; UI |
-| Bestehender Kalender | Update versucht `year` zu ändern | Nicht im Update-DTO, strukturierte Ablehnung; API |
-| Tür mit 0/10/11 Blöcken | PUT speichern | 0 und 10 erlaubt, 11 → 409 mit fachlichem Code; API/UI |
-| Positionen 0, doppelt, Lücke oder unsortiert | PUT | Nur 1..N lückenlos gültig; 409; API/DB |
-| Leerer formatierter Text | PUT | Fachlicher 409, keine Änderung; API |
-| HTML mit Skript/Eventhandler/javascript:-Link | PUT/GET | Gefährliche Inhalte werden nicht ausgeführt; Sicherheits-/UI-Test |
-| Kalender unveröffentlicht | Empfänger GET | Kein aktiver Token, keine Inhalte; API |
-| Veröffentlichung leerer Kalender | PUT sharing | Erfolgreich, genau ein aktiver Token; API/DB |
-| Widerruf, Re-Publish, Rotation | Shared GET alter/neuer Token | Alt 404 neutral, neu zulässig; Status erhalten; API |
-| Vor 1. Dezember des Kalenderjahres | Shared GET/UI | Countdown, Raster nicht angezeigt; UI/Clock |
-| 1. Dezember 00:00 Berlin und später | Shared GET/UI | Raster bleibt dauerhaft; UI/Clock |
-| Tür 24 vor 24.12. 00:00 / danach | PUT öffnen | 409 DOOR_NOT_YET_UNLOCKED / Erfolg; API/Clock |
-| 24.12. 23:59 / 25.12. 00:00 Berlin | Ersteller schließt OPENED | Erfolg / 409 DOOR_CLOSE_PERIOD_ENDED; Clock/API |
-| Bereits OPENED mit korrekter Version | PUT erneut | 200, firstOpened=false, keine Versionserhöhung; API |
-| Bereits OPENED mit alter Version | PUT erneut | **409 VERSION_CONFLICT**, keine Inhalte oder Mutation; API |
-| Erstes FILLED mit alter Version | PUT | 409 VERSION_CONFLICT, kein Öffnen; API |
-| Erfolgreicher Erst-PUT | Antwort | firstOpened=true, Inhalte, aktuelle Version; Animation; API/UI |
-| Bereits OPENED | GET | Inhalt ohne Animation, Version unverändert; API/UI |
-| Ersteller schließt zuvor OPENED | Empfänger GET aus altem Snapshot | Keine Inhalte/Seiteneffekt, anschließend aktualisieren; API/UI |
-| Geschlossenes Türchen erneut geöffnet | PUT mit aktueller Version | firstOpened=true, Animation erneut; API/UI |
-| Empfänger 409 VERSION_CONFLICT | Bestätigung der Aktualisierung | Erst dann Übersicht neu laden; OPENED GET, FILLED nur erneuter Klick PUT; UI |
-| Server-PUT erfolgreich, Response verloren | Client mit alter Version erneut PUT | 409, danach bestätigtes Reload und GET ohne Animation; API/UI |
-| Jahr vergangen, 24 EMPTY | Zustand ableiten | Nicht abgeschlossen, weiter editierbar; Clock/API |
-| Jahr vergangen, 1 OPENED und 23 EMPTY | Zustand ableiten | ABGESCHLOSSEN, endgültige Sperre; Clock/API |
-| Jahr vergangen, 1 OPENED, 1 FILLED | Letztes FILLED öffnen | PUT erfolgreich, completed=true, version +1, danach Sperre; DB/API |
-| Jahr vergangen, 1 OPENED, 1 FILLED | Letztes FILLED leeren | UI warnt **vor** PUT, PUT erfolgreich, danach completed; UI/DB/API |
-| Jahr vergangen | Kalenderjahr auswählen/editor öffnen | Warnhinweis vor möglichem sofortigem Abschluss; UI |
-| 24.12. zu 25.12. | Zeitgeber vorspulen | Abschluss dynamisch ab 00:00, keine Cron-Aktion oder eigene Version; Clock |
-| Ein Kalender, zwei Schreibaktionen mit alter Version | Parallel in echten DB-Transaktionen | Genau ein Gewinner, Verlierer 409, keine Teilmutation; MySQL |
-| Letztes Öffnen vs. gleichzeitiges Befüllen | Parallel | Serielle Transaktionen; abgeschlossener Kalender kann nicht verändert werden; MySQL |
-| Empfängeröffnung vs. Widerruf | Parallel | Erste gültige Mutation gewinnt; 409 bzw. neutraler 404; MySQL |
-| Tokenrotation vs. Öffnung | Parallel | Kein alter Token nach Rotation, keine Zombie-Öffnung; MySQL |
-| Unterschiedliche Türchen, gleiche alte Version | Beide PUT | Zweiter 409 trotz unterschiedlicher Tür; MySQL |
-| Fremder Ersteller | Ändert/fetcht fremden Kalender | **403** ohne Datenfreigabe; Security/API |
-| Ungültiger/widerrufener Token | GET/PUT | Einheitlicher **404**, keine Informationen über Kalender; Security |
-| Konto wird gelöscht | Alle zugehörigen Daten | Keine verbliebenen Kalender/Türchen/Tokens; Integrations-Test |
-| Firebase-Löschung scheitert partiell | Wiederaufnahme gemäß bestehendem Pattern | Kein dauerhaft zugänglicher verwaister Kalender; Integration |
-| Migration in bestehender MySQL-DB | Up-/Rollback/Prüfung | Bestehende minApps unverändert; Migration |
-| Mobile, Tastatur, Screenreader | Editor/Dialog/Shared UI bedienen | WCAG 2.2 AA, verständliche Zustände und Fehlermeldungen; Frontend |
+| Kalenderanlage | Create mit vergangenen/aktuellen/zukünftigen Jahren | Pflichtfelder, Initialwerte und genau 24 EMPTY-Türen; Service-/Repository-Unit-Test mit Repository-/Transaction-Mock |
+| Jahresgrenzen | Werte vor, innerhalb und nach dem erlaubten Jahrbereich | Gültige Jahre akzeptiert, ungültige Jahre abgelehnt; Service-Unit-Test |
+| Jahr ändern | Update-Payload mit zusätzlichem `year` | Whitelist lehnt unbekanntes Feld ab; DTO-/ValidationPipe-Unit-Test |
+| 24-Türen-Invariante | Fehler beim Speichern der Türen | Eine Transaktion umfasst Kalender und 24 Türen; Repository-Unit-Test mit gemocktem EntityManager |
+| 0/10/11 Inhaltsblöcke und lückenhafte Positionen | Türchen speichern | Grenzen und Validierungsfehler; Service-Unit-Test mit Repository-Mock |
+| Leerer oder gefährlicher Text/Link | Inhalte validieren und abbilden | Leere Werte und nicht erlaubte Inhalte werden abgelehnt/sicher behandelt; Validator-/Mapper-Unit-Test |
+| Veröffentlichung, Widerruf und Rotation | Freigabezustände mit gemocktem Repository ändern | Tokenzustand, Versionsprüfung und neutrale Fehlercodes; Service-Unit-Tests |
+| Datumsgrenzen in `Europe/Berlin` | Clock-Mock vor/nach Dezember- und Türchentaggrenzen | Countdown, Öffnungsfreigabe und Schließfrist entsprechen dem Kalenderjahr; Service-/Mapper-Unit-Tests |
+| Öffnung und wiederholte PUTs | Status-/Versionskombinationen über Service-Mocks abbilden | OPENED idempotent ohne Versionszuwachs; veraltete Version immer 409; Service-Unit-Test |
+| Abschluss | EMPTY/FILLED/OPENED-Verteilungen und Clock-Mock kombinieren | Abgeleiteter Abschluss, Sperren und erfolgreiche auslösende Mutation; Service-Unit-Test |
+| Versionskonflikte | Zwei Aufrufe mit derselben erwarteten Version simulieren | Nur erfolgreiche Mutation verändert Version; stale requests erhalten 409; Service-Unit-Test |
+| Ownership | Eigentümer und fremder Nutzer lesen/verändern Ressourcen | Eigene Kalender sichtbar, Fremdzugriff 403; Service-Unit-Test mit Repository-Mock |
+| Shared-Link-Fehler | Ungültigen oder widerrufenen Token simulieren | Einheitlicher neutraler 404 ohne Daten; Service-Unit-Test |
+| Kalenderlöschung | Gemockte Cascade-/Accountlösch-Responses | Zugehörige Daten werden im Domänenablauf entfernt; Service-Unit-Test |
+| Migration | TypeORM `QueryRunner` mocken | Up-/Down-Anweisungen, Constraints und FK-Kaskade werden korrekt angefragt; Migration-Unit-Test |
+| Formulare und UI-Zustände | Angular Forms mit Repository-Mock bedienen | Pflichtfelder, Grenzen, Loading/Success/Error/Empty und Tastaturfokus; Komponenten-Unit-Test |
 
 ## 3. Review der Architektur
 
 - Repository-Konventionen: Angular Standalone/Signals, TailwindCSS, NestJS-Module, DTO/Domain/Entity-Mapper, TypeORM-Repositories, Firebase/minFactory-Guards, Swagger-Generierung.
-- Fachliche Vollständigkeit: Jahreswahl, 24 Türen, 0–10 Blöcke, Uhrzeit, Publication, Bearbeitbarkeit, `ABGESCHLOSSEN`, löschen, keine Sondervorschau.
-- Sicherheit: Token-Entropie, Revocation/Rotation, Caching/Referrer/Logs, Sanitizing, Fremdeigentum, Konto-Löschung.
-- Transaktionen: genau eine globale Version, strict PUT inklusive OPENED, atomare Closure/Versionsprüfung und Sperre in echten MySQL-Races.
+- Fachliche Vollständigkeit: Jahreswahl, 24 Türen, 0–10 Blöcke, Uhrzeit, Freigabe, Bearbeitbarkeit, `ABGESCHLOSSEN`, löschen, keine Sondervorschau; Regeln als isolierte Service-Unit-Tests mit festen Eingaben und Mocks abbilden.
+- Sicherheit: Token-Entropie, Widerruf/Rotation, Caching/Referrer/Logs, Sanitizing, Fremdeigentum und Kontolöschung durch gezielte Unit-Tests der jeweiligen Fachlogik abdecken.
+- Transaktionen: Versions- und Abschlussregeln über Unit-Tests mit gemocktem TypeORM-Manager prüfen; keine echten Datenbank- oder Race-Testläufe voraussetzen.
 - Fehlervertrag: 409 für Versionen/fachliche Regeln, 403 für Rechte, 400 für Formfehler, 404 für Shared Token, getrennte maschinenlesbare Codes.
 - Keine vorgeschriebene unnötige Klassenstruktur und keine neuen Frameworks.
 

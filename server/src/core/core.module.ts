@@ -15,6 +15,7 @@ import { AuthenticationModule } from './authentication/authentication.module';
     TypeOrmModule.forRoot({
       database: process.env.DB_DATABASE,
       entities: ['dist/**/*.entity{.ts,.js}'],
+      migrations: [__dirname + '/../migrations/*{.ts,.js}'],
       host: process.env.DB_HOST,
       password: process.env.DB_PASSWORD,
       port: +process.env.DB_PORT!,
