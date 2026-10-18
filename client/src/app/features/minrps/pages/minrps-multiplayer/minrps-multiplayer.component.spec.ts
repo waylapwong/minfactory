@@ -192,7 +192,7 @@ describe('MinRpsMultiplayerComponent', () => {
         '[data-testid="result-history-item"]',
       );
 
-      expect(historyItems.length).toBe(2);
+      expect(historyItems).toHaveSize(2);
     });
   });
 
