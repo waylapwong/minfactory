@@ -94,7 +94,9 @@ export class MinPokerGame {
       throw new GameRuleException(`Seat ${seat} is already occupied`);
     }
 
-    const currentSeat: number = this.players.findIndex((existingPlayer: MinPokerPlayer | null) => existingPlayer?.id === player.id);
+    const currentSeat: number = this.players.findIndex(
+      (existingPlayer: MinPokerPlayer | null) => existingPlayer?.id === player.id,
+    );
     if (currentSeat !== -1 && currentSeat !== seat) {
       this.players[currentSeat] = null;
     }

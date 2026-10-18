@@ -10,6 +10,7 @@ import {
 import { Server, Socket } from 'socket.io';
 import { AuthenticationService } from '../../../core/authentication/services/authentication.service';
 import { LoggerService } from '../../../core/logging/services/logger.service';
+import { MinFactoryUserService } from '../../minfactory/services/minfactory-user.service';
 import { Namespace } from '../../../shared/enums/namespace.enum';
 import { MinPokerJoinCommand } from '../models/commands/minpoker-join.command';
 import { MinPokerLeaveCommand } from '../models/commands/minpoker-leave.command';
@@ -44,19 +45,26 @@ export class MinPokerGateway implements OnGatewayConnection, OnGatewayDisconnect
 
   constructor(
     private readonly authenticationService: AuthenticationService,
+    private readonly userService: MinFactoryUserService,
     private readonly playerIdRepository: MinPokerPlayerIdRepository,
     private readonly tournamentService: MinPokerTournamentService,
   ) {}
 
   @SubscribeMessage(MinPokerCommand.Join)
-  public async handleJoinCommand(@ConnectedSocket() clientSocket: Socket, @MessageBody() command: MinPokerJoinCommand): Promise<void> {
+  public async handleJoinCommand(
+    @ConnectedSocket() clientSocket: Socket,
+    @MessageBody() command: MinPokerJoinCommand,
+  ): Promise<void> {
     this.logger.debug(`Incoming Command: ${MinPokerCommand.Join} ${JSON.stringify(command)}`);
     const event: MinPokerUpdatedEvent = await this.tournamentService.handleJoinCommand(clientSocket, command);
     this.sendMatchUpdatedEvent(event);
   }
 
   @SubscribeMessage(MinPokerCommand.Leave)
-  public handleLeaveCommand(@ConnectedSocket() clientSocket: Socket, @MessageBody() command: MinPokerLeaveCommand): void {
+  public handleLeaveCommand(
+    @ConnectedSocket() clientSocket: Socket,
+    @MessageBody() command: MinPokerLeaveCommand,
+  ): void {
     this.logger.debug(`Incoming Command: ${MinPokerCommand.Leave} ${JSON.stringify(command)}`);
     const event: MinPokerUpdatedEvent | null = this.tournamentService.handleLeaveCommand(clientSocket, command);
     if (event) {
@@ -65,21 +73,30 @@ export class MinPokerGateway implements OnGatewayConnection, OnGatewayDisconnect
   }
 
   @SubscribeMessage(MinPokerCommand.Pause)
-  public handlePauseCommand(@ConnectedSocket() clientSocket: Socket, @MessageBody() command: MinPokerPauseCommand): void {
+  public handlePauseCommand(
+    @ConnectedSocket() clientSocket: Socket,
+    @MessageBody() command: MinPokerPauseCommand,
+  ): void {
     this.logger.debug(`Incoming Command: ${MinPokerCommand.Pause} ${JSON.stringify(command)}`);
     const event: MinPokerUpdatedEvent = this.tournamentService.handlePauseCommand(clientSocket, command);
     this.sendMatchUpdatedEvent(event);
   }
 
   @SubscribeMessage(MinPokerCommand.Resume)
-  public handleResumeCommand(@ConnectedSocket() clientSocket: Socket, @MessageBody() command: MinPokerResumeCommand): void {
+  public handleResumeCommand(
+    @ConnectedSocket() clientSocket: Socket,
+    @MessageBody() command: MinPokerResumeCommand,
+  ): void {
     this.logger.debug(`Incoming Command: ${MinPokerCommand.Resume} ${JSON.stringify(command)}`);
     const event: MinPokerUpdatedEvent = this.tournamentService.handleResumeCommand(clientSocket, command);
     this.sendMatchUpdatedEvent(event);
   }
 
   @SubscribeMessage(MinPokerCommand.Seat)
-  public async handleSeatCommand(@ConnectedSocket() clientSocket: Socket, @MessageBody() command: MinPokerSeatCommand): Promise<void> {
+  public async handleSeatCommand(
+    @ConnectedSocket() clientSocket: Socket,
+    @MessageBody() command: MinPokerSeatCommand,
+  ): Promise<void> {
     this.logger.debug(`Incoming Command: ${MinPokerCommand.Seat} ${JSON.stringify(command)}`);
     const result: MinPokerSeatResult = await this.tournamentService.handleSeatCommand(clientSocket, command);
     this.sendMatchUpdatedEvent(result.updatedEvent);
@@ -92,7 +109,10 @@ export class MinPokerGateway implements OnGatewayConnection, OnGatewayDisconnect
   }
 
   @SubscribeMessage(MinPokerCommand.Start)
-  public handleStartCommand(@ConnectedSocket() clientSocket: Socket, @MessageBody() command: MinPokerStartCommand): void {
+  public handleStartCommand(
+    @ConnectedSocket() clientSocket: Socket,
+    @MessageBody() command: MinPokerStartCommand,
+  ): void {
     this.logger.debug(`Incoming Command: ${MinPokerCommand.Start} ${JSON.stringify(command)}`);
     const result: MinPokerStartResult = this.tournamentService.handleStartCommand(clientSocket, command);
     this.sendMatchUpdatedEvent(result.updatedEvent);
@@ -112,11 +132,14 @@ export class MinPokerGateway implements OnGatewayConnection, OnGatewayDisconnect
         clientSocket.disconnect();
         return;
       }
-      const decodedFirebaseIdToken: DecodedIdToken = await this.authenticationService.verifyFirebaseIdToken(firebaseIdToken);
-      const event: MinPokerConnectedEvent = await this.tournamentService.handleConnectionCommand(clientSocket, decodedFirebaseIdToken.uid);
+      const decodedFirebaseIdToken: DecodedIdToken = await this.authenticationService.verifyIdToken(firebaseIdToken);
+      const user = await this.userService.findByFirebaseUid(decodedFirebaseIdToken.uid, '');
+      const event: MinPokerConnectedEvent = this.tournamentService.handleConnectionCommand(clientSocket, user);
       this.sendClientEvent(clientSocket, MinPokerEvent.MatchConnected, event);
     } catch (error: unknown) {
-      this.logger.error(`MinPoker connection authentication failed: ${error instanceof Error ? error.message : String(error)}`);
+      this.logger.error(
+        `MinPoker connection authentication failed: ${error instanceof Error ? error.message : String(error)}`,
+      );
       clientSocket.disconnect();
       return;
     }

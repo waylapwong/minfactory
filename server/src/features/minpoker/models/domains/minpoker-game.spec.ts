@@ -71,7 +71,9 @@ describe('MinPokerGame', () => {
       const domain = new MinPokerGame();
       domain.seatPlayer(new MinPokerPlayer({ id: 'player-1', name: 'Alice' }), 0);
 
-      expect(() => domain.seatPlayer(new MinPokerPlayer({ id: 'player-2', name: 'Bob' }), 0)).toThrow(GameRuleException);
+      expect(() => domain.seatPlayer(new MinPokerPlayer({ id: 'player-2', name: 'Bob' }), 0)).toThrow(
+        GameRuleException,
+      );
     });
 
     it('should move player from old seat to new seat', () => {

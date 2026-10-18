@@ -1,7 +1,31 @@
 @BASE_PATH = http://localhost:3000
+@MINFACTORY_BASE_PATH = {{BASE_PATH}}/minfactory
 @HEALTH = health
+@REQUEST_ID = d6a850d8-8977-466e-b710-edbd6513dd0d
+@TOKEN = 
 
 
 ### GET /health
 GET {{BASE_PATH}}/{{HEALTH}}
 Accept: application/json
+
+
+### POST /minfactory/users
+POST {{MINFACTORY_BASE_PATH}}/users
+Accept: application/json
+Authorization: Bearer {{TOKEN}}
+X-Request-Id: {{REQUEST_ID}}
+
+
+### GET /minfactory/users/me
+GET {{MINFACTORY_BASE_PATH}}/users/me
+Accept: application/json
+Authorization: Bearer {{TOKEN}}
+X-Request-Id: {{REQUEST_ID}}
+
+
+### DELETE /minfactory/users/me
+DELETE {{MINFACTORY_BASE_PATH}}/users/me
+Accept: application/json
+Authorization: Bearer {{TOKEN}}
+X-Request-Id: {{REQUEST_ID}}

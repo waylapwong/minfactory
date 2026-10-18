@@ -20,6 +20,10 @@ export class MinPokerGameDto {
   public smallBlind!: number;
   @ApiProperty({ example: 6, minimum: 6, maximum: 6 })
   public tableSize!: number;
-  @ApiProperty({ enum: MinPokerGameVisibility, enumName: 'MinPokerGameVisibility', example: MinPokerGameVisibility.Public })
+  @ApiProperty({
+    enum: MinPokerGameVisibility,
+    enumName: 'MinPokerGameVisibility',
+    example: MinPokerGameVisibility.Public,
+  })
   public visibility!: MinPokerGameVisibility;
 }

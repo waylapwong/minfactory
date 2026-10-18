@@ -57,7 +57,10 @@ describe('MinRpsGameService', () => {
       expect(result).toBeDefined();
       expect(result.name).toBe('Test Game');
       expect(result.id).toBe('test-id');
-      expect(MINRPS_GAME_REPOSITORY_MOCK.save).toHaveBeenCalledWith(expect.objectContaining({ name: 'Test Game' }), 'test-request-id');
+      expect(MINRPS_GAME_REPOSITORY_MOCK.save).toHaveBeenCalledWith(
+        expect.objectContaining({ name: 'Test Game' }),
+        'test-request-id',
+      );
     });
 
     it('should throw when save fails', async () => {
@@ -67,7 +70,10 @@ describe('MinRpsGameService', () => {
       MINRPS_GAME_REPOSITORY_MOCK.save.mockResolvedValue(null);
 
       await expect(service.createGame(createDto, 'test-request-id')).rejects.toThrow(MinRpsGameSaveFailedException);
-      expect(MINRPS_GAME_REPOSITORY_MOCK.save).toHaveBeenCalledWith(expect.objectContaining({ name: 'Test Game' }), 'test-request-id');
+      expect(MINRPS_GAME_REPOSITORY_MOCK.save).toHaveBeenCalledWith(
+        expect.objectContaining({ name: 'Test Game' }),
+        'test-request-id',
+      );
     });
   });
 

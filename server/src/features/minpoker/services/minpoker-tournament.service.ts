@@ -1,7 +1,6 @@
 import { ForbiddenException, Injectable } from '@nestjs/common';
 import { Socket } from 'socket.io';
-import { MinFactoryUserEntity } from '../../minfactory/models/entities/minfactory-user.entity';
-import { MinFactoryUserRepository } from '../../minfactory/repositories/minfactory-user.repository';
+import { MinFactoryUser } from '../../minfactory/models/domains/minfactory-user';
 import { MinPokerDomainMapper } from '../mapper/minpoker-domain.mapper';
 import { MinPokerEntityMapper } from '../mapper/minpoker-entity.mapper';
 import { MinPokerJoinCommand } from '../models/commands/minpoker-join.command';
@@ -47,13 +46,10 @@ export class MinPokerTournamentService {
     private readonly matchRepository: MinPokerMatchRepository,
     private readonly playerIdRepository: MinPokerPlayerIdRepository,
     private readonly roomSystem: MinPokerRoomSystem,
-    private readonly userRepository: MinFactoryUserRepository,
   ) {}
 
-  public async handleConnectionCommand(clientSocket: Socket, firebaseUid: string): Promise<MinPokerConnectedEvent> {
-    // GET USER ID
-    const userEntity: MinFactoryUserEntity = await this.userRepository.findByFirebaseUid(firebaseUid, '');
-    const userId: string = userEntity.id;
+  public handleConnectionCommand(clientSocket: Socket, user: MinFactoryUser): MinPokerConnectedEvent {
+    const userId: string = user.id;
     // BIND SOCKET ID TO USER ID
     clientSocket.data.playerId = userId;
     // SAVE SOCKET ID <-> USER ID MAPPING
@@ -67,7 +63,8 @@ export class MinPokerTournamentService {
 
   public handleDisconnectCommand(clientSocket: Socket): MinPokerDisconnectResult | null {
     // GET PLAYER ID & MATCH ID
-    const playerId: string | null = this.playerIdRepository.findOne(clientSocket.id) ?? clientSocket.data?.playerId ?? null;
+    const playerId: string | null =
+      this.playerIdRepository.findOne(clientSocket.id) ?? clientSocket.data?.playerId ?? null;
     const matchId: string | null = this.roomSystem.getPlayerRoomName(clientSocket);
     // REMOVE CLIENT SOCKET FROM ALL ROOMS
     this.roomSystem.removePlayerFromAllRooms(clientSocket);
@@ -270,7 +267,8 @@ export class MinPokerTournamentService {
   }
 
   private resolvePlayerId(clientSocket: Socket, playerId: string): string {
-    const socketPlayerId: string | null = this.playerIdRepository.findOne(clientSocket.id) ?? clientSocket.data?.playerId ?? null;
+    const socketPlayerId: string | null =
+      this.playerIdRepository.findOne(clientSocket.id) ?? clientSocket.data?.playerId ?? null;
     if (!socketPlayerId) {
       throw new ForbiddenException('Socket is not bound to a player');
     }

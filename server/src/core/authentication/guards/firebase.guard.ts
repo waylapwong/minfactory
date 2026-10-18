@@ -1,38 +1,34 @@
 import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/common';
 import { Request } from 'express';
-import { AuthenticatedRequest } from '../models/authenticated-request';
+import { RequestWithIdentity } from '../models/request-with-identity';
 import { AuthenticationService } from '../services/authentication.service';
 import { DecodedIdToken } from 'firebase-admin/auth';
 
 @Injectable()
-export class AuthenticationGuard implements CanActivate {
+export class FirebaseGuard implements CanActivate {
   constructor(private readonly authenticationService: AuthenticationService) {}
 
   public async canActivate(context: ExecutionContext): Promise<boolean> {
     const request: Request = context.switchToHttp().getRequest<Request>();
-    const token: string = this.extractToken(request.headers.authorization);
-
-    let firebaseUid: string;
-    let email: string;
+    const bearerToken: string = this.extractBearerToken(request.headers.authorization);
+    let decodedIdToken: DecodedIdToken | null = null;
 
     try {
-      const decodedToken: DecodedIdToken = await this.authenticationService.verifyFirebaseIdToken(token);
-      firebaseUid = decodedToken.uid;
-      email = decodedToken.email ?? '';
+      decodedIdToken = await this.authenticationService.verifyIdToken(bearerToken);
     } catch {
       throw new UnauthorizedException('Invalid or expired Firebase token');
     }
 
-    if (!firebaseUid || !email) {
-      throw new UnauthorizedException('Firebase token is missing required claims');
+    if (!decodedIdToken.uid || !decodedIdToken.email) {
+      throw new UnauthorizedException('Missing identity token claims');
     }
 
-    (request as AuthenticatedRequest).firebaseUser = { uid: firebaseUid, email };
+    (request as RequestWithIdentity).identity = { uid: decodedIdToken.uid, email: decodedIdToken.email ?? '' };
 
     return true;
   }
 
-  private extractToken(authorizationHeader?: string): string {
+  private extractBearerToken(authorizationHeader?: string): string {
     if (!authorizationHeader?.startsWith('Bearer ')) {
       throw new UnauthorizedException('Missing or invalid Authorization header');
     }

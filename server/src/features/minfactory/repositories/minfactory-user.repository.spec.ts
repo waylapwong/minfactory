@@ -2,7 +2,7 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 import { NotFoundException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { MinFactoryUserEntity } from '../models/entities/minfactory-user.entity';
-import { MinFactoryRole } from '../../../shared/enums/minfactory-role.enum';
+import { UserRole } from '../../../core/authorization/enums/user-role.enum';
 import { MINFACTORY_USER_TYPEORM_REPOSITORY_MOCK } from '../mocks/minfactory-user.typeorm-repository.mock';
 import { MinFactoryUserRepository } from './minfactory-user.repository';
 
@@ -33,7 +33,7 @@ describe('MinFactoryUserRepository', () => {
         id: 'user-id',
         firebaseUid: 'firebase-uid-123',
         email: 'user@example.com',
-        role: MinFactoryRole.User,
+        role: UserRole.User,
         createdAt: new Date('2025-01-01T00:00:00.000Z'),
       };
       MINFACTORY_USER_TYPEORM_REPOSITORY_MOCK.findOne.mockResolvedValue(entity);
@@ -49,7 +49,9 @@ describe('MinFactoryUserRepository', () => {
     it('should throw NotFoundException when user is not found', async () => {
       MINFACTORY_USER_TYPEORM_REPOSITORY_MOCK.findOne.mockResolvedValue(null);
 
-      await expect(userRepository.findByEmail('missing@example.com', 'test-request-id')).rejects.toThrow(NotFoundException);
+      await expect(userRepository.findByEmail('missing@example.com', 'test-request-id')).rejects.toThrow(
+        NotFoundException,
+      );
     });
   });
 
@@ -59,7 +61,7 @@ describe('MinFactoryUserRepository', () => {
         id: 'user-id',
         firebaseUid: 'firebase-uid-123',
         email: 'user@example.com',
-        role: MinFactoryRole.User,
+        role: UserRole.User,
         createdAt: new Date('2025-01-01T00:00:00.000Z'),
       };
       MINFACTORY_USER_TYPEORM_REPOSITORY_MOCK.findOne.mockResolvedValue(entity);
@@ -75,7 +77,9 @@ describe('MinFactoryUserRepository', () => {
     it('should throw NotFoundException when user is not found', async () => {
       MINFACTORY_USER_TYPEORM_REPOSITORY_MOCK.findOne.mockResolvedValue(null);
 
-      await expect(userRepository.findByFirebaseUid('firebase-uid-123', 'test-request-id')).rejects.toThrow(NotFoundException);
+      await expect(userRepository.findByFirebaseUid('firebase-uid-123', 'test-request-id')).rejects.toThrow(
+        NotFoundException,
+      );
     });
   });
 
@@ -99,31 +103,14 @@ describe('MinFactoryUserRepository', () => {
     });
   });
 
-  describe('deleteByFirebaseUid', () => {
-    it('should find entity and remove it', async () => {
-      const entity: MinFactoryUserEntity = {
-        id: 'user-id',
-        firebaseUid: 'firebase-uid-123',
-        email: 'user@example.com',
-        role: MinFactoryRole.User,
-        createdAt: new Date(),
-      };
-      MINFACTORY_USER_TYPEORM_REPOSITORY_MOCK.findOne.mockResolvedValue(entity);
-      MINFACTORY_USER_TYPEORM_REPOSITORY_MOCK.remove.mockResolvedValue(undefined);
+  describe('deleteById', () => {
+    it('should delete the given user id', async () => {
+      MINFACTORY_USER_TYPEORM_REPOSITORY_MOCK.delete.mockResolvedValue({ affected: 1 });
 
-      await userRepository.deleteByFirebaseUid('firebase-uid-123', 'test-request-id');
+      await userRepository.deleteById('user-id', 'test-request-id');
 
-      expect(MINFACTORY_USER_TYPEORM_REPOSITORY_MOCK.findOne).toHaveBeenCalledWith({
-        where: { firebaseUid: 'firebase-uid-123' },
-      });
-      expect(MINFACTORY_USER_TYPEORM_REPOSITORY_MOCK.remove).toHaveBeenCalledWith(entity);
-    });
-
-    it('should throw NotFoundException when entity to delete is not found', async () => {
-      MINFACTORY_USER_TYPEORM_REPOSITORY_MOCK.findOne.mockResolvedValue(null);
-
-      await expect(userRepository.deleteByFirebaseUid('missing-uid', 'test-request-id')).rejects.toThrow(NotFoundException);
-      expect(MINFACTORY_USER_TYPEORM_REPOSITORY_MOCK.remove).not.toHaveBeenCalled();
+      expect(MINFACTORY_USER_TYPEORM_REPOSITORY_MOCK.delete).toHaveBeenCalledWith('user-id');
+      expect(MINFACTORY_USER_TYPEORM_REPOSITORY_MOCK.findOne).not.toHaveBeenCalled();
     });
   });
 });

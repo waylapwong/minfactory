@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { AuthorizationModule } from '@nestjs/authorization';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthenticationModule } from './authentication/authentication.module';
@@ -7,6 +8,10 @@ import { AuthenticationModule } from './authentication/authentication.module';
   imports: [
     ConfigModule.forRoot(),
     AuthenticationModule,
+    AuthorizationModule.forRoot({
+      globalGuard: false,
+      getUser: (context) => context.switchToHttp().getRequest<{ user?: unknown }>().user,
+    }),
     TypeOrmModule.forRoot({
       database: process.env.DB_DATABASE,
       entities: ['dist/**/*.entity{.ts,.js}'],
