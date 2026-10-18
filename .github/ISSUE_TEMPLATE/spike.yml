@@ -12,6 +12,20 @@ body:
       required: true
 
   - type: textarea
+    id: references
+    attributes:
+      label: Referenzen
+      description: Optionale Links auf relevante Dokumentationen und verwandte Issues.
+      value: |
+        **Fachliche Dokumentation:**
+
+        **Technische Dokumentation:**
+
+        **Weitere Referenzen:**
+    validations:
+      required: false
+
+  - type: textarea
     id: research_goals
     attributes:
       label: Untersuchungsziele
@@ -23,7 +37,7 @@ body:
   - type: textarea
     id: tasks
     attributes:
-      label: Aufgaben
+      label: Umsetzung
       value: |
         #### Frontend
         - [ ] _____
