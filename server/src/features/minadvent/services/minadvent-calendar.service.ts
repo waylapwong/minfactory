@@ -30,8 +30,12 @@ export class MinAdventCalendarService {
     const calendars = (await this.calendarRepository.findByOwner(user.id)).map(MinAdventEntityMapper.toDomain);
     const currentYear = this.getCurrentBerlinYear();
     calendars.sort((left, right) => {
-      if (left.year === currentYear) return right.year === currentYear ? 0 : -1;
-      if (right.year === currentYear) return 1;
+      if (left.year === currentYear) {
+        return right.year === currentYear ? 0 : -1;
+      }
+      if (right.year === currentYear) {
+        return 1;
+      }
       return right.year - left.year || right.createdAt.getTime() - left.createdAt.getTime();
     });
     return calendars.map(MinAdventDomainMapper.toDto);
@@ -85,9 +89,13 @@ export class MinAdventCalendarService {
 
   private async requireOwnedCalendar(user: MinFactoryUser, id: string): Promise<MinAdventCalendar> {
     const calendar = await this.calendarRepository.findById(id);
-    if (!calendar) throw new NotFoundException('Calendar not found.');
+    if (!calendar) {
+      throw new NotFoundException('Calendar not found.');
+    }
     const domain = MinAdventEntityMapper.toDomain(calendar);
-    if (domain.ownerId !== user.id) throw new ForbiddenException('You do not own this calendar.');
+    if (domain.ownerId !== user.id) {
+      throw new ForbiddenException('You do not own this calendar.');
+    }
     return domain;
   }
 

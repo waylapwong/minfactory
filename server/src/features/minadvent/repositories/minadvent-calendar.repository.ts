@@ -26,7 +26,9 @@ export class MinAdventCalendarRepository {
       );
       await doorRepository.save(doors);
       const createdCalendar = await this.findById(savedCalendar.id, calendarRepository);
-      if (!createdCalendar) throw new NotFoundException('Calendar not found.');
+      if (!createdCalendar) {
+        throw new NotFoundException('Calendar not found.');
+      }
       return createdCalendar;
     });
   }
@@ -35,12 +37,12 @@ export class MinAdventCalendarRepository {
     return this.calendars.find({
       where: { ownerId },
       relations: { doors: true },
-      order: { year: 'DESC', createdAt: 'DESC' },
+      order: { year: 'DESC', createdAt: 'DESC', doors: { day: 'ASC' } },
     });
   }
 
   public async findById(id: string, repository = this.calendars): Promise<MinAdventCalendarEntity | null> {
-    return repository.findOne({ where: { id }, relations: { doors: true } });
+    return repository.findOne({ where: { id }, relations: { doors: true }, order: { doors: { day: 'ASC' } } });
   }
 
   public async update(calendar: MinAdventCalendar, expectedVersion: number): Promise<MinAdventCalendarEntity> {
@@ -55,7 +57,9 @@ export class MinAdventCalendarRepository {
       });
     }
     const updatedCalendar = await this.findById(calendar.id);
-    if (!updatedCalendar) throw new NotFoundException('Calendar not found.');
+    if (!updatedCalendar) {
+      throw new NotFoundException('Calendar not found.');
+    }
     return updatedCalendar;
   }
 }

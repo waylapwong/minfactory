@@ -16,8 +16,12 @@ export class MinAdventOverviewComponent implements OnInit {
     const calendars = this.calendarService.calendars();
     const years = [...new Set(calendars.map((calendar) => calendar.year))].sort((left, right) => {
       const currentYear = new Date().getFullYear();
-      if (left === currentYear) return -1;
-      if (right === currentYear) return 1;
+      if (left === currentYear) {
+        return -1;
+      }
+      if (right === currentYear) {
+        return 1;
+      }
       return right - left;
     });
     return years.map((year) => ({ year, calendars: calendars.filter((calendar) => calendar.year === year) }));

@@ -16,12 +16,14 @@ export class MinAdventEntityMapper {
     domain.activeToken = entity.activeToken;
     domain.createdAt = entity.createdAt;
     domain.updatedAt = entity.updatedAt;
-    domain.doors = (entity.doors ?? []).map((entityDoor) => {
-      const door = new MinAdventDoor();
-      door.day = entityDoor.day;
-      door.status = entityDoor.status;
-      return door;
-    });
+    domain.doors = [...(entity.doors ?? [])]
+      .sort((left, right) => left.day - right.day)
+      .map((entityDoor) => {
+        const door = new MinAdventDoor();
+        door.day = entityDoor.day;
+        door.status = entityDoor.status;
+        return door;
+      });
     return domain;
   }
 

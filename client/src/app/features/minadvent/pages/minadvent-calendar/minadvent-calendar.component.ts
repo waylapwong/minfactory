@@ -36,7 +36,9 @@ export class MinAdventCalendarComponent implements OnInit {
 
   public async ngOnInit(): Promise<void> {
     const id = this.route.snapshot.paramMap.get('id');
-    if (!id) return;
+    if (!id) {
+      return;
+    }
     this.isEditing.set(true);
     this.isLoading.set(true);
     try {
@@ -73,7 +75,9 @@ export class MinAdventCalendarComponent implements OnInit {
     const calendar = this.calendar();
     const control = this.form.controls.title;
     control.markAsTouched();
-    if (!calendar || control.invalid) return;
+    if (!calendar || control.invalid) {
+      return;
+    }
     this.isSavingTitle.set(true);
     this.error.set('');
     try {
@@ -94,7 +98,9 @@ export class MinAdventCalendarComponent implements OnInit {
     const calendar = this.calendar();
     const control = this.form.controls.recipientName;
     control.markAsTouched();
-    if (!calendar || control.invalid) return;
+    if (!calendar || control.invalid) {
+      return;
+    }
     this.isSavingRecipient.set(true);
     this.error.set('');
     try {

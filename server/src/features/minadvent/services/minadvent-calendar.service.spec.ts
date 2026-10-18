@@ -24,7 +24,7 @@ describe('MinAdventCalendarService', () => {
     calendar.version = 1;
     calendar.isPublished = false;
     calendar.doors = Array.from({ length: 24 }, (_, index) => ({
-      day: index + 1,
+      day: 24 - index,
       status: MinAdventDoorStatus.Empty,
     })) as MinAdventCalendarEntity['doors'];
     repository.create.mockResolvedValue(calendar);
@@ -32,7 +32,9 @@ describe('MinAdventCalendarService', () => {
     const result = await service.create(owner, { title: 'December', recipientName: 'Alex', year: 1901 });
 
     expect(repository.create).toHaveBeenCalledWith(expect.objectContaining({ ownerId: owner.id, year: 1901 }));
+    expect(result.id).toBe('calendar-1');
     expect(result.doors).toHaveLength(24);
+    expect(result.doors.map((door) => door.day)).toEqual(Array.from({ length: 24 }, (_, index) => index + 1));
     expect(result.doors.every((door) => door.status === MinAdventDoorStatus.Empty)).toBe(true);
   });
 

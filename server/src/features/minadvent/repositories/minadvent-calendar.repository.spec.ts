@@ -19,8 +19,10 @@ describe('MinAdventCalendarRepository', () => {
     calendar.ownerId = 'owner-1';
     calendar.year = 2026;
     calendar.doors = Array.from({ length: 24 }, (_, index) => ({ day: index + 1, status: MinAdventDoorStatus.Empty }));
-    await repository.create(calendar);
+    const created = await repository.create(calendar);
 
+    expect(transaction.calendarRepository.create.mock.calls[0][0].id).toBeUndefined();
+    expect(created.id).toBe('calendar-1');
     expect(transaction.dataSource.transaction).toHaveBeenCalledTimes(1);
     expect(transaction.calendarRepository.save).toHaveBeenCalledTimes(1);
     expect(transaction.doorRepository.create).toHaveBeenCalledTimes(24);

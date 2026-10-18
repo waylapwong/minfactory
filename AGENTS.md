@@ -84,4 +84,4 @@ Das gemeinsame Projektgedächtnis für Codex und Copilot liegt in `./agents-memo
 * **Relevanz:** Speichere nur nicht offensichtliches Projektwissen mit dauerhaftem Nutzen. Keine temporären Informationen, Aufgabenprotokolle oder Inhalte, die bereits im Code oder in anderen Anweisungen eindeutig dokumentiert sind.
 * **Priorität:** Der aktuelle Repository-Code und die geltenden Projektanweisungen haben immer Vorrang vor dem Gedächtnis.
 
-Pflege das Gedächtnis eigenständig bei Bedarf, ohne für jede Änderung eine Bestätigung einzuholen. Lies es nicht allein deshalb, weil eine Aufgabe beginnt, und schreibe nur, wenn tatsächlich neues oder zu korrigierendes Wissen vorliegt.
+Pflege das Gedächtnis eigenständig bei Bedarf, ohne für jede Änderung eine Bestätigung einzuholen. Schreibe nur, wenn tatsächlich neues oder zu korrigierendes Wissen vorliegt.

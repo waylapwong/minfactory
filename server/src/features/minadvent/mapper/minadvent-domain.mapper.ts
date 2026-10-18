@@ -24,7 +24,9 @@ export class MinAdventDomainMapper {
 
   public static toEntity(domain: MinAdventCalendar): MinAdventCalendarEntity {
     const entity = new MinAdventCalendarEntity();
-    entity.id = domain.id;
+    if (domain.id) {
+      entity.id = domain.id;
+    }
     entity.ownerId = domain.ownerId;
     entity.year = domain.year;
     entity.title = domain.title;

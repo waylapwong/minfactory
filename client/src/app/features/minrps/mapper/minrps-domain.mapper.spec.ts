@@ -34,7 +34,9 @@ describe('MinRpsDomainMapper', () => {
       domain.id = 'test-id';
       domain.name = 'Test Game';
       domain.createdAt = new Date('2024-01-01');
-      for (let i = 0; i < 5; i++) domain.observers.set(`obs-${i}`, new MinRpsPlayer());
+      for (let i = 0; i < 5; i++) {
+        domain.observers.set(`obs-${i}`, new MinRpsPlayer());
+      }
       domain.playerCount = 2;
 
       const viewModel = MinRpsDomainMapper.domainToOverviewViewModel(domain);
