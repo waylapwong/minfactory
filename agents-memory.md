@@ -8,4 +8,5 @@
 - Export exactly one class or enum per source file; place each class and enum in its own convention-matched file.
 - Always write unit tests for new or changed logic, following the established test and mock patterns of the neighboring minApps.
 - Group unit tests under a nested `describe('methodName()')` matching the method being tested.
+- Feature root components should use a separate HTML template containing `<router-outlet>`, following the MinPoker and MinRps roots; avoid inline root templates.
 - Record durable repository-wide work instructions in this shared memory. After implementing a ticket, verify the result and check off only completed items under the issue's Tasks section; leave Acceptance Criteria for user review and keep unverified CI/CD checks open.

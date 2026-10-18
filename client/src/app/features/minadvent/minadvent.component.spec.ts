@@ -18,4 +18,18 @@ describe('MinAdventComponent', () => {
       expect(TestBed.inject(ContextService).app()).toBe(AppName.MinAdvent);
     });
   });
+
+  describe('template', () => {
+    it('should render the router outlet', async () => {
+      await TestBed.configureTestingModule({
+        imports: [MinAdventComponent],
+        providers: [provideZonelessChangeDetection()],
+      }).compileComponents();
+
+      const fixture = TestBed.createComponent(MinAdventComponent);
+      fixture.detectChanges();
+
+      expect(fixture.nativeElement.querySelector('router-outlet')).toBeTruthy();
+    });
+  });
 });

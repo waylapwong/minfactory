@@ -5,9 +5,9 @@ import { AppName } from '../../shared/enums/app-name.enum';
 
 @Component({
   selector: 'min-advent',
-  template: '<router-outlet></router-outlet>',
+  templateUrl: './minadvent.component.html',
   imports: [RouterOutlet],
-  host: { class: 'block h-full w-full' },
+  host: { class: 'block h-full' },
 })
 export class MinAdventComponent implements OnInit {
   constructor(private readonly contextService: ContextService) {}
