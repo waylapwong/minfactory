@@ -18,7 +18,15 @@ import { MinPokerGameService } from '../../services/minpoker-game.service';
   templateUrl: './minpoker-public-games.component.html',
   styleUrls: ['./minpoker-public-games.component.scss'],
   host: { class: 'block h-full w-full' },
-  imports: [CardButtonComponent, H2Component, ButtonComponent, DialogComponent, InputComponent, ReactiveFormsModule, DatePipe],
+  imports: [
+    CardButtonComponent,
+    H2Component,
+    ButtonComponent,
+    DialogComponent,
+    InputComponent,
+    ReactiveFormsModule,
+    DatePipe,
+  ],
 })
 export class MinPokerPublicGamesComponent implements OnInit {
   public readonly Color: typeof Color = Color;
@@ -73,7 +81,9 @@ export class MinPokerPublicGamesComponent implements OnInit {
       await this.gameService.loadGames(MinPokerGameVisibility.Public);
     } catch (error) {
       this.isError.set(true);
-      this.errorMessage.set(error instanceof Error ? error.message : 'Spiele konnten nicht geladen werden. Bitte versuche es erneut.');
+      this.errorMessage.set(
+        error instanceof Error ? error.message : 'Spiele konnten nicht geladen werden. Bitte versuche es erneut.',
+      );
     } finally {
       this.isLoading.set(false);
       this.logger.debug(`END loadGames(...)`);

@@ -18,7 +18,10 @@ export class MinAdventCalendarComponent implements OnInit {
   public readonly isEditing = signal(false);
   public readonly form = new FormGroup({
     title: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.maxLength(100)] }),
-    recipientName: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.maxLength(100)] }),
+    recipientName: new FormControl('', {
+      nonNullable: true,
+      validators: [Validators.required, Validators.maxLength(100)],
+    }),
     year: new FormControl(new Date().getFullYear(), {
       nonNullable: true,
       validators: [Validators.required, Validators.min(1), Validators.max(9999), Validators.pattern(/^\d+$/)],
@@ -74,7 +77,12 @@ export class MinAdventCalendarComponent implements OnInit {
     this.isSavingTitle.set(true);
     this.error.set('');
     try {
-      this.calendar.set(await this.calendarService.updateCalendar(calendar.id, { title: control.value, expectedVersion: calendar.version }));
+      this.calendar.set(
+        await this.calendarService.updateCalendar(calendar.id, {
+          title: control.value,
+          expectedVersion: calendar.version,
+        }),
+      );
     } catch {
       this.error.set('Der Titel konnte nicht gespeichert werden. Bitte lade den Kalender neu.');
     } finally {
@@ -91,7 +99,10 @@ export class MinAdventCalendarComponent implements OnInit {
     this.error.set('');
     try {
       this.calendar.set(
-        await this.calendarService.updateCalendar(calendar.id, { recipientName: control.value, expectedVersion: calendar.version }),
+        await this.calendarService.updateCalendar(calendar.id, {
+          recipientName: control.value,
+          expectedVersion: calendar.version,
+        }),
       );
     } catch {
       this.error.set('Der Empfängername konnte nicht gespeichert werden. Bitte lade den Kalender neu.');

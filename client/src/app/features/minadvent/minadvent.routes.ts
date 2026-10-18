@@ -12,16 +12,19 @@ export const MINADVENT_ROUTES: Routes = [
     path: MinAdventPath.Root,
     pathMatch: 'full',
     canActivate: [authenticationGuard],
-    loadComponent: () => import('./pages/minadvent-overview/minadvent-overview.component').then((m) => m.MinAdventOverviewComponent),
+    loadComponent: () =>
+      import('./pages/minadvent-overview/minadvent-overview.component').then((m) => m.MinAdventOverviewComponent),
   },
   {
     path: MinAdventPath.Create,
     canActivate: [authenticationGuard],
-    loadComponent: () => import('./pages/minadvent-calendar/minadvent-calendar.component').then((m) => m.MinAdventCalendarComponent),
+    loadComponent: () =>
+      import('./pages/minadvent-calendar/minadvent-calendar.component').then((m) => m.MinAdventCalendarComponent),
   },
   {
     path: MinAdventPath.Calendar,
     canActivate: [authenticationGuard],
-    loadComponent: () => import('./pages/minadvent-calendar/minadvent-calendar.component').then((m) => m.MinAdventCalendarComponent),
+    loadComponent: () =>
+      import('./pages/minadvent-calendar/minadvent-calendar.component').then((m) => m.MinAdventCalendarComponent),
   },
 ];

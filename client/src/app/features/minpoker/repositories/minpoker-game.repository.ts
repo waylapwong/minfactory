@@ -1,6 +1,11 @@
 import { Injectable } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
-import { MinPokerApiService, MinPokerCreateGameDto, MinPokerGameDto, MinPokerGameVisibility } from '../../../core/generated';
+import {
+  MinPokerApiService,
+  MinPokerCreateGameDto,
+  MinPokerGameDto,
+  MinPokerGameVisibility,
+} from '../../../core/generated';
 import { LoggerService } from '../../../core/logging/services/logger.service';
 
 @Injectable({

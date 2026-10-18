@@ -1,5 +1,10 @@
 import { DestroyRef, Injectable, Signal, WritableSignal, computed, signal } from '@angular/core';
-import { Auth as FirebaseAuth, User as FirebaseUser, createUserWithEmailAndPassword, signInWithEmailAndPassword } from '@angular/fire/auth';
+import {
+  Auth as FirebaseAuth,
+  User as FirebaseUser,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+} from '@angular/fire/auth';
 
 @Injectable({
   providedIn: 'root',

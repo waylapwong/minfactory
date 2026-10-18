@@ -10,7 +10,9 @@ export class MinPokerDomainMapper {
   private static readonly logger: LoggerService = new LoggerService(MinPokerDomainMapper.name);
 
   public static domainToGameViewModel(domain: MinPokerMatch, heroId: string): MinPokerGameVm {
-    MinPokerDomainMapper.logger.debug(`START domainToGameViewModel(domain: ${JSON.stringify(domain)}, heroId: ${heroId})`);
+    MinPokerDomainMapper.logger.debug(
+      `START domainToGameViewModel(domain: ${JSON.stringify(domain)}, heroId: ${heroId})`,
+    );
     try {
       const viewModel: MinPokerGameVm = new MinPokerGameVm();
 

@@ -1,10 +1,14 @@
 <main class="mx-auto max-w-4xl px-4 py-6 sm:px-8">
   <header class="mb-8 flex items-center justify-between gap-4 border-b border-emerald-900/20 pb-5">
     <div>
-      <p class="text-xs font-semibold uppercase text-emerald-800">minFactory</p>
+      <p class="text-xs font-semibold text-emerald-800 uppercase">minFactory</p>
       <h1 class="mt-1 text-3xl font-bold text-stone-900">minAdvent</h1>
     </div>
-    <a routerLink="calendars/new" class="rounded border border-emerald-900 bg-emerald-800 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-900 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-800">Kalender anlegen</a>
+    <a
+      routerLink="calendars/new"
+      class="rounded border border-emerald-900 bg-emerald-800 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-900 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-800"
+      >Kalender anlegen</a
+    >
   </header>
 
   @if (isLoading()) {
@@ -15,16 +19,28 @@
     <section class="border-y border-stone-300 py-12 text-center">
       <h2 class="text-xl font-semibold text-stone-900">Noch keine Kalender</h2>
       <p class="mt-2 text-stone-600">Lege deinen ersten minAdvent-Kalender an.</p>
-      <a routerLink="calendars/new" class="mt-5 inline-block font-semibold text-emerald-900 underline underline-offset-4">Kalender anlegen</a>
+      <a
+        routerLink="calendars/new"
+        class="mt-5 inline-block font-semibold text-emerald-900 underline underline-offset-4"
+        >Kalender anlegen</a
+      >
     </section>
   } @else {
     @for (group of groups(); track group.year) {
       <section class="mb-8" [attr.aria-labelledby]="'year-' + group.year">
-        <h2 class="mb-3 border-b border-stone-300 pb-2 text-lg font-semibold text-stone-800" [id]="'year-' + group.year">{{ group.year }}</h2>
+        <h2
+          class="mb-3 border-b border-stone-300 pb-2 text-lg font-semibold text-stone-800"
+          [id]="'year-' + group.year"
+        >
+          {{ group.year }}
+        </h2>
         <ul class="divide-y divide-stone-200">
           @for (calendar of group.calendars; track calendar.id) {
             <li>
-              <a [routerLink]="['calendars', calendar.id]" class="flex flex-col gap-2 py-4 hover:bg-emerald-50 sm:flex-row sm:items-center sm:justify-between sm:px-3">
+              <a
+                [routerLink]="['calendars', calendar.id]"
+                class="flex flex-col gap-2 py-4 hover:bg-emerald-50 sm:flex-row sm:items-center sm:justify-between sm:px-3"
+              >
                 <span>
                   <span class="block font-semibold text-stone-900">{{ calendar.title }}</span>
                   <span class="text-sm text-stone-600">Für {{ calendar.recipientName }} · {{ calendar.year }}</span>
