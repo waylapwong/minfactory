@@ -652,7 +652,7 @@
           },
           "role": {
             "type": "string",
-            "enum": ["admin", "user"],
+            "enum": ["admin", "guest", "user"],
             "example": "user"
           }
         },

@@ -18,9 +18,10 @@ export interface MinFactoryUserDto {
     role: MinFactoryUserDto.RoleEnum;
 }
 export namespace MinFactoryUserDto {
-    export type RoleEnum = 'admin' | 'user';
+    export type RoleEnum = 'admin' | 'guest' | 'user';
     export const RoleEnum = {
         Admin: 'admin' as RoleEnum,
+        Guest: 'guest' as RoleEnum,
         User: 'user' as RoleEnum
     };
 }
