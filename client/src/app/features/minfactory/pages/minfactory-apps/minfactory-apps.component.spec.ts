@@ -32,7 +32,16 @@ describe('MinFactoryAppsComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should disable minPoker card when feature flag is off and user has User role', () => {
+  it('should show the branded minGames and minTools tabs', () => {
+    const tabLabels = fixture.nativeElement.textContent as string;
+    expect(tabLabels).toContain('minGames');
+    expect(tabLabels).toContain('minTools');
+  });
+
+  it('should disable minPoker for visitors and regular users', () => {
+    expect(component.isMinPokerAccessible()).toBeFalse();
+    expect(fixture.nativeElement.querySelector('min-card-button button').disabled).toBeTrue();
+
     MINFACTORY_USER_SERVICE_MOCK.setProfile({
       createdAt: '19.03.2026, 11:00',
       email: 'user@example.com',
@@ -41,6 +50,7 @@ describe('MinFactoryAppsComponent', () => {
     fixture.detectChanges();
 
     expect(component.isMinPokerAccessible()).toBeFalse();
+    expect(fixture.nativeElement.querySelector('min-card-button button').disabled).toBeTrue();
   });
 
   it('should enable minPoker card when user has Admin role', () => {
@@ -52,5 +62,35 @@ describe('MinFactoryAppsComponent', () => {
     fixture.detectChanges();
 
     expect(component.isMinPokerAccessible()).toBeTrue();
+  });
+
+  it('should keep minAdvent disabled for visitors and regular users', () => {
+    component.selectedTab.set(2);
+    fixture.detectChanges();
+    expect(component.isMinAdventAccessible()).toBeFalse();
+
+    MINFACTORY_USER_SERVICE_MOCK.setProfile({
+      createdAt: '19.03.2026, 11:00',
+      email: 'user@example.com',
+      role: MinFactoryRole.User,
+    });
+    fixture.detectChanges();
+
+    expect(component.isMinAdventAccessible()).toBeFalse();
+    expect(fixture.nativeElement.querySelector('min-card-button button').disabled).toBeTrue();
+  });
+
+  it('should enable minAdvent for Admin users', () => {
+    component.selectedTab.set(2);
+    MINFACTORY_USER_SERVICE_MOCK.setProfile({
+      createdAt: '19.03.2026, 11:00',
+      email: 'admin@example.com',
+      role: MinFactoryRole.Admin,
+    });
+    fixture.detectChanges();
+
+    expect(component.isMinAdventAccessible()).toBeTrue();
+    expect(fixture.nativeElement.querySelector('min-card-button button').disabled).toBeFalse();
+    expect(fixture.nativeElement.textContent).toContain('soon');
   });
 });

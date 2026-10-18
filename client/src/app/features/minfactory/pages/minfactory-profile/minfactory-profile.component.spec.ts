@@ -20,8 +20,8 @@ describe('MinFactoryProfileComponent', () => {
   };
 
   const settleLogout = async (): Promise<void> => {
-    const logoutPromise: Promise<unknown> | undefined = MINFACTORY_AUTHENTICATION_SERVICE_MOCK.logoutUser.calls.mostRecent()
-      ?.returnValue as Promise<unknown> | undefined;
+    const logoutPromise: Promise<unknown> | undefined =
+      MINFACTORY_AUTHENTICATION_SERVICE_MOCK.logoutUser.calls.mostRecent()?.returnValue as Promise<unknown> | undefined;
 
     try {
       await logoutPromise;
@@ -139,7 +139,9 @@ describe('MinFactoryProfileComponent', () => {
     await fixture.whenStable();
 
     expect(component.profileRequestState()).toBe(RequestState.Error);
-    expect(component.profileRequestError()).toBe('Accountdaten konnten nicht geladen werden. Bitte versuche es erneut.');
+    expect(component.profileRequestError()).toBe(
+      'Accountdaten konnten nicht geladen werden. Bitte versuche es erneut.',
+    );
     expect(MINFACTORY_USER_SERVICE_MOCK.clearUserCache).toHaveBeenCalled();
   });
 
@@ -195,8 +197,10 @@ describe('MinFactoryProfileComponent', () => {
 
   describe('deleteAccount()', () => {
     const settleDeleteAccount = async (): Promise<void> => {
-      const deletePromise: Promise<unknown> | undefined = MINFACTORY_AUTHENTICATION_SERVICE_MOCK.deleteAccount.calls.mostRecent()
-        ?.returnValue as Promise<unknown> | undefined;
+      const deletePromise: Promise<unknown> | undefined =
+        MINFACTORY_AUTHENTICATION_SERVICE_MOCK.deleteAccount.calls.mostRecent()?.returnValue as
+          | Promise<unknown>
+          | undefined;
 
       try {
         await deletePromise;

@@ -51,6 +51,7 @@ jobs:
           }
           EOF
           cat > "${{ runner.temp }}/heroku-backend/Procfile" <<'EOF'
+          release: npm --prefix server run migration:run
           web: npm --prefix server run start:prod
           EOF
           git -C "${{ runner.temp }}/heroku-backend" init

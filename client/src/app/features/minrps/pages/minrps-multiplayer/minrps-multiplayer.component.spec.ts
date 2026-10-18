@@ -188,9 +188,11 @@ describe('MinRpsMultiplayerComponent', () => {
       );
       fixture.detectChanges();
 
-      const historyItems: NodeListOf<HTMLElement> = fixture.nativeElement.querySelectorAll('[data-testid="result-history-item"]');
+      const historyItems: NodeListOf<HTMLElement> = fixture.nativeElement.querySelectorAll(
+        '[data-testid="result-history-item"]',
+      );
 
-      expect(historyItems.length).toBe(2);
+      expect(historyItems).toHaveSize(2);
     });
   });
 

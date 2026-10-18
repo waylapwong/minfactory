@@ -15,7 +15,9 @@ export class MinRpsGameService {
   private readonly cachedGames: WritableSignal<MinRpsGame[]> = signal([]);
   private readonly logger: LoggerService = new LoggerService('MinRpsGameService');
 
-  public games: Signal<MinRpsOverviewViewModel[]> = computed(() => this.cachedGames().map(MinRpsDomainMapper.domainToOverviewViewModel));
+  public games: Signal<MinRpsOverviewViewModel[]> = computed(() =>
+    this.cachedGames().map(MinRpsDomainMapper.domainToOverviewViewModel),
+  );
 
   constructor(private readonly gameRepository: MinRpsGameRepository) {}
 
@@ -75,6 +77,11 @@ export class MinRpsGameService {
   }
 
   private isMinRpsErrorDto(error: unknown): error is MinRpsErrorDto {
-    return typeof error === 'object' && error !== null && 'statusCode' in error && typeof (error as MinRpsErrorDto).statusCode === 'number';
+    return (
+      typeof error === 'object' &&
+      error !== null &&
+      'statusCode' in error &&
+      typeof (error as MinRpsErrorDto).statusCode === 'number'
+    );
   }
 }

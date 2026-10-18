@@ -117,7 +117,9 @@ export class MinPokerMyGamesComponent implements OnInit {
       await this.gameService.loadGames(MinPokerGameVisibility.Private);
     } catch (error) {
       this.isError.set(true);
-      this.errorMessage.set(error instanceof Error ? error.message : 'Spiele konnten nicht geladen werden. Bitte versuche es erneut.');
+      this.errorMessage.set(
+        error instanceof Error ? error.message : 'Spiele konnten nicht geladen werden. Bitte versuche es erneut.',
+      );
     } finally {
       this.isLoading.set(false);
       this.logger.debug(`END loadGames(...)`);

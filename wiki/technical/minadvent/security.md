@@ -26,6 +26,6 @@ Widerruf muss den Token **sofort atomar** invalidieren; Wiederveröffentlichung 
 
 Vorhandenen Firebase/MySQL-Konto-Löschpfad prüfen und um die **vollständige** Entfernung sämtlicher Kalender, Türen, Inhaltsblöcke, Veröffentlichungstokens und Fortschrittszustände ergänzen. FK-Kaskaden gelten für MySQL, aber Accountlöschung über Firebase und MySQL ist nicht eine einzige verteilte ACID-Transaktion: Teilausfälle explizit im bestehenden Löschablauf behandeln (z. B. idempotente Wiederaufnahme gemäß vorhandenem Pattern), keine zusätzliche persistente Job-Tabelle erfinden. Alte Shared Links müssen nach erfolgreicher Entfernung sofort nicht mehr verfügbar sein. Keine Wiederherstellung oder Aufbewahrung von geöffneten Türchen nach Accountlöschung.
 
-## 5. Sicherheits-Review
+## 5. Sicherheits-Unit-Tests
 
-Für v1.0.0 prüfen: direkter Fremdkalenderzugriff, Token-Enumeration, Linkweitergabe/Referrer, Caching, HTML-XSS, CSRF-/CORS-Kontext, bruteforcebedingte Last, konkurrierende Rotation/Widerruf/PUT, Token in Logs und Datenbank-Backups, Account-Lösch-Teilausfälle. Die konkrete Rate-Limit-Konfiguration und Infrastrukturwerte sind vor Implementierung zu bestimmen.
+Für v1.0.0 ausschließlich isolierte Unit-Tests mit Mocks vorsehen: fremder Kalenderzugriff und Owner-Filterung, ungültige Tokens ohne Existenzinformationen, Tokenrotation/Widerruf, validierte Inhalte, fehlende Token-/Inhaltsdaten in Logs oder Fehlerantworten sowie idempotente Accountlöschung bei simuliertem Teilausfall. HTTP-/Security-Integrationsläufe, Lasttests und Tests gegen echte Datenbanken sind nicht vorgesehen. Rate Limits, Referrer-/Cache-Header und CORS bleiben verbindliche Implementierungsanforderungen; ihre Konfiguration wird nicht als eigener Testlauf vorausgesetzt.

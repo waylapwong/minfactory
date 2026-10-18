@@ -23,4 +23,14 @@ describe('InputComponent', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
+
+  it('should bind min and max attributes', () => {
+    fixture.componentRef.setInput('min', 1);
+    fixture.componentRef.setInput('max', 9999);
+    fixture.detectChanges();
+
+    const input = fixture.nativeElement.querySelector('input') as HTMLInputElement;
+    expect(input.min).toBe('1');
+    expect(input.max).toBe('9999');
+  });
 });

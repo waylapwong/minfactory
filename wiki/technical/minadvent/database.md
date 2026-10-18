@@ -34,7 +34,6 @@ Zeitstempel `created_at` / `updated_at` UTC, keine einzelnen `openedAt`-Felder. 
 
 1. Als versionierte TypeORM-Migration die drei Tabellen, passenden FKs, Indizes, Constraints und Löschkaskaden anlegen; Schema nicht über `synchronize` ausliefern.
 2. Bei der Einführung bestehende MySQL-TypeORM-Konfiguration prüfen. Falls `DB_SYNCHRONIZE` in Entwicklungsumgebungen genutzt wird, für kontrollierte Migrationen und **insbesondere Produktion** deaktivieren bzw. den Deploymentablauf verbindlich klären.
-3. Migration auf leerem und bestehendem Schema ausprobieren; unveränderte Tabellen anderer minApps prüfen, Rollback bzw. korrigierende Migration vorsehen. Existierende Daten nicht implizit umschreiben.
-4. FK-Löschkaskaden und 24-Türchen-Transaktion mit echtem MySQL testen; Migrationen sind eigene zukünftige Umsetzungstickets und **nicht** Teil dieses Dokumentations-PR.
+3. Up-/Down-Anweisungen, Constraints und Schutz unveränderter Tabellen mit Unit-Tests und gemocktem TypeORM-`QueryRunner` prüfen. Existierende Daten nicht implizit umschreiben.
 
-Zur Implementierung genau eine konsistente Strategie für TypeORM-Transaction-Manager/QueryRunner wählen. Datenbanktransaktionen müssen erfolgreiche parallele Änderungen nach Kalender serialisieren und globales CAS zuverlässig ermöglichen.
+4. FK-Löschkaskaden und die 24-Türchen-Transaktion ausschließlich mit Unit-Tests und gemocktem TypeORM-`QueryRunner`/`EntityManager` abdecken; echte MySQL-Testläufe sind für v1.0.0 nicht vorgesehen.

@@ -12,7 +12,9 @@ export class InputComponent {
   public formControlInput: InputSignal<FormControl> = input.required();
   public id: InputSignal<string> = input.required();
   public label: InputSignal<string> = input('');
+  public max: InputSignal<number | null> = input<number | null>(null);
   public maxLength: InputSignal<number> = input(100);
+  public min: InputSignal<number | null> = input<number | null>(null);
   public minLength: InputSignal<number> = input(0);
   public placeholder: InputSignal<string> = input('');
   public type: InputSignal<string> = input('text');

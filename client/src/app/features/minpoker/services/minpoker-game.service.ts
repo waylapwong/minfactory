@@ -15,8 +15,12 @@ export class MinPokerGameService {
   private readonly cachedPublicGames: WritableSignal<MinPokerGame[]> = signal([]);
   private readonly logger: LoggerService = new LoggerService(MinPokerGameService.name);
 
-  public myGamesVm: Signal<MinPokerPublicGamesVm> = computed(() => MinPokerDomainMapper.toPublicGamesVm(this.cachedMyGames()));
-  public publicGamesVm: Signal<MinPokerPublicGamesVm> = computed(() => MinPokerDomainMapper.toPublicGamesVm(this.cachedPublicGames()));
+  public myGamesVm: Signal<MinPokerPublicGamesVm> = computed(() =>
+    MinPokerDomainMapper.toPublicGamesVm(this.cachedMyGames()),
+  );
+  public publicGamesVm: Signal<MinPokerPublicGamesVm> = computed(() =>
+    MinPokerDomainMapper.toPublicGamesVm(this.cachedPublicGames()),
+  );
 
   constructor(private readonly gameRepository: MinPokerGameRepository) {}
 
@@ -43,8 +47,12 @@ export class MinPokerGameService {
     try {
       await this.gameRepository.delete(id);
       const sortFn = (a: MinPokerGame, b: MinPokerGame) => b.createdAt.getTime() - a.createdAt.getTime();
-      this.cachedMyGames.update((games: MinPokerGame[]) => games.filter((game: MinPokerGame) => game.id !== id).sort(sortFn));
-      this.cachedPublicGames.update((games: MinPokerGame[]) => games.filter((game: MinPokerGame) => game.id !== id).sort(sortFn));
+      this.cachedMyGames.update((games: MinPokerGame[]) =>
+        games.filter((game: MinPokerGame) => game.id !== id).sort(sortFn),
+      );
+      this.cachedPublicGames.update((games: MinPokerGame[]) =>
+        games.filter((game: MinPokerGame) => game.id !== id).sort(sortFn),
+      );
     } finally {
       this.logger.debug(`END deleteGame(...)`);
     }

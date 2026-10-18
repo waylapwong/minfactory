@@ -16,50 +16,62 @@ export class RoutingService {
   }
 
   public navigateToHomePage(): void {
-    this.router.navigate([AppPath.Root]);
+    void this.router.navigate([AppPath.Root]);
   }
 
   public navigateToLogin(): void {
-    this.router.navigate([AppPath.Root, MinFactoryPath.Login]);
+    void this.router.navigate([AppPath.Root, MinFactoryPath.Login]);
   }
 
   public navigateToMinPoker(): void {
     this.router.navigate([AppPath.MinPoker]);
   }
 
+  public navigateToMinAdvent(): void {
+    void this.router.navigate([AppPath.MinAdvent]);
+  }
+
+  public navigateToMinAdventCalendar(id: string): void {
+    void this.router.navigate([AppPath.MinAdvent, 'calendars', id]);
+  }
+
+  public navigateToMinAdventCreate(): void {
+    void this.router.navigate([AppPath.MinAdvent, 'calendars', 'new']);
+  }
+
   public navigateToMinPokerGame(id: string): void {
-    this.router.navigate([AppPath.MinPoker, MinPokerPath.Game, id]);
+    void this.router.navigate([AppPath.MinPoker, MinPokerPath.Game, id]);
   }
 
   public navigateToMinPokerMyGames(): void {
-    this.router.navigate([AppPath.MinPoker, MinPokerPath.MyGames]);
+    void this.router.navigate([AppPath.MinPoker, MinPokerPath.MyGames]);
   }
 
   public navigateToMinPokerPublicGames(): void {
-    this.router.navigate([AppPath.MinPoker, MinPokerPath.PublicGames]);
+    void this.router.navigate([AppPath.MinPoker, MinPokerPath.PublicGames]);
   }
 
   public navigateToMinRps(): void {
-    this.router.navigate([AppPath.MinRps]);
+    void this.router.navigate([AppPath.MinRps]);
   }
 
   public navigateToMinRpsMultiplayer(id: string): void {
-    this.router.navigate([AppPath.MinRps, MinRpsPath.Multiplayer, id]);
+    void this.router.navigate([AppPath.MinRps, MinRpsPath.Multiplayer, id]);
   }
 
   public navigateToMinRpsOverview(): void {
-    this.router.navigate([AppPath.MinRps, MinRpsPath.Overview]);
+    void this.router.navigate([AppPath.MinRps, MinRpsPath.Overview]);
   }
 
   public navigateToMinRpsSingleplayer(): void {
-    this.router.navigate([AppPath.MinRps, MinRpsPath.Singleplayer]);
+    void this.router.navigate([AppPath.MinRps, MinRpsPath.Singleplayer]);
   }
 
   public navigateToProfile(): void {
-    this.router.navigate([AppPath.Root, MinFactoryPath.Profile]);
+    void this.router.navigate([AppPath.Root, MinFactoryPath.Profile]);
   }
 
   public navigateToRegister(): void {
-    this.router.navigate([AppPath.Root, MinFactoryPath.Register]);
+    void this.router.navigate([AppPath.Root, MinFactoryPath.Register]);
   }
 }

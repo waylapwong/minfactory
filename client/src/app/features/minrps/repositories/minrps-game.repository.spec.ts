@@ -15,7 +15,11 @@ describe('MinRpsGameRepository', () => {
     MINRPS_API_SERVICE_MOCK.getAllMinRpsGames.calls.reset();
 
     TestBed.configureTestingModule({
-      providers: [provideZonelessChangeDetection(), MinRpsGameRepository, { provide: MinRPSApiService, useValue: MINRPS_API_SERVICE_MOCK }],
+      providers: [
+        provideZonelessChangeDetection(),
+        MinRpsGameRepository,
+        { provide: MinRPSApiService, useValue: MINRPS_API_SERVICE_MOCK },
+      ],
     });
     repository = TestBed.inject(MinRpsGameRepository);
   });

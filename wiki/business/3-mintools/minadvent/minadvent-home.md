@@ -16,6 +16,8 @@ Die geplante technische Umsetzung ist unter [minAdvent – Technische Spezifikat
 
 Alle Regeln der drei Detailseiten gelten gemeinsam. Im Zweifel sind Datum und Zustand serverseitig maßgeblich; zeitbezogene Entscheidungen folgen **Europe/Berlin**.
 
+Die Verifikation für v1.0.0 verwendet ausschließlich Unit-Tests mit Mocks; die fachlichen Anforderungen und Zustandsregeln bleiben davon unberührt. Details stehen in der [technischen Teststrategie](../../../technical/minadvent/testing.md).
+
 ## 3. Rollen und Ansichten
 
 | Rolle | Zugang | Berechtigungen |

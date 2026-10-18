@@ -1,7 +1,10 @@
 import { LoggerService } from '../../../core/logging/services/logger.service';
 import { MinPokerMatch } from '../models/domains/minpoker-match';
 import { MinPokerMatchPlayer } from '../models/domains/minpoker-match-player';
-import { MinPokerMatchUpdatedEvent, MinPokerMatchUpdatedPlayerEvent } from '../models/events/minpoker-match-updated.event';
+import {
+  MinPokerMatchUpdatedEvent,
+  MinPokerMatchUpdatedPlayerEvent,
+} from '../models/events/minpoker-match-updated.event';
 
 export class MinPokerEventMapper {
   private static readonly logger: LoggerService = new LoggerService(MinPokerEventMapper.name);

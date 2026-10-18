@@ -20,7 +20,9 @@ describe('MinRpsGame', () => {
     it('should create instance with custom values', () => {
       const customDate = new Date('2024-01-01');
       const observers = new Map<string, MinRpsPlayer>();
-      for (let i = 0; i < 5; i++) observers.set(`obs-${i}`, new MinRpsPlayer());
+      for (let i = 0; i < 5; i++) {
+        observers.set(`obs-${i}`, new MinRpsPlayer());
+      }
       const game = new MinRpsGame({
         id: 'game-123',
         name: 'Test Game',

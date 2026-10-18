@@ -20,11 +20,14 @@ export const MINPOKER_ROUTES: Routes = [
   },
   {
     path: MinPokerPath.MyGames,
-    loadComponent: () => import('./pages/minpoker-my-games/minpoker-my-games.component').then((m) => m.MinPokerMyGamesComponent),
+    loadComponent: () =>
+      import('./pages/minpoker-my-games/minpoker-my-games.component').then((m) => m.MinPokerMyGamesComponent),
   },
   {
     path: MinPokerPath.PublicGames,
     loadComponent: () =>
-      import('./pages/minpoker-public-games/minpoker-public-games.component').then((m) => m.MinPokerPublicGamesComponent),
+      import('./pages/minpoker-public-games/minpoker-public-games.component').then(
+        (m) => m.MinPokerPublicGamesComponent,
+      ),
   },
 ];
