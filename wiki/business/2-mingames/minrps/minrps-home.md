@@ -88,7 +88,7 @@ Der Server informiert die verbundenen Personen über Aktualisierungen des Match-
 Beide Spielmodi zeigen **„Letzte Ergebnisse“** mit bis zu **zehn** Einträgen; vor dem ersten Ergebnis erscheint **„Noch keine Ergebnisse“**.
 
 - **Singleplayer:** Der Verlauf besteht nur während der aktuellen Singleplayer-Ansicht und wird beim erneuten Start dieser Ansicht geleert.
-- **Multiplayer:** Der Verlauf gehört zum laufenden **Match**, nicht dauerhaft zu einer bestimmten Kombination zweier Personen. Im Client werden Ergebnisse für die Perspektive des jeweiligen Spielerplatzes umgerechnet. Die Historie wird gelöscht, sobald einer der Spielerplätze frei wird; Beobachter sehen die Match-Historie.
+- **Multiplayer:** Der Verlauf gehört zum laufenden **Match**, nicht dauerhaft zu einer bestimmten Kombination zweier Personen. Im Client werden Ergebnisse für die Perspektive des jeweiligen Spielerplatzes umgerechnet. Die Historie wird gelöscht, sobald einer der Spielerplätze frei wird.
 - Ein noch nicht abgeschlossener Spielzug wird **nicht** als Ergebnis in den Verlauf aufgenommen. Sobald mehr als zehn Ergebnisse vorhanden sind, werden die ältesten verdrängt.
 
 ## 7. Geltungsbereich und bekannte Einschränkungen
