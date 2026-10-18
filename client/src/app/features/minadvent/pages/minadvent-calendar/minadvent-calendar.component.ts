@@ -1,15 +1,23 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
+import { RoutingService } from '../../../../core/routing/services/routing.service';
+import { BadgeComponent } from '../../../../shared/components/badge/badge.component';
+import { ButtonComponent } from '../../../../shared/components/button/button.component';
+import { H1Component } from '../../../../shared/components/h1/h1.component';
+import { H2Component } from '../../../../shared/components/h2/h2.component';
+import { InputComponent } from '../../../../shared/components/input/input.component';
+import { Color } from '../../../../shared/enums/color.enum';
 import { MinAdventCalendarService } from '../../services/minadvent-calendar.service';
 
 @Component({
   selector: 'min-advent-calendar',
   templateUrl: './minadvent-calendar.component.html',
   host: { class: 'block min-h-full w-full' },
-  imports: [ReactiveFormsModule, RouterLink],
+  imports: [BadgeComponent, ButtonComponent, H1Component, H2Component, InputComponent, ReactiveFormsModule],
 })
 export class MinAdventCalendarComponent implements OnInit {
+  public readonly Color: typeof Color = Color;
   public readonly isLoading = signal(false);
   public readonly isSavingTitle = signal(false);
   public readonly isSavingRecipient = signal(false);
@@ -32,6 +40,7 @@ export class MinAdventCalendarComponent implements OnInit {
     private readonly route: ActivatedRoute,
     private readonly router: Router,
     private readonly calendarService: MinAdventCalendarService,
+    public readonly routingService: RoutingService,
   ) {}
 
   public async ngOnInit(): Promise<void> {

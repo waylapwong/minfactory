@@ -65,6 +65,20 @@ describe('RoutingService', () => {
     });
   });
 
+  describe('navigateToMinAdventCalendar()', () => {
+    it('should navigate to a minAdvent calendar', () => {
+      service.navigateToMinAdventCalendar('calendar-123');
+      expect(ROUTER_MOCK.navigate).toHaveBeenCalledWith([AppPath.MinAdvent, 'calendars', 'calendar-123']);
+    });
+  });
+
+  describe('navigateToMinAdventCreate()', () => {
+    it('should navigate to minAdvent calendar creation', () => {
+      service.navigateToMinAdventCreate();
+      expect(ROUTER_MOCK.navigate).toHaveBeenCalledWith([AppPath.MinAdvent, 'calendars', 'new']);
+    });
+  });
+
   describe('navigateToMinPokerGame()', () => {
     it('should navigate to minPoker game with id', () => {
       service.navigateToMinPokerGame('game-123');

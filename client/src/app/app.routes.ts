@@ -37,6 +37,8 @@ export const APP_ROUTES: Routes = [
   {
     path: AppPath.MinAdvent,
     title: AppName.MinAdvent,
+    canActivate: [authenticationGuard, roleGuard],
+    data: { role: MinFactoryRole.Admin },
     loadChildren: () => import('./features/minadvent/minadvent.routes').then((m) => m.MINADVENT_ROUTES),
     loadComponent: () => import('./features/minadvent/minadvent.component').then((m) => m.MinAdventComponent),
   },

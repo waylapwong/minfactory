@@ -12,7 +12,7 @@
     [class.pb-3]="selectedTab() === 1"
     (click)="selectedTab.set(1)"
   >
-    Spiele
+    <min-logo>Games</min-logo>
   </button>
   <!-- TAB: APPS -->
   <button
@@ -26,7 +26,7 @@
     [class.pb-3]="selectedTab() === 2"
     (click)="selectedTab.set(2)"
   >
-    Apps
+    <min-logo>Tools</min-logo>
   </button>
 </div>
 
@@ -54,9 +54,10 @@
   <!-- CONTENT TAB APPS -->
   @if (selectedTab() === 2) {
     <!-- MINADVENT -->
-    <min-card-button (clicked)="routingService.navigateToMinAdvent()">
+    <min-card-button [disabled]="!isMinAdventAccessible()" (clicked)="routingService.navigateToMinAdvent()">
       <div class="flex flex-row items-start justify-between">
         <min-h2><min-logo>Advent</min-logo></min-h2>
+        <min-badge [color]="Color.Yellow">soon</min-badge>
       </div>
       <p class="text-left text-sm text-gray-500">Der minimalistische Adventskalender.</p>
     </min-card-button>

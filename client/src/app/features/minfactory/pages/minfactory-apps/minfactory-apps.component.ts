@@ -1,5 +1,4 @@
 import { Component, Signal, WritableSignal, computed, signal } from '@angular/core';
-import { ENVIRONMENT } from '../../../../../environments/environment';
 import { RoutingService } from '../../../../core/routing/services/routing.service';
 import { BadgeComponent } from '../../../../shared/components/badge/badge.component';
 import { CardButtonComponent } from '../../../../shared/components/card-button/card-button.component';
@@ -19,7 +18,10 @@ import { MinFactoryUserService } from '../../services/minfactory-user.service';
 export class MinFactoryAppsComponent {
   public readonly Color: typeof Color = Color;
   public readonly isMinPokerAccessible: Signal<boolean> = computed(
-    () => ENVIRONMENT.FEATURE_FLAGS.MINPOKER || this.userService.profileViewModel()?.role === MinFactoryRole.Admin,
+    () => this.userService.profileViewModel()?.role === MinFactoryRole.Admin,
+  );
+  public readonly isMinAdventAccessible: Signal<boolean> = computed(
+    () => this.userService.profileViewModel()?.role === MinFactoryRole.Admin,
   );
 
   public selectedTab: WritableSignal<number> = signal(1);

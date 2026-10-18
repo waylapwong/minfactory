@@ -1,142 +1,114 @@
-<main class="mx-auto max-w-3xl px-4 py-6 sm:px-8">
-  <a routerLink="/minadvent" class="text-sm font-semibold text-emerald-900 underline underline-offset-4"
-    >Zur Kalenderübersicht</a
-  >
-  @if (isLoading() && !isEditing()) {
-    <p role="status" class="py-12 text-center text-stone-600">Kalender wird gespeichert …</p>
-  } @else if (isLoading() && isEditing() && !calendar()) {
-    <p role="status" class="py-12 text-center text-stone-600">Kalender wird geladen …</p>
-  } @else {
-    <header class="my-7 border-b border-emerald-900/20 pb-5">
-      <p class="text-xs font-semibold text-emerald-800 uppercase">minAdvent</p>
-      <h1 class="mt-1 text-2xl font-bold text-stone-900">
-        {{ isEditing() ? 'Kalender verwalten' : 'Kalender anlegen' }}
-      </h1>
-    </header>
+<main class="flex h-full flex-col px-4">
+  <header class="relative flex items-center justify-center">
+    <div class="absolute top-0 left-0">
+      <min-button ariaLabel="Zur Kalenderübersicht" title="Zur Kalenderübersicht" [color]="Color.White" (clicked)="routingService.navigateToMinAdvent()">
+        <img src="assets/svgs/minfactory/ui/back.svg" alt="Zurück" class="h-4 w-4" />
+      </min-button>
+    </div>
+    <min-h1>{{ isEditing() ? 'Kalender verwalten' : 'Kalender anlegen' }}</min-h1>
+  </header>
 
+  @if (isLoading() && !isEditing()) {
+    <output aria-live="polite" class="py-8 text-center text-gray-500">Kalender wird gespeichert …</output>
+  } @else if (isLoading() && isEditing() && !calendar()) {
+    <output aria-live="polite" class="py-8 text-center text-gray-500">Kalender wird geladen …</output>
+  } @else {
     @if (error()) {
-      <p role="alert" class="mb-5 border-l-4 border-red-700 bg-red-50 p-4 text-red-900">{{ error() }}</p>
+      <div role="alert" class="mb-4 rounded-lg border-4 border-red-300 bg-red-100 p-3 text-sm text-red-500">
+        <p class="font-bold">Fehler</p>
+        <p>{{ error() }}</p>
+      </div>
     }
 
     @if (!isEditing()) {
-      <form [formGroup]="form" (ngSubmit)="createCalendar()" class="space-y-5">
-        <label class="block font-medium text-stone-800" for="calendar-title"
-          >Kalendertitel
-          <input
-            id="calendar-title"
-            formControlName="title"
-            maxlength="100"
-            required
-            class="mt-1 block w-full rounded border border-stone-400 px-3 py-2"
-          />
+      <form [formGroup]="form" (ngSubmit)="createCalendar()" class="flex flex-col gap-4">
+        <div>
+          <min-input id="calendar-title" label="Kalendertitel" [formControlInput]="form.controls.title" [maxLength]="100" />
           @if (form.controls.title.touched && form.controls.title.invalid) {
-            <span class="text-sm text-red-800">Titel ist erforderlich (max. 100 Zeichen).</span>
+            <p class="mt-1 text-sm text-red-500" aria-live="assertive">Titel ist erforderlich (max. 100 Zeichen).</p>
           }
-        </label>
-        <label class="block font-medium text-stone-800" for="recipient-name"
-          >Empfängername
-          <input
-            id="recipient-name"
-            formControlName="recipientName"
-            maxlength="100"
-            required
-            class="mt-1 block w-full rounded border border-stone-400 px-3 py-2"
-          />
+        </div>
+        <div>
+          <min-input id="recipient-name" label="Empfängername" [formControlInput]="form.controls.recipientName" [maxLength]="100" />
           @if (form.controls.recipientName.touched && form.controls.recipientName.invalid) {
-            <span class="text-sm text-red-800">Empfängername ist erforderlich (max. 100 Zeichen).</span>
+            <p class="mt-1 text-sm text-red-500" aria-live="assertive">Empfängername ist erforderlich (max. 100 Zeichen).</p>
           }
-        </label>
-        <label class="block font-medium text-stone-800" for="calendar-year"
-          >Kalenderjahr
-          <input
+        </div>
+        <div>
+          <min-input
             id="calendar-year"
+            label="Kalenderjahr"
             type="number"
-            formControlName="year"
-            min="1"
-            max="9999"
-            required
-            class="mt-1 block w-full rounded border border-stone-400 px-3 py-2"
+            [min]="1"
+            [max]="9999"
+            [formControlInput]="form.controls.year"
           />
           @if (form.controls.year.touched && form.controls.year.invalid) {
-            <span class="text-sm text-red-800">Bitte gib ein Kalenderjahr zwischen 1 und 9999 ein.</span>
+            <p class="mt-1 text-sm text-red-500" aria-live="assertive">Bitte gib ein Kalenderjahr zwischen 1 und 9999 ein.</p>
           }
-        </label>
-        <button
-          type="submit"
-          [disabled]="form.invalid || isLoading()"
-          class="rounded bg-emerald-800 px-5 py-2 font-semibold text-white hover:bg-emerald-900 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-800 disabled:opacity-50"
-        >
-          Kalender erstellen
-        </button>
+        </div>
+        <div class="flex justify-end">
+          <min-button [color]="Color.Green" [isDisabled]="form.invalid || isLoading()" type="submit">
+            Kalender erstellen
+          </min-button>
+        </div>
       </form>
     } @else if (calendar(); as current) {
-      <section class="space-y-7">
-        <p class="text-sm text-stone-600">
-          Kalenderjahr <strong class="text-stone-900">{{ current.year }}</strong> · Version {{ current.version }}
-        </p>
-        <div class="space-y-2">
-          <label class="block font-medium text-stone-800" for="edit-calendar-title">Kalendertitel</label>
-          <div class="flex flex-col gap-2 sm:flex-row">
-            <input
-              id="edit-calendar-title"
-              [formControl]="form.controls.title"
-              maxlength="100"
-              required
-              class="min-w-0 flex-1 rounded border border-stone-400 px-3 py-2"
-            />
-            <button
-              type="button"
-              (click)="saveTitle()"
-              [disabled]="form.controls.title.invalid || isSavingTitle()"
-              class="rounded bg-emerald-800 px-4 py-2 font-semibold text-white disabled:opacity-50"
-            >
-              Titel speichern
-            </button>
-          </div>
-          @if (form.controls.title.touched && form.controls.title.invalid) {
-            <p class="text-sm text-red-800">Titel ist erforderlich (max. 100 Zeichen).</p>
-          }
+      <section class="flex flex-col gap-5">
+        <div class="flex flex-wrap items-center gap-2 text-sm text-gray-500">
+          <span>Kalenderjahr <strong class="text-black">{{ current.year }}</strong></span>
+          <span aria-hidden="true">·</span>
+          <span>Version {{ current.version }}</span>
+          <min-badge [color]="current.published ? Color.Green : Color.Yellow">
+            {{ current.published ? 'Freigegeben' : 'Entwurf' }}
+          </min-badge>
+          <min-badge [color]="current.completed ? Color.Gray : Color.Blue">
+            {{ current.completed ? 'Abgeschlossen' : 'Bearbeitbar' }}
+          </min-badge>
         </div>
-        <div class="space-y-2">
-          <label class="block font-medium text-stone-800" for="edit-recipient-name">Empfängername</label>
-          <div class="flex flex-col gap-2 sm:flex-row">
-            <input
-              id="edit-recipient-name"
-              [formControl]="form.controls.recipientName"
-              maxlength="100"
-              required
-              class="min-w-0 flex-1 rounded border border-stone-400 px-3 py-2"
-            />
-            <button
-              type="button"
-              (click)="saveRecipient()"
-              [disabled]="form.controls.recipientName.invalid || isSavingRecipient()"
-              class="rounded bg-emerald-800 px-4 py-2 font-semibold text-white disabled:opacity-50"
-            >
-              Empfänger speichern
-            </button>
-          </div>
-          @if (form.controls.recipientName.touched && form.controls.recipientName.invalid) {
-            <p class="text-sm text-red-800">Empfängername ist erforderlich (max. 100 Zeichen).</p>
+        <div class="flex flex-col gap-2">
+          <min-input id="edit-calendar-title" label="Kalendertitel" [formControlInput]="form.controls.title" [maxLength]="100" />
+          @if (form.controls.title.touched && form.controls.title.invalid) {
+            <p class="text-sm text-red-500" aria-live="assertive">Titel ist erforderlich (max. 100 Zeichen).</p>
           }
+          <div class="flex justify-end">
+            <min-button
+              [color]="Color.Green"
+              [isDisabled]="form.controls.title.invalid || isSavingTitle()"
+              (clicked)="saveTitle()"
+            >
+              {{ isSavingTitle() ? 'Speichert …' : 'Titel speichern' }}
+            </min-button>
+          </div>
+        </div>
+        <div class="flex flex-col gap-2">
+          <min-input id="edit-recipient-name" label="Empfängername" [formControlInput]="form.controls.recipientName" [maxLength]="100" />
+          @if (form.controls.recipientName.touched && form.controls.recipientName.invalid) {
+            <p class="text-sm text-red-500" aria-live="assertive">Empfängername ist erforderlich (max. 100 Zeichen).</p>
+          }
+          <div class="flex justify-end">
+            <min-button
+              [color]="Color.Green"
+              [isDisabled]="form.controls.recipientName.invalid || isSavingRecipient()"
+              (clicked)="saveRecipient()"
+            >
+              {{ isSavingRecipient() ? 'Speichert …' : 'Empfänger speichern' }}
+            </min-button>
+          </div>
         </div>
         <section aria-labelledby="doors-heading">
-          <h2 id="doors-heading" class="mb-3 text-lg font-semibold text-stone-900">Türchen</h2>
+          <min-h2 id="doors-heading" class="mb-3">Türchen</min-h2>
           <div class="grid grid-cols-4 gap-2 sm:grid-cols-6">
             @for (door of current.doors; track door.day) {
-              <div
-                class="flex aspect-square flex-col items-center justify-center border border-stone-300 bg-stone-50 text-stone-800"
-              >
-                <span class="text-lg font-semibold">{{ door.day }}</span>
-                <span class="text-[0.65rem]">{{ door.status }}</span>
+              <div class="flex aspect-square flex-col items-center justify-center gap-1 rounded-lg border-4 border-black bg-white p-2 shadow-2xl">
+                <span class="text-2xl font-bold">{{ door.day }}</span>
+                <min-badge [color]="door.status === 'EMPTY' ? Color.Gray : door.status === 'FILLED' ? Color.Yellow : Color.Green">
+                  {{ door.status }}
+                </min-badge>
               </div>
             }
           </div>
         </section>
-        <p class="text-sm text-stone-600">
-          {{ current.published ? 'Freigegeben' : 'Noch nicht freigegeben' }} ·
-          {{ current.completed ? 'Abgeschlossen' : 'Bearbeitbar' }}
-        </p>
       </section>
     }
   }
