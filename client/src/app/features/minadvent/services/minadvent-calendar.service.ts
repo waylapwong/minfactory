@@ -7,24 +7,25 @@ import { MinAdventCalendarRepository } from '../repositories/minadvent-calendar.
 
 @Injectable({ providedIn: 'root' })
 export class MinAdventCalendarService {
-  private readonly cachedCalendars: WritableSignal<MinAdventCalendar[]> = signal([]);
   public readonly calendars: Signal<MinAdventCalendar[]> = computed(() => this.cachedCalendars());
+
+  private readonly cachedCalendars: WritableSignal<MinAdventCalendar[]> = signal([]);
 
   constructor(private readonly repository: MinAdventCalendarRepository) {}
 
-  public async loadCalendars(): Promise<void> {
-    const dtos = await this.repository.getAll();
-    this.cachedCalendars.set(dtos.map(MinAdventDomainMapper.toCalendar));
+  public async createCalendar(input: MinAdventCalendarCreateDto): Promise<MinAdventCalendar> {
+    const calendar = MinAdventDomainMapper.toCalendar(await this.repository.create(input));
+    this.cachedCalendars.update((calendars) => [calendar, ...calendars]);
+    return calendar;
   }
 
   public async getCalendar(id: string): Promise<MinAdventCalendar> {
     return MinAdventDomainMapper.toCalendar(await this.repository.get(id));
   }
 
-  public async createCalendar(input: MinAdventCalendarCreateDto): Promise<MinAdventCalendar> {
-    const calendar = MinAdventDomainMapper.toCalendar(await this.repository.create(input));
-    this.cachedCalendars.update((calendars) => [calendar, ...calendars]);
-    return calendar;
+  public async loadCalendars(): Promise<void> {
+    const dtos = await this.repository.getAll();
+    this.cachedCalendars.set(dtos.map(MinAdventDomainMapper.toCalendar));
   }
 
   public async updateCalendar(id: string, input: MinAdventCalendarUpdateDto): Promise<MinAdventCalendar> {

@@ -1,10 +1,18 @@
-import { MinAdventCalendarCreateDto } from '../models/dtos/minadvent-calendar-create.dto';
-import { MinAdventCalendarUpdateDto } from '../models/dtos/minadvent-calendar-update.dto';
 import { MinAdventCalendar } from '../models/domains/minadvent-calendar';
 import { MinAdventDoor } from '../models/domains/minadvent-door';
-import { MinAdventDoorStatus } from '../models/entities/minadvent-door.entity';
+import { MinAdventCalendarCreateDto } from '../models/dtos/minadvent-calendar-create.dto';
+import { MinAdventCalendarUpdateDto } from '../models/dtos/minadvent-calendar-update.dto';
+import { MinAdventDoorStatus } from '../models/enums/minadvent-door-status.enum';
 
 export class MinAdventDtoMapper {
+  public static applyMetadataUpdate(dto: MinAdventCalendarUpdateDto, domain: MinAdventCalendar): MinAdventCalendar {
+    return {
+      ...domain,
+      title: dto.title?.trim() ?? domain.title,
+      recipientName: dto.recipientName?.trim() ?? domain.recipientName,
+    };
+  }
+
   public static toDomain(dto: MinAdventCalendarCreateDto, ownerId: string): MinAdventCalendar {
     const domain = new MinAdventCalendar();
     domain.ownerId = ownerId;
@@ -18,13 +26,5 @@ export class MinAdventDtoMapper {
       return door;
     });
     return domain;
-  }
-
-  public static applyMetadataUpdate(dto: MinAdventCalendarUpdateDto, domain: MinAdventCalendar): MinAdventCalendar {
-    return {
-      ...domain,
-      title: dto.title?.trim() ?? domain.title,
-      recipientName: dto.recipientName?.trim() ?? domain.recipientName,
-    };
   }
 }

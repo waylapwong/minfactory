@@ -1,10 +1,10 @@
 import { Component, OnInit, Signal, computed, signal } from '@angular/core';
+import { RoutingService } from '../../../../core/routing/services/routing.service';
 import { BadgeComponent } from '../../../../shared/components/badge/badge.component';
 import { ButtonComponent } from '../../../../shared/components/button/button.component';
 import { CardButtonComponent } from '../../../../shared/components/card-button/card-button.component';
 import { H1Component } from '../../../../shared/components/h1/h1.component';
 import { H2Component } from '../../../../shared/components/h2/h2.component';
-import { RoutingService } from '../../../../core/routing/services/routing.service';
 import { Color } from '../../../../shared/enums/color.enum';
 import { MinAdventCalendarGroup } from '../../models/minadvent-calendar.model';
 import { MinAdventCalendarService } from '../../services/minadvent-calendar.service';
@@ -17,7 +17,6 @@ import { MinAdventCalendarService } from '../../services/minadvent-calendar.serv
 })
 export class MinAdventOverviewComponent implements OnInit {
   public readonly Color: typeof Color = Color;
-  public readonly isLoading = signal(true);
   public readonly error = signal('');
   public readonly groups: Signal<MinAdventCalendarGroup[]> = computed(() => {
     const calendars = this.calendarService.calendars();
@@ -33,6 +32,7 @@ export class MinAdventOverviewComponent implements OnInit {
     });
     return years.map((year) => ({ year, calendars: calendars.filter((calendar) => calendar.year === year) }));
   });
+  public readonly isLoading = signal(true);
 
   constructor(
     public readonly routingService: RoutingService,

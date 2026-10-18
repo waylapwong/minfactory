@@ -6,9 +6,9 @@ import { AppName } from './shared/enums/app-name.enum';
 import { MinFactoryRole } from './shared/enums/minfactory-role.enum';
 
 export enum AppPath {
+  MinAdvent = 'minadvent',
   MinPoker = 'minpoker',
   MinRps = 'minrps',
-  MinAdvent = 'minadvent',
   Root = '',
   Unknown = '**',
 }
@@ -19,6 +19,14 @@ export const APP_ROUTES: Routes = [
     title: AppName.MinFactory,
     loadChildren: () => import('./features/minfactory/minfactory.routes').then((m) => m.MINFACTORY_ROUTES),
     loadComponent: () => import('./features/minfactory/minfactory.component').then((m) => m.MinFactoryComponent),
+  },
+  {
+    path: AppPath.MinAdvent,
+    title: AppName.MinAdvent,
+    canActivate: [authenticationGuard, roleGuard],
+    data: { role: MinFactoryRole.Admin },
+    loadChildren: () => import('./features/minadvent/minadvent.routes').then((m) => m.MINADVENT_ROUTES),
+    loadComponent: () => import('./features/minadvent/minadvent.component').then((m) => m.MinAdventComponent),
   },
   {
     path: AppPath.MinPoker,
@@ -33,14 +41,6 @@ export const APP_ROUTES: Routes = [
     title: AppName.MinRps,
     loadChildren: () => import('./features/minrps/minrps.routes').then((m) => m.MINRPS_ROUTES),
     loadComponent: () => import('./features/minrps/minrps.component').then((m) => m.MinRpsComponent),
-  },
-  {
-    path: AppPath.MinAdvent,
-    title: AppName.MinAdvent,
-    canActivate: [authenticationGuard, roleGuard],
-    data: { role: MinFactoryRole.Admin },
-    loadChildren: () => import('./features/minadvent/minadvent.routes').then((m) => m.MINADVENT_ROUTES),
-    loadComponent: () => import('./features/minadvent/minadvent.component').then((m) => m.MinAdventComponent),
   },
   {
     path: AppPath.Unknown,

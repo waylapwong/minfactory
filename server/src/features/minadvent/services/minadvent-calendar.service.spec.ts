@@ -1,8 +1,9 @@
 import { ConflictException, ForbiddenException } from '@nestjs/common';
 import { MinFactoryUser } from '../../minfactory/models/domains/minfactory-user';
-import { MinAdventCalendarEntity } from '../models/entities/minadvent-calendar.entity';
-import { MinAdventDoorStatus } from '../models/entities/minadvent-door.entity';
 import { MinAdventCalendarRepositoryMock } from '../mocks/minadvent-calendar.repository.mock';
+import { MinAdventCalendarEntity } from '../models/entities/minadvent-calendar.entity';
+import { MinAdventDoorEntity } from '../models/entities/minadvent-door.entity';
+import { MinAdventDoorStatus } from '../models/enums/minadvent-door-status.enum';
 import { MinAdventCalendarService } from './minadvent-calendar.service';
 
 describe('MinAdventCalendarService', () => {
@@ -13,6 +14,10 @@ describe('MinAdventCalendarService', () => {
   beforeEach(() => {
     repository = new MinAdventCalendarRepositoryMock();
     service = new MinAdventCalendarService(repository as never);
+  });
+
+  afterEach(() => {
+    jest.useRealTimers();
   });
 
   it('creates a calendar with exactly 24 empty doors', async () => {
@@ -51,6 +56,36 @@ describe('MinAdventCalendarService', () => {
     expect(repository.create).toHaveBeenNthCalledWith(1, expect.objectContaining({ year: 1 }));
     expect(repository.create).toHaveBeenNthCalledWith(2, expect.objectContaining({ year: 9999 }));
   });
+
+  it.each([
+    { currentTime: '2026-12-24T22:59:59.000Z', year: 2026, statuses: [MinAdventDoorStatus.Opened], completed: false },
+    { currentTime: '2026-12-24T23:00:00.000Z', year: 2026, statuses: [MinAdventDoorStatus.Opened], completed: true },
+    { currentTime: '2026-12-24T23:00:00.000Z', year: 2026, statuses: [], completed: false },
+    { currentTime: '2026-12-24T23:00:00.000Z', year: 2027, statuses: [MinAdventDoorStatus.Opened], completed: false },
+    {
+      currentTime: '2026-12-24T23:00:00.000Z',
+      year: 2026,
+      statuses: [MinAdventDoorStatus.Opened, MinAdventDoorStatus.Filled],
+      completed: false,
+    },
+  ])(
+    'derives completed from Berlin time, calendar year and door states',
+    async ({ currentTime, year, statuses, completed }) => {
+      jest.useFakeTimers();
+      jest.setSystemTime(new Date(currentTime));
+      const calendar = Object.assign(new MinAdventCalendarEntity(), {
+        id: 'calendar-1',
+        ownerId: owner.id,
+        year,
+        doors: statuses.map((status, index) => Object.assign(new MinAdventDoorEntity(), { day: index + 1, status })),
+      });
+      repository.findById.mockResolvedValue(calendar);
+
+      const result = await service.get(owner, calendar.id);
+
+      expect(result.completed).toBe(completed);
+    },
+  );
 
   it('does not expose another owner calendar', async () => {
     const calendar = new MinAdventCalendarEntity();

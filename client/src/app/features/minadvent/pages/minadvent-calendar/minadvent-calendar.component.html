@@ -1,7 +1,12 @@
 <main class="flex h-full flex-col px-4">
   <header class="relative flex items-center justify-center">
     <div class="absolute top-0 left-0">
-      <min-button ariaLabel="Zur Kalenderübersicht" title="Zur Kalenderübersicht" [color]="Color.White" (clicked)="routingService.navigateToMinAdvent()">
+      <min-button
+        ariaLabel="Zur Kalenderübersicht"
+        title="Zur Kalenderübersicht"
+        [color]="Color.White"
+        (clicked)="routingService.navigateToMinAdvent()"
+      >
         <img src="assets/svgs/minfactory/ui/back.svg" alt="Zurück" class="h-4 w-4" />
       </min-button>
     </div>
@@ -23,15 +28,27 @@
     @if (!isEditing()) {
       <form [formGroup]="form" (ngSubmit)="createCalendar()" class="flex flex-col gap-4">
         <div>
-          <min-input id="calendar-title" label="Kalendertitel" [formControlInput]="form.controls.title" [maxLength]="100" />
+          <min-input
+            id="calendar-title"
+            label="Kalendertitel"
+            [formControlInput]="form.controls.title"
+            [maxLength]="100"
+          />
           @if (form.controls.title.touched && form.controls.title.invalid) {
             <p class="mt-1 text-sm text-red-500" aria-live="assertive">Titel ist erforderlich (max. 100 Zeichen).</p>
           }
         </div>
         <div>
-          <min-input id="recipient-name" label="Empfängername" [formControlInput]="form.controls.recipientName" [maxLength]="100" />
+          <min-input
+            id="recipient-name"
+            label="Empfängername"
+            [formControlInput]="form.controls.recipientName"
+            [maxLength]="100"
+          />
           @if (form.controls.recipientName.touched && form.controls.recipientName.invalid) {
-            <p class="mt-1 text-sm text-red-500" aria-live="assertive">Empfängername ist erforderlich (max. 100 Zeichen).</p>
+            <p class="mt-1 text-sm text-red-500" aria-live="assertive">
+              Empfängername ist erforderlich (max. 100 Zeichen).
+            </p>
           }
         </div>
         <div>
@@ -44,7 +61,9 @@
             [formControlInput]="form.controls.year"
           />
           @if (form.controls.year.touched && form.controls.year.invalid) {
-            <p class="mt-1 text-sm text-red-500" aria-live="assertive">Bitte gib ein Kalenderjahr zwischen 1 und 9999 ein.</p>
+            <p class="mt-1 text-sm text-red-500" aria-live="assertive">
+              Bitte gib ein Kalenderjahr zwischen 1 und 9999 ein.
+            </p>
           }
         </div>
         <div class="flex justify-end">
@@ -56,7 +75,9 @@
     } @else if (calendar(); as current) {
       <section class="flex flex-col gap-5">
         <div class="flex flex-wrap items-center gap-2 text-sm text-gray-500">
-          <span>Kalenderjahr <strong class="text-black">{{ current.year }}</strong></span>
+          <span
+            >Kalenderjahr <strong class="text-black">{{ current.year }}</strong></span
+          >
           <span aria-hidden="true">·</span>
           <span>Version {{ current.version }}</span>
           <min-badge [color]="current.published ? Color.Green : Color.Yellow">
@@ -67,7 +88,12 @@
           </min-badge>
         </div>
         <div class="flex flex-col gap-2">
-          <min-input id="edit-calendar-title" label="Kalendertitel" [formControlInput]="form.controls.title" [maxLength]="100" />
+          <min-input
+            id="edit-calendar-title"
+            label="Kalendertitel"
+            [formControlInput]="form.controls.title"
+            [maxLength]="100"
+          />
           @if (form.controls.title.touched && form.controls.title.invalid) {
             <p class="text-sm text-red-500" aria-live="assertive">Titel ist erforderlich (max. 100 Zeichen).</p>
           }
@@ -82,7 +108,12 @@
           </div>
         </div>
         <div class="flex flex-col gap-2">
-          <min-input id="edit-recipient-name" label="Empfängername" [formControlInput]="form.controls.recipientName" [maxLength]="100" />
+          <min-input
+            id="edit-recipient-name"
+            label="Empfängername"
+            [formControlInput]="form.controls.recipientName"
+            [maxLength]="100"
+          />
           @if (form.controls.recipientName.touched && form.controls.recipientName.invalid) {
             <p class="text-sm text-red-500" aria-live="assertive">Empfängername ist erforderlich (max. 100 Zeichen).</p>
           }
@@ -100,9 +131,13 @@
           <min-h2 id="doors-heading" class="mb-3">Türchen</min-h2>
           <div class="grid grid-cols-4 gap-2 sm:grid-cols-6">
             @for (door of current.doors; track door.day) {
-              <div class="flex aspect-square flex-col items-center justify-center gap-1 rounded-lg border-4 border-black bg-white p-2 shadow-2xl">
+              <div
+                class="flex aspect-square flex-col items-center justify-center gap-1 rounded-lg border-4 border-black bg-white p-2 shadow-2xl"
+              >
                 <span class="text-2xl font-bold">{{ door.day }}</span>
-                <min-badge [color]="door.status === 'EMPTY' ? Color.Gray : door.status === 'FILLED' ? Color.Yellow : Color.Green">
+                <min-badge
+                  [color]="door.status === 'EMPTY' ? Color.Gray : door.status === 'FILLED' ? Color.Yellow : Color.Green"
+                >
                   {{ door.status }}
                 </min-badge>
               </div>

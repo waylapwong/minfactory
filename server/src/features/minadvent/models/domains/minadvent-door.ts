@@ -1,4 +1,4 @@
-import { MinAdventDoorStatus } from '../entities/minadvent-door.entity';
+import { MinAdventDoorStatus } from '../enums/minadvent-door-status.enum';
 
 export class MinAdventDoor {
   public day: number = 1;

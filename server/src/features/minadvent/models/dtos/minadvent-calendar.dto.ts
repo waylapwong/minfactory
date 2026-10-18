@@ -1,13 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { MinAdventDoorStatus } from '../entities/minadvent-door.entity';
-
-export class MinAdventDoorDto {
-  @ApiProperty({ minimum: 1, maximum: 24 })
-  public day!: number;
-
-  @ApiProperty({ enum: MinAdventDoorStatus })
-  public status!: MinAdventDoorStatus;
-}
+import { MinAdventDoorDto } from './minadvent-door.dto';
 
 export class MinAdventCalendarDto {
   @ApiProperty()

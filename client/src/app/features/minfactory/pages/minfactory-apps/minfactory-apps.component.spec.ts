@@ -50,7 +50,7 @@ describe('MinFactoryAppsComponent', () => {
     fixture.detectChanges();
 
     expect(component.isMinPokerAccessible()).toBeFalse();
-  expect(fixture.nativeElement.querySelector('min-card-button button').disabled).toBeTrue();
+    expect(fixture.nativeElement.querySelector('min-card-button button').disabled).toBeTrue();
   });
 
   it('should enable minPoker card when user has Admin role', () => {

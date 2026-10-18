@@ -1,15 +1,15 @@
 export interface MinAdventCalendar {
-  id: string;
-  title: string;
-  recipientName: string;
-  year: number;
-  version: number;
-  published: boolean;
   completed: boolean;
   doors: { day: number; status: 'EMPTY' | 'FILLED' | 'OPENED' }[];
+  id: string;
+  published: boolean;
+  recipientName: string;
+  title: string;
+  version: number;
+  year: number;
 }
 
 export interface MinAdventCalendarGroup {
-  year: number;
   calendars: MinAdventCalendar[];
+  year: number;
 }

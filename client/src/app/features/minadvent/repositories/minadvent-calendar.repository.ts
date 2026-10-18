@@ -12,12 +12,12 @@ export class MinAdventCalendarRepository {
     return firstValueFrom(this.api.createMinAdventCalendar(input));
   }
 
-  public getAll() {
-    return firstValueFrom(this.api.getMinAdventCalendars());
-  }
-
   public get(id: string) {
     return firstValueFrom(this.api.getMinAdventCalendar(id));
+  }
+
+  public getAll() {
+    return firstValueFrom(this.api.getMinAdventCalendars());
   }
 
   public update(id: string, input: MinAdventCalendarUpdateDto) {

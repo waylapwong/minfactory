@@ -18,12 +18,8 @@ import { MinAdventCalendarService } from '../../services/minadvent-calendar.serv
 })
 export class MinAdventCalendarComponent implements OnInit {
   public readonly Color: typeof Color = Color;
-  public readonly isLoading = signal(false);
-  public readonly isSavingTitle = signal(false);
-  public readonly isSavingRecipient = signal(false);
-  public readonly error = signal('');
   public readonly calendar = signal<Awaited<ReturnType<MinAdventCalendarService['getCalendar']>> | null>(null);
-  public readonly isEditing = signal(false);
+  public readonly error = signal('');
   public readonly form = new FormGroup({
     title: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.maxLength(100)] }),
     recipientName: new FormControl('', {
@@ -35,6 +31,10 @@ export class MinAdventCalendarComponent implements OnInit {
       validators: [Validators.required, Validators.min(1), Validators.max(9999), Validators.pattern(/^\d+$/)],
     }),
   });
+  public readonly isEditing = signal(false);
+  public readonly isLoading = signal(false);
+  public readonly isSavingRecipient = signal(false);
+  public readonly isSavingTitle = signal(false);
 
   constructor(
     private readonly route: ActivatedRoute,
@@ -80,29 +80,6 @@ export class MinAdventCalendarComponent implements OnInit {
     }
   }
 
-  public async saveTitle(): Promise<void> {
-    const calendar = this.calendar();
-    const control = this.form.controls.title;
-    control.markAsTouched();
-    if (!calendar || control.invalid) {
-      return;
-    }
-    this.isSavingTitle.set(true);
-    this.error.set('');
-    try {
-      this.calendar.set(
-        await this.calendarService.updateCalendar(calendar.id, {
-          title: control.value,
-          expectedVersion: calendar.version,
-        }),
-      );
-    } catch {
-      this.error.set('Der Titel konnte nicht gespeichert werden. Bitte lade den Kalender neu.');
-    } finally {
-      this.isSavingTitle.set(false);
-    }
-  }
-
   public async saveRecipient(): Promise<void> {
     const calendar = this.calendar();
     const control = this.form.controls.recipientName;
@@ -123,6 +100,29 @@ export class MinAdventCalendarComponent implements OnInit {
       this.error.set('Der Empfängername konnte nicht gespeichert werden. Bitte lade den Kalender neu.');
     } finally {
       this.isSavingRecipient.set(false);
+    }
+  }
+
+  public async saveTitle(): Promise<void> {
+    const calendar = this.calendar();
+    const control = this.form.controls.title;
+    control.markAsTouched();
+    if (!calendar || control.invalid) {
+      return;
+    }
+    this.isSavingTitle.set(true);
+    this.error.set('');
+    try {
+      this.calendar.set(
+        await this.calendarService.updateCalendar(calendar.id, {
+          title: control.value,
+          expectedVersion: calendar.version,
+        }),
+      );
+    } catch {
+      this.error.set('Der Titel konnte nicht gespeichert werden. Bitte lade den Kalender neu.');
+    } finally {
+      this.isSavingTitle.set(false);
     }
   }
 }

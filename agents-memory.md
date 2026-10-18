@@ -5,4 +5,5 @@
 - Popover keyboard regression test: dispatch native Enter keydown followed by click and verify the popover remains pinned and visible; do not duplicate native button activation in key handlers.
 - `min-select` requires `id`, `formControlInput`, and `options`; `label` and `placeholder` are optional. Options require `label`/`value` and may include `disabled`/`imageSrc`.
 - Always use curly braces for `if`/`else` and similar control-flow statements, including single-line bodies.
+- Export exactly one class or enum per source file; place each class and enum in its own convention-matched file.
 - Record durable repository-wide work instructions in this shared memory. After implementing a ticket, verify the result and check off only completed items under the issue's Tasks section; leave Acceptance Criteria for user review and keep unverified CI/CD checks open.

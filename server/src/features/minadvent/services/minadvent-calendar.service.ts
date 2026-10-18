@@ -10,10 +10,9 @@ import { MinAdventDomainMapper } from '../mapper/minadvent-domain.mapper';
 import { MinAdventDtoMapper } from '../mapper/minadvent-dto.mapper';
 import { MinAdventEntityMapper } from '../mapper/minadvent-entity.mapper';
 import { MinAdventCalendar } from '../models/domains/minadvent-calendar';
-import { MinAdventCalendarDto } from '../models/dtos/minadvent-calendar.dto';
 import { MinAdventCalendarCreateDto } from '../models/dtos/minadvent-calendar-create.dto';
 import { MinAdventCalendarUpdateDto } from '../models/dtos/minadvent-calendar-update.dto';
-import { MinAdventCalendarEntity } from '../models/entities/minadvent-calendar.entity';
+import { MinAdventCalendarDto } from '../models/dtos/minadvent-calendar.dto';
 import { MinAdventCalendarRepository } from '../repositories/minadvent-calendar.repository';
 
 @Injectable()
@@ -24,6 +23,10 @@ export class MinAdventCalendarService {
     this.validateCreate(input);
     const domain = MinAdventDtoMapper.toDomain(input, user.id);
     return MinAdventDomainMapper.toDto(MinAdventEntityMapper.toDomain(await this.calendarRepository.create(domain)));
+  }
+
+  public async get(user: MinFactoryUser, id: string): Promise<MinAdventCalendarDto> {
+    return MinAdventDomainMapper.toDto(await this.requireOwnedCalendar(user, id));
   }
 
   public async list(user: MinFactoryUser): Promise<MinAdventCalendarDto[]> {
@@ -39,10 +42,6 @@ export class MinAdventCalendarService {
       return right.year - left.year || right.createdAt.getTime() - left.createdAt.getTime();
     });
     return calendars.map(MinAdventDomainMapper.toDto);
-  }
-
-  public async get(user: MinFactoryUser, id: string): Promise<MinAdventCalendarDto> {
-    return MinAdventDomainMapper.toDto(await this.requireOwnedCalendar(user, id));
   }
 
   public async update(
@@ -75,16 +74,8 @@ export class MinAdventCalendarService {
     return MinAdventDomainMapper.toDto(MinAdventEntityMapper.toDomain(updated));
   }
 
-  private validateCreate(input: MinAdventCalendarCreateDto): void {
-    if (!input.title?.trim() || input.title.length > 100) {
-      throw new BadRequestException('Title must contain 1 to 100 characters.');
-    }
-    if (!input.recipientName?.trim() || input.recipientName.length > 100) {
-      throw new BadRequestException('Recipient name must contain 1 to 100 characters.');
-    }
-    if (!Number.isInteger(input.year) || input.year < 1 || input.year > 9999) {
-      throw new BadRequestException('Year must be an integer between 1 and 9999.');
-    }
+  private getCurrentBerlinYear(): number {
+    return Number(new Intl.DateTimeFormat('en', { timeZone: 'Europe/Berlin', year: 'numeric' }).format(new Date()));
   }
 
   private async requireOwnedCalendar(user: MinFactoryUser, id: string): Promise<MinAdventCalendar> {
@@ -99,7 +90,15 @@ export class MinAdventCalendarService {
     return domain;
   }
 
-  private getCurrentBerlinYear(): number {
-    return Number(new Intl.DateTimeFormat('en', { timeZone: 'Europe/Berlin', year: 'numeric' }).format(new Date()));
+  private validateCreate(input: MinAdventCalendarCreateDto): void {
+    if (!input.title?.trim() || input.title.length > 100) {
+      throw new BadRequestException('Title must contain 1 to 100 characters.');
+    }
+    if (!input.recipientName?.trim() || input.recipientName.length > 100) {
+      throw new BadRequestException('Recipient name must contain 1 to 100 characters.');
+    }
+    if (!Number.isInteger(input.year) || input.year < 1 || input.year > 9999) {
+      throw new BadRequestException('Year must be an integer between 1 and 9999.');
+    }
   }
 }

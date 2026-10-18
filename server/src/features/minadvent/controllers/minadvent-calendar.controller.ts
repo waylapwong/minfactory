@@ -16,9 +16,9 @@ import { API_PARAM_ID } from '../../../shared/decorators/api-param-id.decorator'
 import { MinApp } from '../../../shared/enums/minapp.enum';
 import { MinFactoryUserGuard } from '../../minfactory/guards/minfactory-user.guard';
 import { MinFactoryUser } from '../../minfactory/models/domains/minfactory-user';
-import { MinAdventCalendarDto } from '../models/dtos/minadvent-calendar.dto';
 import { MinAdventCalendarCreateDto } from '../models/dtos/minadvent-calendar-create.dto';
 import { MinAdventCalendarUpdateDto } from '../models/dtos/minadvent-calendar-update.dto';
+import { MinAdventCalendarDto } from '../models/dtos/minadvent-calendar.dto';
 import { MinAdventCalendarService } from '../services/minadvent-calendar.service';
 
 @Controller('minadvent/calendars')
@@ -27,20 +27,6 @@ import { MinAdventCalendarService } from '../services/minadvent-calendar.service
 @Can(UserRolePolicy, 'isUser')
 export class MinAdventCalendarController {
   constructor(private readonly calendarService: MinAdventCalendarService) {}
-
-  @Post()
-  @HttpCode(201)
-  @ApiOperation({ operationId: 'createMinAdventCalendar' })
-  @API_201({ type: MinAdventCalendarDto })
-  @API_400()
-  @API_401()
-  @API_500()
-  public create(
-    @User() user: MinFactoryUser,
-    @Body() input: MinAdventCalendarCreateDto,
-  ): Promise<MinAdventCalendarDto> {
-    return this.calendarService.create(user, input);
-  }
 
   @Get()
   @HttpCode(200)
@@ -65,6 +51,20 @@ export class MinAdventCalendarController {
   @API_500()
   public get(@User() user: MinFactoryUser, @Param('id', ParseUUIDPipe) id: string): Promise<MinAdventCalendarDto> {
     return this.calendarService.get(user, id);
+  }
+
+  @Post()
+  @HttpCode(201)
+  @ApiOperation({ operationId: 'createMinAdventCalendar' })
+  @API_201({ type: MinAdventCalendarDto })
+  @API_400()
+  @API_401()
+  @API_500()
+  public create(
+    @User() user: MinFactoryUser,
+    @Body() input: MinAdventCalendarCreateDto,
+  ): Promise<MinAdventCalendarDto> {
+    return this.calendarService.create(user, input);
   }
 
   @Put(':id')
