@@ -4,7 +4,7 @@
 
 ## 1. Authentifizierte Ersteller
 
-Vorhandene Firebase Authentication und minFactory-Benutzerintegration nutzen: `MinFactoryUserGuard` prüft Bearer, `@User()` identifiziert den angemeldeten Domänenbenutzer. Ressourcenabhängige Eigentümerprüfung in Service/Policy mit vorhandener `AuthorizationService`-/`@Can()`-Architektur; nur eigene Kalender verwalten, fremder Kalender → **403** ohne Inhaltsfreigabe. Eigenschaftsprüfung ist bei Listen ebenso wichtig wie bei einzelnen Mutationen. Nicht dem vom Client gelieferten Owner vertrauen.
+Vorhandene Firebase Authentication und minFactory-Benutzerintegration nutzen. Ersteller-Routen registrieren die Guards in dieser Reihenfolge: `FirebaseGuard`, `MinFactoryUserGuard`, `AuthorizationGuard`. `FirebaseGuard` validiert den Bearer-Token und setzt `request.identity`; `MinFactoryUserGuard` löst daraus den minFactory-Domänenbenutzer auf, den `@User()` bereitstellt; `AuthorizationGuard` wertet die mit `@Can()` deklarierte Policy aus. Ressourcenabhängige Eigentümerprüfung erfolgt in Service/Policy mit der vorhandenen `AuthorizationService`-/`@Can()`-Architektur: nur eigene Kalender verwalten, fremder Kalender → **403** ohne Inhaltsfreigabe. Eigenschaftsprüfung ist bei Listen ebenso wichtig wie bei einzelnen Mutationen. Nicht dem vom Client gelieferten Owner vertrauen.
 
 ## 2. Öffentliche Empfängerlinks
 
