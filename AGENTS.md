@@ -31,7 +31,14 @@ Senior Fullstack Developer.
 * Bestehende Clean Architecture beibehalten.
 * Feature-Isolation beibehalten.
 * Domain Objects bestehen aus Aggregate Roots und Value Objects.
-* Mapping nur über Mapper-Klassen.
+* Mapping bei neuen oder wesentlich angepassten Konvertierungen über getrennte Mapper-Klassen nach Quellmodell und Verantwortlichkeit umsetzen (keine allumfassende Mapper-Klasse pro Feature):
+  * **DtoMapper:** DTO → Domain.
+  * **DomainMapper:** Domain → DTO und Domain → Entity; weitere benötigte ausgehende Konvertierungen (z. B. ViewModel, Payload oder Event) bleiben nach Quellmodell zugeordnet.
+  * **EntityMapper:** Entity → Domain.
+* Mapper dürfen mehrere fachlich zusammengehörige Konvertierungen derselben Richtung bündeln, müssen aber überschaubar bleiben. Nur tatsächlich benötigte Mapper anlegen; triviale Durchreichungen nicht unnötig abstrahieren.
+* Mapping-Logik nicht in Controllern, Services, Repositories oder Angular-Komponenten duplizieren. Bestehende Clean-Architecture-, Feature- und Repository-Grenzen wahren.
+* Diese Richtungsregel gilt für NestJS und analog für Angular-Modellgrenzen; ohne Persistenz-Entities keinen künstlichen Entity-Layer oder EntityMapper im Frontend anlegen.
+* Referenzimplementierungen: `server/src/features/minrps/mapper/` und `server/src/features/minpoker/mapper/` (DTO-, Domain- und Entity-Mapper); `client/src/app/features/minrps/mapper/` und `client/src/app/features/minpoker/mapper/` (DTO-/Domain-Mapper).
 * Repositories kapseln externe Systeme und Datenzugriffe.
 * Keine Änderungen an generiertem Code.
 
