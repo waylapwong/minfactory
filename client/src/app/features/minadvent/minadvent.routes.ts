@@ -18,10 +18,8 @@ export const MINADVENT_ROUTES: Routes = [
   },
   {
     path: MinAdventPath.Create,
-    canActivate: [authenticationGuard],
-    canDeactivate: [leaveGameGuard],
-    loadComponent: () =>
-      import('./pages/minadvent-calendar/minadvent-calendar.component').then((m) => m.MinAdventCalendarComponent),
+    pathMatch: 'full',
+    redirectTo: MinAdventPath.Root,
   },
   {
     path: MinAdventPath.Calendar,

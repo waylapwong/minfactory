@@ -74,6 +74,13 @@ describe('HeaderComponent', () => {
     });
   });
 
+  describe('isInMinAdvent computed signal', () => {
+    it('should return true when app is MinAdvent', () => {
+      contextService.app.set(AppName.MinAdvent);
+      expect(component.isInMinAdvent()).toBeTrue();
+    });
+  });
+
   describe('Breadcrumb links routing', () => {
     it('should expose AppPath constant', () => {
       expect(component.AppPath).toBeDefined();
@@ -106,6 +113,16 @@ describe('HeaderComponent', () => {
       const pokerLink = links[1];
       expect(pokerLink).toBeTruthy();
       expect((pokerLink as HTMLAnchorElement).textContent?.toLowerCase()).toContain('poker');
+    });
+
+    it('should render MinAdvent link with correct routing when in MinAdvent', () => {
+      contextService.app.set(AppName.MinAdvent);
+      fixture.detectChanges();
+      const links = fixture.nativeElement.querySelectorAll('a');
+      const adventLink = links[1];
+      expect(adventLink).toBeTruthy();
+      expect(adventLink.textContent?.toLowerCase()).toContain('advent');
+      expect(adventLink.getAttribute('aria-current')).toBe('page');
     });
 
     it('should have aria-current="page" on Factory link when in factory', () => {

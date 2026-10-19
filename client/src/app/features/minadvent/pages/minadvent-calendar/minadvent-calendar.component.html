@@ -10,12 +10,10 @@
         <img src="assets/svgs/minfactory/ui/back.svg" alt="Zurück" class="h-4 w-4" />
       </min-button>
     </div>
-    <min-h1>{{ isEditing() ? 'Kalender verwalten' : 'Kalender anlegen' }}</min-h1>
+    <min-h1>Kalender verwalten</min-h1>
   </header>
 
-  @if (isLoading() && !isEditing()) {
-    <output aria-live="polite" class="py-8 text-center text-gray-500">Kalender wird gespeichert …</output>
-  } @else if (isLoading() && isEditing() && !calendar()) {
+  @if (isLoading() && !calendar()) {
     <output aria-live="polite" class="py-8 text-center text-gray-500">Kalender wird geladen …</output>
   } @else {
     @if (error()) {
@@ -25,72 +23,21 @@
       </div>
     }
 
-    @if (!isEditing()) {
-      <form [formGroup]="form" (ngSubmit)="createCalendar()" class="flex flex-col gap-4">
-        <div>
-          <min-input
-            id="calendar-title"
-            label="Kalendertitel"
-            [formControlInput]="form.controls.title"
-            [maxLength]="100"
-            [showCharacterCount]="true"
-          />
-          @if (form.controls.title.touched && form.controls.title.invalid) {
-            <p class="mt-1 text-sm text-red-500" aria-live="assertive">Titel ist erforderlich (max. 100 Zeichen).</p>
-          }
-        </div>
-        <div>
-          <min-input
-            id="recipient-name"
-            label="Empfängername"
-            [formControlInput]="form.controls.recipientName"
-            [maxLength]="100"
-            [showCharacterCount]="true"
-          />
-          @if (form.controls.recipientName.touched && form.controls.recipientName.invalid) {
-            <p class="mt-1 text-sm text-red-500" aria-live="assertive">
-              Empfängername ist erforderlich (max. 100 Zeichen).
-            </p>
-          }
-        </div>
-        <div>
-          <min-input
-            id="calendar-year"
-            label="Kalenderjahr"
-            type="number"
-            [min]="1"
-            [max]="9999"
-            [formControlInput]="form.controls.year"
-          />
-          @if (form.controls.year.touched && form.controls.year.invalid) {
-            <p class="mt-1 text-sm text-red-500" aria-live="assertive">
-              Bitte gib ein Kalenderjahr zwischen 1 und 9999 ein.
-            </p>
-          }
-        </div>
-        <div class="flex justify-end">
-          <min-button [color]="Color.Green" [isDisabled]="form.invalid || isLoading()" type="submit">
-            Kalender erstellen
-          </min-button>
-        </div>
-      </form>
-    } @else if (calendar(); as current) {
+    @if (calendar(); as current) {
       <section class="flex flex-col gap-5">
-        <div class="flex flex-wrap items-center gap-2 text-sm text-gray-500">
-          <span
-            >Kalenderjahr <strong class="text-black">{{ current.year }}</strong></span
-          >
-          <span aria-hidden="true">·</span>
-          <span>Version {{ current.version }}</span>
-          <min-badge [color]="current.published ? Color.Green : Color.Yellow">
+        <div class="flex items-center gap-3">
+          <min-badge [color]="current.published ? Color.Green : Color.Gray">
             {{ current.published ? 'Freigegeben' : 'Entwurf' }}
           </min-badge>
-          <min-badge [color]="current.completed ? Color.Gray : Color.Blue">
-            {{ current.completed ? 'Abgeschlossen' : 'Bearbeitbar' }}
-          </min-badge>
+          <span class="text-sm text-gray-500"
+            >Kalenderjahr <strong class="text-black">{{ current.year }}</strong></span
+          >
+          @if (current.completed) {
+            <min-badge [color]="Color.Gray">Abgeschlossen</min-badge>
+          }
         </div>
         <div class="flex flex-col gap-2">
-          <div class="grid grid-cols-3 items-end gap-2">
+          <div class="grid grid-cols-3 items-start gap-2">
             <div class="col-span-2 min-w-0">
               <min-input
                 id="edit-calendar-title"
@@ -102,11 +49,12 @@
             </div>
             <min-button
               class="col-span-1"
+              [class.mt-6]="true"
               [color]="Color.Green"
               [isDisabled]="isTitleSaveDisabled()"
               (clicked)="saveTitle()"
             >
-              {{ isSavingTitle() ? 'Speichert …' : 'Titel speichern' }}
+              {{ isSavingTitle() ? 'Speichert …' : 'Speichern' }}
             </min-button>
           </div>
           @if (form.controls.title.touched && form.controls.title.invalid) {
@@ -114,7 +62,7 @@
           }
         </div>
         <div class="flex flex-col gap-2">
-          <div class="grid grid-cols-3 items-end gap-2">
+          <div class="grid grid-cols-3 items-start gap-2">
             <div class="col-span-2 min-w-0">
               <min-input
                 id="edit-recipient-name"
@@ -126,11 +74,12 @@
             </div>
             <min-button
               class="col-span-1"
+              [class.mt-6]="true"
               [color]="Color.Green"
               [isDisabled]="isRecipientSaveDisabled()"
               (clicked)="saveRecipient()"
             >
-              {{ isSavingRecipient() ? 'Speichert …' : 'Empfänger speichern' }}
+              {{ isSavingRecipient() ? 'Speichert …' : 'Speichern' }}
             </min-button>
           </div>
           @if (form.controls.recipientName.touched && form.controls.recipientName.invalid) {
@@ -139,20 +88,24 @@
         </div>
         <section aria-labelledby="doors-heading">
           <min-h2 id="doors-heading" class="mb-3">Türchen</min-h2>
-          <p class="mb-3 text-sm text-gray-600" aria-live="polite">{{ filledDoorCount() }} von 24 befüllt</p>
+          <div class="mb-3 flex flex-wrap gap-2" aria-label="Türchenstatus">
+            <min-badge [color]="Color.Gray">{{ emptyDoorCount() }} leer</min-badge>
+            <min-badge [color]="Color.Green">{{ filledDoorCount() }} befüllt</min-badge>
+            <min-badge [color]="Color.Blue">{{ openedDoorCount() }} geöffnet</min-badge>
+          </div>
           <div class="grid grid-cols-4 gap-2 sm:grid-cols-6">
             @for (door of current.doors; track door.day) {
               <button
                 type="button"
-                class="flex aspect-square transform cursor-pointer flex-col items-center justify-center gap-1 rounded-lg border-4 border-black bg-white p-2 shadow-2xl transition-all duration-100 hover:translate-y-0.5 hover:bg-gray-100 hover:shadow-xl focus:bg-gray-100 focus-visible:ring-4 focus-visible:ring-blue-600 active:translate-y-1 active:shadow-none"
-                [class.bg-gray-100]="selectedDoorDay() === door.day"
+                class="flex aspect-square transform cursor-pointer flex-col items-center justify-center gap-1 rounded-lg border-4 border-red-700 bg-red-50 p-2 shadow-2xl transition-all duration-100 hover:translate-y-0.5 hover:bg-red-100 hover:shadow-xl focus:bg-red-100 focus-visible:ring-4 focus-visible:ring-blue-600 active:translate-y-1 active:shadow-none"
+                [class.bg-red-100]="selectedDoorDay() === door.day"
                 [attr.aria-pressed]="selectedDoorDay() === door.day"
                 [attr.aria-label]="'Türchen ' + door.day + ', Status ' + getDoorStatusLabel(door.status)"
                 (click)="selectDoor(door)"
               >
                 <span class="text-2xl font-bold">{{ door.day }}</span>
                 <min-badge
-                  [color]="door.status === 'EMPTY' ? Color.Gray : door.status === 'FILLED' ? Color.Yellow : Color.Green"
+                  [color]="door.status === 'EMPTY' ? Color.Gray : door.status === 'FILLED' ? Color.Green : Color.Blue"
                 >
                   {{ getDoorStatusLabel(door.status) }}
                 </min-badge>
@@ -165,11 +118,14 @@
           <min-dialog
             [title]="'Türchen ' + door.day + ' bearbeiten'"
             [isOpen]="true"
-            size="wide"
             (closed)="closeDoorDialog()"
           >
+            <div dialog-subtitle class="mb-3">
+              <min-badge [color]="door.status === 'EMPTY' ? Color.Gray : door.status === 'FILLED' ? Color.Green : Color.Blue">
+                {{ getDoorStatusLabel(door.status) }}
+              </min-badge>
+            </div>
             <section>
-              <p class="mb-3 text-right text-sm text-gray-600">{{ getDoorStatusLabel(door.status) }}</p>
               @if (door.status === 'OPENED' || current.completed) {
                 <output aria-live="polite" class="mb-4 block border-l-4 border-gray-500 bg-gray-100 p-3 text-sm">
                 {{
@@ -177,19 +133,6 @@
                     ? 'Der Kalender ist abgeschlossen.'
                     : 'Geöffnete Türchen können nicht bearbeitet werden.'
                 }}
-                </output>
-              }
-              @if (doorError()) {
-                <p role="alert" class="mb-3 border-l-4 border-red-700 bg-red-50 p-3 text-sm text-red-900">
-                  {{ doorError() }}
-                </p>
-              }
-              @if (doorSuccess()) {
-                <output
-                  aria-live="polite"
-                  class="mb-3 block border-l-4 border-green-700 bg-green-50 p-3 text-sm text-green-900"
-                >
-                  {{ doorSuccess() }}
                 </output>
               }
               @if (!isSelectedDoorReadOnly()) {
@@ -219,11 +162,11 @@
               }
               <div class="flex flex-col gap-4">
                 @for (block of doorForm.controls; track block; let index = $index) {
-                  <fieldset [formGroup]="block" class="min-w-0 border-4 border-gray-300 bg-white p-3">
+                  <fieldset [formGroup]="block" class="min-w-0 rounded-lg border-4 border-gray-300 bg-white p-3">
                     <legend class="px-1 font-bold">Block {{ index + 1 }}</legend>
                     @if (!isSelectedDoorReadOnly()) {
                       <div class="mb-3 flex flex-wrap items-center justify-between gap-2">
-                        <min-select
+                        <min-advent-select
                           [id]="'block-type-' + index"
                           label="Typ"
                           [formControlInput]="block.controls.type"
@@ -257,73 +200,22 @@
                             [color]="Color.Red"
                             (clicked)="removeBlock(index)"
                           >
-                            Entfernen
+                            <img src="assets/svgs/minfactory/ui/close.svg" alt="" class="h-4 w-4" />
                           </min-button>
                         </div>
                       </div>
                     }
                     @if (block.controls.type.value === MinAdventBlockType.Text) {
-                      @if (!isSelectedDoorReadOnly()) {
-                        <div class="mb-2 flex flex-wrap gap-1" [attr.aria-label]="'Formatierung für Textblock ' + (index + 1)">
-                          <min-button
-                            class="w-10"
-                            ariaLabel="Fett"
-                            title="Fett"
-                            [color]="Color.White"
-                            (clicked)="formatText(index, 'bold')"
-                          >
-                            <strong>B</strong>
-                          </min-button>
-                          <min-button
-                            class="w-10 italic"
-                            ariaLabel="Kursiv"
-                            title="Kursiv"
-                            [color]="Color.White"
-                            (clicked)="formatText(index, 'italic')"
-                          >
-                            I
-                          </min-button>
-                          <min-button
-                            title="Aufzählung"
-                            [color]="Color.White"
-                            (clicked)="formatText(index, 'insertUnorderedList')"
-                          >
-                            • Liste
-                          </min-button>
-                          <min-button
-                            title="Nummerierte Liste"
-                            [color]="Color.White"
-                            (clicked)="formatText(index, 'insertOrderedList')"
-                          >
-                            1. Liste
-                          </min-button>
-                          <min-button
-                            class="w-10"
-                            ariaLabel="Absatz"
-                            title="Absatz"
-                            [color]="Color.White"
-                            (clicked)="formatText(index, 'formatBlock')"
-                          >
-                            ¶
-                          </min-button>
-                        </div>
-                      }
-                      <div
+                      <min-textarea
                         [id]="'door-text-' + index"
-                        contenteditable="true"
-                        dir="ltr"
-                        [attr.aria-label]="'Textinhalt Block ' + (index + 1)"
-                        [attr.contenteditable]="isSelectedDoorReadOnly() ? 'false' : 'true'"
-                        [attr.aria-invalid]="block.controls.text.touched && getDoorFieldError(index, 'text') ? 'true' : null"
-                        [class.border-red-600]="block.controls.text.touched && !!getDoorFieldError(index, 'text')"
-                        [innerHTML]="block.controls.text.value"
-                        class="min-h-28 w-full overflow-auto rounded-lg border-4 border-black bg-white p-3 text-left shadow-xl transition-all duration-100 hover:shadow-lg focus-visible:outline-4 focus-visible:outline-blue-700"
-                        (input)="updateTextBlock(index, $any($event.target).innerHTML)"
-                        (blur)="touchDoorText(index)"
-                      ></div>
-                      <p class="mt-1 text-right text-xs text-gray-600">
-                        {{ countVisibleCharacters(block.controls.text.value) }} / 10.000 Zeichen
-                      </p>
+                        label="Text"
+                        [formControlInput]="block.controls.text"
+                        [maxLength]="10000"
+                        [rows]="5"
+                        [showCharacterCount]="true"
+                        [isInvalid]="isDoorFieldInvalid(index, 'text')"
+                        (valueChanged)="updateDoorField()"
+                      />
                       @if (block.controls.text.touched && getDoorFieldError(index, 'text'); as textError) {
                         <p class="text-sm text-red-600" role="alert">{{ textError }}</p>
                       }
@@ -381,7 +273,7 @@
                     [isDisabled]="isDoorSaveDisabled()"
                     (clicked)="saveDoor()"
                   >
-                    {{ isSavingDoor() ? 'Speichert …' : 'Türchen speichern' }}
+                    {{ isSavingDoor() ? 'Speichert …' : 'Speichern' }}
                   </min-button>
                 </div>
               }
@@ -392,3 +284,4 @@
     }
   }
 </main>
+<min-snackbar [isOpen]="isSnackbarOpen()" [message]="snackbarMessage()" (closed)="closeSnackbar()"></min-snackbar>

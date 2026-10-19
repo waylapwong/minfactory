@@ -16,7 +16,7 @@
         ariaLabel="Kalender anlegen"
         title="Kalender anlegen"
         [color]="Color.Green"
-        (clicked)="routingService.navigateToMinAdventCreate()"
+        (clicked)="openCreateDialog()"
       >
         <img src="assets/svgs/minfactory/ui/add.svg" alt="Kalender anlegen" class="h-4 w-4" />
       </min-button>
@@ -49,7 +49,7 @@
       >
         <min-h2>Noch keine Kalender</min-h2>
         <p class="text-sm text-gray-500">Lege deinen ersten Adventskalender an.</p>
-        <min-button [color]="Color.Green" (clicked)="routingService.navigateToMinAdventCreate()"
+        <min-button [color]="Color.Green" (clicked)="openCreateDialog()"
           >Kalender anlegen</min-button
         >
       </section>
@@ -63,12 +63,12 @@
                 <min-h2 class="text-left break-all">{{ calendar.title }}</min-h2>
                 <p class="text-left text-sm text-gray-500">Für {{ calendar.recipientName }} · {{ calendar.year }}</p>
                 <div class="flex flex-wrap gap-2">
-                  <min-badge [color]="calendar.published ? Color.Green : Color.Yellow">
+                  <min-badge [color]="calendar.published ? Color.Green : Color.Gray">
                     {{ calendar.published ? 'Freigegeben' : 'Entwurf' }}
                   </min-badge>
-                  <min-badge [color]="calendar.completed ? Color.Gray : Color.Blue">
-                    {{ calendar.completed ? 'Abgeschlossen' : 'Bearbeitbar' }}
-                  </min-badge>
+                  @if (calendar.completed) {
+                    <min-badge [color]="Color.Gray">Abgeschlossen</min-badge>
+                  }
                 </div>
               </div>
             </min-card-button>
@@ -78,3 +78,53 @@
     }
   </div>
 </main>
+
+<min-dialog title="Kalender anlegen" [isOpen]="isCreateDialogOpen()" (closed)="isCreateDialogOpen.set(false)">
+  <form [formGroup]="createForm" (ngSubmit)="createCalendar()" class="flex flex-col gap-4">
+    <div>
+      <min-input
+        id="calendar-title"
+        label="Kalendertitel"
+        [formControlInput]="createForm.controls.title"
+        [maxLength]="100"
+        [showCharacterCount]="true"
+      />
+      @if (createForm.controls.title.touched && createForm.controls.title.invalid) {
+        <p class="mt-1 text-sm text-red-500" aria-live="assertive">Titel ist erforderlich (max. 100 Zeichen).</p>
+      }
+    </div>
+    <div>
+      <min-input
+        id="recipient-name"
+        label="Empfängername"
+        [formControlInput]="createForm.controls.recipientName"
+        [maxLength]="100"
+        [showCharacterCount]="true"
+      />
+      @if (createForm.controls.recipientName.touched && createForm.controls.recipientName.invalid) {
+        <p class="mt-1 text-sm text-red-500" aria-live="assertive">Empfängername ist erforderlich (max. 100 Zeichen).</p>
+      }
+    </div>
+    <div>
+      <min-input
+        id="calendar-year"
+        label="Kalenderjahr"
+        type="number"
+        [min]="1"
+        [max]="9999"
+        [formControlInput]="createForm.controls.year"
+      />
+      @if (createForm.controls.year.touched && createForm.controls.year.invalid) {
+        <p class="mt-1 text-sm text-red-500" aria-live="assertive">Bitte gib ein Kalenderjahr zwischen 1 und 9999 ein.</p>
+      }
+    </div>
+    @if (createError()) {
+      <p role="alert" class="text-sm text-red-600">{{ createError() }}</p>
+    }
+    <div class="flex justify-end">
+      <min-button [color]="Color.Green" [isDisabled]="createForm.invalid || isCreating()" type="submit">
+        {{ isCreating() ? 'Erstellt …' : 'Kalender erstellen' }}
+      </min-button>
+    </div>
+  </form>
+</min-dialog>

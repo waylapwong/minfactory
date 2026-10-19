@@ -1,7 +1,7 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, computed, HostListener, OnInit, signal } from '@angular/core';
 import { FormArray, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { MinAdventBlockDto } from '../../../../core/generated/model/min-advent-block-dto';
 import { MinAdventBlockType } from '../../../../core/generated/model/min-advent-block-type';
 import { RoutingService } from '../../../../core/routing/services/routing.service';
@@ -11,10 +11,12 @@ import { DialogComponent } from '../../../../shared/components/dialog/dialog.com
 import { H1Component } from '../../../../shared/components/h1/h1.component';
 import { H2Component } from '../../../../shared/components/h2/h2.component';
 import { InputComponent } from '../../../../shared/components/input/input.component';
-import { SelectComponent, SelectOption } from '../../../../shared/components/select/select.component';
+import { MinAdventSelectComponent } from '../../../../shared/components/select/min-advent-select.component';
+import { SelectOption } from '../../../../shared/components/select/select.component';
+import { SnackbarComponent } from '../../../../shared/components/snackbar/snackbar.component';
 import { TextareaComponent } from '../../../../shared/components/textarea/textarea.component';
 import { Color } from '../../../../shared/enums/color.enum';
-import { MinAdventCalendar, MinAdventDoor } from '../../models/minadvent-calendar.model';
+import { MinAdventDoor } from '../../models/minadvent-calendar.model';
 import { MinAdventCalendarService } from '../../services/minadvent-calendar.service';
 
 type DoorBlockForm = FormGroup<{
@@ -36,7 +38,8 @@ type DoorBlockForm = FormGroup<{
     H1Component,
     H2Component,
     InputComponent,
-    SelectComponent,
+    MinAdventSelectComponent,
+    SnackbarComponent,
     TextareaComponent,
     ReactiveFormsModule,
   ],
@@ -46,17 +49,17 @@ export class MinAdventCalendarComponent implements OnInit {
   public readonly calendar = signal<Awaited<ReturnType<MinAdventCalendarService['getCalendar']>> | null>(null);
   public readonly doorForm = new FormArray<DoorBlockForm>([]);
   public readonly doorDraftRevision = signal(0);
-  public readonly doorError = signal('');
-  public readonly doorSuccess = signal('');
   public readonly isSavingDoor = signal(false);
+  public readonly isSnackbarOpen = signal(false);
+  public readonly snackbarMessage = signal('');
   public readonly selectedDoorDay = signal<number | null>(null);
   public readonly selectedDoor = computed(() => {
     const day = this.selectedDoorDay();
     return this.calendar()?.doors.find((door) => door.day === day) ?? null;
   });
-  public readonly filledDoorCount = computed(
-    () => this.calendar()?.doors.filter((door) => door.status === 'FILLED' || door.status === 'OPENED').length ?? 0,
-  );
+  public readonly emptyDoorCount = computed(() => this.calendar()?.doors.filter((door) => door.status === 'EMPTY').length ?? 0);
+  public readonly filledDoorCount = computed(() => this.calendar()?.doors.filter((door) => door.status === 'FILLED').length ?? 0);
+  public readonly openedDoorCount = computed(() => this.calendar()?.doors.filter((door) => door.status === 'OPENED').length ?? 0);
   public readonly error = signal('');
   public readonly form = new FormGroup({
     title: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.maxLength(100)] }),
@@ -69,7 +72,6 @@ export class MinAdventCalendarComponent implements OnInit {
       validators: [Validators.required, Validators.min(1), Validators.max(9999), Validators.pattern(/^\d+$/)],
     }),
   });
-  public readonly isEditing = signal(false);
   public readonly isLoading = signal(false);
   public readonly isSavingRecipient = signal(false);
   public readonly isSavingTitle = signal(false);
@@ -84,7 +86,6 @@ export class MinAdventCalendarComponent implements OnInit {
 
   constructor(
     private readonly route: ActivatedRoute,
-    private readonly router: Router,
     private readonly calendarService: MinAdventCalendarService,
     public readonly routingService: RoutingService,
   ) {}
@@ -107,8 +108,12 @@ export class MinAdventCalendarComponent implements OnInit {
     }
   }
 
+  public closeSnackbar(): void {
+    this.isSnackbarOpen.set(false);
+    this.snackbarMessage.set('');
+  }
+
   private async loadCalendar(id: string): Promise<void> {
-    this.isEditing.set(true);
     this.isLoading.set(true);
     try {
       const calendar = await this.calendarService.getCalendar(id);
@@ -118,23 +123,6 @@ export class MinAdventCalendarComponent implements OnInit {
       this.form.controls.year.setValue(calendar.year);
     } catch {
       this.error.set('Der Kalender konnte nicht geladen werden.');
-    } finally {
-      this.isLoading.set(false);
-    }
-  }
-
-  public async createCalendar(): Promise<void> {
-    this.error.set('');
-    if (this.form.invalid) {
-      this.form.markAllAsTouched();
-      return;
-    }
-    this.isLoading.set(true);
-    try {
-      const calendar = await this.calendarService.createCalendar(this.form.getRawValue());
-      await this.router.navigate(['/minadvent/calendars', calendar.id]);
-    } catch {
-      this.error.set('Der Kalender konnte nicht angelegt werden. Bitte prüfe deine Eingaben.');
     } finally {
       this.isLoading.set(false);
     }
@@ -218,8 +206,6 @@ export class MinAdventCalendarComponent implements OnInit {
     }
     this.doorForm.markAsPristine();
     this.doorDraftRevision.update((revision) => revision + 1);
-    this.doorError.set('');
-    this.doorSuccess.set('');
   }
 
   public addBlock(type: MinAdventBlockType): void {
@@ -246,63 +232,11 @@ export class MinAdventCalendarComponent implements OnInit {
     this.onDoorDraftChanged();
   }
 
-  public formatText(
-    index: number,
-    command: 'bold' | 'italic' | 'insertUnorderedList' | 'insertOrderedList' | 'formatBlock',
-  ): void {
-    const editor = document.getElementById(`door-text-${index}`);
-    const selection = window.getSelection();
-    if (!editor || !selection || selection.rangeCount === 0) {
-      return;
-    }
-    const range = selection.getRangeAt(0);
-    if (!editor.contains(range.commonAncestorContainer)) {
-      return;
-    }
-    editor.focus();
-    let wrapperTag: string;
-    switch (command) {
-      case 'bold':
-        wrapperTag = 'strong';
-        break;
-      case 'italic':
-        wrapperTag = 'em';
-        break;
-      case 'insertUnorderedList':
-        wrapperTag = 'ul';
-        break;
-      case 'insertOrderedList':
-        wrapperTag = 'ol';
-        break;
-      default:
-        wrapperTag = 'p';
-    }
-    const wrapper = document.createElement(wrapperTag);
-    const contents = range.extractContents();
-    if (command === 'insertUnorderedList' || command === 'insertOrderedList') {
-      const item = document.createElement('li');
-      item.append(contents);
-      wrapper.append(item);
-    } else {
-      wrapper.append(contents);
-    }
-    range.insertNode(wrapper);
-    const formattedRange = document.createRange();
-    formattedRange.selectNodeContents(wrapper);
-    selection.removeAllRanges();
-    selection.addRange(formattedRange);
-    this.updateTextBlock(index, editor.innerHTML);
-  }
-
   public updateTextBlock(index: number, text: string): void {
     const control = this.doorForm.at(index).controls.text;
-    control.setValue(text);
+    control.setValue(this.normalizeText(text));
     control.markAsDirty();
     this.onDoorDraftChanged();
-  }
-
-  public touchDoorText(index: number): void {
-    this.doorForm.at(index).controls.text.markAsTouched();
   }
 
   public updateDoorField(): void {
@@ -379,11 +313,11 @@ export class MinAdventCalendarComponent implements OnInit {
   }
 
   public isDoorSaveDisabled(): boolean {
-    return !this.hasUnsavedDoorChanges() || this.isSavingDoor();
+    return !this.hasUnsavedDoorChanges() || !this.isDoorFormValid() || this.isSavingDoor();
   }
 
   public countVisibleCharacters(text: string): number {
-    return [...this.visibleText(text)].length;
+    return [...this.normalizeText(text).trim()].length;
   }
 
   public getDoorFieldError(index: number, field: 'text' | 'title' | 'url' | 'description'): string | null {
@@ -414,7 +348,6 @@ export class MinAdventCalendarComponent implements OnInit {
     }
     if (!this.isDoorFormValid()) {
       this.doorForm.markAllAsTouched();
-      this.doorError.set('Bitte prüfe die Pflichtfelder und Zeichenbegrenzungen.');
       return;
     }
     const blocks = this.toBlocks();
@@ -422,8 +355,6 @@ export class MinAdventCalendarComponent implements OnInit {
       return;
     }
     this.isSavingDoor.set(true);
-    this.doorError.set('');
-    this.doorSuccess.set('');
     try {
       const result = await this.calendarService.updateDoor(calendar.id, door.day, {
         expectedVersion: calendar.version,
@@ -439,9 +370,10 @@ export class MinAdventCalendarComponent implements OnInit {
       this.originalDoorBlocks = blocks.map((block) => ({ ...block }));
       this.doorForm.markAsPristine();
       this.doorDraftRevision.update((revision) => revision + 1);
-      this.doorSuccess.set('Türchen gespeichert.');
+      this.closeDoorDialog();
+      this.showSnackbar('Türchen gespeichert.');
     } catch (reason) {
-      await this.handleDoorSaveError(reason, calendar, door);
+      this.handleDoorSaveError(reason);
     } finally {
       this.isSavingDoor.set(false);
     }
@@ -454,28 +386,16 @@ export class MinAdventCalendarComponent implements OnInit {
     );
   }
 
-  private async handleDoorSaveError(
-    reason: unknown,
-    calendar: MinAdventCalendar,
-    door: MinAdventDoor,
-  ): Promise<void> {
+  private handleDoorSaveError(reason: unknown): void {
     const error = reason as HttpErrorResponse;
     const code = error.error?.code;
     const isConflict = error.status === 409 && ['VERSION_CONFLICT', 'CALENDAR_COMPLETED', 'DOOR_OPENED'].includes(code);
 
-    if (!isConflict) {
-      this.doorError.set('Das Türchen konnte nicht gespeichert werden. Bitte prüfe deine Eingaben.');
-      return;
-    }
-
-    this.doorError.set(
-      code === 'VERSION_CONFLICT'
-        ? 'Der Kalender wurde zwischenzeitlich geändert. Dein Entwurf bleibt erhalten.'
-        : 'Der Kalenderzustand hat sich geändert. Dein Entwurf bleibt erhalten.',
+    this.showSnackbar(
+      isConflict
+        ? 'Das Türchen konnte wegen einer Kalenderänderung nicht gespeichert werden. Bitte lade den Kalender neu.'
+        : 'Das Türchen konnte nicht gespeichert werden. Bitte versuche es erneut.',
     );
-    if (window.confirm('Kalender jetzt aktualisieren und den lokalen Entwurf verwerfen?')) {
-      await this.reloadCalendarAndDoor(calendar.id, door.day);
-    }
   }
 
   private createBlockForm(block?: Partial<MinAdventBlockDto>): DoorBlockForm {
@@ -500,7 +420,7 @@ export class MinAdventCalendarComponent implements OnInit {
   private normalizeBlocks(blocks: MinAdventBlockDto[]): MinAdventBlockDto[] {
     return blocks.map((block, index) => {
       if (block.type === MinAdventBlockType.Text) {
-        return { position: index + 1, text: block.text ?? '', type: block.type };
+        return { position: index + 1, text: this.normalizeText(block.text ?? ''), type: block.type };
       }
       if (block.type === MinAdventBlockType.Link) {
         return {
@@ -521,8 +441,11 @@ export class MinAdventCalendarComponent implements OnInit {
 
   private onDoorDraftChanged(): void {
     this.doorDraftRevision.update((revision) => revision + 1);
-    this.doorError.set('');
-    this.doorSuccess.set('');
+  }
+
+  private showSnackbar(message: string): void {
+    this.snackbarMessage.set(message);
+    this.isSnackbarOpen.set(true);
   }
 
   private getTextFieldError(value: string): string | null {
@@ -574,26 +497,42 @@ export class MinAdventCalendarComponent implements OnInit {
     return null;
   }
 
-  private async reloadCalendarAndDoor(calendarId: string, day: number): Promise<void> {
-    try {
-      const refreshed = await this.calendarService.getCalendar(calendarId);
-      this.calendar.set(refreshed);
-      const refreshedDoor = refreshed.doors.find((item) => item.day === day);
-      if (refreshedDoor) {
-        this.loadDoorDraft(refreshedDoor);
-      } else {
-        this.selectedDoorDay.set(null);
-        this.doorForm.clear();
-      }
-    } catch {
-      this.doorError.set('Aktualisieren fehlgeschlagen. Dein Entwurf bleibt erhalten.');
-    }
+  private visibleText(html: string): string {
+    return this.normalizeText(html).trim();
   }
 
-  private visibleText(html: string): string {
+  private normalizeText(value: string): string {
+    if (!/<[a-z][^>]*>/i.test(value)) {
+      return value.replace(/\r\n?/g, '\n');
+    }
+
     const container = document.createElement('div');
-    container.innerHTML = html;
-    return container.textContent?.replaceAll('\u00a0', ' ').trim() ?? '';
+    container.innerHTML = value;
+    let text = Array.from(container.childNodes)
+      .map((node) => this.textFromNode(node))
+      .join('')
+      .replaceAll(String.fromCodePoint(160), ' ')
+      .replace(/\r\n?/g, '\n')
+      .replace(/\n{3,}/g, '\n\n');
+
+    while (text.endsWith('\n')) {
+      text = text.slice(0, -1);
+    }
+    return text;
+  }
+
+  private textFromNode(node: Node): string {
+    if (node.nodeType === Node.TEXT_NODE) {
+      return node.textContent ?? '';
+    }
+    if (node instanceof HTMLBRElement) {
+      return '\n';
+    }
+
+    const text = Array.from(node.childNodes)
+      .map((child) => this.textFromNode(child))
+      .join('');
+    return node instanceof HTMLElement && ['DIV', 'LI', 'P'].includes(node.tagName) ? `${text}\n` : text;
   }
 
   private willCompleteCalendar(door: MinAdventDoor, blocks: MinAdventBlockDto[]): boolean {
