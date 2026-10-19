@@ -4,7 +4,7 @@
 
 ## 1. Zweck
 
-minSplit verwaltet gemeinsame Euro-Ausgaben einer Gruppe, verteilt die **gesamten gültigen Ausgaben** ohne individuelle Beteiligungen oder Gewichtungen gleichmäßig und erstellt beim unwiderruflichen Start der Abrechnung einen festen Zahlungsplan. Ausgleichszahlungen werden außerhalb von minSplit tatsächlich ausgeführt und anschließend innerhalb der Gruppe einzeln als erledigt markiert. minSplit überweist kein Geld.
+minSplit verwaltet gemeinsame Euro-Ausgaben einer Gruppe, verteilt den **verrechenbaren Anteil der gültigen Ausgaben** ohne individuelle Beteiligungen oder Gewichtungen gleichmäßig; nicht gleichmäßig teilbare Rest-Cent verbleiben beim jeweiligen Zahler und erstellt beim unwiderruflichen Start der Abrechnung einen festen Zahlungsplan. Ausgleichszahlungen werden außerhalb von minSplit tatsächlich ausgeführt und anschließend innerhalb der Gruppe einzeln als erledigt markiert. minSplit überweist kein Geld.
 
 ## 2. Dokumentationsübersicht
 
