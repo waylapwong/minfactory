@@ -1,5 +1,5 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, computed, HostListener, OnInit, signal } from '@angular/core';
+import { Component, computed, ElementRef, HostListener, OnInit, signal, ViewChild } from '@angular/core';
 import { FormArray, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MinAdventBlockDto } from '../../../../core/generated/model/min-advent-block-dto';
@@ -62,6 +62,8 @@ export class MinAdventCalendarComponent implements OnInit {
   public readonly isSavingTitle = signal(false);
   public readonly MinAdventBlockType = MinAdventBlockType;
 
+  @ViewChild('doorDialog') private readonly doorDialog?: ElementRef<HTMLDialogElement>;
+
   private originalDoorBlocks: MinAdventBlockDto[] = [];
 
   constructor(
@@ -75,6 +77,17 @@ export class MinAdventCalendarComponent implements OnInit {
     const id = this.route.snapshot.paramMap.get('id');
     if (id) {
       void this.loadCalendar(id);
+    }
+  }
+
+  public getDoorStatusLabel(status: MinAdventDoor['status']): string {
+    switch (status) {
+      case 'EMPTY':
+        return 'Leer';
+      case 'FILLED':
+        return 'Befüllt';
+      case 'OPENED':
+        return 'Geöffnet';
     }
   }
 
@@ -168,6 +181,26 @@ export class MinAdventCalendarComponent implements OnInit {
       return;
     }
     this.loadDoorDraft(door);
+    const dialog = this.doorDialog?.nativeElement;
+    if (dialog && !dialog.open) {
+      dialog.showModal();
+    }
+  }
+
+  public closeDoorDialog(): void {
+    if (!this.confirmDiscardDoorDraft()) {
+      return;
+    }
+    this.doorDialog?.nativeElement.close();
+    this.selectedDoorDay.set(null);
+    this.doorForm.clear();
+    this.originalDoorBlocks = [];
+    this.doorDraftRevision.update((revision) => revision + 1);
+  }
+
+  public onDoorDialogCancel(event: Event): void {
+    event.preventDefault();
+    this.closeDoorDialog();
   }
 
   private loadDoorDraft(door: MinAdventDoor): void {

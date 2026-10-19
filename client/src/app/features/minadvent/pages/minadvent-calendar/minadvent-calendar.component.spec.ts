@@ -52,6 +52,14 @@ describe('MinAdventCalendarComponent', () => {
     });
   });
 
+  describe('getDoorStatusLabel()', () => {
+    it('should translate door statuses for display', () => {
+      expect(component.getDoorStatusLabel('EMPTY')).toBe('Leer');
+      expect(component.getDoorStatusLabel('FILLED')).toBe('Befüllt');
+      expect(component.getDoorStatusLabel('OPENED')).toBe('Geöffnet');
+    });
+  });
+
   describe('createCalendar()', () => {
     it('should not create a calendar when the form is invalid', async () => {
       await component.createCalendar();
@@ -128,7 +136,11 @@ describe('MinAdventCalendarComponent', () => {
     it('loads a door draft and warns before replacing unsaved changes', () => {
       const calendar = createMinAdventCalendar();
       component.calendar.set(calendar);
-      component.selectDoor(calendar.doors[0]);
+      component.isEditing.set(true);
+      fixture.detectChanges();
+      (fixture.nativeElement.querySelector('[aria-label="Türchen 1, Status Befüllt"]') as HTMLButtonElement).click();
+      fixture.detectChanges(false);
+      expect((fixture.nativeElement.querySelector('dialog') as HTMLDialogElement).open).toBeTrue();
       component.addBlock(component.MinAdventBlockType.Text);
       component.updateTextBlock(0, '<p>Draft</p>');
       spyOn(window, 'confirm').and.returnValue(false);
@@ -139,6 +151,24 @@ describe('MinAdventCalendarComponent', () => {
       expect(component.doorForm).toHaveSize(1);
       expect(component.hasUnsavedDoorChanges()).toBeTrue();
       expect(window.confirm).toHaveBeenCalledWith('Ungespeicherte Türchenänderungen verwerfen?');
+    });
+  });
+
+  describe('closeDoorDialog()', () => {
+    it('should keep the dialog open when discarding a draft is cancelled', () => {
+      const calendar = createMinAdventCalendar();
+      component.calendar.set(calendar);
+      component.isEditing.set(true);
+      fixture.detectChanges();
+      (fixture.nativeElement.querySelector('[aria-label="Türchen 1, Status Befüllt"]') as HTMLButtonElement).click();
+      component.addBlock(component.MinAdventBlockType.Text);
+      spyOn(window, 'confirm').and.returnValue(false);
+
+      component.closeDoorDialog();
+
+      expect((fixture.nativeElement.querySelector('dialog') as HTMLDialogElement).open).toBeTrue();
+      expect(component.selectedDoorDay()).toBe(1);
+      expect(component.hasUnsavedDoorChanges()).toBeTrue();
     });
   });
 
