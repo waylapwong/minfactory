@@ -3,6 +3,8 @@ import { MinAdventDoor } from '../models/domains/minadvent-door';
 import { MinAdventCalendarEntity } from '../models/entities/minadvent-calendar.entity';
 import { MinAdventDoorEntity } from '../models/entities/minadvent-door.entity';
 import { MinAdventDoorStatus } from '../models/enums/minadvent-door-status.enum';
+import { MinAdventBlock } from '../models/domains/minadvent-block';
+import { MinAdventBlockEntity } from '../models/entities/minadvent-block.entity';
 
 export class MinAdventEntityMapper {
   public static toDomain(entity: MinAdventCalendarEntity): MinAdventCalendar {
@@ -23,6 +25,18 @@ export class MinAdventEntityMapper {
         const door = new MinAdventDoor();
         door.day = entityDoor.day;
         door.status = entityDoor.status;
+        door.blocks = [...(entityDoor.blocks ?? [])]
+          .sort((left, right) => left.position - right.position)
+          .map((entityBlock) => {
+            const block = new MinAdventBlock();
+            block.description = entityBlock.description;
+            block.position = entityBlock.position;
+            block.text = entityBlock.text;
+            block.title = entityBlock.title;
+            block.type = entityBlock.type;
+            block.url = entityBlock.url;
+            return block;
+          });
         return door;
       });
     domain.completed = MinAdventEntityMapper.isCompleted(domain);
@@ -35,6 +49,10 @@ export class MinAdventEntityMapper {
     entity.day = domain.day;
     entity.status = domain.status;
     return entity;
+  }
+
+  public static toBlockEntities(blocks: MinAdventBlock[], doorId: string): MinAdventBlockEntity[] {
+    return blocks.map((block) => Object.assign(new MinAdventBlockEntity(), { ...block, doorId }));
   }
 
   private static isCompleted(calendar: MinAdventCalendar): boolean {

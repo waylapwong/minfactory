@@ -1,8 +1,12 @@
 import { MinAdventCalendar } from '../models/domains/minadvent-calendar';
+import { MinAdventDoor } from '../models/domains/minadvent-door';
 import { MinAdventCalendarDto } from '../models/dtos/minadvent-calendar.dto';
 import { MinAdventDoorDto } from '../models/dtos/minadvent-door.dto';
 import { MinAdventCalendarEntity } from '../models/entities/minadvent-calendar.entity';
 import { MinAdventDoorEntity } from '../models/entities/minadvent-door.entity';
+import { MinAdventBlockDto } from '../models/dtos/minadvent-block.dto';
+import { MinAdventDoorUpdateResponseDto } from '../models/dtos/minadvent-door-update-response.dto';
+import { MinAdventBlock } from '../models/domains/minadvent-block';
 
 export class MinAdventDomainMapper {
   public static toDoorEntities(domain: MinAdventCalendar, calendarId: string): MinAdventDoorEntity[] {
@@ -28,8 +32,29 @@ export class MinAdventDomainMapper {
       const doorDto = new MinAdventDoorDto();
       doorDto.day = door.day;
       doorDto.status = door.status;
+      doorDto.blocks = door.blocks.map((block) => MinAdventDomainMapper.toBlockDto(block));
       return doorDto;
     });
+    return dto;
+  }
+
+  public static toBlockDto(domain: MinAdventBlock): MinAdventBlockDto {
+    return {
+      description: domain.description,
+      position: domain.position,
+      text: domain.text,
+      title: domain.title,
+      type: domain.type,
+      url: domain.url,
+    };
+  }
+
+  public static toDoorUpdateResponse(day: MinAdventDoor, calendar: MinAdventCalendar): MinAdventDoorUpdateResponseDto {
+    const dto = new MinAdventDoorUpdateResponseDto();
+    dto.day = day.day;
+    dto.status = day.status;
+    dto.version = calendar.version;
+    dto.completed = calendar.completed;
     return dto;
   }
 

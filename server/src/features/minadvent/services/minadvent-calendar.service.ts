@@ -5,6 +5,8 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
+import sanitizeHtml from 'sanitize-html';
+import { Parser } from 'htmlparser2';
 import { MinFactoryUser } from '../../minfactory/models/domains/minfactory-user';
 import { MinAdventDomainMapper } from '../mapper/minadvent-domain.mapper';
 import { MinAdventDtoMapper } from '../mapper/minadvent-dto.mapper';
@@ -13,6 +15,10 @@ import { MinAdventCalendar } from '../models/domains/minadvent-calendar';
 import { MinAdventCalendarCreateDto } from '../models/dtos/minadvent-calendar-create.dto';
 import { MinAdventCalendarUpdateDto } from '../models/dtos/minadvent-calendar-update.dto';
 import { MinAdventCalendarDto } from '../models/dtos/minadvent-calendar.dto';
+import { MinAdventDoorUpdateDto } from '../models/dtos/minadvent-door-update.dto';
+import { MinAdventDoorUpdateResponseDto } from '../models/dtos/minadvent-door-update-response.dto';
+import { MinAdventBlock } from '../models/domains/minadvent-block';
+import { MinAdventBlockType } from '../models/enums/minadvent-block-type.enum';
 import { MinAdventCalendarRepository } from '../repositories/minadvent-calendar.repository';
 
 @Injectable()
@@ -74,6 +80,27 @@ export class MinAdventCalendarService {
     return MinAdventDomainMapper.toDto(MinAdventEntityMapper.toDomain(updated));
   }
 
+  public async updateDoor(
+    user: MinFactoryUser,
+    id: string,
+    day: number,
+    input: MinAdventDoorUpdateDto,
+  ): Promise<MinAdventDoorUpdateResponseDto> {
+    if (!Number.isInteger(day) || day < 1 || day > 24) {
+      throw new BadRequestException('Day must be an integer between 1 and 24.');
+    }
+    await this.requireOwnedCalendar(user, id);
+    const updatedEntity = await this.calendarRepository.replaceDoorBlocks(user.id, id, day, input.expectedVersion, () =>
+      this.validateAndMapBlocks(input.blocks),
+    );
+    const updatedCalendar = MinAdventEntityMapper.toDomain(updatedEntity);
+    const updatedDoor = updatedCalendar.doors.find((door) => door.day === day);
+    if (!updatedDoor) {
+      throw new NotFoundException('Door not found.');
+    }
+    return MinAdventDomainMapper.toDoorUpdateResponse(updatedDoor, updatedCalendar);
+  }
+
   private getCurrentBerlinYear(): number {
     return Number(new Intl.DateTimeFormat('en', { timeZone: 'Europe/Berlin', year: 'numeric' }).format(new Date()));
   }
@@ -100,5 +127,89 @@ export class MinAdventCalendarService {
     if (!Number.isInteger(input.year) || input.year < 1 || input.year > 9999) {
       throw new BadRequestException('Year must be an integer between 1 and 9999.');
     }
+  }
+
+  private validateAndMapBlocks(inputs: MinAdventDoorUpdateDto['blocks']): MinAdventBlock[] {
+    if (!Array.isArray(inputs) || inputs.length > 10) {
+      this.throwInvalidContent();
+    }
+    return inputs.map((input, index) => this.validateAndMapBlock(input, index));
+  }
+
+  private validateAndMapBlock(input: MinAdventDoorUpdateDto['blocks'][number], index: number): MinAdventBlock {
+    if (input?.position !== index + 1 || !Object.values(MinAdventBlockType).includes(input.type)) {
+      this.throwInvalidContent();
+    }
+    const block = new MinAdventBlock();
+    block.position = input.position;
+    block.type = input.type;
+    if (input.type === MinAdventBlockType.Text) {
+      block.text = this.sanitizeText(input.text);
+    } else if (input.type === MinAdventBlockType.Link) {
+      this.mapLink(input, block);
+    } else {
+      this.mapVoucher(input, block);
+    }
+    return block;
+  }
+
+  private sanitizeText(text: string | null | undefined): string {
+    if (typeof text !== 'string') {
+      this.throwInvalidContent();
+    }
+    const sanitized = sanitizeHtml(text, {
+      allowedTags: ['p', 'br', 'strong', 'b', 'em', 'i', 'ul', 'ol', 'li'],
+      allowedAttributes: {},
+      disallowedTagsMode: 'discard',
+      nonTextTags: ['script', 'style', 'textarea', 'option'],
+    });
+    const visibleCharacters = this.countVisibleCharacters(sanitized);
+    if (visibleCharacters < 1 || visibleCharacters > 10000) {
+      this.throwInvalidContent();
+    }
+    return sanitized;
+  }
+
+  private mapLink(input: MinAdventDoorUpdateDto['blocks'][number], block: MinAdventBlock): void {
+    if (typeof input.url !== 'string' || input.url.length > 2048) {
+      this.throwInvalidContent();
+    }
+    let parsedUrl: URL;
+    try {
+      parsedUrl = new URL(input.url.trim());
+    } catch {
+      this.throwInvalidContent();
+    }
+    if (!['http:', 'https:'].includes(parsedUrl.protocol) || !parsedUrl.hostname) {
+      this.throwInvalidContent();
+    }
+    block.title = this.validateTitleAndTrim(input.title);
+    block.url = parsedUrl.toString();
+  }
+
+  private mapVoucher(input: MinAdventDoorUpdateDto['blocks'][number], block: MinAdventBlock): void {
+    if (typeof input.description !== 'string' || !input.description.trim() || input.description.length > 2000) {
+      this.throwInvalidContent();
+    }
+    block.title = this.validateTitleAndTrim(input.title);
+    block.description = input.description.trim();
+  }
+
+  private validateTitleAndTrim(title: string | null | undefined): string {
+    if (typeof title !== 'string' || !title.trim() || title.trim().length > 100) {
+      this.throwInvalidContent();
+    }
+    return title.trim();
+  }
+
+  private countVisibleCharacters(html: string): number {
+    let visibleText = '';
+    const parser = new Parser({ ontext: (text) => (visibleText += text) }, { decodeEntities: true });
+    parser.end(html);
+    return [...visibleText.replaceAll('\u00a0', ' ').trim()].length;
+  }
+
+  private throwInvalidContent(): never {
+    throw new ConflictException({ code: 'INVALID_CONTENT', message: 'Die Türcheninhalte sind ungültig.' });
   }
 }

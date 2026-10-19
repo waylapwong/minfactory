@@ -4,6 +4,8 @@ import { MinAdventCalendarRepositoryMock } from '../mocks/minadvent-calendar.rep
 import { MinAdventCalendarEntity } from '../models/entities/minadvent-calendar.entity';
 import { MinAdventDoorEntity } from '../models/entities/minadvent-door.entity';
 import { MinAdventDoorStatus } from '../models/enums/minadvent-door-status.enum';
+import { MinAdventBlockType } from '../models/enums/minadvent-block-type.enum';
+import { MinAdventBlock } from '../models/domains/minadvent-block';
 import { MinAdventCalendarService } from './minadvent-calendar.service';
 
 describe('MinAdventCalendarService', () => {
@@ -121,5 +123,107 @@ describe('MinAdventCalendarService', () => {
 
     expect(result.version).toBe(3);
     expect(repository.update).not.toHaveBeenCalled();
+  });
+
+  describe('updateDoor()', () => {
+    const currentCalendar = (): MinAdventCalendarEntity =>
+      Object.assign(new MinAdventCalendarEntity(), {
+        id: 'calendar-1',
+        ownerId: owner.id,
+        year: 2026,
+        title: 'December',
+        recipientName: 'Alex',
+        version: 4,
+        doors: [Object.assign(new MinAdventDoorEntity(), { id: 'door-3', day: 3, status: MinAdventDoorStatus.Empty })],
+      });
+
+    const captureBlocks = (): MinAdventBlock[][] => {
+      const saved: MinAdventBlock[][] = [];
+      repository.replaceDoorBlocks.mockImplementation((_ownerId, _id, day, expectedVersion, createBlocks) => {
+        const blocks = createBlocks();
+        saved.push(blocks);
+        const calendar = currentCalendar();
+        calendar.version = expectedVersion + 1;
+        calendar.doors[0].day = day;
+        calendar.doors[0].blocks = blocks;
+        calendar.doors[0].status = blocks.length ? MinAdventDoorStatus.Filled : MinAdventDoorStatus.Empty;
+        return Promise.resolve(calendar);
+      });
+      return saved;
+    };
+
+    it('accepts an empty door and exactly ten ordered blocks', async () => {
+      repository.findById.mockResolvedValue(currentCalendar());
+      const saved = captureBlocks();
+
+      const empty = await service.updateDoor(owner, 'calendar-1', 3, { expectedVersion: 4, blocks: [] });
+      const tenBlocks = Array.from({ length: 10 }, (_, index) => ({
+        position: index + 1,
+        type: MinAdventBlockType.Text,
+        text: `<p>${index}</p>`,
+      }));
+      await service.updateDoor(owner, 'calendar-1', 3, { expectedVersion: 5, blocks: tenBlocks });
+
+      expect(empty).toEqual({ day: 3, status: MinAdventDoorStatus.Empty, version: 5, completed: false });
+      expect(saved[0]).toEqual([]);
+      expect(saved[1]).toHaveLength(10);
+      expect(repository.replaceDoorBlocks).toHaveBeenCalledTimes(2);
+    });
+
+    it('rejects eleven blocks and position gaps as invalid content', async () => {
+      repository.findById.mockResolvedValue(currentCalendar());
+      captureBlocks();
+      const elevenBlocks = Array.from({ length: 11 }, (_, index) => ({
+        position: index + 1,
+        type: MinAdventBlockType.Text,
+        text: '<p>Text</p>',
+      }));
+
+      await expect(
+        service.updateDoor(owner, 'calendar-1', 3, { expectedVersion: 4, blocks: elevenBlocks }),
+      ).rejects.toMatchObject({
+        response: expect.objectContaining({ code: 'INVALID_CONTENT' }),
+      });
+      await expect(
+        service.updateDoor(owner, 'calendar-1', 3, {
+          expectedVersion: 4,
+          blocks: [{ position: 2, type: MinAdventBlockType.Text, text: '<p>Text</p>' }],
+        }),
+      ).rejects.toMatchObject({ response: expect.objectContaining({ code: 'INVALID_CONTENT' }) });
+    });
+
+    it('sanitizes text and validates visible text, link and voucher content', async () => {
+      repository.findById.mockResolvedValue(currentCalendar());
+      const saved = captureBlocks();
+
+      await service.updateDoor(owner, 'calendar-1', 3, {
+        expectedVersion: 4,
+        blocks: [
+          {
+            position: 1,
+            type: MinAdventBlockType.Text,
+            text: '<p><strong>Hello</strong><script>alert(1)</script></p>',
+          },
+          { position: 2, type: MinAdventBlockType.Link, title: ' Song ', url: 'https://example.org/song' },
+          { position: 3, type: MinAdventBlockType.Voucher, title: ' Coffee ', description: ' A coffee together ' },
+        ],
+      });
+
+      expect(saved[0][0].text).toBe('<p><strong>Hello</strong></p>');
+      expect(saved[0][1]).toMatchObject({ title: 'Song', url: 'https://example.org/song' });
+      expect(saved[0][2]).toMatchObject({ title: 'Coffee', description: 'A coffee together' });
+      await expect(
+        service.updateDoor(owner, 'calendar-1', 3, {
+          expectedVersion: 4,
+          blocks: [{ position: 1, type: MinAdventBlockType.Text, text: '<p><br></p>' }],
+        }),
+      ).rejects.toMatchObject({ response: expect.objectContaining({ code: 'INVALID_CONTENT' }) });
+      await expect(
+        service.updateDoor(owner, 'calendar-1', 3, {
+          expectedVersion: 4,
+          blocks: [{ position: 1, type: MinAdventBlockType.Link, title: 'Link', url: 'javascript:alert(1)' }],
+        }),
+      ).rejects.toMatchObject({ response: expect.objectContaining({ code: 'INVALID_CONTENT' }) });
+    });
   });
 });

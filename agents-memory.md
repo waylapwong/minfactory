@@ -9,4 +9,4 @@
 - Always write unit tests for new or changed logic, following the established test and mock patterns of the neighboring minApps.
 - Group unit tests under a nested `describe('methodName()')` matching the method being tested.
 - Feature root components should use a separate HTML template containing `<router-outlet>`, following the MinPoker and MinRps roots; avoid inline root templates.
-- Record durable repository-wide work instructions in this shared memory. After implementing a ticket, verify the result and check off only completed items under the issue's Tasks section; leave Acceptance Criteria for user review and keep unverified CI/CD checks open.
+- Record durable repository-wide work instructions in this shared memory. For each ticket, implement and verify the requested work, then check off only completed checkboxes under the issue's "Umsetzung" section; leave all acceptance criteria untouched for user review and keep unverified CI/CD checks open.

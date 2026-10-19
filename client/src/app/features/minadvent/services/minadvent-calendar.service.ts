@@ -1,6 +1,8 @@
 import { Injectable, Signal, WritableSignal, computed, signal } from '@angular/core';
 import { MinAdventCalendarCreateDto } from '../../../core/generated/model/min-advent-calendar-create-dto';
 import { MinAdventCalendarUpdateDto } from '../../../core/generated/model/min-advent-calendar-update-dto';
+import { MinAdventDoorUpdateDto } from '../../../core/generated/model/min-advent-door-update-dto';
+import { MinAdventDoorUpdateResponseDto } from '../../../core/generated/model/min-advent-door-update-response-dto';
 import { MinAdventDomainMapper } from '../mapper/minadvent-domain.mapper';
 import { MinAdventCalendar } from '../models/minadvent-calendar.model';
 import { MinAdventCalendarRepository } from '../repositories/minadvent-calendar.repository';
@@ -32,5 +34,30 @@ export class MinAdventCalendarService {
     const calendar = MinAdventDomainMapper.toCalendar(await this.repository.update(id, input));
     this.cachedCalendars.update((calendars) => calendars.map((item) => (item.id === id ? calendar : item)));
     return calendar;
+  }
+
+  public async updateDoor(
+    id: string,
+    day: number,
+    input: MinAdventDoorUpdateDto,
+  ): Promise<MinAdventDoorUpdateResponseDto> {
+    const result = await this.repository.updateDoor(id, day, input);
+    this.cachedCalendars.update((calendars) =>
+      calendars.map((calendar) =>
+        calendar.id !== id
+          ? calendar
+          : {
+              ...calendar,
+              completed: result.completed,
+              doors: calendar.doors.map((door) =>
+                door.day === result.day
+                  ? { ...door, blocks: input.blocks.map((block) => ({ ...block })), status: result.status }
+                  : door,
+              ),
+              version: result.version,
+            },
+      ),
+    );
+    return result;
   }
 }

@@ -1,6 +1,7 @@
-import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { MinAdventCalendarEntity } from './minadvent-calendar.entity';
 import { MinAdventDoorStatus } from '../enums/minadvent-door-status.enum';
+import { MinAdventBlockEntity } from './minadvent-block.entity';
 
 @Entity({ name: 'minadvent_doors' })
 export class MinAdventDoorEntity {
@@ -13,6 +14,8 @@ export class MinAdventDoorEntity {
   @ManyToOne(() => MinAdventCalendarEntity, (calendar) => calendar.doors, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'calendar_id' })
   public calendar!: MinAdventCalendarEntity;
+  @OneToMany(() => MinAdventBlockEntity, (block) => block.door)
+  public blocks!: MinAdventBlockEntity[];
   @PrimaryGeneratedColumn('uuid')
   public id!: string;
 }

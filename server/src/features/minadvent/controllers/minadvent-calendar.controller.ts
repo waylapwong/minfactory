@@ -1,5 +1,16 @@
 import { AuthorizationGuard, Can } from '@nestjs/authorization';
-import { Body, Controller, Get, HttpCode, Param, ParseUUIDPipe, Post, Put, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  HttpCode,
+  Param,
+  ParseIntPipe,
+  ParseUUIDPipe,
+  Post,
+  Put,
+  UseGuards,
+} from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { User } from '../../../core/authentication/decorators/user.decorator';
 import { FirebaseGuard } from '../../../core/authentication/guards/firebase.guard';
@@ -19,6 +30,8 @@ import { MinFactoryUser } from '../../minfactory/models/domains/minfactory-user'
 import { MinAdventCalendarCreateDto } from '../models/dtos/minadvent-calendar-create.dto';
 import { MinAdventCalendarUpdateDto } from '../models/dtos/minadvent-calendar-update.dto';
 import { MinAdventCalendarDto } from '../models/dtos/minadvent-calendar.dto';
+import { MinAdventDoorUpdateDto } from '../models/dtos/minadvent-door-update.dto';
+import { MinAdventDoorUpdateResponseDto } from '../models/dtos/minadvent-door-update-response.dto';
 import { MinAdventCalendarService } from '../services/minadvent-calendar.service';
 
 @Controller('minadvent/calendars')
@@ -84,5 +97,25 @@ export class MinAdventCalendarController {
     @Body() input: MinAdventCalendarUpdateDto,
   ): Promise<MinAdventCalendarDto> {
     return this.calendarService.update(user, id, input);
+  }
+
+  @Put(':id/doors/:day')
+  @HttpCode(200)
+  @ApiOperation({ operationId: 'updateMinAdventDoor' })
+  @API_PARAM_ID()
+  @API_200({ type: MinAdventDoorUpdateResponseDto })
+  @API_400()
+  @API_401()
+  @API_403()
+  @API_404()
+  @API_409()
+  @API_500()
+  public updateDoor(
+    @User() user: MinFactoryUser,
+    @Param('id', ParseUUIDPipe) id: string,
+    @Param('day', ParseIntPipe) day: number,
+    @Body() input: MinAdventDoorUpdateDto,
+  ): Promise<MinAdventDoorUpdateResponseDto> {
+    return this.calendarService.updateDoor(user, id, day, input);
   }
 }

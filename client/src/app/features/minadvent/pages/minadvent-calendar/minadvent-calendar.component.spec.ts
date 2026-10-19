@@ -16,6 +16,7 @@ describe('MinAdventCalendarComponent', () => {
     MINADVENT_CALENDAR_SERVICE_MOCK.createCalendar.calls.reset();
     MINADVENT_CALENDAR_SERVICE_MOCK.getCalendar.calls.reset();
     MINADVENT_CALENDAR_SERVICE_MOCK.updateCalendar.calls.reset();
+    MINADVENT_CALENDAR_SERVICE_MOCK.updateDoor.calls.reset();
     MINADVENT_ROUTER_MOCK.navigate.calls.reset();
     MINADVENT_ROUTER_MOCK.navigate.and.resolveTo(true);
 
@@ -40,7 +41,8 @@ describe('MinAdventCalendarComponent', () => {
       MINADVENT_CALENDAR_SERVICE_MOCK.getCalendar.and.resolveTo(createMinAdventCalendar());
       MINADVENT_ACTIVATED_ROUTE_MOCK.snapshot.paramMap = convertToParamMap({ id: 'calendar-id' });
 
-      await component.ngOnInit();
+      component.ngOnInit();
+      await fixture.whenStable();
 
       expect(MINADVENT_CALENDAR_SERVICE_MOCK.getCalendar).toHaveBeenCalledWith('calendar-id');
       expect(component.isEditing()).toBeTrue();
@@ -119,6 +121,69 @@ describe('MinAdventCalendarComponent', () => {
       });
       expect(component.calendar()?.recipientName).toBe('Sam');
       expect(component.isSavingRecipient()).toBeFalse();
+    });
+  });
+
+  describe('selectDoor()', () => {
+    it('loads a door draft and warns before replacing unsaved changes', () => {
+      const calendar = createMinAdventCalendar();
+      component.calendar.set(calendar);
+      component.selectDoor(calendar.doors[0]);
+      component.addBlock(component.MinAdventBlockType.Text);
+      component.updateTextBlock(0, '<p>Draft</p>');
+      spyOn(window, 'confirm').and.returnValue(false);
+
+      component.selectDoor(calendar.doors[1]);
+
+      expect(component.selectedDoorDay()).toBe(1);
+      expect(component.doorForm).toHaveSize(1);
+      expect(component.hasUnsavedDoorChanges()).toBeTrue();
+      expect(window.confirm).toHaveBeenCalledWith('Ungespeicherte Türchenänderungen verwerfen?');
+    });
+  });
+
+  describe('saveDoor()', () => {
+    it('saves the complete block list and adopts global version and status', async () => {
+      const calendar = createMinAdventCalendar();
+      component.calendar.set(calendar);
+      component.selectDoor(calendar.doors[0]);
+      component.addBlock(component.MinAdventBlockType.Text);
+      component.updateTextBlock(0, '<p>Eine Überraschung</p>');
+      MINADVENT_CALENDAR_SERVICE_MOCK.updateDoor.and.resolveTo({
+        completed: false,
+        day: 1,
+        status: 'FILLED',
+        version: 2,
+      });
+
+      await component.saveDoor();
+
+      expect(MINADVENT_CALENDAR_SERVICE_MOCK.updateDoor).toHaveBeenCalledWith('calendar-id', 1, {
+        expectedVersion: 1,
+        blocks: [{ position: 1, text: '<p>Eine Überraschung</p>', type: component.MinAdventBlockType.Text }],
+      });
+      expect(component.calendar()?.version).toBe(2);
+      expect(component.selectedDoor()?.status).toBe('FILLED');
+      expect(component.hasUnsavedDoorChanges()).toBeFalse();
+    });
+
+    it('preserves the local draft after a version conflict without confirmation', async () => {
+      const calendar = createMinAdventCalendar();
+      component.calendar.set(calendar);
+      component.selectDoor(calendar.doors[0]);
+      component.addBlock(component.MinAdventBlockType.Text);
+      component.updateTextBlock(0, '<p>Keep this</p>');
+      MINADVENT_CALENDAR_SERVICE_MOCK.updateDoor.and.rejectWith(
+        Object.assign(new Error('Version conflict'), { status: 409, error: { code: 'VERSION_CONFLICT' } }),
+      );
+      spyOn(window, 'confirm').and.returnValue(false);
+
+      await component.saveDoor();
+
+      expect(component.doorForm.at(0).controls.text.value).toBe('<p>Keep this</p>');
+      expect(component.hasUnsavedDoorChanges()).toBeTrue();
+      expect(component.doorError()).toContain('Dein Entwurf bleibt erhalten');
+      expect(MINADVENT_CALENDAR_SERVICE_MOCK.getCalendar).not.toHaveBeenCalled();
     });
   });
 });

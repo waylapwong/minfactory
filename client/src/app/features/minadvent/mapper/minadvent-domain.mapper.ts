@@ -11,7 +11,11 @@ export class MinAdventDomainMapper {
       version: dto.version,
       published: dto.published,
       completed: dto.completed,
-      doors: dto.doors.map((door) => ({ day: door.day, status: door.status })),
+      doors: dto.doors.map((door) => ({
+        blocks: door.blocks.map((block) => ({ ...block })),
+        day: door.day,
+        status: door.status,
+      })),
     };
   }
 }
