@@ -1,4 +1,4 @@
-<main class="flex h-full flex-col px-4">
+<main class="flex h-full flex-col">
   <header class="relative flex items-center justify-center">
     <div class="absolute top-0 left-0">
       <min-button
@@ -33,6 +33,7 @@
             label="Kalendertitel"
             [formControlInput]="form.controls.title"
             [maxLength]="100"
+            [showCharacterCount]="true"
           />
           @if (form.controls.title.touched && form.controls.title.invalid) {
             <p class="mt-1 text-sm text-red-500" aria-live="assertive">Titel ist erforderlich (max. 100 Zeichen).</p>
@@ -44,6 +45,7 @@
             label="Empfängername"
             [formControlInput]="form.controls.recipientName"
             [maxLength]="100"
+            [showCharacterCount]="true"
           />
           @if (form.controls.recipientName.touched && form.controls.recipientName.invalid) {
             <p class="mt-1 text-sm text-red-500" aria-live="assertive">
@@ -88,18 +90,20 @@
           </min-badge>
         </div>
         <div class="flex flex-col gap-2">
-          <div class="flex items-end gap-2">
-            <div class="min-w-0 flex-1">
+          <div class="grid grid-cols-3 items-end gap-2">
+            <div class="col-span-2 min-w-0">
               <min-input
                 id="edit-calendar-title"
                 label="Kalendertitel"
                 [formControlInput]="form.controls.title"
                 [maxLength]="100"
+                [showCharacterCount]="true"
               />
             </div>
             <min-button
+              class="col-span-1"
               [color]="Color.Green"
-              [isDisabled]="form.controls.title.invalid || isSavingTitle()"
+              [isDisabled]="isTitleSaveDisabled()"
               (clicked)="saveTitle()"
             >
               {{ isSavingTitle() ? 'Speichert …' : 'Titel speichern' }}
@@ -110,18 +114,20 @@
           }
         </div>
         <div class="flex flex-col gap-2">
-          <div class="flex items-end gap-2">
-            <div class="min-w-0 flex-1">
+          <div class="grid grid-cols-3 items-end gap-2">
+            <div class="col-span-2 min-w-0">
               <min-input
                 id="edit-recipient-name"
                 label="Empfängername"
                 [formControlInput]="form.controls.recipientName"
                 [maxLength]="100"
+                [showCharacterCount]="true"
               />
             </div>
             <min-button
+              class="col-span-1"
               [color]="Color.Green"
-              [isDisabled]="form.controls.recipientName.invalid || isSavingRecipient()"
+              [isDisabled]="isRecipientSaveDisabled()"
               (clicked)="saveRecipient()"
             >
               {{ isSavingRecipient() ? 'Speichert …' : 'Empfänger speichern' }}
@@ -155,27 +161,15 @@
           </div>
         </section>
 
-        <dialog
-          #doorDialog
-          aria-labelledby="door-editor-heading"
-          class="m-auto max-h-[90dvh] w-[calc(100%-2rem)] max-w-3xl overflow-y-auto border-4 border-black bg-gray-100 p-4 text-neutral-900 shadow-2xl backdrop:bg-black/60"
-          (cancel)="onDoorDialogCancel($event)"
-        >
-          @if (selectedDoor(); as door) {
+        @if (selectedDoor(); as door) {
+          <min-dialog
+            [title]="'Türchen ' + door.day + ' bearbeiten'"
+            [isOpen]="true"
+            size="wide"
+            (closed)="closeDoorDialog()"
+          >
             <section>
-              <header class="mb-4 flex flex-wrap items-center justify-between gap-2">
-              <min-h2 id="door-editor-heading">Türchen {{ door.day }} bearbeiten</min-h2>
-                <div class="flex items-center gap-3">
-                  <span class="text-sm text-gray-600">{{ getDoorStatusLabel(door.status) }}</span>
-                  <button
-                    type="button"
-                    class="transform cursor-pointer rounded-lg border-4 border-black bg-white px-3 py-2 font-semibold shadow-xl transition-all duration-100 hover:translate-y-0.5 hover:bg-gray-100 hover:shadow-lg focus-visible:ring-4 focus-visible:ring-blue-600 active:translate-y-1 active:shadow-none"
-                    (click)="closeDoorDialog()"
-                  >
-                    Schließen
-                  </button>
-                </div>
-              </header>
+              <p class="mb-3 text-right text-sm text-gray-600">{{ getDoorStatusLabel(door.status) }}</p>
               @if (door.status === 'OPENED' || current.completed) {
                 <output aria-live="polite" class="mb-4 block border-l-4 border-gray-500 bg-gray-100 p-3 text-sm">
                 {{
@@ -200,30 +194,27 @@
               }
               @if (!isSelectedDoorReadOnly()) {
                 <div class="mb-4 flex flex-wrap gap-2" aria-label="Inhaltsblock hinzufügen">
-                  <button
-                    type="button"
-                    class="transform cursor-pointer rounded-lg border-4 border-black bg-white px-3 py-2 font-semibold shadow-xl transition-all duration-100 hover:translate-y-0.5 hover:bg-gray-100 hover:shadow-lg focus-visible:ring-4 focus-visible:ring-blue-600 active:translate-y-1 active:shadow-none disabled:cursor-not-allowed disabled:bg-gray-300 disabled:opacity-50 disabled:shadow-none"
-                    [disabled]="doorForm.length >= 10"
-                    (click)="addBlock(MinAdventBlockType.Text)"
+                  <min-button
+                    [color]="Color.White"
+                    [isDisabled]="doorForm.length >= 10"
+                    (clicked)="addBlock(MinAdventBlockType.Text)"
                   >
                     + Text
-                  </button>
-                  <button
-                    type="button"
-                    class="transform cursor-pointer rounded-lg border-4 border-black bg-white px-3 py-2 font-semibold shadow-xl transition-all duration-100 hover:translate-y-0.5 hover:bg-gray-100 hover:shadow-lg focus-visible:ring-4 focus-visible:ring-blue-600 active:translate-y-1 active:shadow-none disabled:cursor-not-allowed disabled:bg-gray-300 disabled:opacity-50 disabled:shadow-none"
-                    [disabled]="doorForm.length >= 10"
-                    (click)="addBlock(MinAdventBlockType.Link)"
+                  </min-button>
+                  <min-button
+                    [color]="Color.White"
+                    [isDisabled]="doorForm.length >= 10"
+                    (clicked)="addBlock(MinAdventBlockType.Link)"
                   >
                     + Link
-                  </button>
-                  <button
-                    type="button"
-                    class="transform cursor-pointer rounded-lg border-4 border-black bg-white px-3 py-2 font-semibold shadow-xl transition-all duration-100 hover:translate-y-0.5 hover:bg-gray-100 hover:shadow-lg focus-visible:ring-4 focus-visible:ring-blue-600 active:translate-y-1 active:shadow-none disabled:cursor-not-allowed disabled:bg-gray-300 disabled:opacity-50 disabled:shadow-none"
-                    [disabled]="doorForm.length >= 10"
-                    (click)="addBlock(MinAdventBlockType.Voucher)"
+                  </min-button>
+                  <min-button
+                    [color]="Color.White"
+                    [isDisabled]="doorForm.length >= 10"
+                    (clicked)="addBlock(MinAdventBlockType.Voucher)"
                   >
                     + Gutschein
-                  </button>
+                  </min-button>
                 </div>
               }
               <div class="flex flex-col gap-4">
@@ -232,95 +223,89 @@
                     <legend class="px-1 font-bold">Block {{ index + 1 }}</legend>
                     @if (!isSelectedDoorReadOnly()) {
                       <div class="mb-3 flex flex-wrap items-center justify-between gap-2">
-                        <label class="flex items-center gap-2 text-sm font-semibold" [for]="'block-type-' + index">
-                          Typ
-                          <select
-                            [id]="'block-type-' + index"
-                            formControlName="type"
-                            (change)="updateDoorField()"
-                            class="min-h-10 rounded-lg border-4 border-black bg-white px-2 shadow-xl transition-all duration-100 hover:bg-gray-100 focus-visible:ring-4 focus-visible:ring-blue-600"
-                          >
-                            <option [ngValue]="MinAdventBlockType.Text">Text</option>
-                            <option [ngValue]="MinAdventBlockType.Link">Link</option>
-                            <option [ngValue]="MinAdventBlockType.Voucher">Gutschein</option>
-                          </select>
-                        </label>
+                        <min-select
+                          [id]="'block-type-' + index"
+                          label="Typ"
+                          [formControlInput]="block.controls.type"
+                          [options]="doorBlockTypeOptions"
+                          (valueChanged)="updateDoorField()"
+                        />
                         <div class="flex gap-1">
-                          <button
-                            type="button"
-                            class="min-h-10 min-w-10 transform cursor-pointer rounded-lg border-4 border-black bg-white shadow-xl transition-all duration-100 hover:translate-y-0.5 hover:bg-gray-100 hover:shadow-lg focus-visible:ring-4 focus-visible:ring-blue-600 active:translate-y-1 active:shadow-none disabled:cursor-not-allowed disabled:bg-gray-300 disabled:opacity-50 disabled:shadow-none"
-                            [disabled]="index === 0"
-                            [attr.aria-label]="'Block ' + (index + 1) + ' nach oben verschieben'"
-                            (click)="moveBlock(index, -1)"
+                          <min-button
+                            class="w-10"
+                            [ariaLabel]="'Block ' + (index + 1) + ' nach oben verschieben'"
+                            [title]="'Block ' + (index + 1) + ' nach oben verschieben'"
+                            [color]="Color.White"
+                            [isDisabled]="index === 0"
+                            (clicked)="moveBlock(index, -1)"
                           >
                             ↑
-                          </button>
-                          <button
-                            type="button"
-                            class="min-h-10 min-w-10 transform cursor-pointer rounded-lg border-4 border-black bg-white shadow-xl transition-all duration-100 hover:translate-y-0.5 hover:bg-gray-100 hover:shadow-lg focus-visible:ring-4 focus-visible:ring-blue-600 active:translate-y-1 active:shadow-none disabled:cursor-not-allowed disabled:bg-gray-300 disabled:opacity-50 disabled:shadow-none"
-                            [disabled]="index === doorForm.length - 1"
-                            [attr.aria-label]="'Block ' + (index + 1) + ' nach unten verschieben'"
-                            (click)="moveBlock(index, 1)"
+                          </min-button>
+                          <min-button
+                            class="w-10"
+                            [ariaLabel]="'Block ' + (index + 1) + ' nach unten verschieben'"
+                            [title]="'Block ' + (index + 1) + ' nach unten verschieben'"
+                            [color]="Color.White"
+                            [isDisabled]="index === doorForm.length - 1"
+                            (clicked)="moveBlock(index, 1)"
                           >
                             ↓
-                          </button>
-                          <button
-                            type="button"
-                            class="min-h-10 transform cursor-pointer rounded-lg border-4 border-red-700 bg-white px-3 text-red-800 shadow-xl transition-all duration-100 hover:translate-y-0.5 hover:bg-red-50 hover:shadow-lg focus-visible:ring-4 focus-visible:ring-red-600 active:translate-y-1 active:shadow-none"
-                            [attr.aria-label]="'Block ' + (index + 1) + ' entfernen'"
-                            (click)="removeBlock(index)"
+                          </min-button>
+                          <min-button
+                            [ariaLabel]="'Block ' + (index + 1) + ' entfernen'"
+                            [title]="'Block ' + (index + 1) + ' entfernen'"
+                            [color]="Color.Red"
+                            (clicked)="removeBlock(index)"
                           >
                             Entfernen
-                          </button>
+                          </min-button>
                         </div>
                       </div>
                     }
                     @if (block.controls.type.value === MinAdventBlockType.Text) {
                       @if (!isSelectedDoorReadOnly()) {
                         <div class="mb-2 flex flex-wrap gap-1" [attr.aria-label]="'Formatierung für Textblock ' + (index + 1)">
-                          <button
-                            type="button"
-                            class="min-h-10 min-w-10 transform cursor-pointer rounded-lg border-4 border-black bg-white font-bold shadow-xl transition-all duration-100 hover:translate-y-0.5 hover:bg-gray-100 hover:shadow-lg focus-visible:ring-4 focus-visible:ring-blue-600 active:translate-y-1 active:shadow-none"
-                            aria-label="Fett"
+                          <min-button
+                            class="w-10"
+                            ariaLabel="Fett"
                             title="Fett"
-                            (click)="formatText(index, 'bold')"
+                            [color]="Color.White"
+                            (clicked)="formatText(index, 'bold')"
                           >
-                            B
-                          </button>
-                          <button
-                            type="button"
-                            class="min-h-10 min-w-10 transform cursor-pointer rounded-lg border-4 border-black bg-white italic shadow-xl transition-all duration-100 hover:translate-y-0.5 hover:bg-gray-100 hover:shadow-lg focus-visible:ring-4 focus-visible:ring-blue-600 active:translate-y-1 active:shadow-none"
-                            aria-label="Kursiv"
+                            <strong>B</strong>
+                          </min-button>
+                          <min-button
+                            class="w-10 italic"
+                            ariaLabel="Kursiv"
                             title="Kursiv"
-                            (click)="formatText(index, 'italic')"
+                            [color]="Color.White"
+                            (clicked)="formatText(index, 'italic')"
                           >
                             I
-                          </button>
-                          <button
-                            type="button"
-                            class="min-h-10 transform cursor-pointer rounded-lg border-4 border-black bg-white px-2 shadow-xl transition-all duration-100 hover:translate-y-0.5 hover:bg-gray-100 hover:shadow-lg focus-visible:ring-4 focus-visible:ring-blue-600 active:translate-y-1 active:shadow-none"
+                          </min-button>
+                          <min-button
                             title="Aufzählung"
-                            (click)="formatText(index, 'insertUnorderedList')"
+                            [color]="Color.White"
+                            (clicked)="formatText(index, 'insertUnorderedList')"
                           >
                             • Liste
-                          </button>
-                          <button
-                            type="button"
-                            class="min-h-10 transform cursor-pointer rounded-lg border-4 border-black bg-white px-2 shadow-xl transition-all duration-100 hover:translate-y-0.5 hover:bg-gray-100 hover:shadow-lg focus-visible:ring-4 focus-visible:ring-blue-600 active:translate-y-1 active:shadow-none"
+                          </min-button>
+                          <min-button
                             title="Nummerierte Liste"
-                            (click)="formatText(index, 'insertOrderedList')"
+                            [color]="Color.White"
+                            (clicked)="formatText(index, 'insertOrderedList')"
                           >
                             1. Liste
-                          </button>
-                          <button
-                            type="button"
-                            class="min-h-10 min-w-10 transform cursor-pointer rounded-lg border-4 border-black bg-white shadow-xl transition-all duration-100 hover:translate-y-0.5 hover:bg-gray-100 hover:shadow-lg focus-visible:ring-4 focus-visible:ring-blue-600 active:translate-y-1 active:shadow-none"
-                            aria-label="Absatz"
+                          </min-button>
+                          <min-button
+                            class="w-10"
+                            ariaLabel="Absatz"
                             title="Absatz"
-                            (click)="formatText(index, 'formatBlock')"
+                            [color]="Color.White"
+                            (clicked)="formatText(index, 'formatBlock')"
                           >
                             ¶
-                          </button>
+                          </min-button>
                         </div>
                       }
                       <div
@@ -329,48 +314,60 @@
                         dir="ltr"
                         [attr.aria-label]="'Textinhalt Block ' + (index + 1)"
                         [attr.contenteditable]="isSelectedDoorReadOnly() ? 'false' : 'true'"
+                        [attr.aria-invalid]="block.controls.text.touched && getDoorFieldError(index, 'text') ? 'true' : null"
+                        [class.border-red-600]="block.controls.text.touched && !!getDoorFieldError(index, 'text')"
                         [innerHTML]="block.controls.text.value"
                         class="min-h-28 w-full overflow-auto rounded-lg border-4 border-black bg-white p-3 text-left shadow-xl transition-all duration-100 hover:shadow-lg focus-visible:outline-4 focus-visible:outline-blue-700"
                         (input)="updateTextBlock(index, $any($event.target).innerHTML)"
+                        (blur)="touchDoorText(index)"
                       ></div>
                       <p class="mt-1 text-right text-xs text-gray-600">
                         {{ countVisibleCharacters(block.controls.text.value) }} / 10.000 Zeichen
                       </p>
+                      @if (block.controls.text.touched && getDoorFieldError(index, 'text'); as textError) {
+                        <p class="text-sm text-red-600" role="alert">{{ textError }}</p>
+                      }
                     } @else {
-                      <label class="mb-3 block text-sm font-semibold" [for]="'block-title-' + index">
-                        {{ block.controls.type.value === MinAdventBlockType.Link ? 'Linktitel' : 'Gutscheintitel' }}
-                        <input
-                          [id]="'block-title-' + index"
-                          formControlName="title"
-                          maxlength="100"
-                          (input)="updateDoorField()"
-                          class="mt-1 min-h-11 w-full rounded-lg border-4 border-black bg-white px-3 font-normal shadow-xl transition-all duration-100 hover:bg-gray-100 focus-visible:ring-4 focus-visible:ring-blue-600"
-                        />
-                      </label>
+                      <min-input
+                        [id]="'block-title-' + index"
+                        [label]="block.controls.type.value === MinAdventBlockType.Link ? 'Linktitel' : 'Gutscheintitel'"
+                        [formControlInput]="block.controls.title"
+                        [maxLength]="100"
+                        [showCharacterCount]="true"
+                        [isInvalid]="isDoorFieldInvalid(index, 'title')"
+                        (valueChanged)="updateDoorField()"
+                      />
+                      @if (block.controls.title.touched && getDoorFieldError(index, 'title'); as titleError) {
+                        <p class="text-sm text-red-600" role="alert">{{ titleError }}</p>
+                      }
                       @if (block.controls.type.value === MinAdventBlockType.Link) {
-                        <label class="block text-sm font-semibold" [for]="'block-url-' + index">
-                          HTTP(S)-Adresse
-                          <input
-                            [id]="'block-url-' + index"
-                            formControlName="url"
-                            type="url"
-                            maxlength="2048"
-                            (input)="updateDoorField()"
-                            class="mt-1 min-h-11 w-full rounded-lg border-4 border-black bg-white px-3 font-normal shadow-xl transition-all duration-100 hover:bg-gray-100 focus-visible:ring-4 focus-visible:ring-blue-600"
-                          />
-                        </label>
+                        <min-input
+                          [id]="'block-url-' + index"
+                          label="HTTP(S)-Adresse"
+                          type="url"
+                          [formControlInput]="block.controls.url"
+                          [maxLength]="2048"
+                          [showCharacterCount]="true"
+                          [isInvalid]="isDoorFieldInvalid(index, 'url')"
+                          (valueChanged)="updateDoorField()"
+                        />
+                        @if (block.controls.url.touched && getDoorFieldError(index, 'url'); as urlError) {
+                          <p class="text-sm text-red-600" role="alert">{{ urlError }}</p>
+                        }
                       } @else {
-                        <label class="block text-sm font-semibold" [for]="'block-description-' + index">
-                          Beschreibung
-                          <textarea
-                            [id]="'block-description-' + index"
-                            formControlName="description"
-                            maxlength="2000"
-                            rows="4"
-                            (input)="updateDoorField()"
-                            class="mt-1 w-full rounded-lg border-4 border-black bg-white p-3 font-normal shadow-xl transition-all duration-100 hover:bg-gray-100 focus-visible:ring-4 focus-visible:ring-blue-600"
-                          ></textarea>
-                        </label>
+                        <min-textarea
+                          [id]="'block-description-' + index"
+                          label="Beschreibung"
+                          [formControlInput]="block.controls.description"
+                          [maxLength]="2000"
+                          [rows]="4"
+                          [showCharacterCount]="true"
+                          [isInvalid]="isDoorFieldInvalid(index, 'description')"
+                          (valueChanged)="updateDoorField()"
+                        />
+                        @if (block.controls.description.touched && getDoorFieldError(index, 'description'); as descriptionError) {
+                          <p class="text-sm text-red-600" role="alert">{{ descriptionError }}</p>
+                        }
                       }
                     }
                   </fieldset>
@@ -381,7 +378,7 @@
                   <p class="text-sm text-gray-600">{{ doorForm.length }} / 10 Blöcke</p>
                   <min-button
                     [color]="Color.Green"
-                    [isDisabled]="isSavingDoor() || !isDoorFormValid()"
+                    [isDisabled]="isDoorSaveDisabled()"
                     (clicked)="saveDoor()"
                   >
                     {{ isSavingDoor() ? 'Speichert …' : 'Türchen speichern' }}
@@ -389,8 +386,8 @@
                 </div>
               }
             </section>
-          }
-        </dialog>
+          </min-dialog>
+        }
       </section>
     }
   }

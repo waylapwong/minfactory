@@ -8,7 +8,7 @@
     [class]="
       `rounded-lg border-4 bg-white px-2 py-1 shadow-2xl` +
       ` placeholder:text-gray-500` +
-      ` focus:ring-1 focus:outline-none` +
+      ` transition-all duration-100 hover:bg-gray-100 hover:shadow-xl focus-visible:ring-4 focus-visible:ring-blue-600` +
       ` disabled:cursor-not-allowed disabled:bg-gray-300 disabled:opacity-50 disabled:shadow-none` +
       ` ${isFormControlInvalid() ? 'border-red-500 focus:ring-red-500' : 'border-black focus:ring-black'}`
     "
@@ -18,8 +18,13 @@
     [attr.min]="min()"
     [attr.minlength]="minLength()"
     [formControl]="formControlInput()"
+    [attr.aria-invalid]="isFormControlInvalid() ? 'true' : null"
     [id]="id()"
     [placeholder]="placeholder()"
     [type]="type()"
+    (input)="valueChanged.emit($event)"
   />
+  @if (showCharacterCount()) {
+    <p class="mt-1 text-right text-xs text-gray-600">{{ getCharacterCount() }} / {{ maxLength() }} Zeichen</p>
+  }
 </div>

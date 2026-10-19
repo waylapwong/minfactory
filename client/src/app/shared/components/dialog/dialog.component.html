@@ -2,7 +2,15 @@
   <!-- BACKDROP -->
   <div class="fixed inset-0 z-40 flex items-center justify-center bg-black/50 backdrop-blur-xs">
     <!-- DIALOG -->
-    <div class="w-9/10 max-w-md rounded-lg border-4 border-black bg-gray-100 p-4 text-neutral-900 shadow-xl">
+    <dialog
+      open
+      aria-modal="true"
+      [attr.aria-label]="title()"
+      [class]="
+        'relative m-0 rounded-lg border-4 border-black bg-gray-100 p-4 text-neutral-900 shadow-xl ' +
+        (size() === 'wide' ? 'w-[calc(100%-1rem)] max-h-[90dvh] max-w-3xl overflow-y-auto' : 'w-9/10 max-w-md')
+      "
+    >
       <div class="flex flex-row items-start justify-between">
         <!-- TITLE -->
         <min-h2>{{ title() }}</min-h2>
@@ -14,6 +22,6 @@
 
       <!-- CONTENT -->
       <ng-content></ng-content>
-    </div>
+    </dialog>
   </div>
 }

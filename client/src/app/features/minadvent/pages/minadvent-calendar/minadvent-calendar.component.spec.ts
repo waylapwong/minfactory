@@ -112,6 +112,17 @@ describe('MinAdventCalendarComponent', () => {
       expect(component.calendar()?.title).toBe('Neuer Titel');
       expect(component.isSavingTitle()).toBeFalse();
     });
+
+    it('should not save an unchanged title', async () => {
+      const calendar = createMinAdventCalendar();
+      component.calendar.set(calendar);
+      component.form.controls.title.setValue(calendar.title);
+
+      await component.saveTitle();
+
+      expect(component.isTitleSaveDisabled()).toBeTrue();
+      expect(MINADVENT_CALENDAR_SERVICE_MOCK.updateCalendar).not.toHaveBeenCalled();
+    });
   });
 
   describe('saveRecipient()', () => {
@@ -130,6 +141,17 @@ describe('MinAdventCalendarComponent', () => {
       expect(component.calendar()?.recipientName).toBe('Sam');
       expect(component.isSavingRecipient()).toBeFalse();
     });
+
+    it('should not save an unchanged recipient', async () => {
+      const calendar = createMinAdventCalendar();
+      component.calendar.set(calendar);
+      component.form.controls.recipientName.setValue(calendar.recipientName);
+
+      await component.saveRecipient();
+
+      expect(component.isRecipientSaveDisabled()).toBeTrue();
+      expect(MINADVENT_CALENDAR_SERVICE_MOCK.updateCalendar).not.toHaveBeenCalled();
+    });
   });
 
   describe('selectDoor()', () => {
@@ -140,7 +162,7 @@ describe('MinAdventCalendarComponent', () => {
       fixture.detectChanges();
       (fixture.nativeElement.querySelector('[aria-label="Türchen 1, Status Befüllt"]') as HTMLButtonElement).click();
       fixture.detectChanges(false);
-      expect((fixture.nativeElement.querySelector('dialog') as HTMLDialogElement).open).toBeTrue();
+      expect(fixture.nativeElement.querySelector('[aria-modal="true"]')).toBeTruthy();
       component.addBlock(component.MinAdventBlockType.Text);
       component.updateTextBlock(0, '<p>Draft</p>');
       spyOn(window, 'confirm').and.returnValue(false);
@@ -161,18 +183,52 @@ describe('MinAdventCalendarComponent', () => {
       component.isEditing.set(true);
       fixture.detectChanges();
       (fixture.nativeElement.querySelector('[aria-label="Türchen 1, Status Befüllt"]') as HTMLButtonElement).click();
+      fixture.detectChanges(false);
       component.addBlock(component.MinAdventBlockType.Text);
       spyOn(window, 'confirm').and.returnValue(false);
 
       component.closeDoorDialog();
+      fixture.detectChanges(false);
 
-      expect((fixture.nativeElement.querySelector('dialog') as HTMLDialogElement).open).toBeTrue();
+      expect(fixture.nativeElement.querySelector('[aria-modal="true"]')).toBeTruthy();
       expect(component.selectedDoorDay()).toBe(1);
       expect(component.hasUnsavedDoorChanges()).toBeTrue();
     });
   });
 
   describe('saveDoor()', () => {
+    it('should disable saving unchanged doors and reject empty required text', async () => {
+      const calendar = createMinAdventCalendar();
+      component.calendar.set(calendar);
+      component.selectDoor(calendar.doors[0]);
+
+      expect(component.isDoorSaveDisabled()).toBeTrue();
+      await component.saveDoor();
+      expect(MINADVENT_CALENDAR_SERVICE_MOCK.updateDoor).not.toHaveBeenCalled();
+
+      component.addBlock(component.MinAdventBlockType.Text);
+      expect(component.isDoorSaveDisabled()).toBeFalse();
+      expect(component.getDoorFieldError(0, 'text')).toBe('Der Text darf nicht leer sein.');
+      await component.saveDoor();
+
+      expect(component.doorForm.at(0).controls.text.touched).toBeTrue();
+      expect(MINADVENT_CALENDAR_SERVICE_MOCK.updateDoor).not.toHaveBeenCalled();
+    });
+
+    it('should report empty link and voucher fields', () => {
+      const calendar = createMinAdventCalendar();
+      component.calendar.set(calendar);
+      component.selectDoor(calendar.doors[0]);
+      component.addBlock(component.MinAdventBlockType.Link);
+
+      expect(component.getDoorFieldError(0, 'title')).toBe('Der Titel ist erforderlich.');
+      expect(component.getDoorFieldError(0, 'url')).toBe('Die Adresse ist erforderlich.');
+
+      component.removeBlock(0);
+      component.addBlock(component.MinAdventBlockType.Voucher);
+      expect(component.getDoorFieldError(0, 'description')).toBe('Die Beschreibung ist erforderlich.');
+    });
+
     it('saves the complete block list and adopts global version and status', async () => {
       const calendar = createMinAdventCalendar();
       component.calendar.set(calendar);

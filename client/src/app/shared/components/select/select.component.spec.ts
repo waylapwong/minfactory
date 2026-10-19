@@ -64,14 +64,6 @@ describe('SelectComponent', () => {
     });
   });
 
-  describe('closeDropdown()', () => {
-    it('should set isOpen to false', () => {
-      component.isOpen.set(true);
-      component.closeDropdown();
-      expect(component.isOpen()).toBeFalse();
-    });
-  });
-
   describe('getOptionAriaLabel()', () => {
     it('should return label when option has a label', () => {
       expect(component.getOptionAriaLabel({ label: 'My Label', value: 'val' })).toBe('My Label');
@@ -79,6 +71,14 @@ describe('SelectComponent', () => {
 
     it('should return value when option has no label', () => {
       expect(component.getOptionAriaLabel({ label: '', value: 'my-value' })).toBe('my-value');
+    });
+  });
+
+  describe('closeDropdown()', () => {
+    it('should set isOpen to false', () => {
+      component.isOpen.set(true);
+      component.closeDropdown();
+      expect(component.isOpen()).toBeFalse();
     });
   });
 
@@ -97,11 +97,14 @@ describe('SelectComponent', () => {
   });
 
   describe('selectOption()', () => {
-    it('should set value and close dropdown for a normal option', () => {
+    it('should set value, emit change, and close dropdown for a normal option', () => {
+      const valueChanged = jasmine.createSpy('valueChanged');
+      component.valueChanged.subscribe(valueChanged);
       component.isOpen.set(true);
       component.selectOption(testOptions[0]);
       expect(component.formControlInput().value).toBe('man-1.svg');
       expect(component.isOpen()).toBeFalse();
+      expect(valueChanged).toHaveBeenCalledWith('man-1.svg');
     });
 
     it('should not change value for a disabled option', () => {

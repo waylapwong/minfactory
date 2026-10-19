@@ -1,4 +1,4 @@
-import { Component, ElementRef, HostListener, InputSignal, WritableSignal, input, signal } from '@angular/core';
+import { Component, ElementRef, HostListener, InputSignal, OutputEmitterRef, WritableSignal, input, output, signal } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 
 export interface SelectOption {
@@ -20,10 +20,10 @@ export class SelectComponent {
   public label: InputSignal<string> = input('');
   public options: InputSignal<readonly SelectOption[]> = input.required();
   public placeholder: InputSignal<string> = input('');
+  public valueChanged: OutputEmitterRef<string> = output();
   public readonly isOpen: WritableSignal<boolean> = signal(false);
 
   constructor(private readonly elementRef: ElementRef<HTMLElement>) {}
-
   public get selectedOption(): SelectOption | null {
     const value: string = this.formControlInput().value;
     const option: SelectOption | undefined = this.options().find((currentOption) => currentOption.value === value);
@@ -34,12 +34,12 @@ export class SelectComponent {
     return this.formControlInput().invalid && (this.formControlInput().touched || this.formControlInput().dirty);
   }
 
-  public closeDropdown(): void {
-    this.isOpen.set(false);
-  }
-
   public getOptionAriaLabel(option: SelectOption): string {
     return option.label || option.value;
+  }
+
+  public closeDropdown(): void {
+    this.isOpen.set(false);
   }
 
   public onToggleDropdown(): void {
@@ -54,6 +54,7 @@ export class SelectComponent {
     this.formControlInput().setValue(option.value);
     this.formControlInput().markAsDirty();
     this.formControlInput().markAsTouched();
+    this.valueChanged.emit(option.value);
     this.closeDropdown();
   }
 

@@ -1,5 +1,5 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, computed, ElementRef, HostListener, OnInit, signal, ViewChild } from '@angular/core';
+import { Component, computed, HostListener, OnInit, signal } from '@angular/core';
 import { FormArray, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MinAdventBlockDto } from '../../../../core/generated/model/min-advent-block-dto';
@@ -7,11 +7,14 @@ import { MinAdventBlockType } from '../../../../core/generated/model/min-advent-
 import { RoutingService } from '../../../../core/routing/services/routing.service';
 import { BadgeComponent } from '../../../../shared/components/badge/badge.component';
 import { ButtonComponent } from '../../../../shared/components/button/button.component';
+import { DialogComponent } from '../../../../shared/components/dialog/dialog.component';
 import { H1Component } from '../../../../shared/components/h1/h1.component';
 import { H2Component } from '../../../../shared/components/h2/h2.component';
 import { InputComponent } from '../../../../shared/components/input/input.component';
+import { SelectComponent, SelectOption } from '../../../../shared/components/select/select.component';
+import { TextareaComponent } from '../../../../shared/components/textarea/textarea.component';
 import { Color } from '../../../../shared/enums/color.enum';
-import { MinAdventDoor } from '../../models/minadvent-calendar.model';
+import { MinAdventCalendar, MinAdventDoor } from '../../models/minadvent-calendar.model';
 import { MinAdventCalendarService } from '../../services/minadvent-calendar.service';
 
 type DoorBlockForm = FormGroup<{
@@ -26,7 +29,17 @@ type DoorBlockForm = FormGroup<{
   selector: 'min-advent-calendar',
   templateUrl: './minadvent-calendar.component.html',
   host: { class: 'block min-h-full w-full' },
-  imports: [BadgeComponent, ButtonComponent, H1Component, H2Component, InputComponent, ReactiveFormsModule],
+  imports: [
+    BadgeComponent,
+    ButtonComponent,
+    DialogComponent,
+    H1Component,
+    H2Component,
+    InputComponent,
+    SelectComponent,
+    TextareaComponent,
+    ReactiveFormsModule,
+  ],
 })
 export class MinAdventCalendarComponent implements OnInit {
   public readonly Color: typeof Color = Color;
@@ -61,8 +74,11 @@ export class MinAdventCalendarComponent implements OnInit {
   public readonly isSavingRecipient = signal(false);
   public readonly isSavingTitle = signal(false);
   public readonly MinAdventBlockType = MinAdventBlockType;
-
-  @ViewChild('doorDialog') private readonly doorDialog?: ElementRef<HTMLDialogElement>;
+  public readonly doorBlockTypeOptions: readonly SelectOption[] = [
+    { label: 'Text', value: MinAdventBlockType.Text },
+    { label: 'Link', value: MinAdventBlockType.Link },
+    { label: 'Gutschein', value: MinAdventBlockType.Voucher },
+  ];
 
   private originalDoorBlocks: MinAdventBlockDto[] = [];
 
@@ -134,7 +150,7 @@ export class MinAdventCalendarComponent implements OnInit {
     const calendar = this.calendar();
     const control = this.form.controls.recipientName;
     control.markAsTouched();
-    if (!calendar || control.invalid) {
+    if (!calendar || control.invalid || control.value === calendar.recipientName) {
       return;
     }
     this.isSavingRecipient.set(true);
@@ -157,7 +173,7 @@ export class MinAdventCalendarComponent implements OnInit {
     const calendar = this.calendar();
     const control = this.form.controls.title;
     control.markAsTouched();
-    if (!calendar || control.invalid) {
+    if (!calendar || control.invalid || control.value === calendar.title) {
       return;
     }
     this.isSavingTitle.set(true);
@@ -181,26 +197,16 @@ export class MinAdventCalendarComponent implements OnInit {
       return;
     }
     this.loadDoorDraft(door);
-    const dialog = this.doorDialog?.nativeElement;
-    if (dialog && !dialog.open) {
-      dialog.showModal();
-    }
   }
 
   public closeDoorDialog(): void {
     if (!this.confirmDiscardDoorDraft()) {
       return;
     }
-    this.doorDialog?.nativeElement.close();
     this.selectedDoorDay.set(null);
     this.doorForm.clear();
     this.originalDoorBlocks = [];
     this.doorDraftRevision.update((revision) => revision + 1);
-  }
-
-  public onDoorDialogCancel(event: Event): void {
-    event.preventDefault();
-    this.closeDoorDialog();
   }
 
   private loadDoorDraft(door: MinAdventDoor): void {
@@ -289,12 +295,22 @@ export class MinAdventCalendarComponent implements OnInit {
   }
 
   public updateTextBlock(index: number, text: string): void {
-    this.doorForm.at(index).controls.text.setValue(text);
+    const control = this.doorForm.at(index).controls.text;
+    control.setValue(text);
+    control.markAsDirty();
     this.onDoorDraftChanged();
+  }
+
+  public touchDoorText(index: number): void {
+    this.doorForm.at(index).controls.text.markAsTouched();
   }
 
   public updateDoorField(): void {
     this.onDoorDraftChanged();
+  }
+
+  public isDoorFieldInvalid(index: number, field: 'text' | 'title' | 'url' | 'description'): boolean {
+    return this.doorForm.at(index).controls[field].touched && Boolean(this.getDoorFieldError(index, field));
   }
 
   public hasUnsavedDoorChanges(): boolean {
@@ -304,6 +320,21 @@ export class MinAdventCalendarComponent implements OnInit {
 
   public confirmDiscardDoorDraft(): boolean {
     return !this.hasUnsavedDoorChanges() || window.confirm('Ungespeicherte Türchenänderungen verwerfen?');
+  }
+
+  public isTitleSaveDisabled(): boolean {
+    const calendar = this.calendar();
+    return !calendar || this.form.controls.title.invalid || this.isSavingTitle() || this.form.controls.title.value === calendar.title;
+  }
+
+  public isRecipientSaveDisabled(): boolean {
+    const calendar = this.calendar();
+    return (
+      !calendar ||
+      this.form.controls.recipientName.invalid ||
+      this.isSavingRecipient() ||
+      this.form.controls.recipientName.value === calendar.recipientName
+    );
   }
 
   public canDeactivate(): boolean {
@@ -347,22 +378,47 @@ export class MinAdventCalendarComponent implements OnInit {
     });
   }
 
+  public isDoorSaveDisabled(): boolean {
+    return !this.hasUnsavedDoorChanges() || this.isSavingDoor();
+  }
+
   public countVisibleCharacters(text: string): number {
     return [...this.visibleText(text)].length;
+  }
+
+  public getDoorFieldError(index: number, field: 'text' | 'title' | 'url' | 'description'): string | null {
+    const block = this.doorForm.at(index);
+    if (!block) {
+      return null;
+    }
+    switch (field) {
+      case 'text':
+        return this.getTextFieldError(block.controls.text.value);
+      case 'title':
+        return this.getTitleFieldError(block.controls.title.value);
+      case 'url':
+        return this.getUrlFieldError(block.controls.url.value);
+      case 'description':
+        return this.getDescriptionFieldError(block.controls.description.value);
+    }
   }
 
   public async saveDoor(): Promise<void> {
     const calendar = this.calendar();
     const door = this.selectedDoor();
-    if (!calendar || !door || this.isSelectedDoorReadOnly() || !this.isDoorFormValid()) {
+    if (!calendar || !door || this.isSelectedDoorReadOnly()) {
+      return;
+    }
+    if (!this.hasUnsavedDoorChanges()) {
+      return;
+    }
+    if (!this.isDoorFormValid()) {
+      this.doorForm.markAllAsTouched();
       this.doorError.set('Bitte prüfe die Pflichtfelder und Zeichenbegrenzungen.');
       return;
     }
     const blocks = this.toBlocks();
-    if (
-      this.willCompleteCalendar(door, blocks) &&
-      !window.confirm('Dieses Türchen leeren und den Kalender abschließen?')
-    ) {
+    if (this.shouldCancelDoorSave(door, blocks)) {
       return;
     }
     this.isSavingDoor.set(true);
@@ -385,22 +441,40 @@ export class MinAdventCalendarComponent implements OnInit {
       this.doorDraftRevision.update((revision) => revision + 1);
       this.doorSuccess.set('Türchen gespeichert.');
     } catch (reason) {
-      const error = reason as HttpErrorResponse;
-      const code = error.error?.code;
-      if (error.status === 409 && ['VERSION_CONFLICT', 'CALENDAR_COMPLETED', 'DOOR_OPENED'].includes(code)) {
-        this.doorError.set(
-          code === 'VERSION_CONFLICT'
-            ? 'Der Kalender wurde zwischenzeitlich geändert. Dein Entwurf bleibt erhalten.'
-            : 'Der Kalenderzustand hat sich geändert. Dein Entwurf bleibt erhalten.',
-        );
-        if (window.confirm('Kalender jetzt aktualisieren und den lokalen Entwurf verwerfen?')) {
-          await this.reloadCalendarAndDoor(calendar.id, door.day);
-        }
-      } else {
-        this.doorError.set('Das Türchen konnte nicht gespeichert werden. Bitte prüfe deine Eingaben.');
-      }
+      await this.handleDoorSaveError(reason, calendar, door);
     } finally {
       this.isSavingDoor.set(false);
+    }
+  }
+
+  private shouldCancelDoorSave(door: MinAdventDoor, blocks: MinAdventBlockDto[]): boolean {
+    return (
+      this.willCompleteCalendar(door, blocks) &&
+      !window.confirm('Dieses Türchen leeren und den Kalender abschließen?')
+    );
+  }
+
+  private async handleDoorSaveError(
+    reason: unknown,
+    calendar: MinAdventCalendar,
+    door: MinAdventDoor,
+  ): Promise<void> {
+    const error = reason as HttpErrorResponse;
+    const code = error.error?.code;
+    const isConflict = error.status === 409 && ['VERSION_CONFLICT', 'CALENDAR_COMPLETED', 'DOOR_OPENED'].includes(code);
+
+    if (!isConflict) {
+      this.doorError.set('Das Türchen konnte nicht gespeichert werden. Bitte prüfe deine Eingaben.');
+      return;
+    }
+
+    this.doorError.set(
+      code === 'VERSION_CONFLICT'
+        ? 'Der Kalender wurde zwischenzeitlich geändert. Dein Entwurf bleibt erhalten.'
+        : 'Der Kalenderzustand hat sich geändert. Dein Entwurf bleibt erhalten.',
+    );
+    if (window.confirm('Kalender jetzt aktualisieren und den lokalen Entwurf verwerfen?')) {
+      await this.reloadCalendarAndDoor(calendar.id, door.day);
     }
   }
 
@@ -449,6 +523,55 @@ export class MinAdventCalendarComponent implements OnInit {
     this.doorDraftRevision.update((revision) => revision + 1);
     this.doorError.set('');
     this.doorSuccess.set('');
+  }
+
+  private getTextFieldError(value: string): string | null {
+    const count = this.countVisibleCharacters(value);
+    if (count === 0) {
+      return 'Der Text darf nicht leer sein.';
+    }
+    if (count > 10000) {
+      return 'Der Text darf maximal 10.000 Zeichen enthalten.';
+    }
+    return null;
+  }
+
+  private getTitleFieldError(value: string): string | null {
+    if (!value.trim()) {
+      return 'Der Titel ist erforderlich.';
+    }
+    if (value.trim().length > 100) {
+      return 'Maximal 100 Zeichen.';
+    }
+    return null;
+  }
+
+  private getUrlFieldError(value: string): string | null {
+    if (!value.trim()) {
+      return 'Die Adresse ist erforderlich.';
+    }
+    if (value.length > 2048) {
+      return 'Die Adresse darf maximal 2.048 Zeichen enthalten.';
+    }
+    try {
+      const url = new URL(value.trim());
+      if (!['http:', 'https:'].includes(url.protocol) || !url.hostname) {
+        return 'Bitte gib eine gültige HTTP(S)-Adresse ein.';
+      }
+    } catch {
+      return 'Bitte gib eine gültige HTTP(S)-Adresse ein.';
+    }
+    return null;
+  }
+
+  private getDescriptionFieldError(value: string): string | null {
+    if (!value.trim()) {
+      return 'Die Beschreibung ist erforderlich.';
+    }
+    if (value.trim().length > 2000) {
+      return 'Maximal 2.000 Zeichen.';
+    }
+    return null;
   }
 
   private async reloadCalendarAndDoor(calendarId: string, day: number): Promise<void> {
