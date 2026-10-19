@@ -15,3 +15,4 @@
 ### minTools
 
 - [minAdvent](3-mintools/minadvent/minadvent-home.md)
+- [minSplit](3-mintools/minsplit/minsplit-home.md)
