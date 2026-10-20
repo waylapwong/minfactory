@@ -10,23 +10,41 @@
             "required": true,
             "in": "header",
             "description": "Unique request ID",
-            "schema": { "type": "string", "example": "80210e8c-9688-4369-a20a-4d69d1187dd7" }
+            "schema": {
+              "type": "string",
+              "example": "80210e8c-9688-4369-a20a-4d69d1187dd7"
+            }
           },
           {
             "name": "id",
             "required": true,
             "in": "path",
             "description": "Unique ID of resource",
-            "schema": { "example": "550e8400-e29b-41d4-a716-446655440000", "type": "string" }
+            "schema": {
+              "example": "550e8400-e29b-41d4-a716-446655440000",
+              "type": "string"
+            }
           }
         ],
         "responses": {
-          "204": { "description": "Deleted" },
-          "400": { "description": "Bad Request" },
-          "401": { "description": "Unauthorized" },
-          "403": { "description": "Forbidden" },
-          "404": { "description": "Not Found" },
-          "500": { "description": "Internal Server Error" }
+          "204": {
+            "description": "Deleted"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
         },
         "summary": "",
         "tags": ["minPoker"]
@@ -41,14 +59,19 @@
             "required": true,
             "in": "header",
             "description": "Unique request ID",
-            "schema": { "type": "string", "example": "80210e8c-9688-4369-a20a-4d69d1187dd7" }
+            "schema": {
+              "type": "string",
+              "example": "80210e8c-9688-4369-a20a-4d69d1187dd7"
+            }
           },
           {
             "name": "visibility",
             "required": true,
             "in": "query",
             "description": "public = alle öffentlichen Spiele. private = alle selbst erstellten Spiele.",
-            "schema": { "$ref": "#/components/schemas/MinPokerGameVisibility" }
+            "schema": {
+              "$ref": "#/components/schemas/MinPokerGameVisibility"
+            }
           }
         ],
         "responses": {
@@ -56,15 +79,30 @@
             "description": "OK",
             "content": {
               "application/json": {
-                "schema": { "type": "array", "items": { "$ref": "#/components/schemas/MinPokerGameDto" } }
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/MinPokerGameDto"
+                  }
+                }
               }
             }
           },
-          "400": { "description": "Bad Request" },
-          "401": { "description": "Unauthorized" },
-          "403": { "description": "Forbidden" },
-          "404": { "description": "Not Found" },
-          "500": { "description": "Internal Server Error" }
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
         },
         "summary": "",
         "tags": ["minPoker"]
@@ -77,23 +115,48 @@
             "required": true,
             "in": "header",
             "description": "Unique request ID",
-            "schema": { "type": "string", "example": "80210e8c-9688-4369-a20a-4d69d1187dd7" }
+            "schema": {
+              "type": "string",
+              "example": "80210e8c-9688-4369-a20a-4d69d1187dd7"
+            }
           }
         ],
         "requestBody": {
           "required": true,
-          "content": { "application/json": { "schema": { "$ref": "#/components/schemas/MinPokerCreateGameDto" } } }
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MinPokerCreateGameDto"
+              }
+            }
+          }
         },
         "responses": {
           "201": {
             "description": "Created",
-            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/MinPokerGameDto" } } }
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MinPokerGameDto"
+                }
+              }
+            }
           },
-          "400": { "description": "Bad Request" },
-          "401": { "description": "Unauthorized" },
-          "403": { "description": "Forbidden" },
-          "404": { "description": "Not Found" },
-          "500": { "description": "Internal Server Error" }
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
         },
         "summary": "",
         "tags": ["minPoker"]
@@ -108,15 +171,28 @@
             "required": true,
             "in": "header",
             "description": "Unique request ID",
-            "schema": { "type": "string", "example": "80210e8c-9688-4369-a20a-4d69d1187dd7" }
+            "schema": {
+              "type": "string",
+              "example": "80210e8c-9688-4369-a20a-4d69d1187dd7"
+            }
           }
         ],
         "responses": {
-          "204": { "description": "Deleted" },
-          "400": { "description": "Bad Request" },
-          "401": { "description": "Unauthorized" },
-          "404": { "description": "Not Found" },
-          "500": { "description": "Internal Server Error" }
+          "204": {
+            "description": "Deleted"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
         },
         "summary": "",
         "tags": ["minFactory"]
@@ -129,18 +205,35 @@
             "required": true,
             "in": "header",
             "description": "Unique request ID",
-            "schema": { "type": "string", "example": "80210e8c-9688-4369-a20a-4d69d1187dd7" }
+            "schema": {
+              "type": "string",
+              "example": "80210e8c-9688-4369-a20a-4d69d1187dd7"
+            }
           }
         ],
         "responses": {
           "200": {
             "description": "OK",
-            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/MinFactoryUserDto" } } }
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MinFactoryUserDto"
+                }
+              }
+            }
           },
-          "400": { "description": "Bad Request" },
-          "401": { "description": "Unauthorized" },
-          "404": { "description": "Not Found" },
-          "500": { "description": "Internal Server Error" }
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
         },
         "summary": "",
         "tags": ["minFactory"]
@@ -155,18 +248,35 @@
             "required": true,
             "in": "header",
             "description": "Unique request ID",
-            "schema": { "type": "string", "example": "80210e8c-9688-4369-a20a-4d69d1187dd7" }
+            "schema": {
+              "type": "string",
+              "example": "80210e8c-9688-4369-a20a-4d69d1187dd7"
+            }
           }
         ],
         "responses": {
           "201": {
             "description": "Created",
-            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/MinFactoryUserDto" } } }
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MinFactoryUserDto"
+                }
+              }
+            }
           },
-          "400": { "description": "Bad Request" },
-          "401": { "description": "Unauthorized" },
-          "409": { "description": "Conflict" },
-          "500": { "description": "Internal Server Error" }
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "409": {
+            "description": "Conflict"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
         },
         "summary": "",
         "tags": ["minFactory"]
@@ -181,24 +291,42 @@
             "required": true,
             "in": "path",
             "description": "Unique ID of resource",
-            "schema": { "example": "550e8400-e29b-41d4-a716-446655440000", "type": "string" }
+            "schema": {
+              "example": "550e8400-e29b-41d4-a716-446655440000",
+              "type": "string"
+            }
           },
           {
             "name": "X-Request-Id",
             "required": true,
             "in": "header",
             "description": "Unique request ID",
-            "schema": { "type": "string", "example": "80210e8c-9688-4369-a20a-4d69d1187dd7" }
+            "schema": {
+              "type": "string",
+              "example": "80210e8c-9688-4369-a20a-4d69d1187dd7"
+            }
           }
         ],
         "responses": {
-          "204": { "description": "Deleted" },
-          "400": { "description": "Bad Request" },
+          "204": {
+            "description": "Deleted"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
           "404": {
             "description": "minRPS game not found",
-            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/MinRpsErrorDto" } } }
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MinRpsErrorDto"
+                }
+              }
+            }
           },
-          "500": { "description": "Internal Server Error" }
+          "500": {
+            "description": "Internal Server Error"
+          }
         },
         "summary": "",
         "tags": ["minRPS"]
@@ -206,26 +334,52 @@
       "get": {
         "operationId": "getMinRpsGame",
         "parameters": [
-          { "name": "id", "required": true, "in": "path", "schema": { "type": "string" } },
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
           {
             "name": "X-Request-Id",
             "required": true,
             "in": "header",
             "description": "Unique request ID",
-            "schema": { "type": "string", "example": "80210e8c-9688-4369-a20a-4d69d1187dd7" }
+            "schema": {
+              "type": "string",
+              "example": "80210e8c-9688-4369-a20a-4d69d1187dd7"
+            }
           }
         ],
         "responses": {
           "200": {
             "description": "OK",
-            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/MinRpsGameDto" } } }
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MinRpsGameDto"
+                }
+              }
+            }
           },
-          "400": { "description": "Bad Request" },
+          "400": {
+            "description": "Bad Request"
+          },
           "404": {
             "description": "Not Found",
-            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/MinRpsErrorDto" } } }
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MinRpsErrorDto"
+                }
+              }
+            }
           },
-          "500": { "description": "Internal Server Error" }
+          "500": {
+            "description": "Internal Server Error"
+          }
         },
         "summary": "",
         "tags": ["minRPS"]
@@ -240,7 +394,10 @@
             "required": true,
             "in": "header",
             "description": "Unique request ID",
-            "schema": { "type": "string", "example": "80210e8c-9688-4369-a20a-4d69d1187dd7" }
+            "schema": {
+              "type": "string",
+              "example": "80210e8c-9688-4369-a20a-4d69d1187dd7"
+            }
           }
         ],
         "responses": {
@@ -248,12 +405,21 @@
             "description": "OK",
             "content": {
               "application/json": {
-                "schema": { "type": "array", "items": { "$ref": "#/components/schemas/MinRpsGameDto" } }
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/MinRpsGameDto"
+                  }
+                }
               }
             }
           },
-          "400": { "description": "Bad Request" },
-          "500": { "description": "Internal Server Error" }
+          "400": {
+            "description": "Bad Request"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
         },
         "summary": "",
         "tags": ["minRPS"]
@@ -266,20 +432,39 @@
             "required": true,
             "in": "header",
             "description": "Unique request ID",
-            "schema": { "type": "string", "example": "80210e8c-9688-4369-a20a-4d69d1187dd7" }
+            "schema": {
+              "type": "string",
+              "example": "80210e8c-9688-4369-a20a-4d69d1187dd7"
+            }
           }
         ],
         "requestBody": {
           "required": true,
-          "content": { "application/json": { "schema": { "$ref": "#/components/schemas/MinRpsCreateGameDto" } } }
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MinRpsCreateGameDto"
+              }
+            }
+          }
         },
         "responses": {
           "201": {
             "description": "Created",
-            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/MinRpsGameDto" } } }
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MinRpsGameDto"
+                }
+              }
+            }
           },
-          "400": { "description": "Bad Request" },
-          "500": { "description": "Internal Server Error" }
+          "400": {
+            "description": "Bad Request"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
         },
         "summary": "",
         "tags": ["minRPS"]
@@ -294,21 +479,42 @@
             "required": true,
             "in": "header",
             "description": "Unique request ID",
-            "schema": { "type": "string", "example": "80210e8c-9688-4369-a20a-4d69d1187dd7" }
+            "schema": {
+              "type": "string",
+              "example": "80210e8c-9688-4369-a20a-4d69d1187dd7"
+            }
           }
         ],
         "requestBody": {
           "required": true,
-          "content": { "application/json": { "schema": { "$ref": "#/components/schemas/MinRpsPlayDto" } } }
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MinRpsPlayDto"
+              }
+            }
+          }
         },
         "responses": {
           "201": {
             "description": "Created",
-            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/MinRpsPlayResultDto" } } }
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MinRpsPlayResultDto"
+                }
+              }
+            }
           },
-          "400": { "description": "Bad Request" },
-          "409": { "description": "Conflict" },
-          "500": { "description": "Internal Server Error" }
+          "400": {
+            "description": "Bad Request"
+          },
+          "409": {
+            "description": "Conflict"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
         },
         "summary": "",
         "tags": ["minRPS"]
@@ -323,13 +529,24 @@
             "description": "OK",
             "content": {
               "application/json": {
-                "schema": { "type": "array", "items": { "$ref": "#/components/schemas/MinAdventCalendarDto" } }
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/MinAdventCalendarDto"
+                  }
+                }
               }
             }
           },
-          "400": { "description": "Bad Request" },
-          "401": { "description": "Unauthorized" },
-          "500": { "description": "Internal Server Error" }
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
         },
         "summary": "",
         "tags": ["minAdvent"]
@@ -339,16 +556,34 @@
         "parameters": [],
         "requestBody": {
           "required": true,
-          "content": { "application/json": { "schema": { "$ref": "#/components/schemas/MinAdventCalendarCreateDto" } } }
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MinAdventCalendarCreateDto"
+              }
+            }
+          }
         },
         "responses": {
           "201": {
             "description": "Created",
-            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/MinAdventCalendarDto" } } }
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MinAdventCalendarDto"
+                }
+              }
+            }
           },
-          "400": { "description": "Bad Request" },
-          "401": { "description": "Unauthorized" },
-          "500": { "description": "Internal Server Error" }
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
         },
         "summary": "",
         "tags": ["minAdvent"]
@@ -363,19 +598,38 @@
             "required": true,
             "in": "path",
             "description": "Unique ID of resource",
-            "schema": { "example": "550e8400-e29b-41d4-a716-446655440000", "type": "string" }
+            "schema": {
+              "example": "550e8400-e29b-41d4-a716-446655440000",
+              "type": "string"
+            }
           }
         ],
         "responses": {
           "200": {
             "description": "OK",
-            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/MinAdventCalendarDto" } } }
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MinAdventCalendarDto"
+                }
+              }
+            }
           },
-          "400": { "description": "Bad Request" },
-          "401": { "description": "Unauthorized" },
-          "403": { "description": "Forbidden" },
-          "404": { "description": "Not Found" },
-          "500": { "description": "Internal Server Error" }
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
         },
         "summary": "",
         "tags": ["minAdvent"]
@@ -388,24 +642,51 @@
             "required": true,
             "in": "path",
             "description": "Unique ID of resource",
-            "schema": { "example": "550e8400-e29b-41d4-a716-446655440000", "type": "string" }
+            "schema": {
+              "example": "550e8400-e29b-41d4-a716-446655440000",
+              "type": "string"
+            }
           }
         ],
         "requestBody": {
           "required": true,
-          "content": { "application/json": { "schema": { "$ref": "#/components/schemas/MinAdventCalendarUpdateDto" } } }
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MinAdventCalendarUpdateDto"
+              }
+            }
+          }
         },
         "responses": {
           "200": {
             "description": "OK",
-            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/MinAdventCalendarDto" } } }
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MinAdventCalendarDto"
+                }
+              }
+            }
           },
-          "400": { "description": "Bad Request" },
-          "401": { "description": "Unauthorized" },
-          "403": { "description": "Forbidden" },
-          "404": { "description": "Not Found" },
-          "409": { "description": "Conflict" },
-          "500": { "description": "Internal Server Error" }
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "409": {
+            "description": "Conflict"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
         },
         "summary": "",
         "tags": ["minAdvent"]
@@ -420,27 +701,59 @@
             "required": true,
             "in": "path",
             "description": "Unique ID of resource",
-            "schema": { "example": "550e8400-e29b-41d4-a716-446655440000", "type": "string" }
+            "schema": {
+              "example": "550e8400-e29b-41d4-a716-446655440000",
+              "type": "string"
+            }
           },
-          { "name": "day", "required": true, "in": "path", "schema": { "type": "number" } }
+          {
+            "name": "day",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
         ],
         "requestBody": {
           "required": true,
-          "content": { "application/json": { "schema": { "$ref": "#/components/schemas/MinAdventDoorUpdateDto" } } }
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MinAdventDoorUpdateDto"
+              }
+            }
+          }
         },
         "responses": {
           "200": {
             "description": "OK",
             "content": {
-              "application/json": { "schema": { "$ref": "#/components/schemas/MinAdventDoorUpdateResponseDto" } }
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MinAdventDoorUpdateResponseDto"
+                }
+              }
             }
           },
-          "400": { "description": "Bad Request" },
-          "401": { "description": "Unauthorized" },
-          "403": { "description": "Forbidden" },
-          "404": { "description": "Not Found" },
-          "409": { "description": "Conflict" },
-          "500": { "description": "Internal Server Error" }
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "409": {
+            "description": "Conflict"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
         },
         "summary": "",
         "tags": ["minAdvent"]
@@ -455,21 +768,38 @@
             "required": true,
             "in": "path",
             "description": "Unique ID of resource",
-            "schema": { "example": "550e8400-e29b-41d4-a716-446655440000", "type": "string" }
+            "schema": {
+              "example": "550e8400-e29b-41d4-a716-446655440000",
+              "type": "string"
+            }
           }
         ],
         "responses": {
           "200": {
             "description": "OK",
             "content": {
-              "application/json": { "schema": { "$ref": "#/components/schemas/MinAdventSharingResponseDto" } }
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MinAdventSharingResponseDto"
+                }
+              }
             }
           },
-          "400": { "description": "Bad Request" },
-          "401": { "description": "Unauthorized" },
-          "403": { "description": "Forbidden" },
-          "404": { "description": "Not Found" },
-          "500": { "description": "Internal Server Error" }
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
         },
         "summary": "",
         "tags": ["minAdvent"]
@@ -482,26 +812,51 @@
             "required": true,
             "in": "path",
             "description": "Unique ID of resource",
-            "schema": { "example": "550e8400-e29b-41d4-a716-446655440000", "type": "string" }
+            "schema": {
+              "example": "550e8400-e29b-41d4-a716-446655440000",
+              "type": "string"
+            }
           }
         ],
         "requestBody": {
           "required": true,
-          "content": { "application/json": { "schema": { "$ref": "#/components/schemas/MinAdventSharingUpdateDto" } } }
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MinAdventSharingUpdateDto"
+              }
+            }
+          }
         },
         "responses": {
           "200": {
             "description": "OK",
             "content": {
-              "application/json": { "schema": { "$ref": "#/components/schemas/MinAdventSharingResponseDto" } }
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MinAdventSharingResponseDto"
+                }
+              }
             }
           },
-          "400": { "description": "Bad Request" },
-          "401": { "description": "Unauthorized" },
-          "403": { "description": "Forbidden" },
-          "404": { "description": "Not Found" },
-          "409": { "description": "Conflict" },
-          "500": { "description": "Internal Server Error" }
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "409": {
+            "description": "Conflict"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
         },
         "summary": "",
         "tags": ["minAdvent"]
@@ -516,26 +871,51 @@
             "required": true,
             "in": "path",
             "description": "Unique ID of resource",
-            "schema": { "example": "550e8400-e29b-41d4-a716-446655440000", "type": "string" }
+            "schema": {
+              "example": "550e8400-e29b-41d4-a716-446655440000",
+              "type": "string"
+            }
           }
         ],
         "requestBody": {
           "required": true,
-          "content": { "application/json": { "schema": { "$ref": "#/components/schemas/MinAdventTokenRotationDto" } } }
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MinAdventTokenRotationDto"
+              }
+            }
+          }
         },
         "responses": {
           "200": {
             "description": "OK",
             "content": {
-              "application/json": { "schema": { "$ref": "#/components/schemas/MinAdventSharingResponseDto" } }
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MinAdventSharingResponseDto"
+                }
+              }
             }
           },
-          "400": { "description": "Bad Request" },
-          "401": { "description": "Unauthorized" },
-          "403": { "description": "Forbidden" },
-          "404": { "description": "Not Found" },
-          "409": { "description": "Conflict" },
-          "500": { "description": "Internal Server Error" }
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "409": {
+            "description": "Conflict"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
         },
         "summary": "",
         "tags": ["minAdvent"]
@@ -544,16 +924,139 @@
     "/minadvent/shared/{token}": {
       "get": {
         "operationId": "getMinAdventSharedCalendar",
-        "parameters": [{ "name": "token", "required": true, "in": "path", "schema": { "type": "string" } }],
+        "parameters": [
+          {
+            "name": "token",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "OK",
             "content": {
-              "application/json": { "schema": { "$ref": "#/components/schemas/MinAdventSharedCalendarDto" } }
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MinAdventSharedCalendarDto"
+                }
+              }
             }
           },
-          "404": { "description": "Not Found" },
-          "500": { "description": "Internal Server Error" }
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "summary": "",
+        "tags": ["minAdvent"]
+      }
+    },
+    "/minadvent/shared/{token}/doors/{day}": {
+      "get": {
+        "operationId": "getMinAdventSharedDoor",
+        "parameters": [
+          {
+            "name": "token",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "day",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MinAdventSharedDoorContentDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "409": {
+            "description": "Conflict"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "summary": "",
+        "tags": ["minAdvent"]
+      },
+      "put": {
+        "operationId": "openMinAdventSharedDoor",
+        "parameters": [
+          {
+            "name": "token",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "day",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MinAdventSharedDoorOpenDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MinAdventSharedDoorOpenResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "409": {
+            "description": "Conflict"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
         },
         "summary": "",
         "tags": ["minAdvent"]
@@ -564,26 +1067,81 @@
     "title": "minFactory",
     "description": "minFactory OpenAPI specification. <br/> <a href=\"http://localhost:3000/openapi-json/\" target=\"_blank\">JSON specification</a>",
     "version": "v0.0.0",
-    "contact": { "name": "minFactory", "url": "https://minFactory.com", "email": "" }
+    "contact": {
+      "name": "minFactory",
+      "url": "https://minFactory.com",
+      "email": ""
+    }
   },
   "tags": [],
   "servers": [],
   "components": {
     "schemas": {
-      "MinPokerGameVisibility": { "type": "string", "enum": ["private", "public"] },
+      "MinPokerGameVisibility": {
+        "type": "string",
+        "enum": ["private", "public"]
+      },
       "MinPokerGameDto": {
         "type": "object",
         "properties": {
-          "bigBlind": { "type": "number", "example": 2, "minimum": 2, "maximum": 2 },
-          "createdAt": { "format": "date-time", "type": "string", "example": "2026-03-24T18:45:30.000Z" },
-          "creatorId": { "type": "string", "example": "550e8400-e29b-41d4-a716-446655440000", "format": "uuid" },
-          "id": { "type": "string", "example": "0d82d524-adfe-4403-8872-0c3899c727be", "format": "uuid" },
-          "name": { "type": "string", "example": "Test Name", "maxLength": 32, "minLength": 2 },
-          "observerCount": { "type": "number", "example": 10, "minimum": 0 },
-          "playerCount": { "type": "number", "example": 3, "minimum": 0, "maximum": 6 },
-          "smallBlind": { "type": "number", "example": 1, "minimum": 1, "maximum": 1 },
-          "tableSize": { "type": "number", "example": 6, "minimum": 6, "maximum": 6 },
-          "visibility": { "example": "public", "allOf": [{ "$ref": "#/components/schemas/MinPokerGameVisibility" }] }
+          "bigBlind": {
+            "type": "number",
+            "example": 2,
+            "minimum": 2,
+            "maximum": 2
+          },
+          "createdAt": {
+            "format": "date-time",
+            "type": "string",
+            "example": "2026-03-24T18:45:30.000Z"
+          },
+          "creatorId": {
+            "type": "string",
+            "example": "550e8400-e29b-41d4-a716-446655440000",
+            "format": "uuid"
+          },
+          "id": {
+            "type": "string",
+            "example": "0d82d524-adfe-4403-8872-0c3899c727be",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string",
+            "example": "Test Name",
+            "maxLength": 32,
+            "minLength": 2
+          },
+          "observerCount": {
+            "type": "number",
+            "example": 10,
+            "minimum": 0
+          },
+          "playerCount": {
+            "type": "number",
+            "example": 3,
+            "minimum": 0,
+            "maximum": 6
+          },
+          "smallBlind": {
+            "type": "number",
+            "example": 1,
+            "minimum": 1,
+            "maximum": 1
+          },
+          "tableSize": {
+            "type": "number",
+            "example": 6,
+            "minimum": 6,
+            "maximum": 6
+          },
+          "visibility": {
+            "example": "public",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/MinPokerGameVisibility"
+              }
+            ]
+          }
         },
         "required": [
           "bigBlind",
@@ -601,182 +1159,501 @@
       "MinPokerCreateGameDto": {
         "type": "object",
         "properties": {
-          "visibility": { "example": "public", "allOf": [{ "$ref": "#/components/schemas/MinPokerGameVisibility" }] },
-          "name": { "type": "string", "example": "Test Name", "maxLength": 32, "minLength": 2 }
+          "visibility": {
+            "example": "public",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/MinPokerGameVisibility"
+              }
+            ]
+          },
+          "name": {
+            "type": "string",
+            "example": "Test Name",
+            "maxLength": 32,
+            "minLength": 2
+          }
         },
         "required": ["visibility", "name"]
       },
       "MinFactoryUserDto": {
         "type": "object",
         "properties": {
-          "id": { "type": "string", "example": "a1b2c3d4-e5f6-7890-abcd-ef1234567890" },
-          "createdAt": { "format": "date-time", "type": "string", "example": "2025-10-21T18:45:30.000Z" },
-          "email": { "type": "string", "example": "user@example.com" },
-          "role": { "type": "string", "enum": ["admin", "guest", "user"], "example": "user" }
+          "id": {
+            "type": "string",
+            "example": "a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+          },
+          "createdAt": {
+            "format": "date-time",
+            "type": "string",
+            "example": "2025-10-21T18:45:30.000Z"
+          },
+          "email": {
+            "type": "string",
+            "example": "user@example.com"
+          },
+          "role": {
+            "type": "string",
+            "enum": ["admin", "guest", "user"],
+            "example": "user"
+          }
         },
         "required": ["id", "createdAt", "email", "role"]
       },
       "MinRpsErrorDto": {
         "type": "object",
         "properties": {
-          "errorCode": { "type": "string", "example": "XXX.XXX.XXX" },
-          "requestId": { "type": "string", "example": "XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX", "format": "uuid" },
-          "statusCode": { "type": "number", "example": 500 },
-          "properties": { "type": "object", "example": { "lorem": "ipsum" }, "additionalProperties": true }
+          "errorCode": {
+            "type": "string",
+            "example": "XXX.XXX.XXX"
+          },
+          "requestId": {
+            "type": "string",
+            "example": "XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX",
+            "format": "uuid"
+          },
+          "statusCode": {
+            "type": "number",
+            "example": 500
+          },
+          "properties": {
+            "type": "object",
+            "example": {
+              "lorem": "ipsum"
+            },
+            "additionalProperties": true
+          }
         },
         "required": ["errorCode", "requestId", "statusCode"]
       },
       "MinRpsGameDto": {
         "type": "object",
         "properties": {
-          "createdAt": { "format": "date-time", "type": "string", "example": "2000-01-01T00:00:00.000Z" },
-          "id": { "type": "string", "example": "XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX", "format": "uuid" },
-          "name": { "type": "string", "example": "Lorem ipsum", "maxLength": 16, "minLength": 2 },
-          "observerCount": { "type": "number", "example": 1, "minimum": 0 },
-          "playerCount": { "type": "number", "example": 1, "minimum": 0 }
+          "createdAt": {
+            "format": "date-time",
+            "type": "string",
+            "example": "2000-01-01T00:00:00.000Z"
+          },
+          "id": {
+            "type": "string",
+            "example": "XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string",
+            "example": "Lorem ipsum",
+            "maxLength": 16,
+            "minLength": 2
+          },
+          "observerCount": {
+            "type": "number",
+            "example": 1,
+            "minimum": 0
+          },
+          "playerCount": {
+            "type": "number",
+            "example": 1,
+            "minimum": 0
+          }
         },
         "required": ["createdAt", "id", "name", "observerCount", "playerCount"]
       },
       "MinRpsCreateGameDto": {
         "type": "object",
-        "properties": { "name": { "type": "string", "example": "Lorem ipsum" } },
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "Lorem ipsum"
+          }
+        },
         "required": ["name"]
       },
-      "MinRpsMove": { "type": "string", "enum": ["none", "rock", "paper", "scissors"] },
+      "MinRpsMove": {
+        "type": "string",
+        "enum": ["none", "rock", "paper", "scissors"]
+      },
       "MinRpsPlayDto": {
         "type": "object",
         "properties": {
-          "player1Move": { "example": "rock", "allOf": [{ "$ref": "#/components/schemas/MinRpsMove" }] }
+          "player1Move": {
+            "example": "rock",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/MinRpsMove"
+              }
+            ]
+          }
         },
         "required": ["player1Move"]
       },
-      "MinRpsResult": { "type": "string", "enum": ["None", "Player1", "Player2", "Draw"] },
+      "MinRpsResult": {
+        "type": "string",
+        "enum": ["None", "Player1", "Player2", "Draw"]
+      },
       "MinRpsPlayResultDto": {
         "type": "object",
         "properties": {
-          "player1Move": { "example": "rock", "allOf": [{ "$ref": "#/components/schemas/MinRpsMove" }] },
-          "player2Move": { "example": "rock", "allOf": [{ "$ref": "#/components/schemas/MinRpsMove" }] },
-          "result": { "example": "Draw", "allOf": [{ "$ref": "#/components/schemas/MinRpsResult" }] }
+          "player1Move": {
+            "example": "rock",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/MinRpsMove"
+              }
+            ]
+          },
+          "player2Move": {
+            "example": "rock",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/MinRpsMove"
+              }
+            ]
+          },
+          "result": {
+            "example": "Draw",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/MinRpsResult"
+              }
+            ]
+          }
         },
         "required": ["player1Move", "player2Move", "result"]
       },
-      "MinAdventDoorStatus": { "type": "string", "enum": ["EMPTY", "FILLED", "OPENED"] },
-      "MinAdventBlockType": { "type": "string", "enum": ["TEXT", "LINK", "VOUCHER"] },
+      "MinAdventDoorStatus": {
+        "type": "string",
+        "enum": ["EMPTY", "FILLED", "OPENED"]
+      },
+      "MinAdventBlockType": {
+        "type": "string",
+        "enum": ["TEXT", "LINK", "VOUCHER"]
+      },
       "MinAdventBlockDto": {
         "type": "object",
         "properties": {
-          "description": { "type": "string", "nullable": true, "maxLength": 2000 },
-          "position": { "type": "number", "minimum": 1, "maximum": 10 },
+          "description": {
+            "type": "string",
+            "nullable": true,
+            "maxLength": 2000
+          },
+          "position": {
+            "type": "number",
+            "minimum": 1,
+            "maximum": 10
+          },
           "text": {
             "type": "string",
             "nullable": true,
             "maxLength": 10000,
             "description": "Sanitized HTML with a limited formatting allowlist."
           },
-          "title": { "type": "string", "nullable": true, "maxLength": 100 },
-          "type": { "allOf": [{ "$ref": "#/components/schemas/MinAdventBlockType" }] },
-          "url": { "type": "string", "nullable": true, "maxLength": 2048, "format": "uri" }
+          "title": {
+            "type": "string",
+            "nullable": true,
+            "maxLength": 100
+          },
+          "type": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/MinAdventBlockType"
+              }
+            ]
+          },
+          "url": {
+            "type": "string",
+            "nullable": true,
+            "maxLength": 2048,
+            "format": "uri"
+          }
         },
         "required": ["position", "type"]
       },
       "MinAdventDoorDto": {
         "type": "object",
         "properties": {
-          "day": { "type": "number", "minimum": 1, "maximum": 24 },
-          "status": { "allOf": [{ "$ref": "#/components/schemas/MinAdventDoorStatus" }] },
-          "blocks": { "type": "array", "items": { "$ref": "#/components/schemas/MinAdventBlockDto" } }
+          "day": {
+            "type": "number",
+            "minimum": 1,
+            "maximum": 24
+          },
+          "status": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/MinAdventDoorStatus"
+              }
+            ]
+          },
+          "blocks": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MinAdventBlockDto"
+            }
+          }
         },
         "required": ["day", "status", "blocks"]
       },
       "MinAdventCalendarDto": {
         "type": "object",
         "properties": {
-          "id": { "type": "string" },
-          "title": { "type": "string", "maxLength": 100 },
-          "recipientName": { "type": "string", "maxLength": 100 },
-          "year": { "type": "number" },
-          "version": { "type": "number" },
-          "published": { "type": "boolean" },
-          "completed": { "type": "boolean" },
-          "doors": { "type": "array", "items": { "$ref": "#/components/schemas/MinAdventDoorDto" } }
+          "id": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string",
+            "maxLength": 100
+          },
+          "recipientName": {
+            "type": "string",
+            "maxLength": 100
+          },
+          "year": {
+            "type": "number"
+          },
+          "version": {
+            "type": "number"
+          },
+          "published": {
+            "type": "boolean"
+          },
+          "completed": {
+            "type": "boolean"
+          },
+          "doors": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MinAdventDoorDto"
+            }
+          }
         },
         "required": ["id", "title", "recipientName", "year", "version", "published", "completed", "doors"]
       },
       "MinAdventCalendarCreateDto": {
         "type": "object",
         "properties": {
-          "year": { "type": "number", "minimum": 1, "maximum": 9999, "example": 2026 },
-          "recipientName": { "type": "string", "maxLength": 100 },
-          "title": { "type": "string", "maxLength": 100 }
+          "year": {
+            "type": "number",
+            "minimum": 1,
+            "maximum": 9999,
+            "example": 2026
+          },
+          "recipientName": {
+            "type": "string",
+            "maxLength": 100
+          },
+          "title": {
+            "type": "string",
+            "maxLength": 100
+          }
         },
         "required": ["year", "recipientName", "title"]
       },
       "MinAdventCalendarUpdateDto": {
         "type": "object",
         "properties": {
-          "expectedVersion": { "type": "number", "minimum": 1 },
-          "recipientName": { "type": "string", "maxLength": 100 },
-          "title": { "type": "string", "maxLength": 100 }
+          "expectedVersion": {
+            "type": "number",
+            "minimum": 1
+          },
+          "recipientName": {
+            "type": "string",
+            "maxLength": 100
+          },
+          "title": {
+            "type": "string",
+            "maxLength": 100
+          }
         },
         "required": ["expectedVersion"]
       },
       "MinAdventDoorUpdateDto": {
         "type": "object",
         "properties": {
-          "blocks": { "maxItems": 10, "type": "array", "items": { "$ref": "#/components/schemas/MinAdventBlockDto" } },
-          "expectedVersion": { "type": "number", "minimum": 1 }
+          "blocks": {
+            "maxItems": 10,
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MinAdventBlockDto"
+            }
+          },
+          "expectedVersion": {
+            "type": "number",
+            "minimum": 1
+          }
         },
         "required": ["blocks", "expectedVersion"]
       },
       "MinAdventDoorUpdateResponseDto": {
         "type": "object",
         "properties": {
-          "day": { "type": "number", "minimum": 1, "maximum": 24 },
-          "status": { "allOf": [{ "$ref": "#/components/schemas/MinAdventDoorStatus" }] },
-          "version": { "type": "number" },
-          "completed": { "type": "boolean" }
+          "day": {
+            "type": "number",
+            "minimum": 1,
+            "maximum": 24
+          },
+          "status": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/MinAdventDoorStatus"
+              }
+            ]
+          },
+          "version": {
+            "type": "number"
+          },
+          "completed": {
+            "type": "boolean"
+          }
         },
         "required": ["day", "status", "version", "completed"]
       },
       "MinAdventSharingResponseDto": {
         "type": "object",
         "properties": {
-          "published": { "type": "boolean" },
-          "sharedUrl": { "type": "string" },
-          "version": { "type": "number" },
-          "completed": { "type": "boolean" }
+          "published": {
+            "type": "boolean"
+          },
+          "sharedUrl": {
+            "type": "string"
+          },
+          "version": {
+            "type": "number"
+          },
+          "completed": {
+            "type": "boolean"
+          }
         },
         "required": ["published", "version", "completed"]
       },
       "MinAdventSharingUpdateDto": {
         "type": "object",
-        "properties": { "published": { "type": "boolean" }, "expectedVersion": { "type": "number" } },
+        "properties": {
+          "published": {
+            "type": "boolean"
+          },
+          "expectedVersion": {
+            "type": "number"
+          }
+        },
         "required": ["published", "expectedVersion"]
       },
       "MinAdventTokenRotationDto": {
         "type": "object",
-        "properties": { "expectedVersion": { "type": "number" } },
+        "properties": {
+          "expectedVersion": {
+            "type": "number"
+          }
+        },
         "required": ["expectedVersion"]
       },
       "MinAdventSharedDoorDto": {
         "type": "object",
         "properties": {
-          "day": { "type": "number" },
-          "status": { "allOf": [{ "$ref": "#/components/schemas/MinAdventDoorStatus" }] }
+          "day": {
+            "type": "number"
+          },
+          "status": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/MinAdventDoorStatus"
+              }
+            ]
+          }
         },
         "required": ["day", "status"]
       },
       "MinAdventSharedCalendarDto": {
         "type": "object",
         "properties": {
-          "title": { "type": "string" },
-          "recipientName": { "type": "string" },
-          "year": { "type": "number" },
-          "version": { "type": "number" },
-          "completed": { "type": "boolean" },
-          "doors": { "type": "array", "items": { "$ref": "#/components/schemas/MinAdventSharedDoorDto" } }
+          "title": {
+            "type": "string"
+          },
+          "recipientName": {
+            "type": "string"
+          },
+          "year": {
+            "type": "number"
+          },
+          "version": {
+            "type": "number"
+          },
+          "completed": {
+            "type": "boolean"
+          },
+          "doors": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MinAdventSharedDoorDto"
+            }
+          }
         },
         "required": ["title", "recipientName", "year", "version", "completed", "doors"]
+      },
+      "MinAdventSharedDoorContentDto": {
+        "type": "object",
+        "properties": {
+          "day": {
+            "type": "number",
+            "minimum": 1,
+            "maximum": 24
+          },
+          "status": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/MinAdventDoorStatus"
+              }
+            ]
+          },
+          "blocks": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MinAdventBlockDto"
+            }
+          }
+        },
+        "required": ["day", "status", "blocks"]
+      },
+      "MinAdventSharedDoorOpenDto": {
+        "type": "object",
+        "properties": {
+          "expectedVersion": {
+            "type": "number",
+            "minimum": 1
+          }
+        },
+        "required": ["expectedVersion"]
+      },
+      "MinAdventSharedDoorOpenResponseDto": {
+        "type": "object",
+        "properties": {
+          "day": {
+            "type": "number",
+            "minimum": 1,
+            "maximum": 24
+          },
+          "status": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/MinAdventDoorStatus"
+              }
+            ]
+          },
+          "version": {
+            "type": "number"
+          },
+          "completed": {
+            "type": "boolean"
+          },
+          "firstOpened": {
+            "type": "boolean"
+          },
+          "blocks": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MinAdventBlockDto"
+            }
+          }
+        },
+        "required": ["day", "status", "version", "completed", "firstOpened", "blocks"]
       }
     }
   }

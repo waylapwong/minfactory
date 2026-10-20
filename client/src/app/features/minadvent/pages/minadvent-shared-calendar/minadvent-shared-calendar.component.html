@@ -56,11 +56,82 @@
             [class.bg-sky-100]="door.status === 'OPENED'"
             [class.text-sky-950]="door.status === 'OPENED'"
           >
-            <span class="text-2xl font-bold tabular-nums">{{ door.day }}</span>
-            <span class="text-xs font-semibold">{{ getDoorStatusLabel(door.status) }}</span>
+            <button
+              type="button"
+              class="flex h-full w-full flex-col items-center justify-center gap-1 rounded-sm focus-visible:outline-4 focus-visible:outline-offset-2 focus-visible:outline-blue-700 disabled:cursor-not-allowed disabled:opacity-70"
+              [disabled]="door.status === 'EMPTY' || !isDoorAvailable(door.day) || isDoorLoading()"
+              [attr.aria-label]="'Türchen ' + door.day + ', ' + getDoorStatusLabel(door.status)"
+              (click)="selectDoor(door.day)"
+            >
+              <span class="text-2xl font-bold tabular-nums">{{ door.day }}</span>
+              <span class="text-xs font-semibold">{{ getDoorStatusLabel(door.status) }}</span>
+            </button>
           </li>
         }
       </ol>
+    }
+
+    @if (doorError()) {
+      <section role="alert" class="flex flex-col items-center gap-3 text-center">
+        <p class="text-gray-800">{{ doorError() }}</p>
+        @if (reloadRequired()) {
+          <button
+            type="button"
+            class="rounded border-2 border-gray-800 px-4 py-2 font-semibold text-gray-900 focus-visible:outline-4 focus-visible:outline-blue-700"
+            (click)="reloadAfterConflict()"
+          >
+            Übersicht neu laden
+          </button>
+        }
+      </section>
+    }
+
+    @if (selectedDoor(); as content) {
+      <dialog
+        #contentDialog
+        aria-labelledby="door-title"
+        (close)="closeDoor()"
+        class="m-auto h-full max-h-full w-full max-w-none overflow-y-auto bg-black/50 p-4 backdrop:bg-black/50 sm:h-auto sm:max-w-2xl sm:overflow-visible"
+      >
+        <section
+          class="w-full max-w-2xl rounded-lg bg-white p-5 shadow-xl sm:p-8"
+          [class.animate-[door-reveal_450ms_ease-out]]="animateDoor()"
+        >
+          <header class="mb-5 flex items-start justify-between gap-4">
+            <h2 id="door-title" class="text-2xl font-bold text-gray-950">Türchen {{ content.day }}</h2>
+            <button
+              type="button"
+              aria-label="Inhalt schließen"
+              class="rounded border-2 border-gray-800 px-3 py-1 font-semibold text-gray-900 focus-visible:outline-4 focus-visible:outline-blue-700"
+              (click)="closeDoor()"
+            >
+              Schließen
+            </button>
+          </header>
+          <div class="flex flex-col gap-4">
+            @for (block of content.blocks; track block.position) {
+              @if (block.type === 'TEXT') {
+                <div class="break-words text-gray-900" [innerHTML]="block.text"></div>
+              } @else if (block.type === 'LINK') {
+                <p>
+                  <a
+                    class="font-semibold text-blue-800 underline focus-visible:outline-4 focus-visible:outline-blue-700"
+                    [href]="block.url"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    >{{ block.title }}</a
+                  >
+                </p>
+              } @else {
+                <section class="rounded border border-amber-700 bg-amber-50 p-4">
+                  <h3 class="font-bold text-gray-950">{{ block.title }}</h3>
+                  <p class="mt-2 whitespace-pre-wrap text-gray-900">{{ block.description }}</p>
+                </section>
+              }
+            }
+          </div>
+        </section>
+      </dialog>
     }
   }
 </main>

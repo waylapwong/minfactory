@@ -94,6 +94,90 @@ export class MinAdventCalendarRepository {
     });
   }
 
+  public async getSharedDoor(token: string, day: number): Promise<MinAdventCalendarEntity | null> {
+    const calendar = await this.calendars.findOne({
+      where: { activeToken: token, isPublished: true },
+      relations: { doors: { blocks: true } },
+      order: { doors: { day: 'ASC', blocks: { position: 'ASC' } } },
+    });
+    if (!calendar) {
+      return null;
+    }
+    calendar.doors = (calendar.doors ?? []).filter((door) => door.day === day);
+    return calendar;
+  }
+
+  public async openSharedDoor(
+    token: string,
+    day: number,
+    expectedVersion: number,
+    currentDate: { year: number; month: number; day: number },
+  ): Promise<{ calendar: MinAdventCalendarEntity; firstOpened: boolean }> {
+    return this.dataSource.transaction(async (manager) => {
+      const calendarRepository = manager.getRepository(MinAdventCalendarEntity);
+      const doorRepository = manager.getRepository(MinAdventDoorEntity);
+      const blockRepository = manager.getRepository(MinAdventBlockEntity);
+      const calendar = await calendarRepository
+        .createQueryBuilder('calendar')
+        .setLock('pessimistic_write')
+        .where('calendar.activeToken = :token AND calendar.isPublished = :published', { token, published: true })
+        .getOne();
+      if (!calendar) {
+        throw new NotFoundException('Shared calendar is unavailable.');
+      }
+      if (calendar.version !== expectedVersion) {
+        throw new ConflictException({
+          code: 'VERSION_CONFLICT',
+          message: 'Der Kalender wurde zwischenzeitlich geÃ¤ndert.',
+        });
+      }
+      const doors = await doorRepository.find({ where: { calendarId: calendar.id } });
+      const door = doors.find((candidate) => candidate.day === day);
+      if (!door) {
+        throw new NotFoundException('Door not found.');
+      }
+      if (door.status === MinAdventDoorStatus.Opened) {
+        const blocks = await blockRepository.find({ where: { doorId: door.id }, order: { position: 'ASC' } });
+        calendar.doors = doors.map((item) => Object.assign(item, { blocks: item.id === door.id ? blocks : [] }));
+        return { calendar, firstOpened: false };
+      }
+      if (door.status !== MinAdventDoorStatus.Filled) {
+        throw new ConflictException({ code: 'DOOR_EMPTY', message: 'Dieses TÃ¼rchen enthÃ¤lt keinen Inhalt.' });
+      }
+      if (
+        currentDate.year < calendar.year ||
+        (currentDate.year === calendar.year &&
+          (currentDate.month < 12 || (currentDate.month === 12 && currentDate.day < day)))
+      ) {
+        throw new ConflictException({
+          code: 'DOOR_NOT_YET_UNLOCKED',
+          message: 'Dieses TÃ¼rchen ist noch nicht freigegeben.',
+        });
+      }
+      await doorRepository.update({ id: door.id }, { status: MinAdventDoorStatus.Opened });
+      const update = await calendarRepository.update(
+        { id: calendar.id, version: expectedVersion },
+        { version: expectedVersion + 1 },
+      );
+      if (!update.affected) {
+        throw new ConflictException({
+          code: 'VERSION_CONFLICT',
+          message: 'Der Kalender wurde zwischenzeitlich geÃ¤ndert.',
+        });
+      }
+      const blocks = await blockRepository.find({ where: { doorId: door.id }, order: { position: 'ASC' } });
+      const refreshed = await calendarRepository.findOne({
+        where: { id: calendar.id },
+        relations: { doors: { blocks: true } },
+        order: { doors: { day: 'ASC', blocks: { position: 'ASC' } } },
+      });
+      if (!refreshed) {
+        throw new NotFoundException('Calendar not found.');
+      }
+      return { calendar: refreshed, firstOpened: true };
+    });
+  }
+
   public async findByOwner(ownerId: string): Promise<MinAdventCalendarEntity[]> {
     return this.calendars.find({
       where: { ownerId },

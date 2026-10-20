@@ -15,6 +15,8 @@ describe('MinAdventSharedCalendarComponent', () => {
   beforeEach(async () => {
     MINADVENT_ACTIVATED_ROUTE_MOCK.snapshot.paramMap = convertToParamMap({ token: 'shared-token' });
     MINADVENT_CALENDAR_SERVICE_MOCK.getSharedCalendar.calls.reset();
+    MINADVENT_CALENDAR_SERVICE_MOCK.getSharedDoor.calls.reset();
+    MINADVENT_CALENDAR_SERVICE_MOCK.openSharedDoor.calls.reset();
 
     await TestBed.configureTestingModule({
       imports: [MinAdventSharedCalendarComponent],
@@ -93,6 +95,67 @@ describe('MinAdventSharedCalendarComponent', () => {
 
       expect(fixture.nativeElement.textContent).toContain('Der Adventskalender konnte nicht geladen werden.');
       expect(fixture.nativeElement.querySelector('button')?.textContent).toContain('Erneut laden');
+    });
+  });
+
+  describe('selectDoor()', () => {
+    it('opens a filled unlocked door and displays the first-open animation', async () => {
+      MINADVENT_CALENDAR_SERVICE_MOCK.getSharedCalendar.and.resolveTo(createMinAdventSharedCalendarDto());
+      MINADVENT_CALENDAR_SERVICE_MOCK.openSharedDoor.and.resolveTo({
+        day: 1,
+        status: 'OPENED',
+        version: 2,
+        completed: false,
+        firstOpened: true,
+        blocks: [],
+      });
+      fixture.detectChanges();
+      await fixture.whenStable();
+      component.now.set(Date.UTC(2026, 11, 1, 0, 0));
+
+      await component.selectDoor(1);
+
+      expect(MINADVENT_CALENDAR_SERVICE_MOCK.openSharedDoor).toHaveBeenCalledWith('shared-token', 1, 1);
+      expect(component.selectedDoor()?.day).toBe(1);
+      expect(component.animateDoor()).toBeTrue();
+      expect(component.calendar()?.version).toBe(2);
+    });
+
+    it('uses a read-only GET to show an already opened door', async () => {
+      const calendar = createMinAdventSharedCalendarDto({
+        doors: Array.from({ length: 24 }, (_, index) => ({ day: index + 1, status: index === 0 ? 'OPENED' : 'EMPTY' })),
+      });
+      MINADVENT_CALENDAR_SERVICE_MOCK.getSharedCalendar.and.resolveTo(calendar);
+      MINADVENT_CALENDAR_SERVICE_MOCK.getSharedDoor.and.resolveTo({ day: 1, status: 'OPENED', blocks: [] });
+      fixture.detectChanges();
+      await fixture.whenStable();
+      component.now.set(Date.UTC(2026, 11, 1, 0, 0));
+
+      await component.selectDoor(1);
+
+      expect(MINADVENT_CALENDAR_SERVICE_MOCK.getSharedDoor).toHaveBeenCalledWith('shared-token', 1);
+      expect(MINADVENT_CALENDAR_SERVICE_MOCK.openSharedDoor).not.toHaveBeenCalled();
+      expect(component.animateDoor()).toBeFalse();
+    });
+
+    it('requires a confirmed reload after a lost opening response instead of retrying it', async () => {
+      MINADVENT_CALENDAR_SERVICE_MOCK.getSharedCalendar.and.resolveTo(createMinAdventSharedCalendarDto());
+      MINADVENT_CALENDAR_SERVICE_MOCK.openSharedDoor.and.rejectWith(new HttpErrorResponse({ status: 0 }));
+      fixture.detectChanges();
+      await fixture.whenStable();
+      component.now.set(Date.UTC(2026, 11, 1, 0, 0));
+
+      await component.selectDoor(1);
+
+      expect(component.reloadRequired()).toBeTrue();
+      expect(MINADVENT_CALENDAR_SERVICE_MOCK.openSharedDoor).toHaveBeenCalledTimes(1);
+
+      spyOn(window, 'confirm').and.returnValue(true);
+      await component.reloadAfterConflict();
+
+      expect(window.confirm).toHaveBeenCalled();
+      expect(MINADVENT_CALENDAR_SERVICE_MOCK.getSharedCalendar).toHaveBeenCalledTimes(2);
+      expect(MINADVENT_CALENDAR_SERVICE_MOCK.openSharedDoor).toHaveBeenCalledTimes(1);
     });
   });
 });

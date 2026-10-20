@@ -14,6 +14,8 @@ describe('MinAdventCalendarRepository', () => {
     MINADVENT_API_SERVICE_MOCK.getMinAdventCalendar.calls.reset();
     MINADVENT_API_SERVICE_MOCK.getMinAdventCalendars.calls.reset();
     MINADVENT_API_SERVICE_MOCK.getMinAdventSharedCalendar.calls.reset();
+    MINADVENT_API_SERVICE_MOCK.getMinAdventSharedDoor.calls.reset();
+    MINADVENT_API_SERVICE_MOCK.openMinAdventSharedDoor.calls.reset();
     MINADVENT_API_SERVICE_MOCK.updateMinAdventCalendar.calls.reset();
 
     TestBed.configureTestingModule({
@@ -78,6 +80,35 @@ describe('MinAdventCalendarRepository', () => {
 
       expect(MINADVENT_API_SERVICE_MOCK.getMinAdventSharedCalendar).toHaveBeenCalledWith('shared-token');
       expect(result).toBe(MINADVENT_SHARED_CALENDAR_DTO_MOCK);
+    });
+  });
+
+  describe('getSharedDoor()', () => {
+    it('gets content through the generated API service', async () => {
+      const response = { day: 2, status: 'OPENED', blocks: [] } as never;
+      MINADVENT_API_SERVICE_MOCK.getMinAdventSharedDoor.and.returnValue(of(response));
+
+      await expectAsync(repository.getSharedDoor('shared-token', 2)).toBeResolvedTo(response);
+      expect(MINADVENT_API_SERVICE_MOCK.getMinAdventSharedDoor).toHaveBeenCalledWith('shared-token', 2);
+    });
+  });
+
+  describe('openSharedDoor()', () => {
+    it('opens content through the generated API service with the current version', async () => {
+      const response = {
+        day: 2,
+        status: 'OPENED',
+        version: 3,
+        completed: false,
+        firstOpened: true,
+        blocks: [],
+      } as never;
+      MINADVENT_API_SERVICE_MOCK.openMinAdventSharedDoor.and.returnValue(of(response));
+
+      await expectAsync(repository.openSharedDoor('shared-token', 2, 2)).toBeResolvedTo(response);
+      expect(MINADVENT_API_SERVICE_MOCK.openMinAdventSharedDoor).toHaveBeenCalledWith('shared-token', 2, {
+        expectedVersion: 2,
+      });
     });
   });
 

@@ -8,6 +8,8 @@ import { MinAdventSharedCalendarDto } from '../../../core/generated/model/min-ad
 import { MinAdventDomainMapper } from '../mapper/minadvent-domain.mapper';
 import { MinAdventCalendar } from '../models/minadvent-calendar.model';
 import { MinAdventCalendarRepository } from '../repositories/minadvent-calendar.repository';
+import { MinAdventSharedDoorContentDto } from '../../../core/generated/model/min-advent-shared-door-content-dto';
+import { MinAdventSharedDoorOpenResponseDto } from '../../../core/generated/model/min-advent-shared-door-open-response-dto';
 
 @Injectable({ providedIn: 'root' })
 export class MinAdventCalendarService {
@@ -29,6 +31,18 @@ export class MinAdventCalendarService {
 
   public getSharedCalendar(token: string): Promise<MinAdventSharedCalendarDto> {
     return this.repository.getSharedCalendar(token);
+  }
+
+  public getSharedDoor(token: string, day: number): Promise<MinAdventSharedDoorContentDto> {
+    return this.repository.getSharedDoor(token, day);
+  }
+
+  public openSharedDoor(
+    token: string,
+    day: number,
+    expectedVersion: number,
+  ): Promise<MinAdventSharedDoorOpenResponseDto> {
+    return this.repository.openSharedDoor(token, day, expectedVersion);
   }
 
   public async loadCalendars(): Promise<void> {

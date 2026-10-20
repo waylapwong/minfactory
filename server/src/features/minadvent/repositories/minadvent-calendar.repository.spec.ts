@@ -204,4 +204,106 @@ describe('MinAdventCalendarRepository', () => {
       expect(transaction.calendarRepository.update).not.toHaveBeenCalled();
     });
   });
+
+  describe('openSharedDoor()', () => {
+    it('checks the global version before reading the selected door', async () => {
+      transaction.calendar.version = 3;
+
+      await expect(
+        repository.openSharedDoor('a'.repeat(64), 1, 2, { year: 2026, month: 12, day: 1 }),
+      ).rejects.toMatchObject({
+        response: expect.objectContaining({ code: 'VERSION_CONFLICT' }),
+      });
+
+      expect(transaction.doorRepository.find).not.toHaveBeenCalled();
+      expect(transaction.doorRepository.update).not.toHaveBeenCalled();
+    });
+
+    it('opens FILLED atomically and increments the version once', async () => {
+      const door = Object.assign(new MinAdventDoorEntity(), {
+        id: 'door-1',
+        calendarId: 'calendar-1',
+        day: 1,
+        status: MinAdventDoorStatus.Filled,
+      });
+      transaction.calendar.activeToken = 'a'.repeat(64);
+      transaction.doors.push(door);
+      const block = Object.assign(new MinAdventBlockEntity(), {
+        id: 'block-1',
+        doorId: door.id,
+        position: 1,
+        type: 'TEXT',
+        text: '<p>Surprise</p>',
+      });
+      transaction.blockRepository.find.mockResolvedValue([block]);
+      transaction.calendarRepository.findOne.mockResolvedValue({
+        ...transaction.calendar,
+        version: 2,
+        doors: [{ ...door, status: MinAdventDoorStatus.Opened, blocks: [block] }],
+      });
+
+      const result = await repository.openSharedDoor('a'.repeat(64), 1, 1, { year: 2026, month: 12, day: 1 });
+
+      expect(transaction.calendarQueryBuilder.setLock).toHaveBeenCalledWith('pessimistic_write');
+      expect(transaction.calendarQueryBuilder.where).toHaveBeenCalledWith(
+        'calendar.activeToken = :token AND calendar.isPublished = :published',
+        { token: 'a'.repeat(64), published: true },
+      );
+      expect(transaction.doorRepository.update).toHaveBeenCalledWith(
+        { id: door.id },
+        { status: MinAdventDoorStatus.Opened },
+      );
+      expect(transaction.calendarRepository.update).toHaveBeenCalledWith(
+        { id: 'calendar-1', version: 1 },
+        { version: 2 },
+      );
+      expect(result.firstOpened).toBe(true);
+      expect(result.calendar.version).toBe(2);
+    });
+
+    it('rejects empty doors and doors before their December day', async () => {
+      transaction.doors.push(
+        Object.assign(new MinAdventDoorEntity(), { id: 'door-1', day: 1, status: MinAdventDoorStatus.Empty }),
+        Object.assign(new MinAdventDoorEntity(), { id: 'door-2', day: 2, status: MinAdventDoorStatus.Filled }),
+      );
+
+      await expect(
+        repository.openSharedDoor('a'.repeat(64), 1, 1, { year: 2026, month: 12, day: 1 }),
+      ).rejects.toMatchObject({
+        response: expect.objectContaining({ code: 'DOOR_EMPTY' }),
+      });
+      await expect(
+        repository.openSharedDoor('a'.repeat(64), 2, 1, { year: 2026, month: 12, day: 1 }),
+      ).rejects.toMatchObject({
+        response: expect.objectContaining({ code: 'DOOR_NOT_YET_UNLOCKED' }),
+      });
+
+      expect(transaction.doorRepository.update).not.toHaveBeenCalled();
+      expect(transaction.calendarRepository.update).not.toHaveBeenCalled();
+    });
+
+    it('returns already opened content without a mutation when the expected version is current', async () => {
+      const door = Object.assign(new MinAdventDoorEntity(), {
+        id: 'door-1',
+        calendarId: 'calendar-1',
+        day: 1,
+        status: MinAdventDoorStatus.Opened,
+      });
+      const filledDoor = Object.assign(new MinAdventDoorEntity(), {
+        id: 'door-2',
+        calendarId: 'calendar-1',
+        day: 2,
+        status: MinAdventDoorStatus.Filled,
+      });
+      transaction.doors.push(door, filledDoor);
+
+      const result = await repository.openSharedDoor('a'.repeat(64), 1, 1, { year: 2026, month: 12, day: 1 });
+
+      expect(result.firstOpened).toBe(false);
+      expect(result.calendar.doors).toHaveLength(2);
+      expect(result.calendar.doors[1].status).toBe(MinAdventDoorStatus.Filled);
+      expect(transaction.doorRepository.update).not.toHaveBeenCalled();
+      expect(transaction.calendarRepository.update).not.toHaveBeenCalled();
+    });
+  });
 });

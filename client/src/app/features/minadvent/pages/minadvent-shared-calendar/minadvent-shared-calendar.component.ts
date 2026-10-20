@@ -1,7 +1,9 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, OnDestroy, OnInit, Signal, computed, signal } from '@angular/core';
+import { Component, ElementRef, OnDestroy, OnInit, Signal, computed, effect, signal, viewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { MinAdventSharedCalendarDto } from '../../../../core/generated/model/min-advent-shared-calendar-dto';
+import { MinAdventSharedDoorContentDto } from '../../../../core/generated/model/min-advent-shared-door-content-dto';
+import { MinAdventSharedDoorOpenResponseDto } from '../../../../core/generated/model/min-advent-shared-door-open-response-dto';
 import { MinAdventCalendarService } from '../../services/minadvent-calendar.service';
 
 const BERLIN_DATE_FORMATTER = new Intl.DateTimeFormat('en', {
@@ -18,6 +20,9 @@ const BERLIN_DATE_FORMATTER = new Intl.DateTimeFormat('en', {
 @Component({
   selector: 'min-advent-shared-calendar',
   templateUrl: './minadvent-shared-calendar.component.html',
+  styles: [
+    '@keyframes door-reveal { from { opacity: 0.6; transform: scale(0.96); } to { opacity: 1; transform: scale(1); } }',
+  ],
   host: { class: 'block min-h-full w-full' },
 })
 export class MinAdventSharedCalendarComponent implements OnInit, OnDestroy {
@@ -25,6 +30,11 @@ export class MinAdventSharedCalendarComponent implements OnInit, OnDestroy {
   public readonly error = signal('');
   public readonly isLoading = signal(true);
   public readonly now = signal(Date.now());
+  public readonly selectedDoor = signal<MinAdventSharedDoorContentDto | null>(null);
+  public readonly isDoorLoading = signal(false);
+  public readonly doorError = signal('');
+  public readonly reloadRequired = signal(false);
+  public readonly animateDoor = signal(false);
   public readonly isBeforeDecember: Signal<boolean> = computed(() => {
     const calendar = this.calendar();
     return calendar !== null && this.now() < this.getDecemberStart(calendar.year);
@@ -44,6 +54,7 @@ export class MinAdventSharedCalendarComponent implements OnInit, OnDestroy {
   });
 
   private readonly token: string;
+  private readonly contentDialog = viewChild<ElementRef<HTMLDialogElement>>('contentDialog');
   private countdownInterval: ReturnType<typeof setInterval> | null = null;
 
   constructor(
@@ -51,6 +62,12 @@ export class MinAdventSharedCalendarComponent implements OnInit, OnDestroy {
     private readonly calendarService: MinAdventCalendarService,
   ) {
     this.token = this.route.snapshot.paramMap.get('token') ?? '';
+    effect(() => {
+      const dialog = this.contentDialog()?.nativeElement;
+      if (this.selectedDoor() && dialog && !dialog.open) {
+        dialog.showModal();
+      }
+    });
   }
 
   public ngOnInit(): void {
@@ -77,6 +94,93 @@ export class MinAdventSharedCalendarComponent implements OnInit, OnDestroy {
       default:
         return 'Leer';
     }
+  }
+
+  public isDoorAvailable(day: number): boolean {
+    const parts = Object.fromEntries(
+      BERLIN_DATE_FORMATTER.formatToParts(new Date(this.now())).map((part) => [part.type, Number(part.value)]),
+    );
+    const calendar = this.calendar();
+    return (
+      calendar !== null &&
+      (parts['year'] > calendar.year ||
+        (parts['year'] === calendar.year && parts['month'] === 12 && parts['day'] >= day))
+    );
+  }
+
+  public async selectDoor(day: number): Promise<void> {
+    const calendar = this.calendar();
+    const door = calendar?.doors.find((item) => item.day === day);
+    if (!calendar || !door || !this.isDoorAvailable(day) || door.status === 'EMPTY' || this.isDoorLoading()) {
+      return;
+    }
+    this.doorError.set('');
+    this.reloadRequired.set(false);
+    this.isDoorLoading.set(true);
+    try {
+      if (door.status === 'OPENED') {
+        this.showDoor(await this.calendarService.getSharedDoor(this.token, day), false);
+      } else {
+        const response = await this.calendarService.openSharedDoor(this.token, day, calendar.version);
+        this.applyOpenedDoor(response);
+        this.showDoor(response, response.firstOpened);
+      }
+    } catch (error) {
+      this.doorError.set(
+        'Die TÃ¼r konnte nicht geÃ¶ffnet werden. Lade zuerst die Ãœbersicht neu, bevor du es erneut versuchst.',
+      );
+      this.reloadRequired.set(true);
+      if (error instanceof HttpErrorResponse && error.status === 404) {
+        this.doorError.set('Dieser Adventskalender ist nicht verfÃ¼gbar.');
+        this.reloadRequired.set(false);
+      }
+    } finally {
+      this.isDoorLoading.set(false);
+    }
+  }
+
+  public async reloadAfterConflict(): Promise<void> {
+    if (!window.confirm('MÃ¶chtest du die Adventskalender-Ãœbersicht jetzt neu laden?')) {
+      return;
+    }
+    await this.loadCalendar();
+    const selectedDay = this.selectedDoor()?.day;
+    const door = this.calendar()?.doors.find((item) => item.day === selectedDay);
+    this.reloadRequired.set(false);
+    this.doorError.set('');
+    if (selectedDay && door?.status === 'OPENED') {
+      try {
+        this.showDoor(await this.calendarService.getSharedDoor(this.token, selectedDay), false);
+      } catch {
+        this.doorError.set('Der Inhalt konnte nach dem Neuladen nicht abgerufen werden.');
+      }
+    } else if (door?.status === 'FILLED') {
+      this.doorError.set('Das TÃ¼rchen ist noch nicht geÃ¶ffnet. Klicke erneut darauf, um es zu Ã¶ffnen.');
+    }
+  }
+
+  public closeDoor(): void {
+    this.selectedDoor.set(null);
+    this.animateDoor.set(false);
+    this.doorError.set('');
+  }
+
+  private showDoor(door: MinAdventSharedDoorContentDto, animate: boolean): void {
+    this.selectedDoor.set(door);
+    this.animateDoor.set(animate);
+  }
+
+  private applyOpenedDoor(response: MinAdventSharedDoorOpenResponseDto): void {
+    this.calendar.update((calendar) =>
+      calendar === null
+        ? null
+        : {
+            ...calendar,
+            completed: response.completed,
+            version: response.version,
+            doors: calendar.doors.map((door) => (door.day === response.day ? { ...door, status: 'OPENED' } : door)),
+          },
+    );
   }
 
   private async loadCalendar(): Promise<void> {

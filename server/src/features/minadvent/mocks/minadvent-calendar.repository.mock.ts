@@ -7,6 +7,13 @@ export class MinAdventCalendarRepositoryMock {
     .mockResolvedValue(new MinAdventCalendarEntity());
   public findById = jest.fn<Promise<MinAdventCalendarEntity | null>, [string]>().mockResolvedValue(null);
   public findByActiveToken = jest.fn<Promise<MinAdventCalendarEntity | null>, [string]>().mockResolvedValue(null);
+  public getSharedDoor = jest.fn<Promise<MinAdventCalendarEntity | null>, [string, number]>().mockResolvedValue(null);
+  public openSharedDoor = jest
+    .fn<
+      Promise<{ calendar: MinAdventCalendarEntity; firstOpened: boolean }>,
+      [string, number, number, { year: number; month: number; day: number }]
+    >()
+    .mockResolvedValue({ calendar: new MinAdventCalendarEntity(), firstOpened: true });
   public findByOwner = jest.fn<Promise<MinAdventCalendarEntity[]>, [string]>().mockResolvedValue([]);
   public update = jest
     .fn<Promise<MinAdventCalendarEntity>, [MinAdventCalendarEntity, number]>()
