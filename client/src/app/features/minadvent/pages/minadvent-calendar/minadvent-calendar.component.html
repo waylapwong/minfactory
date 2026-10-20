@@ -97,7 +97,7 @@
             @for (door of current.doors; track door.day) {
               <button
                 type="button"
-                class="flex aspect-square transform cursor-pointer flex-col items-center justify-center gap-1 rounded-lg border-4 border-red-700 bg-red-50 p-2 shadow-2xl transition-all duration-100 hover:translate-y-0.5 hover:bg-red-100 hover:shadow-xl focus:bg-red-100 focus-visible:ring-4 focus-visible:ring-blue-600 active:translate-y-1 active:shadow-none"
+                class="flex aspect-square transform cursor-pointer flex-col items-center justify-center gap-1 rounded-lg border-4 border-black bg-white p-2 shadow-2xl transition-all duration-100 hover:translate-y-0.5 hover:bg-gray-100 hover:shadow-xl focus:bg-gray-100 focus-visible:ring-4 focus-visible:ring-blue-600 active:translate-y-1 active:shadow-none"
                 [class.bg-red-100]="selectedDoorDay() === door.day"
                 [attr.aria-pressed]="selectedDoorDay() === door.day"
                 [attr.aria-label]="'Türchen ' + door.day + ', Status ' + getDoorStatusLabel(door.status)"
@@ -115,24 +115,22 @@
         </section>
 
         @if (selectedDoor(); as door) {
-          <min-dialog
-            [title]="'Türchen ' + door.day + ' bearbeiten'"
-            [isOpen]="true"
-            (closed)="closeDoorDialog()"
-          >
+          <min-dialog [title]="'Türchen ' + door.day + ' bearbeiten'" [isOpen]="true" (closed)="closeDoorDialog()">
             <div dialog-subtitle class="mb-3">
-              <min-badge [color]="door.status === 'EMPTY' ? Color.Gray : door.status === 'FILLED' ? Color.Green : Color.Blue">
+              <min-badge
+                [color]="door.status === 'EMPTY' ? Color.Gray : door.status === 'FILLED' ? Color.Green : Color.Blue"
+              >
                 {{ getDoorStatusLabel(door.status) }}
               </min-badge>
             </div>
             <section>
               @if (door.status === 'OPENED' || current.completed) {
                 <output aria-live="polite" class="mb-4 block border-l-4 border-gray-500 bg-gray-100 p-3 text-sm">
-                {{
-                  current.completed
-                    ? 'Der Kalender ist abgeschlossen.'
-                    : 'Geöffnete Türchen können nicht bearbeitet werden.'
-                }}
+                  {{
+                    current.completed
+                      ? 'Der Kalender ist abgeschlossen.'
+                      : 'Geöffnete Türchen können nicht bearbeitet werden.'
+                  }}
                 </output>
               }
               @if (!isSelectedDoorReadOnly()) {
@@ -211,7 +209,7 @@
                         label="Text"
                         [formControlInput]="block.controls.text"
                         [maxLength]="10000"
-                        [rows]="5"
+                        [rows]="3"
                         [showCharacterCount]="true"
                         [isInvalid]="isDoorFieldInvalid(index, 'text')"
                         (valueChanged)="updateDoorField()"
@@ -252,12 +250,15 @@
                           label="Beschreibung"
                           [formControlInput]="block.controls.description"
                           [maxLength]="2000"
-                          [rows]="4"
+                          [rows]="3"
                           [showCharacterCount]="true"
                           [isInvalid]="isDoorFieldInvalid(index, 'description')"
                           (valueChanged)="updateDoorField()"
                         />
-                        @if (block.controls.description.touched && getDoorFieldError(index, 'description'); as descriptionError) {
+                        @if (
+                          block.controls.description.touched && getDoorFieldError(index, 'description');
+                          as descriptionError
+                        ) {
                           <p class="text-sm text-red-600" role="alert">{{ descriptionError }}</p>
                         }
                       }
@@ -268,11 +269,7 @@
               @if (!isSelectedDoorReadOnly()) {
                 <div class="mt-4 flex flex-wrap items-center justify-between gap-3">
                   <p class="text-sm text-gray-600">{{ doorForm.length }} / 10 Blöcke</p>
-                  <min-button
-                    [color]="Color.Green"
-                    [isDisabled]="isDoorSaveDisabled()"
-                    (clicked)="saveDoor()"
-                  >
+                  <min-button [color]="Color.Green" [isDisabled]="isDoorSaveDisabled()" (clicked)="saveDoor()">
                     {{ isSavingDoor() ? 'Speichert …' : 'Speichern' }}
                   </min-button>
                 </div>

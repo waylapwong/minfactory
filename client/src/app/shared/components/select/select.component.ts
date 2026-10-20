@@ -1,4 +1,14 @@
-import { Component, ElementRef, HostListener, InputSignal, OutputEmitterRef, WritableSignal, input, output, signal } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  HostListener,
+  InputSignal,
+  OutputEmitterRef,
+  WritableSignal,
+  input,
+  output,
+  signal,
+} from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 
 export interface SelectOption {

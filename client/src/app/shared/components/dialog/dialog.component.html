@@ -8,7 +8,9 @@
       [attr.aria-label]="title()"
       [class]="
         'relative m-0 rounded-lg border-4 border-black bg-gray-100 p-4 text-neutral-900 shadow-xl ' +
-        (size() === 'wide' ? 'w-[calc(100%-1rem)] max-h-[90dvh] max-w-3xl overflow-y-auto' : 'w-9/10 max-h-[90dvh] max-w-md overflow-y-auto')
+        (size() === 'wide'
+          ? 'max-h-[90dvh] w-[calc(100%-1rem)] max-w-3xl overflow-y-auto'
+          : 'max-h-[90dvh] w-9/10 max-w-md overflow-y-auto')
       "
     >
       <div class="flex flex-row items-start justify-between">

@@ -49,9 +49,7 @@
       >
         <min-h2>Noch keine Kalender</min-h2>
         <p class="text-sm text-gray-500">Lege deinen ersten Adventskalender an.</p>
-        <min-button [color]="Color.Green" (clicked)="openCreateDialog()"
-          >Kalender anlegen</min-button
-        >
+        <min-button [color]="Color.Green" (clicked)="openCreateDialog()">Kalender anlegen</min-button>
       </section>
     } @else {
       @for (group of groups(); track group.year) {
@@ -102,7 +100,9 @@
         [showCharacterCount]="true"
       />
       @if (createForm.controls.recipientName.touched && createForm.controls.recipientName.invalid) {
-        <p class="mt-1 text-sm text-red-500" aria-live="assertive">Empfängername ist erforderlich (max. 100 Zeichen).</p>
+        <p class="mt-1 text-sm text-red-500" aria-live="assertive">
+          Empfängername ist erforderlich (max. 100 Zeichen).
+        </p>
       }
     </div>
     <div>
@@ -115,7 +115,9 @@
         [formControlInput]="createForm.controls.year"
       />
       @if (createForm.controls.year.touched && createForm.controls.year.invalid) {
-        <p class="mt-1 text-sm text-red-500" aria-live="assertive">Bitte gib ein Kalenderjahr zwischen 1 und 9999 ein.</p>
+        <p class="mt-1 text-sm text-red-500" aria-live="assertive">
+          Bitte gib ein Kalenderjahr zwischen 1 und 9999 ein.
+        </p>
       }
     </div>
     @if (createError()) {

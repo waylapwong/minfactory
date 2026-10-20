@@ -232,7 +232,9 @@ describe('MinAdventCalendarComponent', () => {
 
       expect(MINADVENT_CALENDAR_SERVICE_MOCK.updateDoor).toHaveBeenCalledWith('calendar-id', 1, {
         expectedVersion: 1,
-        blocks: [{ position: 1, text: 'Eine Überraschung\n\nNoch eine Zeile', type: component.MinAdventBlockType.Text }],
+        blocks: [
+          { position: 1, text: 'Eine Überraschung\n\nNoch eine Zeile', type: component.MinAdventBlockType.Text },
+        ],
       });
       expect(component.calendar()?.version).toBe(2);
       expect(component.calendar()?.doors[0].status).toBe('FILLED');

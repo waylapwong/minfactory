@@ -57,9 +57,15 @@ export class MinAdventCalendarComponent implements OnInit {
     const day = this.selectedDoorDay();
     return this.calendar()?.doors.find((door) => door.day === day) ?? null;
   });
-  public readonly emptyDoorCount = computed(() => this.calendar()?.doors.filter((door) => door.status === 'EMPTY').length ?? 0);
-  public readonly filledDoorCount = computed(() => this.calendar()?.doors.filter((door) => door.status === 'FILLED').length ?? 0);
-  public readonly openedDoorCount = computed(() => this.calendar()?.doors.filter((door) => door.status === 'OPENED').length ?? 0);
+  public readonly emptyDoorCount = computed(
+    () => this.calendar()?.doors.filter((door) => door.status === 'EMPTY').length ?? 0,
+  );
+  public readonly filledDoorCount = computed(
+    () => this.calendar()?.doors.filter((door) => door.status === 'FILLED').length ?? 0,
+  );
+  public readonly openedDoorCount = computed(
+    () => this.calendar()?.doors.filter((door) => door.status === 'OPENED').length ?? 0,
+  );
   public readonly error = signal('');
   public readonly form = new FormGroup({
     title: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.maxLength(100)] }),
@@ -258,7 +264,12 @@ export class MinAdventCalendarComponent implements OnInit {
 
   public isTitleSaveDisabled(): boolean {
     const calendar = this.calendar();
-    return !calendar || this.form.controls.title.invalid || this.isSavingTitle() || this.form.controls.title.value === calendar.title;
+    return (
+      !calendar ||
+      this.form.controls.title.invalid ||
+      this.isSavingTitle() ||
+      this.form.controls.title.value === calendar.title
+    );
   }
 
   public isRecipientSaveDisabled(): boolean {
@@ -381,8 +392,7 @@ export class MinAdventCalendarComponent implements OnInit {
 
   private shouldCancelDoorSave(door: MinAdventDoor, blocks: MinAdventBlockDto[]): boolean {
     return (
-      this.willCompleteCalendar(door, blocks) &&
-      !window.confirm('Dieses Türchen leeren und den Kalender abschließen?')
+      this.willCompleteCalendar(door, blocks) && !window.confirm('Dieses Türchen leeren und den Kalender abschließen?')
     );
   }
 
