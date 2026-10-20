@@ -125,6 +125,155 @@ describe('MinAdventCalendarService', () => {
     expect(repository.update).not.toHaveBeenCalled();
   });
 
+  describe('updateSharing()', () => {
+    it('publishes with a cryptographically random token and advances the global version', async () => {
+      const calendar = Object.assign(new MinAdventCalendarEntity(), {
+        id: 'calendar-1',
+        ownerId: owner.id,
+        title: 'December',
+        recipientName: 'Alex',
+        year: 2026,
+        version: 2,
+        isPublished: true,
+        activeToken: 'a'.repeat(64),
+        doors: [],
+      });
+      repository.findById.mockResolvedValue(Object.assign({}, calendar, { isPublished: false, activeToken: null }));
+      repository.updateSharing.mockResolvedValue(calendar);
+
+      const result = await service.updateSharing(owner, calendar.id, { published: true, expectedVersion: 2 });
+
+      expect(repository.updateSharing).toHaveBeenCalledWith(
+        owner.id,
+        calendar.id,
+        2,
+        true,
+        expect.stringMatching(/^[a-f0-9]{64}$/),
+      );
+      expect(result).toEqual({
+        published: true,
+        sharedUrl: `/minadvent/shared/${calendar.activeToken}`,
+        version: 2,
+        completed: false,
+      });
+    });
+
+    it('keeps the current version for an unchanged sharing state', async () => {
+      const calendar = Object.assign(new MinAdventCalendarEntity(), {
+        id: 'calendar-1',
+        ownerId: owner.id,
+        version: 4,
+        isPublished: false,
+        activeToken: null,
+        doors: [],
+      });
+      repository.findById.mockResolvedValue(calendar);
+
+      const result = await service.updateSharing(owner, calendar.id, { published: false, expectedVersion: 4 });
+
+      expect(repository.updateSharing).not.toHaveBeenCalled();
+      expect(result.version).toBe(4);
+      expect(result.sharedUrl).toBeUndefined();
+    });
+
+    it('rejects stale global versions before applying a sharing change', async () => {
+      const calendar = Object.assign(new MinAdventCalendarEntity(), {
+        id: 'calendar-1',
+        ownerId: owner.id,
+        version: 5,
+        isPublished: false,
+        activeToken: null,
+        doors: [],
+      });
+      repository.findById.mockResolvedValue(calendar);
+
+      await expect(service.updateSharing(owner, calendar.id, { published: true, expectedVersion: 4 })).rejects.toThrow(
+        ConflictException,
+      );
+      expect(repository.updateSharing).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('rotateSharingToken()', () => {
+    it('replaces the active token using the current global version', async () => {
+      const calendar = Object.assign(new MinAdventCalendarEntity(), {
+        id: 'calendar-1',
+        ownerId: owner.id,
+        title: 'December',
+        recipientName: 'Alex',
+        year: 2026,
+        version: 4,
+        isPublished: true,
+        activeToken: 'b'.repeat(64),
+        doors: [],
+      });
+      repository.findById.mockResolvedValue(calendar);
+      repository.updateSharing.mockResolvedValue(calendar);
+
+      await service.rotateSharingToken(owner, calendar.id, { expectedVersion: 4 });
+
+      expect(repository.updateSharing).toHaveBeenCalledWith(
+        owner.id,
+        calendar.id,
+        4,
+        true,
+        expect.stringMatching(/^[a-f0-9]{64}$/),
+      );
+    });
+
+    it('rejects rotation when the calendar is unpublished', async () => {
+      const calendar = Object.assign(new MinAdventCalendarEntity(), {
+        id: 'calendar-1',
+        ownerId: owner.id,
+        version: 4,
+        isPublished: false,
+        activeToken: null,
+        doors: [],
+      });
+      repository.findById.mockResolvedValue(calendar);
+
+      await expect(service.rotateSharingToken(owner, calendar.id, { expectedVersion: 4 })).rejects.toThrow();
+      expect(repository.updateSharing).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('getSharedCalendar()', () => {
+    it('returns calendar metadata and door statuses without private block content', async () => {
+      const calendar = Object.assign(new MinAdventCalendarEntity(), {
+        id: 'calendar-1',
+        ownerId: owner.id,
+        title: 'December',
+        recipientName: 'Alex',
+        year: 2026,
+        version: 3,
+        isPublished: true,
+        activeToken: 'c'.repeat(64),
+        doors: [{ day: 1, status: MinAdventDoorStatus.Filled, blocks: [{ text: 'private' }] }],
+      });
+      repository.findByActiveToken.mockResolvedValue(calendar);
+
+      const result = await service.getSharedCalendar(calendar.activeToken);
+
+      expect(repository.findByActiveToken).toHaveBeenCalledWith(calendar.activeToken);
+      expect(result).toEqual({
+        title: 'December',
+        recipientName: 'Alex',
+        year: 2026,
+        version: 3,
+        completed: false,
+        doors: [{ day: 1, status: MinAdventDoorStatus.Filled }],
+      });
+      expect(result?.doors[0]).not.toHaveProperty('blocks');
+    });
+
+    it('returns unavailable for malformed or inactive tokens', async () => {
+      await expect(service.getSharedCalendar('short')).resolves.toBeNull();
+      repository.findByActiveToken.mockResolvedValue(null);
+      await expect(service.getSharedCalendar('d'.repeat(64))).resolves.toBeNull();
+      expect(repository.findByActiveToken).toHaveBeenCalledTimes(1);
+    });
+  });
+
   describe('updateDoor()', () => {
     const currentCalendar = (): MinAdventCalendarEntity =>
       Object.assign(new MinAdventCalendarEntity(), {

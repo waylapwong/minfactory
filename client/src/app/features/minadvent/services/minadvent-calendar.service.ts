@@ -3,6 +3,7 @@ import { MinAdventCalendarCreateDto } from '../../../core/generated/model/min-ad
 import { MinAdventCalendarUpdateDto } from '../../../core/generated/model/min-advent-calendar-update-dto';
 import { MinAdventDoorUpdateDto } from '../../../core/generated/model/min-advent-door-update-dto';
 import { MinAdventDoorUpdateResponseDto } from '../../../core/generated/model/min-advent-door-update-response-dto';
+import { MinAdventSharingResponseDto } from '../../../core/generated/model/min-advent-sharing-response-dto';
 import { MinAdventDomainMapper } from '../mapper/minadvent-domain.mapper';
 import { MinAdventCalendar } from '../models/minadvent-calendar.model';
 import { MinAdventCalendarRepository } from '../repositories/minadvent-calendar.repository';
@@ -59,5 +60,35 @@ export class MinAdventCalendarService {
       ),
     );
     return result;
+  }
+
+  public getSharing(id: string): Promise<MinAdventSharingResponseDto> {
+    return this.repository.getSharing(id);
+  }
+
+  public async updateSharing(
+    id: string,
+    published: boolean,
+    expectedVersion: number,
+  ): Promise<MinAdventSharingResponseDto> {
+    const response = await this.repository.updateSharing(id, { published, expectedVersion });
+    this.updateCachedSharing(id, response);
+    return response;
+  }
+
+  public async rotateSharingToken(id: string, expectedVersion: number): Promise<MinAdventSharingResponseDto> {
+    const response = await this.repository.rotateSharingToken(id, { expectedVersion });
+    this.updateCachedSharing(id, response);
+    return response;
+  }
+
+  private updateCachedSharing(id: string, response: MinAdventSharingResponseDto): void {
+    this.cachedCalendars.update((calendars) =>
+      calendars.map((calendar) =>
+        calendar.id === id
+          ? { ...calendar, completed: response.completed, published: response.published, version: response.version }
+          : calendar,
+      ),
+    );
   }
 }

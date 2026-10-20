@@ -15,9 +15,11 @@ describe('MinAdventCalendarComponent', () => {
     MINADVENT_ACTIVATED_ROUTE_MOCK.snapshot.paramMap = convertToParamMap({});
     MINADVENT_CALENDAR_SERVICE_MOCK.createCalendar.calls.reset();
     MINADVENT_CALENDAR_SERVICE_MOCK.getCalendar.calls.reset();
+    MINADVENT_CALENDAR_SERVICE_MOCK.getSharing.calls.reset();
     MINADVENT_CALENDAR_SERVICE_MOCK.updateCalendar.calls.reset();
     MINADVENT_CALENDAR_SERVICE_MOCK.updateDoor.calls.reset();
-    MINADVENT_CALENDAR_SERVICE_MOCK.updateDoor.calls.reset();
+    MINADVENT_CALENDAR_SERVICE_MOCK.updateSharing.calls.reset();
+    MINADVENT_CALENDAR_SERVICE_MOCK.rotateSharingToken.calls.reset();
 
     await TestBed.configureTestingModule({
       imports: [MinAdventCalendarComponent],
@@ -56,6 +58,28 @@ describe('MinAdventCalendarComponent', () => {
       expect(component.getDoorStatusLabel('EMPTY')).toBe('Leer');
       expect(component.getDoorStatusLabel('FILLED')).toBe('Befüllt');
       expect(component.getDoorStatusLabel('OPENED')).toBe('Geöffnet');
+    });
+  });
+
+  describe('confirmSharingAction()', () => {
+    it('publishes an empty calendar using its current version and displays the returned link', async () => {
+      const calendar = { ...createMinAdventCalendar(), doors: [] };
+      component.calendar.set(calendar);
+      component.openSharingDialog('publish');
+      MINADVENT_CALENDAR_SERVICE_MOCK.updateSharing.and.resolveTo({
+        published: true,
+        sharedUrl: '/minadvent/shared/secret-token',
+        version: 2,
+        completed: false,
+      });
+
+      await component.confirmSharingAction();
+
+      expect(MINADVENT_CALENDAR_SERVICE_MOCK.updateSharing).toHaveBeenCalledWith(calendar.id, true, calendar.version);
+      expect(component.calendar()?.published).toBeTrue();
+      expect(component.calendar()?.version).toBe(2);
+      expect(component.sharedUrl()).toBe(`${window.location.origin}/minadvent/shared/secret-token`);
+      expect(component.sharingDialogAction()).toBeNull();
     });
   });
 

@@ -5,6 +5,7 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
+import { randomBytes } from 'node:crypto';
 import sanitizeHtml from 'sanitize-html';
 import { Parser } from 'htmlparser2';
 import { MinFactoryUser } from '../../minfactory/models/domains/minfactory-user';
@@ -20,6 +21,10 @@ import { MinAdventDoorUpdateResponseDto } from '../models/dtos/minadvent-door-up
 import { MinAdventBlock } from '../models/domains/minadvent-block';
 import { MinAdventBlockType } from '../models/enums/minadvent-block-type.enum';
 import { MinAdventCalendarRepository } from '../repositories/minadvent-calendar.repository';
+import { MinAdventSharingUpdateDto } from '../models/dtos/minadvent-sharing-update.dto';
+import { MinAdventTokenRotationDto } from '../models/dtos/minadvent-token-rotation.dto';
+import { MinAdventSharingResponseDto } from '../models/dtos/minadvent-sharing-response.dto';
+import { MinAdventSharedCalendarDto } from '../models/dtos/minadvent-shared-calendar.dto';
 
 @Injectable()
 export class MinAdventCalendarService {
@@ -99,6 +104,87 @@ export class MinAdventCalendarService {
       throw new NotFoundException('Door not found.');
     }
     return MinAdventDomainMapper.toDoorUpdateResponse(updatedDoor, updatedCalendar);
+  }
+
+  public async updateSharing(
+    user: MinFactoryUser,
+    id: string,
+    input: MinAdventSharingUpdateDto,
+  ): Promise<MinAdventSharingResponseDto> {
+    const current = await this.requireOwnedCalendar(user, id);
+    if (current.version !== input.expectedVersion) {
+      throw new ConflictException({
+        code: 'VERSION_CONFLICT',
+        message: 'Der Kalender wurde zwischenzeitlich geÃ¤ndert.',
+      });
+    }
+    if (current.isPublished === input.published) {
+      return this.toSharingResponse(current);
+    }
+    const token = input.published ? this.createToken() : null;
+    const updated = MinAdventEntityMapper.toDomain(
+      await this.calendarRepository.updateSharing(user.id, id, input.expectedVersion, input.published, token),
+    );
+    return this.toSharingResponse(updated);
+  }
+
+  public async getSharing(user: MinFactoryUser, id: string): Promise<MinAdventSharingResponseDto> {
+    return this.toSharingResponse(await this.requireOwnedCalendar(user, id));
+  }
+
+  public async rotateSharingToken(
+    user: MinFactoryUser,
+    id: string,
+    input: MinAdventTokenRotationDto,
+  ): Promise<MinAdventSharingResponseDto> {
+    const current = await this.requireOwnedCalendar(user, id);
+    if (current.version !== input.expectedVersion) {
+      throw new ConflictException({
+        code: 'VERSION_CONFLICT',
+        message: 'Der Kalender wurde zwischenzeitlich geÃ¤ndert.',
+      });
+    }
+    if (!current.isPublished) {
+      throw new ConflictException({ code: 'CALENDAR_NOT_PUBLISHED', message: 'Der Kalender ist nicht freigegeben.' });
+    }
+    const updated = MinAdventEntityMapper.toDomain(
+      await this.calendarRepository.updateSharing(user.id, id, input.expectedVersion, true, this.createToken()),
+    );
+    return this.toSharingResponse(updated);
+  }
+
+  public async getSharedCalendar(token: string): Promise<MinAdventSharedCalendarDto | null> {
+    if (!/^[a-f0-9]{64}$/.test(token)) {
+      return null;
+    }
+    const entity = await this.calendarRepository.findByActiveToken(token);
+    if (!entity) {
+      return null;
+    }
+    const calendar = MinAdventEntityMapper.toDomain(entity);
+    const response = new MinAdventSharedCalendarDto();
+    response.title = calendar.title;
+    response.recipientName = calendar.recipientName;
+    response.year = calendar.year;
+    response.version = calendar.version;
+    response.completed = calendar.completed;
+    response.doors = calendar.doors.map((door) => ({ day: door.day, status: door.status }));
+    return response;
+  }
+
+  private createToken(): string {
+    return randomBytes(32).toString('hex');
+  }
+
+  private toSharingResponse(calendar: MinAdventCalendar): MinAdventSharingResponseDto {
+    const response = new MinAdventSharingResponseDto();
+    response.published = calendar.isPublished;
+    response.version = calendar.version;
+    response.completed = calendar.completed;
+    if (calendar.activeToken) {
+      response.sharedUrl = `/minadvent/shared/${calendar.activeToken}`;
+    }
+    return response;
   }
 
   private getCurrentBerlinYear(): number {

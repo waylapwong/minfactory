@@ -7,7 +7,10 @@ export const MINADVENT_CALENDAR_SERVICE_MOCK = {
   calendars: MINADVENT_CALENDARS_SIGNAL.asReadonly(),
   createCalendar: jasmine.createSpy('createCalendar'),
   getCalendar: jasmine.createSpy('getCalendar'),
+  getSharing: jasmine.createSpy('getSharing'),
   loadCalendars: jasmine.createSpy('loadCalendars'),
   updateCalendar: jasmine.createSpy('updateCalendar'),
   updateDoor: jasmine.createSpy('updateDoor'),
+  updateSharing: jasmine.createSpy('updateSharing'),
+  rotateSharingToken: jasmine.createSpy('rotateSharingToken'),
 };

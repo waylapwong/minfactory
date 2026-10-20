@@ -33,6 +33,9 @@ import { MinAdventCalendarDto } from '../models/dtos/minadvent-calendar.dto';
 import { MinAdventDoorUpdateDto } from '../models/dtos/minadvent-door-update.dto';
 import { MinAdventDoorUpdateResponseDto } from '../models/dtos/minadvent-door-update-response.dto';
 import { MinAdventCalendarService } from '../services/minadvent-calendar.service';
+import { MinAdventSharingUpdateDto } from '../models/dtos/minadvent-sharing-update.dto';
+import { MinAdventSharingResponseDto } from '../models/dtos/minadvent-sharing-response.dto';
+import { MinAdventTokenRotationDto } from '../models/dtos/minadvent-token-rotation.dto';
 
 @Controller('minadvent/calendars')
 @ApiTags(MinApp.MinAdvent)
@@ -117,5 +120,60 @@ export class MinAdventCalendarController {
     @Body() input: MinAdventDoorUpdateDto,
   ): Promise<MinAdventDoorUpdateResponseDto> {
     return this.calendarService.updateDoor(user, id, day, input);
+  }
+
+  @Get(':id/sharing')
+  @HttpCode(200)
+  @ApiOperation({ operationId: 'getMinAdventSharing' })
+  @API_PARAM_ID()
+  @API_200({ type: MinAdventSharingResponseDto })
+  @API_400()
+  @API_401()
+  @API_403()
+  @API_404()
+  @API_500()
+  public getSharing(
+    @User() user: MinFactoryUser,
+    @Param('id', ParseUUIDPipe) id: string,
+  ): Promise<MinAdventSharingResponseDto> {
+    return this.calendarService.getSharing(user, id);
+  }
+
+  @Put(':id/sharing')
+  @HttpCode(200)
+  @ApiOperation({ operationId: 'updateMinAdventSharing' })
+  @API_PARAM_ID()
+  @API_200({ type: MinAdventSharingResponseDto })
+  @API_400()
+  @API_401()
+  @API_403()
+  @API_404()
+  @API_409()
+  @API_500()
+  public updateSharing(
+    @User() user: MinFactoryUser,
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() input: MinAdventSharingUpdateDto,
+  ): Promise<MinAdventSharingResponseDto> {
+    return this.calendarService.updateSharing(user, id, input);
+  }
+
+  @Put(':id/sharing/token')
+  @HttpCode(200)
+  @ApiOperation({ operationId: 'rotateMinAdventSharingToken' })
+  @API_PARAM_ID()
+  @API_200({ type: MinAdventSharingResponseDto })
+  @API_400()
+  @API_401()
+  @API_403()
+  @API_404()
+  @API_409()
+  @API_500()
+  public rotateSharingToken(
+    @User() user: MinFactoryUser,
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() input: MinAdventTokenRotationDto,
+  ): Promise<MinAdventSharingResponseDto> {
+    return this.calendarService.rotateSharingToken(user, id, input);
   }
 }

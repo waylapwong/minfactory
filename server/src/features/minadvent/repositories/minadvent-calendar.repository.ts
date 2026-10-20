@@ -18,6 +18,47 @@ export class MinAdventCalendarRepository {
     private readonly dataSource: DataSource,
   ) {}
 
+  public async updateSharing(
+    ownerId: string,
+    calendarId: string,
+    expectedVersion: number,
+    published: boolean,
+    activeToken: string | null,
+  ): Promise<MinAdventCalendarEntity> {
+    return this.dataSource.transaction(async (manager) => {
+      const repository = manager.getRepository(MinAdventCalendarEntity);
+      const calendar = await repository
+        .createQueryBuilder('calendar')
+        .setLock('pessimistic_write')
+        .where('calendar.id = :calendarId AND calendar.ownerId = :ownerId', { calendarId, ownerId })
+        .getOne();
+      if (!calendar) {
+        throw new NotFoundException('Calendar not found.');
+      }
+      if (calendar.version !== expectedVersion) {
+        throw new ConflictException({
+          code: 'VERSION_CONFLICT',
+          message: 'Der Kalender wurde zwischenzeitlich geÃ¤ndert.',
+        });
+      }
+      const result = await repository.update(
+        { id: calendarId, ownerId, version: expectedVersion },
+        { isPublished: published, activeToken, version: expectedVersion + 1 },
+      );
+      if (!result.affected) {
+        throw new ConflictException({
+          code: 'VERSION_CONFLICT',
+          message: 'Der Kalender wurde zwischenzeitlich geÃ¤ndert.',
+        });
+      }
+      const updated = await this.findById(calendarId, repository);
+      if (!updated) {
+        throw new NotFoundException('Calendar not found.');
+      }
+      return updated;
+    });
+  }
+
   public async create(calendar: MinAdventCalendar): Promise<MinAdventCalendarEntity> {
     return this.dataSource.transaction(async (manager) => {
       const calendarRepository = manager.getRepository(MinAdventCalendarEntity);
@@ -42,6 +83,14 @@ export class MinAdventCalendarRepository {
       where: { id },
       relations: { doors: { blocks: true } },
       order: { doors: { day: 'ASC', blocks: { position: 'ASC' } } },
+    });
+  }
+
+  public async findByActiveToken(token: string): Promise<MinAdventCalendarEntity | null> {
+    return this.calendars.findOne({
+      where: { activeToken: token, isPublished: true },
+      relations: { doors: true },
+      order: { doors: { day: 'ASC' } },
     });
   }
 

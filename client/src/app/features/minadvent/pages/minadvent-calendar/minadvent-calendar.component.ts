@@ -47,6 +47,10 @@ type DoorBlockForm = FormGroup<{
 export class MinAdventCalendarComponent implements OnInit {
   public readonly Color: typeof Color = Color;
   public readonly calendar = signal<Awaited<ReturnType<MinAdventCalendarService['getCalendar']>> | null>(null);
+  public readonly sharedUrl = signal('');
+  public readonly sharingDialogAction = signal<'publish' | 'revoke' | 'rotate' | null>(null);
+  public readonly sharingError = signal('');
+  public readonly isSharing = signal(false);
   public readonly doorForm = new FormArray<DoorBlockForm>([]);
   public readonly doorDraftRevision = signal(0);
   public readonly isSavingDoor = signal(false);
@@ -120,6 +124,98 @@ export class MinAdventCalendarComponent implements OnInit {
     this.snackbarMessage.set('');
   }
 
+  public openSharingDialog(action: 'publish' | 'revoke' | 'rotate'): void {
+    this.sharingError.set('');
+    this.sharingDialogAction.set(action);
+  }
+
+  public closeSharingDialog(): void {
+    if (!this.isSharing()) {
+      this.sharingDialogAction.set(null);
+      this.sharingError.set('');
+    }
+  }
+
+  public async confirmSharingAction(): Promise<void> {
+    const calendar = this.calendar();
+    const action = this.sharingDialogAction();
+    if (!calendar || !action || this.isSharing()) {
+      return;
+    }
+    this.isSharing.set(true);
+    this.sharingError.set('');
+    try {
+      const response =
+        action === 'rotate'
+          ? await this.calendarService.rotateSharingToken(calendar.id, calendar.version)
+          : await this.calendarService.updateSharing(calendar.id, action === 'publish', calendar.version);
+      this.calendar.update((current) =>
+        current
+          ? { ...current, completed: response.completed, published: response.published, version: response.version }
+          : current,
+      );
+      this.sharedUrl.set(response.sharedUrl ? new URL(response.sharedUrl, window.location.origin).toString() : '');
+      this.sharingDialogAction.set(null);
+    } catch (error) {
+      this.sharingError.set(
+        error instanceof HttpErrorResponse && error.status === 409
+          ? 'Der Kalender wurde zwischenzeitlich geändert. Lade ihn neu und versuche es erneut.'
+          : 'Die Freigabe konnte nicht geändert werden. Bitte versuche es erneut.',
+      );
+    } finally {
+      this.isSharing.set(false);
+    }
+  }
+
+  public async copySharedUrl(): Promise<void> {
+    try {
+      await navigator.clipboard.writeText(this.sharedUrl());
+      this.showSnackbar('Freigabelink kopiert.');
+    } catch {
+      this.sharingError.set('Der Link konnte nicht kopiert werden. Markiere ihn und kopiere ihn manuell.');
+    }
+  }
+
+  public async shareCalendar(): Promise<void> {
+    if (!navigator.share) {
+      await this.copySharedUrl();
+      return;
+    }
+    try {
+      await navigator.share({ title: 'Adventskalender', url: this.sharedUrl() });
+    } catch (error) {
+      if (!(error instanceof DOMException && error.name === 'AbortError')) {
+        this.sharingError.set('Der Kalender konnte nicht geteilt werden.');
+      }
+    }
+  }
+
+  public getSharingDialogTitle(): string {
+    switch (this.sharingDialogAction()) {
+      case 'publish':
+        return 'Kalender veröffentlichen?';
+      case 'revoke':
+        return 'Freigabe widerrufen?';
+      case 'rotate':
+        return 'Freigabelink erneuern?';
+      default:
+        return '';
+    }
+  }
+
+  public getSharingDialogMessage(): string {
+    switch (this.sharingDialogAction()) {
+      case 'publish':
+        return 'Jede Person mit dem geheimen Link kann den Kalender ansehen und verfügbare Türchen öffnen.';
+      case 'revoke':
+        return 'Der aktuelle Link wird sofort ungültig. Inhalte und Türchenstatus bleiben erhalten.';
+      case 'rotate':
+        return 'Der bisherige Link wird sofort ungültig und durch einen neuen Link ersetzt.';
+      default:
+        return '';
+    }
+  }
+
   private async loadCalendar(id: string): Promise<void> {
     this.isLoading.set(true);
     try {
@@ -128,6 +224,14 @@ export class MinAdventCalendarComponent implements OnInit {
       this.form.controls.title.setValue(calendar.title);
       this.form.controls.recipientName.setValue(calendar.recipientName);
       this.form.controls.year.setValue(calendar.year);
+      if (calendar.published) {
+        try {
+          const sharing = await this.calendarService.getSharing(id);
+          this.sharedUrl.set(sharing.sharedUrl ? new URL(sharing.sharedUrl, window.location.origin).toString() : '');
+        } catch {
+          this.sharingError.set('Der Freigabelink konnte nicht geladen werden.');
+        }
+      }
     } catch {
       this.error.set('Der Kalender konnte nicht geladen werden.');
     } finally {
