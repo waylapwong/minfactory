@@ -1,7 +1,7 @@
 import { provideZonelessChangeDetection } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { MINADVENT_CALENDAR_REPOSITORY_MOCK } from '../mocks/minadvent-calendar.repository.mock';
-import { createMinAdventCalendarDto } from '../mocks/minadvent-calendar.mock';
+import { createMinAdventCalendarDto, createMinAdventSharedCalendarDto } from '../mocks/minadvent-calendar.mock';
 import { MinAdventCalendarRepository } from '../repositories/minadvent-calendar.repository';
 import { MinAdventCalendarService } from './minadvent-calendar.service';
 
@@ -12,6 +12,7 @@ describe('MinAdventCalendarService', () => {
     MINADVENT_CALENDAR_REPOSITORY_MOCK.create.calls.reset();
     MINADVENT_CALENDAR_REPOSITORY_MOCK.get.calls.reset();
     MINADVENT_CALENDAR_REPOSITORY_MOCK.getAll.calls.reset();
+    MINADVENT_CALENDAR_REPOSITORY_MOCK.getSharedCalendar.calls.reset();
     MINADVENT_CALENDAR_REPOSITORY_MOCK.update.calls.reset();
     MINADVENT_CALENDAR_REPOSITORY_MOCK.updateDoor.calls.reset();
 
@@ -58,6 +59,17 @@ describe('MinAdventCalendarService', () => {
 
       expect(MINADVENT_CALENDAR_REPOSITORY_MOCK.get).toHaveBeenCalledWith('calendar-id');
       expect(result.id).toBe('calendar-id');
+    });
+  });
+
+  describe('getSharedCalendar()', () => {
+    it('should pass the shared token to the repository', async () => {
+      MINADVENT_CALENDAR_REPOSITORY_MOCK.getSharedCalendar.and.resolveTo(createMinAdventSharedCalendarDto());
+
+      const result = await service.getSharedCalendar('shared-token');
+
+      expect(MINADVENT_CALENDAR_REPOSITORY_MOCK.getSharedCalendar).toHaveBeenCalledWith('shared-token');
+      expect(result.title).toBe('Adventskalender');
     });
   });
 

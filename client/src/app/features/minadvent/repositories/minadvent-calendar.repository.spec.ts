@@ -3,7 +3,7 @@ import { TestBed } from '@angular/core/testing';
 import { of } from 'rxjs';
 import { MinAdventApiService } from '../../../core/generated';
 import { MINADVENT_API_SERVICE_MOCK } from '../mocks/minadvent-api.service.mock';
-import { MINADVENT_CALENDAR_DTO_MOCK } from '../mocks/minadvent-calendar.mock';
+import { MINADVENT_CALENDAR_DTO_MOCK, MINADVENT_SHARED_CALENDAR_DTO_MOCK } from '../mocks/minadvent-calendar.mock';
 import { MinAdventCalendarRepository } from './minadvent-calendar.repository';
 
 describe('MinAdventCalendarRepository', () => {
@@ -13,6 +13,7 @@ describe('MinAdventCalendarRepository', () => {
     MINADVENT_API_SERVICE_MOCK.createMinAdventCalendar.calls.reset();
     MINADVENT_API_SERVICE_MOCK.getMinAdventCalendar.calls.reset();
     MINADVENT_API_SERVICE_MOCK.getMinAdventCalendars.calls.reset();
+    MINADVENT_API_SERVICE_MOCK.getMinAdventSharedCalendar.calls.reset();
     MINADVENT_API_SERVICE_MOCK.updateMinAdventCalendar.calls.reset();
 
     TestBed.configureTestingModule({
@@ -66,6 +67,17 @@ describe('MinAdventCalendarRepository', () => {
 
       expect(MINADVENT_API_SERVICE_MOCK.getMinAdventCalendars).toHaveBeenCalled();
       expect(result).toEqual([MINADVENT_CALENDAR_DTO_MOCK]);
+    });
+  });
+
+  describe('getSharedCalendar()', () => {
+    it('should fetch a shared calendar by token through the API service', async () => {
+      MINADVENT_API_SERVICE_MOCK.getMinAdventSharedCalendar.and.returnValue(of(MINADVENT_SHARED_CALENDAR_DTO_MOCK));
+
+      const result = await repository.getSharedCalendar('shared-token');
+
+      expect(MINADVENT_API_SERVICE_MOCK.getMinAdventSharedCalendar).toHaveBeenCalledWith('shared-token');
+      expect(result).toBe(MINADVENT_SHARED_CALENDAR_DTO_MOCK);
     });
   });
 

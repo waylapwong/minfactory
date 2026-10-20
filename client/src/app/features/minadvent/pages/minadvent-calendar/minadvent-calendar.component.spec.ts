@@ -80,6 +80,11 @@ describe('MinAdventCalendarComponent', () => {
       expect(component.calendar()?.version).toBe(2);
       expect(component.sharedUrl()).toBe(`${window.location.origin}/minadvent/shared/secret-token`);
       expect(component.sharingDialogAction()).toBeNull();
+
+      fixture.detectChanges();
+      const sharedLink = fixture.nativeElement.querySelector('a') as HTMLAnchorElement;
+      expect(sharedLink.target).toBe('_blank');
+      expect(sharedLink.rel).toBe('noopener noreferrer');
     });
   });
 

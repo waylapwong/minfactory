@@ -4,6 +4,7 @@ import { MinAdventCalendarUpdateDto } from '../../../core/generated/model/min-ad
 import { MinAdventDoorUpdateDto } from '../../../core/generated/model/min-advent-door-update-dto';
 import { MinAdventDoorUpdateResponseDto } from '../../../core/generated/model/min-advent-door-update-response-dto';
 import { MinAdventSharingResponseDto } from '../../../core/generated/model/min-advent-sharing-response-dto';
+import { MinAdventSharedCalendarDto } from '../../../core/generated/model/min-advent-shared-calendar-dto';
 import { MinAdventDomainMapper } from '../mapper/minadvent-domain.mapper';
 import { MinAdventCalendar } from '../models/minadvent-calendar.model';
 import { MinAdventCalendarRepository } from '../repositories/minadvent-calendar.repository';
@@ -24,6 +25,10 @@ export class MinAdventCalendarService {
 
   public async getCalendar(id: string): Promise<MinAdventCalendar> {
     return MinAdventDomainMapper.toCalendar(await this.repository.get(id));
+  }
+
+  public getSharedCalendar(token: string): Promise<MinAdventSharedCalendarDto> {
+    return this.repository.getSharedCalendar(token);
   }
 
   public async loadCalendars(): Promise<void> {
