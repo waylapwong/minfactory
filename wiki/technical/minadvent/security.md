@@ -17,7 +17,7 @@ Widerruf muss den Token **sofort atomar** invalidieren; Wiederveröffentlichung 
 ## 3. Abwehrmaßnahmen und Eingaben
 
 - Angemessene **Rate Limits** für Shared GET/PUT, tokenbasierte Brute-Force-Abwehr ohne neue unnötige Infrastruktur; ungültige Token gleich behandeln.
-- Text-WYSIWYG nur erlaubte Grundformatierungen (Absätze, Listen, fett, kursiv); gefährliche HTML-Attribute, Eventhandler, Skripte und URLs herausfiltern. Serverseitig validieren/sanitizen und bei Darstellung sicher rendern; Angulars Standard-Sanitization nicht durch generelles Bypass-Trust aushebeln.
+- Text- und Gutscheinbeschreibungen sind einfacher Text, kein WYSIWYG- oder beliebiger HTML-Inhalt. Inhalte bei der Darstellung als Text behandeln; Angulars Standard-Sanitization nicht durch generelles Bypass-Trust aushebeln.
 - Externe Links ausschließlich validierte `http:`/`https:`-URLs. Blockgrenzen/Pflichtfelder serverseitig durchsetzen; keine blind übernommene HTML-Quelle.
 - Angemeldete Ersteller-CORS und anonyme Shared-Routen ohne unbeabsichtigte Cross-Origin-Ausweitung prüfen; Content- und Auth-Guards getrennt anwenden.
 - Für PUTs und Linkänderungen globale Version und abgeleiteten Abschluss in **derselben DB-Transaktion** unter geeigneter Sperre prüfen. Token-Revoke und Öffnung dürfen nicht gleichzeitig beide mit veralteten Voraussetzungen durchgehen.

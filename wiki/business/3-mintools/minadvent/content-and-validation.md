@@ -14,9 +14,9 @@ Pro Türchen sind **0 bis maximal 10 Inhaltsblöcke insgesamt** zulässig, frei 
 
 | Blocktyp | Felder | Zweck |
 | --- | --- | --- |
-| Text | Formatierter Text | WYSIWYG-Grundformatierung: **fett**, *kursiv*, Absätze und Listen. |
+| Text | Einfacher Text | Normales mehrzeiliges Textfeld ohne WYSIWYG-Formatierung. |
 | Link | Titel, HTTP(S)-URL | Anklickbarer externer Inhalt. |
-| Gutschein | Titel, Beschreibung | Anzeige eines Gutscheins; **keine digitale Einlösung**. |
+| Gutschein | Titel, Beschreibung | Titel und Beschreibung als normale Formularfelder; die Beschreibung ist wie beim Textblock ein mehrzeiliges Textfeld. Anzeige eines Gutscheins, **keine digitale Einlösung**. |
 
 Blöcke werden innerhalb eines Türchens mit **fortlaufenden Positionen 1, 2, 3, …** gespeichert und in dieser Reihenfolge angezeigt. Es gibt keine Position 0, doppelte Positionen oder Lücken. Blöcke dürfen ohne zusätzliche Rückfrage entfernt werden. Wenn alle Blöcke entfernt und gespeichert sind, ist das Türchen `EMPTY` (gegebenenfalls führt genau das nach Weihnachten zum endgültigen Abschluss).
 
@@ -27,7 +27,7 @@ Blöcke werden innerhalb eines Türchens mit **fortlaufenden Positionen 1, 2, 3,
 | Kalendertitel | Erforderlich, höchstens **100 Zeichen** |
 | Empfängername | Erforderlich, höchstens **100 Zeichen** |
 | Kalenderjahr | Erforderlich, vorbelegt mit aktuellem Jahr; nach Erstellung unveränderlich |
-| Textblock | Sichtbarer, nicht leerer Inhalt; höchstens **10.000 sichtbare Zeichen** |
+| Textblock | Nicht leerer einfacher Text; höchstens **10.000 Zeichen** |
 | Linktitel | Erforderlich, höchstens **100 Zeichen** |
 | Linkadresse | Erforderliche gültige **HTTP(S)-URL**; eine konkrete technische Maximallänge wird vor Implementierung festgelegt |
 | Gutscheintitel | Erforderlich, höchstens **100 Zeichen** |
@@ -35,7 +35,7 @@ Blöcke werden innerhalb eines Türchens mit **fortlaufenden Positionen 1, 2, 3,
 | Blockanzahl | **0–10** insgesamt pro Türchen |
 | Position | Lückenlose Ganzzahlen ab **1** |
 
-Bloße Leerzeichen, Whitespace-only und formatierter Text ohne sichtbare Zeichen zählen als leer. Unvollständige Blöcke können nicht gespeichert werden; ein Türchen mit **null** Blöcken ist hingegen gültig. Das Frontend informiert verständlich über verletzte Grenzen; die fachliche Validierung wird serverseitig erneut durchgesetzt. Formatiertes Textmaterial wird sicher dargestellt und darf keine schädlichen Inhalte ausführen.
+Ein Inhalt, der nur aus Leerzeichen besteht, zählt als leer. Unvollständige Blöcke können nicht gespeichert werden; ein Türchen mit **null** Blöcken ist hingegen gültig. Das Frontend informiert verständlich über verletzte Grenzen; die fachliche Validierung wird serverseitig erneut durchgesetzt. Textinhalte werden als einfacher Text dargestellt und nicht als HTML interpretiert.
 
 ## 4. Version und gleichzeitige Bearbeitung
 

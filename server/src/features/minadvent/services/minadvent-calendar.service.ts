@@ -183,8 +183,12 @@ export class MinAdventCalendarService {
     if (!['http:', 'https:'].includes(parsedUrl.protocol) || !parsedUrl.hostname) {
       this.throwInvalidContent();
     }
+    const serializedUrl = parsedUrl.toString();
+    if (serializedUrl.length > 2048) {
+      this.throwInvalidContent();
+    }
     block.title = this.validateTitleAndTrim(input.title);
-    block.url = parsedUrl.toString();
+    block.url = serializedUrl;
   }
 
   private mapVoucher(input: MinAdventDoorUpdateDto['blocks'][number], block: MinAdventBlock): void {
