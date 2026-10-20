@@ -11,6 +11,7 @@
 ## minTools
 
 - [minAdvent – Technische Spezifikation v1.0.0](minadvent/minadvent-home.md)
+- [minSplit – Technische Spezifikation v1.0.0](minsplit/minsplit-home.md)
 
 ## Development
 
