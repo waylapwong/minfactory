@@ -71,6 +71,7 @@ export class MinAdventOverviewComponent implements OnInit {
 
   public async loadCalendars(): Promise<void> {
     this.isLoading.set(true);
+    this.error.set('');
     this.createError.set('');
     try {
       await this.calendarService.loadCalendars();

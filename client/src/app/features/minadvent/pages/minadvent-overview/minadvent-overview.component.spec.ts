@@ -69,6 +69,17 @@ describe('MinAdventOverviewComponent', () => {
       expect(component.error()).toBe('Deine Kalender konnten nicht geladen werden. Bitte versuche es erneut.');
       expect(component.isLoading()).toBeFalse();
     });
+
+    it('should clear the previous loading error when a retry succeeds', async () => {
+      MINADVENT_CALENDAR_SERVICE_MOCK.loadCalendars.and.rejectWith(new Error('Unavailable'));
+      await component.loadCalendars();
+      MINADVENT_CALENDAR_SERVICE_MOCK.loadCalendars.and.resolveTo();
+
+      await component.loadCalendars();
+
+      expect(component.error()).toBe('');
+      expect(component.isLoading()).toBeFalse();
+    });
   });
 
   describe('createCalendar()', () => {

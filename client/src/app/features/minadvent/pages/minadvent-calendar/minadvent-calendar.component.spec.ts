@@ -56,6 +56,24 @@ describe('MinAdventCalendarComponent', () => {
     });
   });
 
+  describe('navigateBack()', () => {
+    it('should delegate discard confirmation to the route guard', () => {
+      const calendar = createMinAdventCalendar();
+      component.calendar.set(calendar);
+      component.selectDoor(calendar.doors[0]);
+      component.addBlock(component.MinAdventBlockType.Text);
+      spyOn(component.routingService, 'navigateToMinAdvent');
+      const confirmSpy = spyOn(window, 'confirm').and.returnValue(false);
+
+      component.navigateBack();
+
+      expect(component.routingService.navigateToMinAdvent).toHaveBeenCalled();
+      expect(confirmSpy).not.toHaveBeenCalled();
+      expect(component.canDeactivate()).toBeFalse();
+      expect(confirmSpy).toHaveBeenCalledOnceWith('Ungespeicherte Türchenänderungen verwerfen?');
+    });
+  });
+
   describe('saveTitle()', () => {
     it('should save a changed title using the calendar version', async () => {
       const calendar = createMinAdventCalendar();

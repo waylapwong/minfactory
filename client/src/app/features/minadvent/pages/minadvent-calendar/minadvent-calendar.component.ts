@@ -135,9 +135,7 @@ export class MinAdventCalendarComponent implements OnInit {
   }
 
   public navigateBack(): void {
-    if (this.confirmDiscardDoorDraft()) {
-      this.routingService.navigateToMinAdvent();
-    }
+    this.routingService.navigateToMinAdvent();
   }
 
   public async saveRecipient(): Promise<void> {
