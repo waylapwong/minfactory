@@ -69,7 +69,13 @@ describe('MinAdventSharedCalendarComponent', () => {
       fixture.detectChanges();
 
       expect(component.isBeforeDecember()).toBeFalse();
-      expect(fixture.nativeElement.querySelectorAll('ol li')).toHaveSize(24);
+      expect(fixture.nativeElement.querySelectorAll('[aria-label="T\u00fcrchen\u00fcbersicht"] > button')).toHaveSize(
+        24,
+      );
+      expect(fixture.nativeElement.querySelectorAll('min-badge')).toHaveSize(24);
+      expect(fixture.nativeElement.querySelector('button[aria-label^="T\u00fcrchen 1"]')?.className).toContain(
+        'hover:translate-y-0.5',
+      );
       expect(fixture.nativeElement.textContent).toContain('Befüllt');
       expect(fixture.nativeElement.textContent).toContain('Leer');
       expect(fixture.nativeElement.textContent).not.toContain('Alex');
@@ -119,6 +125,8 @@ describe('MinAdventSharedCalendarComponent', () => {
       expect(component.selectedDoor()?.day).toBe(1);
       expect(component.animateDoor()).toBeTrue();
       expect(component.calendar()?.version).toBe(2);
+      fixture.detectChanges();
+      expect(fixture.nativeElement.querySelector('min-dialog')).toBeTruthy();
     });
 
     it('uses a read-only GET to show an already opened door', async () => {

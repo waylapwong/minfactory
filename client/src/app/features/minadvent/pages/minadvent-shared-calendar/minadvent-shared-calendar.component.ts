@@ -1,9 +1,12 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, ElementRef, OnDestroy, OnInit, Signal, computed, effect, signal, viewChild } from '@angular/core';
+import { Component, OnDestroy, OnInit, Signal, computed, signal } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { MinAdventSharedCalendarDto } from '../../../../core/generated/model/min-advent-shared-calendar-dto';
 import { MinAdventSharedDoorContentDto } from '../../../../core/generated/model/min-advent-shared-door-content-dto';
 import { MinAdventSharedDoorOpenResponseDto } from '../../../../core/generated/model/min-advent-shared-door-open-response-dto';
+import { BadgeComponent } from '../../../../shared/components/badge/badge.component';
+import { DialogComponent } from '../../../../shared/components/dialog/dialog.component';
+import { Color } from '../../../../shared/enums/color.enum';
 import { MinAdventCalendarService } from '../../services/minadvent-calendar.service';
 
 const BERLIN_DATE_FORMATTER = new Intl.DateTimeFormat('en', {
@@ -23,10 +26,12 @@ const BERLIN_DATE_FORMATTER = new Intl.DateTimeFormat('en', {
   styles: [
     '@keyframes door-reveal { from { opacity: 0.6; transform: scale(0.96); } to { opacity: 1; transform: scale(1); } }',
   ],
+  imports: [BadgeComponent, DialogComponent],
   host: { class: 'block min-h-full w-full' },
 })
 export class MinAdventSharedCalendarComponent implements OnInit, OnDestroy {
   public readonly calendar = signal<MinAdventSharedCalendarDto | null>(null);
+  public readonly Color: typeof Color = Color;
   public readonly error = signal('');
   public readonly isLoading = signal(true);
   public readonly now = signal(Date.now());
@@ -54,7 +59,6 @@ export class MinAdventSharedCalendarComponent implements OnInit, OnDestroy {
   });
 
   private readonly token: string;
-  private readonly contentDialog = viewChild<ElementRef<HTMLDialogElement>>('contentDialog');
   private countdownInterval: ReturnType<typeof setInterval> | null = null;
 
   constructor(
@@ -62,12 +66,6 @@ export class MinAdventSharedCalendarComponent implements OnInit, OnDestroy {
     private readonly calendarService: MinAdventCalendarService,
   ) {
     this.token = this.route.snapshot.paramMap.get('token') ?? '';
-    effect(() => {
-      const dialog = this.contentDialog()?.nativeElement;
-      if (this.selectedDoor() && dialog && !dialog.open) {
-        dialog.showModal();
-      }
-    });
   }
 
   public ngOnInit(): void {
