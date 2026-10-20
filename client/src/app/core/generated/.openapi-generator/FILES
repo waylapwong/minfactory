@@ -20,6 +20,11 @@ model/min-advent-door-dto.ts
 model/min-advent-door-status.ts
 model/min-advent-door-update-dto.ts
 model/min-advent-door-update-response-dto.ts
+model/min-advent-shared-calendar-dto.ts
+model/min-advent-shared-door-dto.ts
+model/min-advent-sharing-response-dto.ts
+model/min-advent-sharing-update-dto.ts
+model/min-advent-token-rotation-dto.ts
 model/min-factory-user-dto.ts
 model/min-poker-create-game-dto.ts
 model/min-poker-game-dto.ts

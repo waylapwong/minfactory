@@ -15,6 +15,9 @@ import { MinAdventBlockType } from './min-advent-block-type';
 export interface MinAdventBlockDto { 
     description?: string | null;
     position: number;
+    /**
+     * Sanitized HTML with a limited formatting allowlist.
+     */
     text?: string | null;
     title?: string | null;
     type: MinAdventBlockType;

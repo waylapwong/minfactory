@@ -12,8 +12,8 @@
 
 
 export interface MinAdventCalendarCreateDto { 
-    title: string;
-    recipientName: string;
     year: number;
+    recipientName: string;
+    title: string;
 }
 

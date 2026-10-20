@@ -4,6 +4,7 @@ import { UserRolePolicy } from '../../core/authorization/policies/user-role.poli
 import { MinFactoryUserGuard } from '../minfactory/guards/minfactory-user.guard';
 import { MinFactoryModule } from '../minfactory/minfactory.module';
 import { MinAdventCalendarController } from './controllers/minadvent-calendar.controller';
+import { MinAdventSharedController } from './controllers/minadvent-shared.controller';
 import { MinAdventCalendarEntity } from './models/entities/minadvent-calendar.entity';
 import { MinAdventDoorEntity } from './models/entities/minadvent-door.entity';
 import { MinAdventBlockEntity } from './models/entities/minadvent-block.entity';
@@ -15,7 +16,7 @@ import { MinAdventCalendarService } from './services/minadvent-calendar.service'
     TypeOrmModule.forFeature([MinAdventCalendarEntity, MinAdventDoorEntity, MinAdventBlockEntity]),
     MinFactoryModule,
   ],
-  controllers: [MinAdventCalendarController],
+  controllers: [MinAdventCalendarController, MinAdventSharedController],
   providers: [MinAdventCalendarRepository, MinAdventCalendarService, MinFactoryUserGuard, UserRolePolicy],
 })
 export class MinAdventModule {}

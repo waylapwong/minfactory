@@ -6,7 +6,7 @@ export class MinAdventDoorDto {
   @ApiProperty({ minimum: 1, maximum: 24 })
   public day!: number;
 
-  @ApiProperty({ enum: MinAdventDoorStatus })
+  @ApiProperty({ enum: MinAdventDoorStatus, enumName: 'MinAdventDoorStatus' })
   public status!: MinAdventDoorStatus;
 
   @ApiProperty({ type: [MinAdventBlockDto] })

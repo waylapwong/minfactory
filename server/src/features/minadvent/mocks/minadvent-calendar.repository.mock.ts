@@ -6,11 +6,15 @@ export class MinAdventCalendarRepositoryMock {
     .fn<Promise<MinAdventCalendarEntity>, [Partial<MinAdventCalendarEntity>]>()
     .mockResolvedValue(new MinAdventCalendarEntity());
   public findById = jest.fn<Promise<MinAdventCalendarEntity | null>, [string]>().mockResolvedValue(null);
+  public findByActiveToken = jest.fn<Promise<MinAdventCalendarEntity | null>, [string]>().mockResolvedValue(null);
   public findByOwner = jest.fn<Promise<MinAdventCalendarEntity[]>, [string]>().mockResolvedValue([]);
   public update = jest
     .fn<Promise<MinAdventCalendarEntity>, [MinAdventCalendarEntity, number]>()
     .mockResolvedValue(new MinAdventCalendarEntity());
   public replaceDoorBlocks = jest
     .fn<Promise<MinAdventCalendarEntity>, [string, string, number, number, () => MinAdventBlock[]]>()
+    .mockResolvedValue(new MinAdventCalendarEntity());
+  public updateSharing = jest
+    .fn<Promise<MinAdventCalendarEntity>, [string, string, number, boolean, string | null]>()
     .mockResolvedValue(new MinAdventCalendarEntity());
 }

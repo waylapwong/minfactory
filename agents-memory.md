@@ -11,3 +11,4 @@
 - Group unit tests under a nested `describe('methodName()')` matching the method being tested.
 - Feature root components should use a separate HTML template containing `<router-outlet>`, following the MinPoker and MinRps roots; avoid inline root templates.
 - Record durable repository-wide work instructions in this shared memory. For each ticket, implement and verify the requested work, then check off only completed checkboxes under the issue's "Umsetzung" section; leave all acceptance criteria untouched for user review and keep unverified CI/CD checks open.
+- Never hand-edit client/openapi.json. Generate it from the running NestJS Swagger endpoint at http://localhost:3000/openapi-json/, copy that output into the client, then run npm run api in client/ to regenerate API models and services.

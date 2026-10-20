@@ -12,8 +12,8 @@
 
 
 export interface MinAdventCalendarUpdateDto { 
-    title?: string;
-    recipientName?: string;
     expectedVersion: number;
+    recipientName?: string;
+    title?: string;
 }
 
