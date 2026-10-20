@@ -115,4 +115,38 @@ describe('MinAdventOverviewComponent', () => {
       expect(component.createForm.controls.recipientName.touched).toBeTrue();
     });
   });
+
+  describe('createCalendar()', () => {
+    it('opens the shared dialog from the create button', () => {
+      fixture.nativeElement.querySelector('[aria-label="Kalender anlegen"]').click();
+      fixture.detectChanges();
+
+      expect(component.isCreateDialogOpen()).toBeTrue();
+      expect(fixture.nativeElement.querySelector('[aria-modal="true"]')).toBeTruthy();
+    });
+
+    it('creates a valid calendar and navigates to its detail page', async () => {
+      const calendar = createMinAdventCalendar();
+      MINADVENT_CALENDAR_SERVICE_MOCK.createCalendar.and.resolveTo(calendar);
+      component.createForm.setValue({ recipientName: 'Alex', title: 'Adventskalender', year: 2026 });
+
+      await component.createCalendar();
+
+      expect(MINADVENT_CALENDAR_SERVICE_MOCK.createCalendar).toHaveBeenCalledWith({
+        recipientName: 'Alex',
+        title: 'Adventskalender',
+        year: 2026,
+      });
+      expect(ROUTING_SERVICE_MOCK.navigateToMinAdventCalendar).toHaveBeenCalledWith(calendar.id);
+      expect(component.isCreateDialogOpen()).toBeFalse();
+    });
+
+    it('does not create an invalid calendar', async () => {
+      await component.createCalendar();
+
+      expect(MINADVENT_CALENDAR_SERVICE_MOCK.createCalendar).not.toHaveBeenCalled();
+      expect(component.createForm.controls.title.touched).toBeTrue();
+      expect(component.createForm.controls.recipientName.touched).toBeTrue();
+    });
+  });
 });

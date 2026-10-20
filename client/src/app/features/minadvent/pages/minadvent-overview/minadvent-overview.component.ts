@@ -29,8 +29,19 @@ import { MinAdventCalendarService } from '../../services/minadvent-calendar.serv
 })
 export class MinAdventOverviewComponent implements OnInit {
   public readonly Color: typeof Color = Color;
-  public readonly error = signal('');
   public readonly createError = signal('');
+  public readonly createForm = new FormGroup({
+    title: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.maxLength(100)] }),
+    recipientName: new FormControl('', {
+      nonNullable: true,
+      validators: [Validators.required, Validators.maxLength(100)],
+    }),
+    year: new FormControl(new Date().getFullYear(), {
+      nonNullable: true,
+      validators: [Validators.required, Validators.min(1), Validators.max(9999), Validators.pattern(/^\d+$/)],
+    }),
+  });
+  public readonly error = signal('');
   public readonly groups: Signal<MinAdventCalendarGroup[]> = computed(() => {
     const calendars = this.calendarService.calendars();
     const years = [...new Set(calendars.map((calendar) => calendar.year))].sort((left, right) => {
@@ -45,20 +56,9 @@ export class MinAdventOverviewComponent implements OnInit {
     });
     return years.map((year) => ({ year, calendars: calendars.filter((calendar) => calendar.year === year) }));
   });
-  public readonly isLoading = signal(true);
   public readonly isCreateDialogOpen = signal(false);
   public readonly isCreating = signal(false);
-  public readonly createForm = new FormGroup({
-    title: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.maxLength(100)] }),
-    recipientName: new FormControl('', {
-      nonNullable: true,
-      validators: [Validators.required, Validators.maxLength(100)],
-    }),
-    year: new FormControl(new Date().getFullYear(), {
-      nonNullable: true,
-      validators: [Validators.required, Validators.min(1), Validators.max(9999), Validators.pattern(/^\d+$/)],
-    }),
-  });
+  public readonly isLoading = signal(true);
 
   constructor(
     public readonly routingService: RoutingService,
@@ -67,19 +67,6 @@ export class MinAdventOverviewComponent implements OnInit {
 
   public ngOnInit(): void {
     void this.loadCalendars();
-  }
-
-  public async loadCalendars(): Promise<void> {
-    this.isLoading.set(true);
-    this.error.set('');
-    this.createError.set('');
-    try {
-      await this.calendarService.loadCalendars();
-    } catch {
-      this.error.set('Deine Kalender konnten nicht geladen werden. Bitte versuche es erneut.');
-    } finally {
-      this.isLoading.set(false);
-    }
   }
 
   public async createCalendar(): Promise<void> {
@@ -98,6 +85,19 @@ export class MinAdventOverviewComponent implements OnInit {
       this.createError.set('Der Kalender konnte nicht angelegt werden. Bitte prüfe deine Eingaben.');
     } finally {
       this.isCreating.set(false);
+    }
+  }
+
+  public async loadCalendars(): Promise<void> {
+    this.isLoading.set(true);
+    this.error.set('');
+    this.createError.set('');
+    try {
+      await this.calendarService.loadCalendars();
+    } catch {
+      this.error.set('Deine Kalender konnten nicht geladen werden. Bitte versuche es erneut.');
+    } finally {
+      this.isLoading.set(false);
     }
   }
 
