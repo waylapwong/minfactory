@@ -13,15 +13,15 @@ import { MinAdventBlockType } from './min-advent-block-type';
 
 
 export interface MinAdventBlockDto { 
-    description?: string;
+    description?: string | null;
     position: number;
     /**
      * Sanitized HTML with a limited formatting allowlist.
      */
-    text?: string;
-    title?: string;
+    text?: string | null;
+    title?: string | null;
     type: MinAdventBlockType;
-    url?: string;
+    url?: string | null;
 }
 export namespace MinAdventBlockDto {
 }

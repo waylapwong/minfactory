@@ -25,7 +25,7 @@ export class MinAdventSharedController {
     if (!calendar) {
       throw new NotFoundException({
         code: 'SHARED_CALENDAR_UNAVAILABLE',
-        message: 'Dieser Adventskalender ist nicht verfÃ¼gbar.',
+        message: 'Dieser Adventskalender ist nicht verfügbar.',
       });
     }
     return calendar;

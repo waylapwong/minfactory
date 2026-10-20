@@ -8,6 +8,6 @@ export default new DataSource({
   password: process.env.DB_PASSWORD,
   database: process.env.DB_DATABASE,
   entities: ['src/**/*.entity.ts'],
-  migrations: ['src/migrations/*{.ts,.js}'],
+  migrations: [__dirname + '/core/migrations/*{.ts,.js}'],
   synchronize: false,
 });

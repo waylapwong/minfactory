@@ -115,7 +115,7 @@ export class MinAdventCalendarService {
     if (current.version !== input.expectedVersion) {
       throw new ConflictException({
         code: 'VERSION_CONFLICT',
-        message: 'Der Kalender wurde zwischenzeitlich geÃ¤ndert.',
+        message: 'Der Kalender wurde zwischenzeitlich geändert.',
       });
     }
     if (current.isPublished === input.published) {
@@ -141,7 +141,7 @@ export class MinAdventCalendarService {
     if (current.version !== input.expectedVersion) {
       throw new ConflictException({
         code: 'VERSION_CONFLICT',
-        message: 'Der Kalender wurde zwischenzeitlich geÃ¤ndert.',
+        message: 'Der Kalender wurde zwischenzeitlich geändert.',
       });
     }
     if (!current.isPublished) {

@@ -38,7 +38,7 @@ export class MinAdventCalendarRepository {
       if (calendar.version !== expectedVersion) {
         throw new ConflictException({
           code: 'VERSION_CONFLICT',
-          message: 'Der Kalender wurde zwischenzeitlich geÃ¤ndert.',
+          message: 'Der Kalender wurde zwischenzeitlich geändert.',
         });
       }
       const result = await repository.update(
@@ -48,7 +48,7 @@ export class MinAdventCalendarRepository {
       if (!result.affected) {
         throw new ConflictException({
           code: 'VERSION_CONFLICT',
-          message: 'Der Kalender wurde zwischenzeitlich geÃ¤ndert.',
+          message: 'Der Kalender wurde zwischenzeitlich geändert.',
         });
       }
       const updated = await this.findById(calendarId, repository);

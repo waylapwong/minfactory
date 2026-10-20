@@ -26,7 +26,7 @@ describe('MinAdventSharedController', () => {
         status: 404,
         response: {
           code: 'SHARED_CALENDAR_UNAVAILABLE',
-          message: 'Dieser Adventskalender ist nicht verfÃ¼gbar.',
+          message: 'Dieser Adventskalender ist nicht verfügbar.',
         },
       });
     });
