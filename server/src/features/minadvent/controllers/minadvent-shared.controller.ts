@@ -1,11 +1,16 @@
-import { Controller, Get, Header, HttpCode, NotFoundException, Param } from '@nestjs/common';
+import { Body, Controller, Get, Header, HttpCode, NotFoundException, Param, ParseIntPipe, Put } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { API_200 } from '../../../shared/decorators/api-200.decorator';
 import { API_404 } from '../../../shared/decorators/api-404.decorator';
 import { API_500 } from '../../../shared/decorators/api-500.decorator';
+import { API_409 } from '../../../shared/decorators/api-409.decorator';
+import { API_400 } from '../../../shared/decorators/api-400.decorator';
 import { MinApp } from '../../../shared/enums/minapp.enum';
 import { MinAdventSharedCalendarDto } from '../models/dtos/minadvent-shared-calendar.dto';
 import { MinAdventCalendarService } from '../services/minadvent-calendar.service';
+import { MinAdventSharedDoorContentDto } from '../models/dtos/minadvent-shared-door-content.dto';
+import { MinAdventSharedDoorOpenDto } from '../models/dtos/minadvent-shared-door-open.dto';
+import { MinAdventSharedDoorOpenResponseDto } from '../models/dtos/minadvent-shared-door-open-response.dto';
 
 @Controller('minadvent/shared')
 @ApiTags(MinApp.MinAdvent)
@@ -29,5 +34,54 @@ export class MinAdventSharedController {
       });
     }
     return calendar;
+  }
+
+  @Get(':token/doors/:day')
+  @HttpCode(200)
+  @Header('Cache-Control', 'no-store')
+  @Header('Referrer-Policy', 'no-referrer')
+  @ApiOperation({ operationId: 'getMinAdventSharedDoor' })
+  @API_200({ type: MinAdventSharedDoorContentDto })
+  @API_400()
+  @API_404()
+  @API_409()
+  @API_500()
+  public async getDoor(
+    @Param('token') token: string,
+    @Param('day', ParseIntPipe) day: number,
+  ): Promise<MinAdventSharedDoorContentDto> {
+    const door = await this.calendarService.getSharedDoor(token, day);
+    if (!door) {
+      throw new NotFoundException({
+        code: 'SHARED_CALENDAR_UNAVAILABLE',
+        message: 'Dieser Adventskalender ist nicht verfÃ¼gbar.',
+      });
+    }
+    return door;
+  }
+
+  @Put(':token/doors/:day')
+  @HttpCode(200)
+  @Header('Cache-Control', 'no-store')
+  @Header('Referrer-Policy', 'no-referrer')
+  @ApiOperation({ operationId: 'openMinAdventSharedDoor' })
+  @API_200({ type: MinAdventSharedDoorOpenResponseDto })
+  @API_400()
+  @API_404()
+  @API_409()
+  @API_500()
+  public async openDoor(
+    @Param('token') token: string,
+    @Param('day', ParseIntPipe) day: number,
+    @Body() input: MinAdventSharedDoorOpenDto,
+  ): Promise<MinAdventSharedDoorOpenResponseDto> {
+    const door = await this.calendarService.openSharedDoor(token, day, input);
+    if (!door) {
+      throw new NotFoundException({
+        code: 'SHARED_CALENDAR_UNAVAILABLE',
+        message: 'Dieser Adventskalender ist nicht verfÃ¼gbar.',
+      });
+    }
+    return door;
   }
 }

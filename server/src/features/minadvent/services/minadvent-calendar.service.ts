@@ -25,6 +25,10 @@ import { MinAdventSharingUpdateDto } from '../models/dtos/minadvent-sharing-upda
 import { MinAdventTokenRotationDto } from '../models/dtos/minadvent-token-rotation.dto';
 import { MinAdventSharingResponseDto } from '../models/dtos/minadvent-sharing-response.dto';
 import { MinAdventSharedCalendarDto } from '../models/dtos/minadvent-shared-calendar.dto';
+import { MinAdventSharedDoorContentDto } from '../models/dtos/minadvent-shared-door-content.dto';
+import { MinAdventSharedDoorOpenDto } from '../models/dtos/minadvent-shared-door-open.dto';
+import { MinAdventSharedDoorOpenResponseDto } from '../models/dtos/minadvent-shared-door-open-response.dto';
+import { MinAdventDoorStatus } from '../models/enums/minadvent-door-status.enum';
 
 @Injectable()
 export class MinAdventCalendarService {
@@ -170,6 +174,72 @@ export class MinAdventCalendarService {
     response.completed = calendar.completed;
     response.doors = calendar.doors.map((door) => ({ day: door.day, status: door.status }));
     return response;
+  }
+
+  public async getSharedDoor(token: string, day: number): Promise<MinAdventSharedDoorContentDto | null> {
+    if (!Number.isInteger(day) || day < 1 || day > 24) {
+      throw new BadRequestException('Day must be an integer between 1 and 24.');
+    }
+    if (!/^[a-f0-9]{64}$/.test(token)) {
+      return null;
+    }
+    const entity = await this.calendarRepository.getSharedDoor(token, day);
+    if (!entity) {
+      return null;
+    }
+    const calendar = MinAdventEntityMapper.toDomain(entity);
+    const door = calendar.doors[0];
+    if (!door || door.status !== MinAdventDoorStatus.Opened) {
+      throw new ConflictException({ code: 'DOOR_NOT_OPENED', message: 'Dieses TÃ¼rchen wurde noch nicht geÃ¶ffnet.' });
+    }
+    const response = new MinAdventSharedDoorContentDto();
+    response.day = door.day;
+    response.status = door.status;
+    response.blocks = door.blocks.map(MinAdventDomainMapper.toBlockDto);
+    return response;
+  }
+
+  public async openSharedDoor(
+    token: string,
+    day: number,
+    input: MinAdventSharedDoorOpenDto,
+  ): Promise<MinAdventSharedDoorOpenResponseDto | null> {
+    if (!Number.isInteger(day) || day < 1 || day > 24) {
+      throw new BadRequestException('Day must be an integer between 1 and 24.');
+    }
+    if (!/^[a-f0-9]{64}$/.test(token)) {
+      return null;
+    }
+    const now = Object.fromEntries(
+      new Intl.DateTimeFormat('en', { timeZone: 'Europe/Berlin', year: 'numeric', month: 'numeric', day: 'numeric' })
+        .formatToParts(new Date())
+        .map((part) => [part.type, Number(part.value)]),
+    );
+    try {
+      const result = await this.calendarRepository.openSharedDoor(token, day, input.expectedVersion, {
+        year: now['year'],
+        month: now['month'],
+        day: now['day'],
+      });
+      const calendar = MinAdventEntityMapper.toDomain(result.calendar);
+      const door = calendar.doors.find((item) => item.day === day);
+      if (!door) {
+        throw new NotFoundException('Door not found.');
+      }
+      const response = new MinAdventSharedDoorOpenResponseDto();
+      response.day = door.day;
+      response.status = door.status;
+      response.version = calendar.version;
+      response.completed = calendar.completed;
+      response.firstOpened = result.firstOpened;
+      response.blocks = door.blocks.map(MinAdventDomainMapper.toBlockDto);
+      return response;
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        return null;
+      }
+      throw error;
+    }
   }
 
   private createToken(): string {

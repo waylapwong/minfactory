@@ -42,25 +42,78 @@
         </dl>
       </section>
     } @else {
-      <ol aria-label="Türchenübersicht" class="grid grid-cols-4 gap-2 sm:grid-cols-6 sm:gap-3 md:grid-cols-8">
+      <div role="group" aria-label="T&#252;rchen&#252;bersicht" class="grid grid-cols-4 gap-2 sm:grid-cols-6">
         @for (door of current.doors; track door.day) {
-          <li
-            class="flex aspect-square min-w-0 flex-col items-center justify-center gap-1 border-2 p-1 text-center sm:p-2"
-            [class.border-gray-400]="door.status === 'EMPTY'"
-            [class.bg-gray-100]="door.status === 'EMPTY'"
-            [class.text-gray-800]="door.status === 'EMPTY'"
-            [class.border-emerald-700]="door.status === 'FILLED'"
-            [class.bg-emerald-100]="door.status === 'FILLED'"
-            [class.text-emerald-950]="door.status === 'FILLED'"
-            [class.border-sky-700]="door.status === 'OPENED'"
-            [class.bg-sky-100]="door.status === 'OPENED'"
-            [class.text-sky-950]="door.status === 'OPENED'"
+          <button
+            type="button"
+            class="flex aspect-square transform cursor-pointer flex-col items-center justify-center gap-1 rounded-lg border-4 border-black bg-white p-2 shadow-2xl transition-all duration-100 hover:translate-y-0.5 hover:bg-gray-100 hover:shadow-xl focus:bg-gray-100 focus-visible:ring-4 focus-visible:ring-blue-600 active:translate-y-1 active:shadow-none disabled:cursor-not-allowed disabled:opacity-60"
+            [class.bg-red-100]="selectedDoor()?.day === door.day"
+            [attr.aria-pressed]="selectedDoor()?.day === door.day"
+            [attr.aria-label]="'T&#252;rchen ' + door.day + ', Status ' + getDoorStatusLabel(door.status)"
+            [disabled]="door.status === 'EMPTY' || !isDoorAvailable(door.day) || isDoorLoading()"
+            (click)="selectDoor(door.day)"
           >
-            <span class="text-2xl font-bold tabular-nums">{{ door.day }}</span>
-            <span class="text-xs font-semibold">{{ getDoorStatusLabel(door.status) }}</span>
-          </li>
+            <span class="text-2xl font-bold">{{ door.day }}</span>
+            <min-badge
+              [color]="door.status === 'EMPTY' ? Color.Gray : door.status === 'FILLED' ? Color.Green : Color.Blue"
+            >
+              {{ getDoorStatusLabel(door.status) }}
+            </min-badge>
+          </button>
         }
-      </ol>
+      </div>
+    }
+
+    @if (isDoorLoading()) {
+      <output role="status" aria-live="polite" class="text-center text-gray-700">Türcheninhalt wird geladen …</output>
+    }
+
+    @if (doorError()) {
+      <section role="alert" class="flex flex-col items-center gap-3 text-center">
+        <p class="text-gray-800">{{ doorError() }}</p>
+        @if (reloadRequired()) {
+          <button
+            type="button"
+            class="rounded border-2 border-gray-800 px-4 py-2 font-semibold text-gray-900 focus-visible:outline-4 focus-visible:outline-blue-700"
+            (click)="reloadAfterConflict()"
+          >
+            Übersicht neu laden
+          </button>
+        }
+      </section>
+    }
+
+    @if (selectedDoor(); as content) {
+      <min-dialog [title]="'T&#252;rchen ' + content.day" [isOpen]="true" (closed)="closeDoor()">
+        <div dialog-subtitle class="mb-3">
+          <min-badge [color]="Color.Blue">{{ getDoorStatusLabel(content.status) }}</min-badge>
+        </div>
+        <div class="flex flex-col gap-4" [class.animate-[door-reveal_450ms_ease-out]]="animateDoor()">
+          @for (block of content.blocks; track block.position) {
+            @if (block.type === 'TEXT') {
+              <section
+                class="min-w-0 rounded-lg border-4 border-gray-300 bg-white p-3 break-words"
+                [innerHTML]="block.text"
+              ></section>
+            } @else if (block.type === 'LINK') {
+              <section class="min-w-0 rounded-lg border-4 border-gray-300 bg-white p-3 break-words">
+                <a
+                  class="font-semibold text-blue-800 underline hover:text-blue-950 focus-visible:outline-4 focus-visible:outline-blue-700"
+                  [href]="block.url"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  >{{ block.title }}</a
+                >
+              </section>
+            } @else {
+              <section class="min-w-0 rounded-lg border-4 border-gray-300 bg-white p-3 break-words">
+                <h3 class="font-bold text-gray-950">{{ block.title }}</h3>
+                <p class="mt-2 whitespace-pre-wrap text-gray-900">{{ block.description }}</p>
+              </section>
+            }
+          }
+        </div>
+      </min-dialog>
     }
   }
 </main>

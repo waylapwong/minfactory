@@ -274,6 +274,107 @@ describe('MinAdventCalendarService', () => {
     });
   });
 
+  describe('getSharedDoor()', () => {
+    it('returns blocks only for a currently opened door', async () => {
+      repository.getSharedDoor.mockResolvedValue(
+        Object.assign(new MinAdventCalendarEntity(), {
+          id: 'calendar-1',
+          ownerId: owner.id,
+          year: 2026,
+          version: 5,
+          doors: [
+            Object.assign(new MinAdventDoorEntity(), {
+              day: 2,
+              status: MinAdventDoorStatus.Opened,
+              blocks: [{ position: 1, type: MinAdventBlockType.Text, text: '<p>Surprise</p>' }],
+            }),
+          ],
+        }),
+      );
+
+      await expect(service.getSharedDoor('e'.repeat(64), 2)).resolves.toEqual({
+        day: 2,
+        status: MinAdventDoorStatus.Opened,
+        blocks: [
+          {
+            position: 1,
+            type: MinAdventBlockType.Text,
+            text: '<p>Surprise</p>',
+            title: undefined,
+            url: undefined,
+            description: undefined,
+          },
+        ],
+      });
+    });
+
+    it('rejects access to content unless the door is currently opened', async () => {
+      repository.getSharedDoor.mockResolvedValue(
+        Object.assign(new MinAdventCalendarEntity(), {
+          id: 'calendar-1',
+          year: 2026,
+          doors: [
+            Object.assign(new MinAdventDoorEntity(), {
+              day: 2,
+              status: MinAdventDoorStatus.Filled,
+              blocks: [{ text: 'private' }],
+            }),
+          ],
+        }),
+      );
+
+      await expect(service.getSharedDoor('f'.repeat(64), 2)).rejects.toMatchObject({
+        response: expect.objectContaining({ code: 'DOOR_NOT_OPENED' }),
+      });
+    });
+  });
+
+  describe('openSharedDoor()', () => {
+    it('returns the animation flag and opened content from the atomic repository operation', async () => {
+      repository.openSharedDoor.mockResolvedValue({
+        calendar: Object.assign(new MinAdventCalendarEntity(), {
+          id: 'calendar-1',
+          year: 2026,
+          version: 6,
+          doors: [
+            Object.assign(new MinAdventDoorEntity(), {
+              day: 2,
+              status: MinAdventDoorStatus.Opened,
+              blocks: [{ position: 1, type: MinAdventBlockType.Text, text: '<p>Surprise</p>' }],
+            }),
+          ],
+        }),
+        firstOpened: true,
+      });
+
+      const result = await service.openSharedDoor('a'.repeat(64), 2, { expectedVersion: 5 });
+
+      expect(repository.openSharedDoor).toHaveBeenCalledWith(
+        'a'.repeat(64),
+        2,
+        5,
+        expect.objectContaining({ year: expect.any(Number), month: expect.any(Number), day: expect.any(Number) }),
+      );
+      expect(result).toMatchObject({
+        day: 2,
+        status: MinAdventDoorStatus.Opened,
+        version: 6,
+        firstOpened: true,
+        completed: false,
+      });
+      expect(result?.blocks[0].text).toBe('<p>Surprise</p>');
+    });
+
+    it('does not retry a stale open request', async () => {
+      repository.openSharedDoor.mockRejectedValue(new ConflictException({ code: 'VERSION_CONFLICT' }));
+
+      await expect(service.openSharedDoor('a'.repeat(64), 2, { expectedVersion: 4 })).rejects.toThrow(
+        ConflictException,
+      );
+      expect(repository.openSharedDoor).toHaveBeenCalledTimes(1);
+    });
+  });
+
   describe('updateDoor()', () => {
     const currentCalendar = (): MinAdventCalendarEntity =>
       Object.assign(new MinAdventCalendarEntity(), {

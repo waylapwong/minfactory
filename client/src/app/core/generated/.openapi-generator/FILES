@@ -21,7 +21,10 @@ model/min-advent-door-status.ts
 model/min-advent-door-update-dto.ts
 model/min-advent-door-update-response-dto.ts
 model/min-advent-shared-calendar-dto.ts
+model/min-advent-shared-door-content-dto.ts
 model/min-advent-shared-door-dto.ts
+model/min-advent-shared-door-open-dto.ts
+model/min-advent-shared-door-open-response-dto.ts
 model/min-advent-sharing-response-dto.ts
 model/min-advent-sharing-update-dto.ts
 model/min-advent-token-rotation-dto.ts

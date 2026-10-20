@@ -8,6 +8,8 @@ export const MINADVENT_CALENDAR_SERVICE_MOCK = {
   createCalendar: jasmine.createSpy('createCalendar'),
   getCalendar: jasmine.createSpy('getCalendar'),
   getSharedCalendar: jasmine.createSpy('getSharedCalendar'),
+  getSharedDoor: jasmine.createSpy('getSharedDoor'),
+  openSharedDoor: jasmine.createSpy('openSharedDoor'),
   getSharing: jasmine.createSpy('getSharing'),
   loadCalendars: jasmine.createSpy('loadCalendars'),
   updateCalendar: jasmine.createSpy('updateCalendar'),

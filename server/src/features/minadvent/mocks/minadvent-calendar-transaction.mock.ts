@@ -33,6 +33,7 @@ export class MinAdventCalendarTransactionMock {
   };
   public readonly doorRepository = {
     create: jest.fn((value: Partial<MinAdventDoorEntity>) => value),
+    find: jest.fn().mockImplementation(() => Promise.resolve(this.doors)),
     save: jest.fn().mockResolvedValue([]),
     update: jest.fn().mockResolvedValue({ affected: 1 }),
     createQueryBuilder: jest.fn(() => this.doorQueryBuilder),
