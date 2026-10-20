@@ -225,5 +225,24 @@ describe('MinAdventCalendarService', () => {
         }),
       ).rejects.toMatchObject({ response: expect.objectContaining({ code: 'INVALID_CONTENT' }) });
     });
+
+    it('rejects links whose serialized URL exceeds the database column length', async () => {
+      repository.findById.mockResolvedValue(currentCalendar());
+      captureBlocks();
+
+      await expect(
+        service.updateDoor(owner, 'calendar-1', 3, {
+          expectedVersion: 4,
+          blocks: [
+            {
+              position: 1,
+              type: MinAdventBlockType.Link,
+              title: 'Unicode URL',
+              url: `https://example.org/${'ü'.repeat(400)}`,
+            },
+          ],
+        }),
+      ).rejects.toMatchObject({ response: expect.objectContaining({ code: 'INVALID_CONTENT' }) });
+    });
   });
 });

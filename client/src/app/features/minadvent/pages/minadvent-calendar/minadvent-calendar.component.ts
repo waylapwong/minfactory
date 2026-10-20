@@ -89,6 +89,7 @@ export class MinAdventCalendarComponent implements OnInit {
   ];
 
   private originalDoorBlocks: MinAdventBlockDto[] = [];
+  private readonly originalTextByForm = new WeakMap<DoorBlockForm, string>();
 
   constructor(
     private readonly route: ActivatedRoute,
@@ -135,9 +136,7 @@ export class MinAdventCalendarComponent implements OnInit {
   }
 
   public navigateBack(): void {
-    if (this.confirmDiscardDoorDraft()) {
-      this.routingService.navigateToMinAdvent();
-    }
+    this.routingService.navigateToMinAdvent();
   }
 
   public async saveRecipient(): Promise<void> {
@@ -208,7 +207,13 @@ export class MinAdventCalendarComponent implements OnInit {
     this.originalDoorBlocks = this.normalizeBlocks(door.blocks);
     this.doorForm.clear({ emitEvent: false });
     for (const block of this.originalDoorBlocks) {
-      this.doorForm.push(this.createBlockForm(block), { emitEvent: false });
+      const form = this.createBlockForm(
+        block.type === MinAdventBlockType.Text ? { ...block, text: this.normalizeText(block.text ?? '') } : block,
+      );
+      if (block.type === MinAdventBlockType.Text) {
+        this.originalTextByForm.set(form, block.text ?? '');
+      }
+      this.doorForm.push(form, { emitEvent: false });
     }
     this.doorForm.markAsPristine();
     this.doorDraftRevision.update((revision) => revision + 1);
@@ -384,7 +389,7 @@ export class MinAdventCalendarComponent implements OnInit {
       this.closeDoorDialog();
       this.showSnackbar('Türchen gespeichert.');
     } catch (reason) {
-      this.handleDoorSaveError(reason);
+      await this.handleDoorSaveError(reason);
     } finally {
       this.isSavingDoor.set(false);
     }
@@ -396,10 +401,30 @@ export class MinAdventCalendarComponent implements OnInit {
     );
   }
 
-  private handleDoorSaveError(reason: unknown): void {
+  private async handleDoorSaveError(reason: unknown): Promise<void> {
     const error = reason as HttpErrorResponse;
     const code = error.error?.code;
     const isConflict = error.status === 409 && ['VERSION_CONFLICT', 'CALENDAR_COMPLETED', 'DOOR_OPENED'].includes(code);
+
+    if (error.status === 409 && code === 'VERSION_CONFLICT') {
+      const calendar = this.calendar();
+      if (
+        calendar &&
+        window.confirm(
+          'Der Kalender wurde geändert. Jetzt aktualisieren? Dein Entwurf bleibt erhalten; beim erneuten Speichern können Änderungen an diesem Türchen überschrieben werden.',
+        )
+      ) {
+        try {
+          this.calendar.set(await this.calendarService.getCalendar(calendar.id));
+          this.showSnackbar('Kalender aktualisiert. Dein Türchenentwurf ist erhalten; speichere erneut.');
+        } catch {
+          this.showSnackbar('Der Kalender konnte nicht aktualisiert werden. Dein Türchenentwurf ist erhalten.');
+        }
+        return;
+      }
+      this.showSnackbar('Kalender nicht aktualisiert. Dein Türchenentwurf ist erhalten.');
+      return;
+    }
 
     this.showSnackbar(
       isConflict
@@ -420,17 +445,26 @@ export class MinAdventCalendarComponent implements OnInit {
 
   private toBlocks(): MinAdventBlockDto[] {
     return this.normalizeBlocks(
-      this.doorForm.controls.map((block, index) => ({
-        ...block.getRawValue(),
-        position: index + 1,
-      })),
+      this.doorForm.controls.map((block, index) => {
+        const value = block.getRawValue();
+        let text = value.text;
+        if (value.type === MinAdventBlockType.Text) {
+          const originalText = this.originalTextByForm.get(block);
+          if (originalText !== undefined && value.text === this.normalizeText(originalText)) {
+            text = originalText;
+          } else {
+            text = this.normalizeText(value.text);
+          }
+        }
+        return { ...value, position: index + 1, text };
+      }),
     );
   }
 
   private normalizeBlocks(blocks: MinAdventBlockDto[]): MinAdventBlockDto[] {
     return blocks.map((block, index) => {
       if (block.type === MinAdventBlockType.Text) {
-        return { position: index + 1, text: this.normalizeText(block.text ?? ''), type: block.type };
+        return { position: index + 1, text: block.text ?? '', type: block.type };
       }
       if (block.type === MinAdventBlockType.Link) {
         return {
