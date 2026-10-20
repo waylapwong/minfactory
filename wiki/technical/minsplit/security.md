@@ -8,7 +8,7 @@ Vorhandene Firebase-/minFactory-Integrationen verwenden: `FirebaseGuard`, `MinFa
 
 ## Shared Link als Bearer Secret
 
-Beim Erstellen der Gruppe einen kryptografisch sicheren Token mit **mindestens 256 Bit Entropie** erzeugen; **genau einen** gültigen Token pro Gruppe. Zur Prüfung den Token nur über kryptografischen Hashwert in der DB nachschlagen; Klartext nur bei Erstellung/Rotation für die Erstelleranzeige zurückgeben. Da ein verlorener Link so nicht rücklesbar ist, kann der Ersteller bei Bedarf **einen neuen generieren**; die bestehende Gruppe bleibt unverändert. Diese Details sind technische Sicherheitsentscheidungen, keine zusätzliche fachliche Zugangshürde.
+Beim Erstellen der Gruppe einen kryptografisch sicheren Token mit **mindestens 256 Bit Entropie** erzeugen; **genau einen** gültigen Token pro Gruppe. Den **aktuellen Token** wie bei der bestehenden minAdvent-Spezifikation in einer geschützten eindeutigen Datenbankspalte vorhalten, sodass der angemeldete Ersteller den bestehenden Link jederzeit wieder abrufen/kopieren kann. Das ist eine bewusst sicherheitssensible reversible Speicherung: DB-Berechtigungen und Backups besonders schützen. Nur der Ersteller darf den Token über authentifizierte Routen lesen; öffentliche Responses enthalten ihn nicht. Diese Details sind technische Sicherheitsentscheidungen, keine zusätzliche fachliche Zugangshürde.
 
 Bei Rotation den alten Hash **atomar** ersetzen, globale Version einmal erhöhen; erst nach Commit ist alter Link ungültig. Gleichzeitige Linkzugriffe/Rotationen werden im Gruppen-Transaktionskontext erneut geprüft. Öffentliche Antworten für ungültigen/rotierten/gelöschten Token: derselbe neutrale **404 GROUP_UNAVAILABLE**, ohne Gruppenexistenz zu verraten.
 
