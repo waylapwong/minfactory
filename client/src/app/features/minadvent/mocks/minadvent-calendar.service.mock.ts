@@ -9,4 +9,5 @@ export const MINADVENT_CALENDAR_SERVICE_MOCK = {
   getCalendar: jasmine.createSpy('getCalendar'),
   loadCalendars: jasmine.createSpy('loadCalendars'),
   updateCalendar: jasmine.createSpy('updateCalendar'),
+  updateDoor: jasmine.createSpy('updateDoor'),
 };

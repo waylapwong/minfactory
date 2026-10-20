@@ -4,8 +4,8 @@ import { MinAdventCalendar } from '../models/minadvent-calendar.model';
 export const MINADVENT_CALENDAR_DTO_MOCK: MinAdventCalendarDto = {
   completed: false,
   doors: [
-    { day: 1, status: 'FILLED' },
-    { day: 2, status: 'OPENED' },
+    { blocks: [], day: 1, status: 'FILLED' },
+    { blocks: [], day: 2, status: 'OPENED' },
   ],
   id: 'calendar-id',
   published: false,

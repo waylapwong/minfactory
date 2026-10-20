@@ -24,6 +24,10 @@ import { MinAdventCalendarCreateDto } from '../model/min-advent-calendar-create-
 import { MinAdventCalendarDto } from '../model/min-advent-calendar-dto';
 // @ts-ignore
 import { MinAdventCalendarUpdateDto } from '../model/min-advent-calendar-update-dto';
+// @ts-ignore
+import { MinAdventDoorUpdateDto } from '../model/min-advent-door-update-dto';
+// @ts-ignore
+import { MinAdventDoorUpdateResponseDto } from '../model/min-advent-door-update-response-dto';
 
 // @ts-ignore
 import { BASE_PATH, COLLECTION_FORMATS }                     from '../variables';
@@ -338,6 +342,82 @@ export class MinAdventApiService {
             {
                 context: localVarHttpContext,
                 body: minAdventCalendarUpdateDto,
+                responseType: <any>responseType_,
+                withCredentials: this.configuration.withCredentials,
+                headers: localVarHeaders,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
+    }
+
+    /**
+     * 
+     * @param id 
+     * @param day 
+     * @param minAdventDoorUpdateDto 
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     */
+    public updateMinAdventDoor(id: string, day: number, minAdventDoorUpdateDto: MinAdventDoorUpdateDto, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<MinAdventDoorUpdateResponseDto>;
+    public updateMinAdventDoor(id: string, day: number, minAdventDoorUpdateDto: MinAdventDoorUpdateDto, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpResponse<MinAdventDoorUpdateResponseDto>>;
+    public updateMinAdventDoor(id: string, day: number, minAdventDoorUpdateDto: MinAdventDoorUpdateDto, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpEvent<MinAdventDoorUpdateResponseDto>>;
+    public updateMinAdventDoor(id: string, day: number, minAdventDoorUpdateDto: MinAdventDoorUpdateDto, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<any> {
+        if (id === null || id === undefined) {
+            throw new Error('Required parameter id was null or undefined when calling updateMinAdventDoor.');
+        }
+        if (day === null || day === undefined) {
+            throw new Error('Required parameter day was null or undefined when calling updateMinAdventDoor.');
+        }
+        if (minAdventDoorUpdateDto === null || minAdventDoorUpdateDto === undefined) {
+            throw new Error('Required parameter minAdventDoorUpdateDto was null or undefined when calling updateMinAdventDoor.');
+        }
+
+        let localVarHeaders = this.defaultHeaders;
+
+        let localVarHttpHeaderAcceptSelected: string | undefined = options && options.httpHeaderAccept;
+        if (localVarHttpHeaderAcceptSelected === undefined) {
+            // to determine the Accept header
+            const httpHeaderAccepts: string[] = [
+                'application/json'
+            ];
+            localVarHttpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        }
+        if (localVarHttpHeaderAcceptSelected !== undefined) {
+            localVarHeaders = localVarHeaders.set('Accept', localVarHttpHeaderAcceptSelected);
+        }
+
+        let localVarHttpContext: HttpContext | undefined = options && options.context;
+        if (localVarHttpContext === undefined) {
+            localVarHttpContext = new HttpContext();
+        }
+
+
+        // to determine the Content-Type header
+        const consumes: string[] = [
+            'application/json'
+        ];
+        const httpContentTypeSelected: string | undefined = this.configuration.selectHeaderContentType(consumes);
+        if (httpContentTypeSelected !== undefined) {
+            localVarHeaders = localVarHeaders.set('Content-Type', httpContentTypeSelected);
+        }
+
+        let responseType_: 'text' | 'json' | 'blob' = 'json';
+        if (localVarHttpHeaderAcceptSelected) {
+            if (localVarHttpHeaderAcceptSelected.startsWith('text')) {
+                responseType_ = 'text';
+            } else if (this.configuration.isJsonMime(localVarHttpHeaderAcceptSelected)) {
+                responseType_ = 'json';
+            } else {
+                responseType_ = 'blob';
+            }
+        }
+
+        let localVarPath = `/minadvent/calendars/${this.configuration.encodeParam({name: "id", value: id, in: "path", style: "simple", explode: false, dataType: "string", dataFormat: "uuid"})}/doors/${this.configuration.encodeParam({name: "day", value: day, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: undefined})}`;
+        return this.httpClient.request<MinAdventDoorUpdateResponseDto>('put', `${this.configuration.basePath}${localVarPath}`,
+            {
+                context: localVarHttpContext,
+                body: minAdventDoorUpdateDto,
                 responseType: <any>responseType_,
                 withCredentials: this.configuration.withCredentials,
                 headers: localVarHeaders,

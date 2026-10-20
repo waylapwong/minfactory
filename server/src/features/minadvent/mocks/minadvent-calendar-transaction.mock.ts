@@ -1,6 +1,7 @@
 import { DataSource, EntityManager, Repository } from 'typeorm';
 import { MinAdventCalendarEntity } from '../models/entities/minadvent-calendar.entity';
 import { MinAdventDoorEntity } from '../models/entities/minadvent-door.entity';
+import { MinAdventBlockEntity } from '../models/entities/minadvent-block.entity';
 
 export class MinAdventCalendarTransactionMock {
   public readonly calendar = Object.assign(new MinAdventCalendarEntity(), {
@@ -33,11 +34,26 @@ export class MinAdventCalendarTransactionMock {
   public readonly doorRepository = {
     create: jest.fn((value: Partial<MinAdventDoorEntity>) => value),
     save: jest.fn().mockResolvedValue([]),
+    update: jest.fn().mockResolvedValue({ affected: 1 }),
     createQueryBuilder: jest.fn(() => this.doorQueryBuilder),
   };
+  public readonly blockRepository = {
+    create: jest.fn((value: Partial<MinAdventBlockEntity>) => value),
+    find: jest.fn().mockResolvedValue([]),
+    save: jest.fn().mockResolvedValue([]),
+    delete: jest.fn().mockResolvedValue({ affected: 0 }),
+  };
   public readonly manager = {
-    getRepository: jest.fn((entity: typeof MinAdventCalendarEntity | typeof MinAdventDoorEntity) =>
-      entity === MinAdventCalendarEntity ? this.calendarRepository : this.doorRepository,
+    getRepository: jest.fn(
+      (entity: typeof MinAdventCalendarEntity | typeof MinAdventDoorEntity | typeof MinAdventBlockEntity) => {
+        if (entity === MinAdventCalendarEntity) {
+          return this.calendarRepository;
+        }
+        if (entity === MinAdventBlockEntity) {
+          return this.blockRepository;
+        }
+        return this.doorRepository;
+      },
     ),
   };
   public readonly dataSource = {

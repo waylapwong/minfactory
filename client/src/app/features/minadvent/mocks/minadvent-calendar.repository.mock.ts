@@ -3,4 +3,5 @@ export const MINADVENT_CALENDAR_REPOSITORY_MOCK = {
   get: jasmine.createSpy('get'),
   getAll: jasmine.createSpy('getAll'),
   update: jasmine.createSpy('update'),
+  updateDoor: jasmine.createSpy('updateDoor'),
 };

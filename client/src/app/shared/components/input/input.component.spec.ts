@@ -33,4 +33,23 @@ describe('InputComponent', () => {
     expect(input.min).toBe('1');
     expect(input.max).toBe('9999');
   });
+
+  it('should show the current character count when enabled', () => {
+    fixture.componentRef.setInput('formControlInput', new FormControl('Advent'));
+    fixture.componentRef.setInput('maxLength', 20);
+    fixture.componentRef.setInput('showCharacterCount', true);
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.textContent).toContain('6 / 20 Zeichen');
+  });
+
+  it('should forward input changes', () => {
+    const valueChanged = jasmine.createSpy('valueChanged');
+    component.valueChanged.subscribe(valueChanged);
+    const input = fixture.nativeElement.querySelector('input') as HTMLInputElement;
+    input.value = 'Test';
+    input.dispatchEvent(new Event('input'));
+
+    expect(valueChanged).toHaveBeenCalled();
+  });
 });

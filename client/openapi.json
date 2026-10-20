@@ -90,6 +90,44 @@
         "tags": ["minAdvent"]
       }
     },
+    "/minadvent/calendars/{id}/doors/{day}": {
+      "put": {
+        "operationId": "updateMinAdventDoor",
+        "parameters": [
+          { "name": "id", "required": true, "in": "path", "schema": { "type": "string", "format": "uuid" } },
+          {
+            "name": "day",
+            "required": true,
+            "in": "path",
+            "schema": { "type": "integer", "minimum": 1, "maximum": 24 }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/MinAdventDoorUpdateDto" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": { "schema": { "$ref": "#/components/schemas/MinAdventDoorUpdateResponseDto" } }
+            }
+          },
+          "400": { "description": "Bad Request" },
+          "401": { "description": "Unauthorized" },
+          "403": { "description": "Forbidden" },
+          "404": { "description": "Not Found" },
+          "409": { "description": "Version, state or content conflict" },
+          "500": { "description": "Internal Server Error" }
+        },
+        "summary": "",
+        "tags": ["minAdvent"]
+      }
+    },
     "/minpoker/games/{id}": {
       "delete": {
         "operationId": "deleteMinPokerGame",
@@ -751,13 +789,30 @@
         "type": "string",
         "enum": ["EMPTY", "FILLED", "OPENED"]
       },
+      "MinAdventBlockType": {
+        "type": "string",
+        "enum": ["TEXT", "LINK", "VOUCHER"]
+      },
+      "MinAdventBlockDto": {
+        "type": "object",
+        "properties": {
+          "description": { "type": "string", "maxLength": 2000, "nullable": true },
+          "position": { "type": "integer", "minimum": 1, "maximum": 10 },
+          "text": { "type": "string", "maxLength": 10000, "nullable": true },
+          "title": { "type": "string", "maxLength": 100, "nullable": true },
+          "type": { "$ref": "#/components/schemas/MinAdventBlockType" },
+          "url": { "type": "string", "maxLength": 2048, "format": "uri", "nullable": true }
+        },
+        "required": ["position", "type"]
+      },
       "MinAdventDoorDto": {
         "type": "object",
         "properties": {
           "day": { "type": "number", "minimum": 1, "maximum": 24 },
-          "status": { "$ref": "#/components/schemas/MinAdventDoorStatus" }
+          "status": { "$ref": "#/components/schemas/MinAdventDoorStatus" },
+          "blocks": { "type": "array", "items": { "$ref": "#/components/schemas/MinAdventBlockDto" } }
         },
-        "required": ["day", "status"]
+        "required": ["day", "status", "blocks"]
       },
       "MinAdventCalendarDto": {
         "type": "object",
@@ -790,6 +845,24 @@
           "expectedVersion": { "type": "integer", "minimum": 1 }
         },
         "required": ["expectedVersion"]
+      },
+      "MinAdventDoorUpdateDto": {
+        "type": "object",
+        "properties": {
+          "blocks": { "type": "array", "maxItems": 10, "items": { "$ref": "#/components/schemas/MinAdventBlockDto" } },
+          "expectedVersion": { "type": "integer", "minimum": 1 }
+        },
+        "required": ["blocks", "expectedVersion"]
+      },
+      "MinAdventDoorUpdateResponseDto": {
+        "type": "object",
+        "properties": {
+          "day": { "type": "integer", "minimum": 1, "maximum": 24 },
+          "status": { "$ref": "#/components/schemas/MinAdventDoorStatus" },
+          "version": { "type": "integer" },
+          "completed": { "type": "boolean" }
+        },
+        "required": ["day", "status", "version", "completed"]
       },
       "MinRpsErrorDto": {
         "type": "object",

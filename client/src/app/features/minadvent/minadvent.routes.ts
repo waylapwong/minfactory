@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { authenticationGuard } from '../../core/authentication/guards/authentication.guard';
+import { leaveGameGuard } from '../../shared/guards/leave-game.guard';
 
 export enum MinAdventPath {
   Calendar = 'calendars/:id',
@@ -17,13 +18,13 @@ export const MINADVENT_ROUTES: Routes = [
   },
   {
     path: MinAdventPath.Create,
-    canActivate: [authenticationGuard],
-    loadComponent: () =>
-      import('./pages/minadvent-calendar/minadvent-calendar.component').then((m) => m.MinAdventCalendarComponent),
+    pathMatch: 'full',
+    redirectTo: MinAdventPath.Root,
   },
   {
     path: MinAdventPath.Calendar,
     canActivate: [authenticationGuard],
+    canDeactivate: [leaveGameGuard],
     loadComponent: () =>
       import('./pages/minadvent-calendar/minadvent-calendar.component').then((m) => m.MinAdventCalendarComponent),
   },

@@ -74,14 +74,13 @@ Senior Fullstack Developer.
 
 ## Agent Memory
 
-Das gemeinsame Projektgedächtnis für Codex und Copilot liegt in `./agents-memory.md`.
+Das gemeinsame Projektgedächtnis für Codex und Copilot liegt in `./agents-memory.md`. Es hilft Agents, wiederkehrende Repo-Patterns und Coding-Konventionen über Aufgaben hinweg anzuwenden.
 
-* **Lesen:** Lade das Gedächtnis nur, wenn es für die aktuelle Aufgabe relevant ist. Vermeide unnötige Kontext- und Tokenkosten.
-* **Schreiben:** Ergänze selbstständig neue, bestätigte und langfristig relevante Erkenntnisse über das Projekt.
-* **Aktualisieren:** Korrigiere oder entferne veraltete und widersprüchliche Informationen.
-* **Verdichten:** Fasse gleiche oder ähnliche Erkenntnisse zusammen. Vermeide Duplikate und unnötige Erklärungen.
-* **Kürze:** Formuliere Einträge prägnant und möglichst in einer Zeile. Halte das gesamte Gedächtnis so klein wie möglich.
-* **Relevanz:** Speichere nur nicht offensichtliches Projektwissen mit dauerhaftem Nutzen. Keine temporären Informationen, Aufgabenprotokolle oder Inhalte, die bereits im Code oder in anderen Anweisungen eindeutig dokumentiert sind.
-* **Priorität:** Der aktuelle Repository-Code und die geltenden Projektanweisungen haben immer Vorrang vor dem Gedächtnis.
+* **Zu Aufgabenbeginn lesen:** Prüfe das Gedächtnis, sobald die Aufgabe Code, Tests, Architektur oder Projektabläufe betrifft. Nutze die Einträge als Hinweise und gleiche sie mit dem aktuellen Code und den geltenden Anweisungen ab.
+* **Beim Arbeiten beobachten:** Achte darauf, ob ein Pattern oder eine Konvention an mehreren unabhängigen Stellen im Repository vorkommt oder durch mehrere passende Beispiele bestätigt wird. Übernimm solche wiederkehrenden Patterns bei der Umsetzung.
+* **Selbstständig lernen:** Wenn du dabei eine neue, nicht offensichtliche und langfristig nützliche Repo-Konvention feststellst, ergänze sie direkt in `agents-memory.md` – auch wenn der Prompt nicht ausdrücklich um eine Memory-Aktualisierung bittet. Schreibe nur, wenn die Beobachtung durch den aktuellen Code oder die Aufgabe belegt ist; halte Vermutungen und einmalige Entscheidungen heraus.
+* **Gedächtnis aktuell halten:** Korrigiere oder entferne Einträge, die dem aktuellen Code oder geltenden Anweisungen widersprechen. Fasse ähnliche Hinweise zusammen und vermeide Duplikate.
+* **Knapp und dauerhaft:** Formuliere Erkenntnisse prägnant, möglichst in einer Zeile. Speichere keine Aufgabenprotokolle, temporären Details oder Regeln, die bereits eindeutig in `AGENTS.md` stehen.
+* **Priorität:** Aktueller Repository-Code und geltende Projektanweisungen haben immer Vorrang vor dem Gedächtnis.
 
-Pflege das Gedächtnis eigenständig bei Bedarf, ohne für jede Änderung eine Bestätigung einzuholen. Schreibe nur, wenn tatsächlich neues oder zu korrigierendes Wissen vorliegt.
+Pflege `agents-memory.md` eigenständig während der Arbeit, ohne dafür eine Bestätigung einzuholen. Ändere es nur bei belegtem, dauerhaft nützlichem Erkenntnisgewinn oder notwendiger Korrektur.

@@ -29,4 +29,18 @@ describe('CardButtonComponent', () => {
       expect(spy).toHaveBeenCalled();
     });
   });
+
+  describe('closeOnEscape()', () => {
+    it('should emit closed when the dialog is open', () => {
+      fixture.componentRef.setInput('isOpen', true);
+      const spy = jasmine.createSpy('closed');
+      component.closed.subscribe(spy);
+      const event = new KeyboardEvent('keydown', { key: 'Escape', cancelable: true });
+
+      component.closeOnEscape(event);
+
+      expect(event.defaultPrevented).toBeTrue();
+      expect(spy).toHaveBeenCalled();
+    });
+  });
 });

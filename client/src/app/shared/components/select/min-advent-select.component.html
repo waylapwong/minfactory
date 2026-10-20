@@ -1,0 +1,21 @@
+<div class="flex w-full flex-col">
+  @if (label()) {
+    <label class="font-bold" [for]="id()">{{ label() }}:</label>
+  }
+  <select
+    [attr.aria-invalid]="isInvalid() ? 'true' : null"
+    [formControl]="formControlInput()"
+    [id]="id()"
+    [class]="
+      `min-h-10 w-full rounded-lg border-4 bg-white px-2 py-1 shadow-2xl transition-all duration-100` +
+      ` hover:bg-gray-100 hover:shadow-xl focus-visible:ring-4 focus-visible:ring-black` +
+      ` disabled:cursor-not-allowed disabled:bg-gray-300 disabled:opacity-50 disabled:shadow-none` +
+      ` ${isInvalid() ? 'border-red-500' : 'border-black'}`
+    "
+    (change)="emitValueChanged($event)"
+  >
+    @for (option of options(); track option.value) {
+      <option [value]="option.value" [disabled]="option.disabled === true">{{ option.label }}</option>
+    }
+  </select>
+</div>

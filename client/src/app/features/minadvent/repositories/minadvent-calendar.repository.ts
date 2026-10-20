@@ -3,6 +3,7 @@ import { firstValueFrom } from 'rxjs';
 import { MinAdventApiService } from '../../../core/generated';
 import { MinAdventCalendarCreateDto } from '../../../core/generated/model/min-advent-calendar-create-dto';
 import { MinAdventCalendarUpdateDto } from '../../../core/generated/model/min-advent-calendar-update-dto';
+import { MinAdventDoorUpdateDto } from '../../../core/generated/model/min-advent-door-update-dto';
 
 @Injectable({ providedIn: 'root' })
 export class MinAdventCalendarRepository {
@@ -22,5 +23,9 @@ export class MinAdventCalendarRepository {
 
   public update(id: string, input: MinAdventCalendarUpdateDto) {
     return firstValueFrom(this.api.updateMinAdventCalendar(id, input));
+  }
+
+  public updateDoor(id: string, day: number, input: MinAdventDoorUpdateDto) {
+    return firstValueFrom(this.api.updateMinAdventDoor(id, day, input));
   }
 }

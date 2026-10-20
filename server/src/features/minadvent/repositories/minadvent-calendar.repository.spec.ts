@@ -1,7 +1,9 @@
 import { ConflictException } from '@nestjs/common';
 import { MinAdventCalendarTransactionMock } from '../mocks/minadvent-calendar-transaction.mock';
 import { MinAdventCalendar } from '../models/domains/minadvent-calendar';
+import { MinAdventBlock } from '../models/domains/minadvent-block';
 import { MinAdventDoorEntity } from '../models/entities/minadvent-door.entity';
+import { MinAdventBlockEntity } from '../models/entities/minadvent-block.entity';
 import { MinAdventDoorStatus } from '../models/enums/minadvent-door-status.enum';
 import { MinAdventCalendarRepository } from './minadvent-calendar.repository';
 
@@ -88,5 +90,118 @@ describe('MinAdventCalendarRepository', () => {
     expect((error as ConflictException).getResponse()).toEqual(expect.objectContaining({ code: 'CALENDAR_COMPLETED' }));
     expect(transaction.dataSource.transaction).toHaveBeenCalledTimes(1);
     expect(transaction.calendarRepository.update).not.toHaveBeenCalled();
+  });
+
+  describe('replaceDoorBlocks()', () => {
+    it('checks the expected global version before applying any block changes', async () => {
+      transaction.calendar.version = 2;
+      transaction.doors.push(
+        Object.assign(new MinAdventDoorEntity(), {
+          id: 'door-3',
+          calendarId: 'calendar-1',
+          day: 3,
+          status: MinAdventDoorStatus.Empty,
+        }),
+      );
+
+      await expect(repository.replaceDoorBlocks('owner-1', 'calendar-1', 3, 1, () => [])).rejects.toBeInstanceOf(
+        ConflictException,
+      );
+
+      expect(transaction.blockRepository.find).not.toHaveBeenCalled();
+      expect(transaction.blockRepository.delete).not.toHaveBeenCalled();
+      expect(transaction.calendarRepository.update).not.toHaveBeenCalled();
+    });
+
+    it('rejects edits to opened doors and completed calendars without writing', async () => {
+      transaction.doors.push(
+        Object.assign(new MinAdventDoorEntity(), {
+          id: 'door-3',
+          calendarId: 'calendar-1',
+          day: 3,
+          status: MinAdventDoorStatus.Opened,
+        }),
+      );
+
+      await expect(repository.replaceDoorBlocks('owner-1', 'calendar-1', 3, 1, () => [])).rejects.toMatchObject({
+        response: expect.objectContaining({ code: 'DOOR_OPENED' }),
+      });
+      expect(transaction.blockRepository.delete).not.toHaveBeenCalled();
+
+      jest.useFakeTimers();
+      jest.setSystemTime(new Date('2026-12-24T23:00:00.000Z'));
+      await expect(repository.replaceDoorBlocks('owner-1', 'calendar-1', 3, 1, () => [])).rejects.toMatchObject({
+        response: expect.objectContaining({ code: 'CALENDAR_COMPLETED' }),
+      });
+      expect(transaction.blockRepository.delete).not.toHaveBeenCalled();
+    });
+
+    it('replaces all blocks and increments the calendar version once', async () => {
+      const door = Object.assign(new MinAdventDoorEntity(), {
+        id: 'door-3',
+        calendarId: 'calendar-1',
+        day: 3,
+        status: MinAdventDoorStatus.Empty,
+      });
+      transaction.doors.push(door);
+      const block = Object.assign(new MinAdventBlockEntity(), {
+        position: 1,
+        type: 'TEXT',
+        text: '<p>Surprise</p>',
+        title: null,
+        url: null,
+        description: null,
+      });
+      transaction.blockRepository.find.mockResolvedValue([]);
+      transaction.calendarRepository.findOne.mockResolvedValue({
+        ...transaction.calendar,
+        version: 2,
+        doors: [{ ...door, status: MinAdventDoorStatus.Filled, blocks: [block] }],
+      });
+
+      const result = await repository.replaceDoorBlocks('owner-1', 'calendar-1', 3, 1, () => [
+        Object.assign(new MinAdventBlock(), block),
+      ]);
+
+      expect(transaction.calendarQueryBuilder.setLock).toHaveBeenCalledWith('pessimistic_write');
+      expect(transaction.doorQueryBuilder.setLock).toHaveBeenCalledWith('pessimistic_write');
+      expect(transaction.blockRepository.delete).toHaveBeenCalledWith({ doorId: 'door-3' });
+      expect(transaction.blockRepository.save).toHaveBeenCalledTimes(1);
+      expect(transaction.doorRepository.update).toHaveBeenCalledWith(
+        { id: 'door-3' },
+        { status: MinAdventDoorStatus.Filled },
+      );
+      expect(transaction.calendarRepository.update).toHaveBeenCalledWith(
+        { id: 'calendar-1', ownerId: 'owner-1', version: 1 },
+        { version: 2 },
+      );
+      expect(result.version).toBe(2);
+    });
+
+    it('does not increment the version when blocks are unchanged', async () => {
+      const existing = Object.assign(new MinAdventBlockEntity(), {
+        position: 1,
+        type: 'TEXT',
+        text: '<p>Same</p>',
+        title: null,
+        url: null,
+        description: null,
+      });
+      const door = Object.assign(new MinAdventDoorEntity(), {
+        id: 'door-3',
+        calendarId: 'calendar-1',
+        day: 3,
+        status: MinAdventDoorStatus.Filled,
+      });
+      transaction.doors.push(door);
+      transaction.blockRepository.find.mockResolvedValue([existing]);
+
+      await repository.replaceDoorBlocks('owner-1', 'calendar-1', 3, 1, () => [
+        Object.assign(new MinAdventBlock(), existing),
+      ]);
+
+      expect(transaction.blockRepository.delete).not.toHaveBeenCalled();
+      expect(transaction.calendarRepository.update).not.toHaveBeenCalled();
+    });
   });
 });

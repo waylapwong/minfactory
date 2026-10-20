@@ -11,11 +11,15 @@ configuration.ts
 encoder.ts
 git_push.sh
 index.ts
+model/min-advent-block-dto.ts
+model/min-advent-block-type.ts
 model/min-advent-calendar-create-dto.ts
 model/min-advent-calendar-dto.ts
 model/min-advent-calendar-update-dto.ts
 model/min-advent-door-dto.ts
 model/min-advent-door-status.ts
+model/min-advent-door-update-dto.ts
+model/min-advent-door-update-response-dto.ts
 model/min-factory-user-dto.ts
 model/min-poker-create-game-dto.ts
 model/min-poker-game-dto.ts

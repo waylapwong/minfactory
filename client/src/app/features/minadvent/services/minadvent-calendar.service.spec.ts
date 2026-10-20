@@ -13,6 +13,7 @@ describe('MinAdventCalendarService', () => {
     MINADVENT_CALENDAR_REPOSITORY_MOCK.get.calls.reset();
     MINADVENT_CALENDAR_REPOSITORY_MOCK.getAll.calls.reset();
     MINADVENT_CALENDAR_REPOSITORY_MOCK.update.calls.reset();
+    MINADVENT_CALENDAR_REPOSITORY_MOCK.updateDoor.calls.reset();
 
     TestBed.configureTestingModule({
       providers: [
@@ -88,6 +89,32 @@ describe('MinAdventCalendarService', () => {
       expect(result.title).toBe('Aktualisiert');
       expect(service.calendars()).toHaveSize(1);
       expect(service.calendars()[0].title).toBe('Aktualisiert');
+    });
+  });
+
+  describe('updateDoor()', () => {
+    it('adopts the door status and global version in the calendar cache', async () => {
+      MINADVENT_CALENDAR_REPOSITORY_MOCK.getAll.and.resolveTo([createMinAdventCalendarDto()]);
+      MINADVENT_CALENDAR_REPOSITORY_MOCK.updateDoor.and.resolveTo({
+        completed: false,
+        day: 1,
+        status: 'FILLED',
+        version: 2,
+      });
+      await service.loadCalendars();
+
+      const result = await service.updateDoor('calendar-id', 1, {
+        blocks: [{ position: 1, text: '<p>Surprise</p>', type: 'TEXT' }],
+        expectedVersion: 1,
+      });
+
+      expect(MINADVENT_CALENDAR_REPOSITORY_MOCK.updateDoor).toHaveBeenCalledWith('calendar-id', 1, {
+        blocks: [{ position: 1, text: '<p>Surprise</p>', type: 'TEXT' }],
+        expectedVersion: 1,
+      });
+      expect(result.version).toBe(2);
+      expect(service.calendars()[0].version).toBe(2);
+      expect(service.calendars()[0].doors[0].blocks).toEqual([{ position: 1, text: '<p>Surprise</p>', type: 'TEXT' }]);
     });
   });
 });

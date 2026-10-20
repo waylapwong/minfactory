@@ -9,12 +9,14 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
+import { MinAdventBlockDto } from './min-advent-block-dto';
 import { MinAdventDoorStatus } from './min-advent-door-status';
 
 
 export interface MinAdventDoorDto { 
     day: number;
     status: MinAdventDoorStatus;
+    blocks: Array<MinAdventBlockDto>;
 }
 export namespace MinAdventDoorDto {
 }
