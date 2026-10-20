@@ -125,11 +125,11 @@ export class MinAdventSharedCalendarComponent implements OnInit, OnDestroy {
       }
     } catch (error) {
       this.doorError.set(
-        'Die TÃ¼r konnte nicht geÃ¶ffnet werden. Lade zuerst die Ãœbersicht neu, bevor du es erneut versuchst.',
+        'Die Tür konnte nicht geöffnet werden. Lade zuerst die Übersicht neu, bevor du es erneut versuchst.',
       );
       this.reloadRequired.set(true);
       if (error instanceof HttpErrorResponse && error.status === 404) {
-        this.doorError.set('Dieser Adventskalender ist nicht verfÃ¼gbar.');
+        this.doorError.set('Dieser Adventskalender ist nicht verfügbar.');
         this.reloadRequired.set(false);
       }
     } finally {
@@ -138,7 +138,7 @@ export class MinAdventSharedCalendarComponent implements OnInit, OnDestroy {
   }
 
   public async reloadAfterConflict(): Promise<void> {
-    if (!window.confirm('MÃ¶chtest du die Adventskalender-Ãœbersicht jetzt neu laden?')) {
+    if (!window.confirm('Möchtest du die Adventskalender-Übersicht jetzt neu laden?')) {
       return;
     }
     await this.loadCalendar();
@@ -153,7 +153,7 @@ export class MinAdventSharedCalendarComponent implements OnInit, OnDestroy {
         this.doorError.set('Der Inhalt konnte nach dem Neuladen nicht abgerufen werden.');
       }
     } else if (door?.status === 'FILLED') {
-      this.doorError.set('Das TÃ¼rchen ist noch nicht geÃ¶ffnet. Klicke erneut darauf, um es zu Ã¶ffnen.');
+      this.doorError.set('Das Türchen ist noch nicht geöffnet. Klicke erneut darauf, um es zu öffnen.');
     }
   }
 

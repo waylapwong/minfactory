@@ -2,6 +2,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { provideZonelessChangeDetection } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ActivatedRoute, convertToParamMap } from '@angular/router';
+import { MinAdventSharedDoorOpenResponseDto } from '../../../../core/generated/model/min-advent-shared-door-open-response-dto';
 import { MINADVENT_ACTIVATED_ROUTE_MOCK } from '../../mocks/minadvent-calendar.component.mock';
 import { createMinAdventSharedCalendarDto } from '../../mocks/minadvent-calendar.mock';
 import { MINADVENT_CALENDAR_SERVICE_MOCK } from '../../mocks/minadvent-calendar.service.mock';
@@ -105,6 +106,29 @@ describe('MinAdventSharedCalendarComponent', () => {
   });
 
   describe('selectDoor()', () => {
+    it('announces while a door request is pending', async () => {
+      MINADVENT_CALENDAR_SERVICE_MOCK.getSharedCalendar.and.resolveTo(createMinAdventSharedCalendarDto());
+      let resolveOpening!: (value: MinAdventSharedDoorOpenResponseDto) => void;
+      MINADVENT_CALENDAR_SERVICE_MOCK.openSharedDoor.and.returnValue(
+        new Promise<MinAdventSharedDoorOpenResponseDto>((resolve) => {
+          resolveOpening = resolve;
+        }),
+      );
+      fixture.detectChanges();
+      await fixture.whenStable();
+      component.now.set(Date.UTC(2026, 11, 1, 0, 0));
+
+      const opening = component.selectDoor(1);
+      fixture.detectChanges();
+
+      expect(fixture.nativeElement.querySelector('output[role="status"][aria-live="polite"]')?.textContent).toContain(
+        'Türcheninhalt wird geladen',
+      );
+
+      resolveOpening({ day: 1, status: 'OPENED', version: 2, completed: false, firstOpened: true, blocks: [] });
+      await opening;
+    });
+
     it('opens a filled unlocked door and displays the first-open animation', async () => {
       MINADVENT_CALENDAR_SERVICE_MOCK.getSharedCalendar.and.resolveTo(createMinAdventSharedCalendarDto());
       MINADVENT_CALENDAR_SERVICE_MOCK.openSharedDoor.and.resolveTo({
@@ -144,6 +168,19 @@ describe('MinAdventSharedCalendarComponent', () => {
       expect(MINADVENT_CALENDAR_SERVICE_MOCK.getSharedDoor).toHaveBeenCalledWith('shared-token', 1);
       expect(MINADVENT_CALENDAR_SERVICE_MOCK.openSharedDoor).not.toHaveBeenCalled();
       expect(component.animateDoor()).toBeFalse();
+    });
+
+    it('shows correctly encoded German error messages when opening a door fails', async () => {
+      MINADVENT_CALENDAR_SERVICE_MOCK.getSharedCalendar.and.resolveTo(createMinAdventSharedCalendarDto());
+      MINADVENT_CALENDAR_SERVICE_MOCK.openSharedDoor.and.rejectWith(new HttpErrorResponse({ status: 500 }));
+      fixture.detectChanges();
+      await fixture.whenStable();
+      component.now.set(Date.UTC(2026, 11, 1, 0, 0));
+
+      await component.selectDoor(1);
+
+      expect(component.doorError()).toContain('Die Tür konnte nicht geöffnet werden.');
+      expect(component.doorError()).not.toContain('TÃ');
     });
 
     it('requires a confirmed reload after a lost opening response instead of retrying it', async () => {
