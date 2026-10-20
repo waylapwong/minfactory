@@ -6,7 +6,7 @@
 
 | Tabelle | Felder (fachlicher Kern) | Integrität |
 | --- | --- | --- |
-| `minsplit_groups` | `id UUID PK`, `creator_id FK` (minFactory-User), `name`, `description NULL`, `status ACTIVE/SETTLING/CLOSED`, `version BIGINT=1`, `share_token_hash UNIQUE`, `next_booking_sequence BIGINT=1`, `next_event_sequence BIGINT=1`, `created_at`, `updated_at` | Index `creator_id,status`; Tokenrotation atomar, genau ein gültiger Token je Gruppe |
+| `minsplit_groups` | `id UUID PK`, `creator_id FK` (minFactory-User), `name`, `description NULL`, `status ACTIVE/SETTLING/CLOSED`, `version BIGINT=1`, `share_token UNIQUE`, `next_booking_sequence BIGINT=1`, `next_event_sequence BIGINT=1`, `created_at`, `updated_at` | Index `creator_id,status`; Tokenrotation atomar, genau ein gültiger Token je Gruppe |
 | `minsplit_participants` | `id UUID PK`, `group_id FK`, `name VARCHAR(20)`, `normalized_name VARCHAR(20)`, `join_sequence BIGINT`, `is_active BOOL`, `is_creator BOOL` | UNIQUE(`group_id,normalized_name`), UNIQUE(`group_id,join_sequence`); entfernte Datensätze **behalten** (Namen reserviert, Referenzen gültig), Ersteller immer aktiv |
 | `minsplit_expenses` | `id UUID PK`, `group_id FK`, `payer_id FK`, `title`, `amount_cents BIGINT`, `booking_sequence BIGINT`, `cancelled_at NULL`, `replacement_for_expense_id NULL`, `created_at` | `amount_cents > 0`, UNIQUE(`group_id,booking_sequence`); stornierte Buchungen bleiben für Chronik |
 | `minsplit_settlements` | `id UUID PK`, `group_id FK`, `position INT`, `debtor_id FK`, `creditor_id FK`, `amount_cents BIGINT`, `is_confirmed BOOL` | UNIQUE(`group_id,position`), `amount_cents > 0`; Planzeilen nach Fixierung unveränderlich, **nur** Bezahlstatus schaltbar |
@@ -30,4 +30,4 @@ Versionierte TypeORM-Migrationen mit Up/Down erstellen, ohne `synchronize` als P
 
 ## Offene physische Details für Implementierungstickets
 
-Exakte User-FK-Spalte, konkrete MySQL-Kollation und vorhandenes Migrationen-Deployment an bestehendem Code ausrichten; Tokenhash und Rest-Cent-Snapshot können als einfache Spalten/JSON oder bei Bedarf als kleine separate Tabelle abgebildet werden. Keine zusätzliche Event-Sourcing-Infrastruktur: Die Chronik ist ein Audit-Read-Model, die Tabellen bleiben Source of Truth.
+Exakte User-FK-Spalte, konkrete MySQL-Kollation und vorhandenes Migrationen-Deployment an bestehendem Code ausrichten; Die Freigabetoken-Spalte erlaubt dem berechtigten Ersteller das erneute Kopieren des aktuell gültigen Links; Rest-Cent-Snapshots können als einfache Spalten/JSON oder bei Bedarf als kleine separate Tabelle abgebildet werden. Keine zusätzliche Event-Sourcing-Infrastruktur: Die Chronik ist ein Audit-Read-Model, die Tabellen bleiben Source of Truth.
