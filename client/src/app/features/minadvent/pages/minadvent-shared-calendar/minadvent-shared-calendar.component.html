@@ -17,26 +17,26 @@
     </section>
   } @else if (calendar(); as current) {
     <header>
-      <h1 class="break-words text-center text-3xl font-bold text-gray-950">{{ current.title }}</h1>
+      <h1 class="text-center text-3xl font-bold break-words text-gray-950">{{ current.title }}</h1>
     </header>
 
     @if (isBeforeDecember()) {
       <section aria-label="Countdown bis zum 1. Dezember" class="mx-auto w-full max-w-xl py-8">
         <dl class="grid grid-cols-4 gap-2 text-center sm:gap-4">
           <div class="border-b-4 border-rose-500 pb-3">
-            <dd class="text-3xl font-bold tabular-nums text-gray-950">{{ countdown().days }}</dd>
+            <dd class="text-3xl font-bold text-gray-950 tabular-nums">{{ countdown().days }}</dd>
             <dt class="text-sm text-gray-700">Tage</dt>
           </div>
           <div class="border-b-4 border-amber-500 pb-3">
-            <dd class="text-3xl font-bold tabular-nums text-gray-950">{{ countdown().hours }}</dd>
+            <dd class="text-3xl font-bold text-gray-950 tabular-nums">{{ countdown().hours }}</dd>
             <dt class="text-sm text-gray-700">Stunden</dt>
           </div>
           <div class="border-b-4 border-emerald-600 pb-3">
-            <dd class="text-3xl font-bold tabular-nums text-gray-950">{{ countdown().minutes }}</dd>
+            <dd class="text-3xl font-bold text-gray-950 tabular-nums">{{ countdown().minutes }}</dd>
             <dt class="text-sm text-gray-700">Minuten</dt>
           </div>
           <div class="border-b-4 border-sky-600 pb-3">
-            <dd class="text-3xl font-bold tabular-nums text-gray-950">{{ countdown().seconds }}</dd>
+            <dd class="text-3xl font-bold text-gray-950 tabular-nums">{{ countdown().seconds }}</dd>
             <dt class="text-sm text-gray-700">Sekunden</dt>
           </div>
         </dl>

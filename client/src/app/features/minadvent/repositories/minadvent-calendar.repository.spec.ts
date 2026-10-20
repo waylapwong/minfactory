@@ -3,10 +3,7 @@ import { TestBed } from '@angular/core/testing';
 import { of } from 'rxjs';
 import { MinAdventApiService } from '../../../core/generated';
 import { MINADVENT_API_SERVICE_MOCK } from '../mocks/minadvent-api.service.mock';
-import {
-  MINADVENT_CALENDAR_DTO_MOCK,
-  MINADVENT_SHARED_CALENDAR_DTO_MOCK,
-} from '../mocks/minadvent-calendar.mock';
+import { MINADVENT_CALENDAR_DTO_MOCK, MINADVENT_SHARED_CALENDAR_DTO_MOCK } from '../mocks/minadvent-calendar.mock';
 import { MinAdventCalendarRepository } from './minadvent-calendar.repository';
 
 describe('MinAdventCalendarRepository', () => {
