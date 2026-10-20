@@ -1,4 +1,5 @@
 import { MinAdventCalendarDto } from '../../../core/generated';
+import { MinAdventSharedCalendarDto } from '../../../core/generated/model/min-advent-shared-calendar-dto';
 import { MinAdventCalendar } from '../models/minadvent-calendar.model';
 
 export const MINADVENT_CALENDAR_DTO_MOCK: MinAdventCalendarDto = {
@@ -20,6 +21,18 @@ export const MINADVENT_CALENDAR_MOCK: MinAdventCalendar = {
   doors: MINADVENT_CALENDAR_DTO_MOCK.doors.map((door) => ({ ...door })),
 };
 
+export const MINADVENT_SHARED_CALENDAR_DTO_MOCK: MinAdventSharedCalendarDto = {
+  title: 'Adventskalender',
+  recipientName: 'Alex',
+  year: 2026,
+  version: 1,
+  completed: false,
+  doors: Array.from({ length: 24 }, (_, index) => ({
+    day: index + 1,
+    status: index === 0 ? 'FILLED' : 'EMPTY',
+  })),
+};
+
 export function createMinAdventCalendar(overrides: Partial<MinAdventCalendar> = {}): MinAdventCalendar {
   return {
     ...MINADVENT_CALENDAR_MOCK,
@@ -33,5 +46,15 @@ export function createMinAdventCalendarDto(overrides: Partial<MinAdventCalendarD
     ...MINADVENT_CALENDAR_DTO_MOCK,
     ...overrides,
     doors: overrides.doors ?? MINADVENT_CALENDAR_DTO_MOCK.doors.map((door) => ({ ...door })),
+  };
+}
+
+export function createMinAdventSharedCalendarDto(
+  overrides: Partial<MinAdventSharedCalendarDto> = {},
+): MinAdventSharedCalendarDto {
+  return {
+    ...MINADVENT_SHARED_CALENDAR_DTO_MOCK,
+    ...overrides,
+    doors: overrides.doors ?? MINADVENT_SHARED_CALENDAR_DTO_MOCK.doors.map((door) => ({ ...door })),
   };
 }

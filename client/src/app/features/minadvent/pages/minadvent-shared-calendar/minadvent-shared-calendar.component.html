@@ -1,0 +1,66 @@
+<main class="mx-auto flex min-h-full w-full max-w-4xl flex-col gap-6 px-4 py-8 sm:px-6">
+  @if (isLoading()) {
+    <output aria-live="polite" class="py-8 text-center text-gray-600">Adventskalender wird geladen …</output>
+  } @else if (error()) {
+    <section role="alert" class="mx-auto flex w-full max-w-lg flex-col items-center gap-4 py-12 text-center">
+      <h1 class="text-2xl font-bold text-gray-900">Adventskalender</h1>
+      <p class="text-gray-700">{{ error() }}</p>
+      @if (calendar() === null && error() !== 'Dieser Adventskalender ist nicht verfügbar.') {
+        <button
+          type="button"
+          class="rounded border-2 border-gray-800 px-4 py-2 font-semibold text-gray-900 hover:bg-gray-100 focus-visible:outline-4 focus-visible:outline-blue-700"
+          (click)="retry()"
+        >
+          Erneut laden
+        </button>
+      }
+    </section>
+  } @else if (calendar(); as current) {
+    <header>
+      <h1 class="break-words text-center text-3xl font-bold text-gray-950">{{ current.title }}</h1>
+    </header>
+
+    @if (isBeforeDecember()) {
+      <section aria-label="Countdown bis zum 1. Dezember" class="mx-auto w-full max-w-xl py-8">
+        <dl class="grid grid-cols-4 gap-2 text-center sm:gap-4">
+          <div class="border-b-4 border-rose-500 pb-3">
+            <dd class="text-3xl font-bold tabular-nums text-gray-950">{{ countdown().days }}</dd>
+            <dt class="text-sm text-gray-700">Tage</dt>
+          </div>
+          <div class="border-b-4 border-amber-500 pb-3">
+            <dd class="text-3xl font-bold tabular-nums text-gray-950">{{ countdown().hours }}</dd>
+            <dt class="text-sm text-gray-700">Stunden</dt>
+          </div>
+          <div class="border-b-4 border-emerald-600 pb-3">
+            <dd class="text-3xl font-bold tabular-nums text-gray-950">{{ countdown().minutes }}</dd>
+            <dt class="text-sm text-gray-700">Minuten</dt>
+          </div>
+          <div class="border-b-4 border-sky-600 pb-3">
+            <dd class="text-3xl font-bold tabular-nums text-gray-950">{{ countdown().seconds }}</dd>
+            <dt class="text-sm text-gray-700">Sekunden</dt>
+          </div>
+        </dl>
+      </section>
+    } @else {
+      <ol aria-label="Türchenübersicht" class="grid grid-cols-4 gap-2 sm:grid-cols-6 sm:gap-3 md:grid-cols-8">
+        @for (door of current.doors; track door.day) {
+          <li
+            class="flex aspect-square min-w-0 flex-col items-center justify-center gap-1 border-2 p-1 text-center sm:p-2"
+            [class.border-gray-400]="door.status === 'EMPTY'"
+            [class.bg-gray-100]="door.status === 'EMPTY'"
+            [class.text-gray-800]="door.status === 'EMPTY'"
+            [class.border-emerald-700]="door.status === 'FILLED'"
+            [class.bg-emerald-100]="door.status === 'FILLED'"
+            [class.text-emerald-950]="door.status === 'FILLED'"
+            [class.border-sky-700]="door.status === 'OPENED'"
+            [class.bg-sky-100]="door.status === 'OPENED'"
+            [class.text-sky-950]="door.status === 'OPENED'"
+          >
+            <span class="text-2xl font-bold tabular-nums">{{ door.day }}</span>
+            <span class="text-xs font-semibold">{{ getDoorStatusLabel(door.status) }}</span>
+          </li>
+        }
+      </ol>
+    }
+  }
+</main>
