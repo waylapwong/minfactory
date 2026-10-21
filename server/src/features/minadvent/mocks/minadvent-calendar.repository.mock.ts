@@ -18,6 +18,9 @@ export class MinAdventCalendarRepositoryMock {
   public update = jest
     .fn<Promise<MinAdventCalendarEntity>, [MinAdventCalendarEntity, number]>()
     .mockResolvedValue(new MinAdventCalendarEntity());
+  public closeDoor = jest
+    .fn<Promise<MinAdventCalendarEntity>, [string, string, number, number]>()
+    .mockResolvedValue(new MinAdventCalendarEntity());
   public replaceDoorBlocks = jest
     .fn<Promise<MinAdventCalendarEntity>, [string, string, number, number, () => MinAdventBlock[]]>()
     .mockResolvedValue(new MinAdventCalendarEntity());

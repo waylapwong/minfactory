@@ -1,4 +1,4 @@
-import { ConflictException, ForbiddenException } from '@nestjs/common';
+import { BadRequestException, ConflictException, ForbiddenException } from '@nestjs/common';
 import { MinFactoryUser } from '../../minfactory/models/domains/minfactory-user';
 import { MinAdventCalendarRepositoryMock } from '../mocks/minadvent-calendar.repository.mock';
 import { MinAdventBlock } from '../models/domains/minadvent-block';
@@ -372,6 +372,77 @@ describe('MinAdventCalendarService', () => {
         ConflictException,
       );
       expect(repository.openSharedDoor).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  describe('updateDoorStatus()', () => {
+    const currentCalendar = (calendarOwnerId = owner.id): MinAdventCalendarEntity =>
+      Object.assign(new MinAdventCalendarEntity(), {
+        id: 'calendar-1',
+        ownerId: calendarOwnerId,
+        year: 2026,
+        version: 8,
+        doors: [],
+      });
+
+    it.each([1, 24])('closes boundary day %i and maps the updated response', async (day) => {
+      const calendar = currentCalendar();
+      const updatedCalendar = Object.assign(new MinAdventCalendarEntity(), {
+        ...calendar,
+        version: 9,
+        doors: [Object.assign(new MinAdventDoorEntity(), { day, status: MinAdventDoorStatus.Filled })],
+      });
+      repository.findById.mockResolvedValue(calendar);
+      repository.closeDoor.mockResolvedValue(updatedCalendar);
+
+      const result = await service.updateDoorStatus(owner, calendar.id, day, {
+        status: MinAdventDoorStatus.Filled,
+        expectedVersion: 8,
+      });
+
+      expect(repository.closeDoor).toHaveBeenCalledWith(owner.id, calendar.id, day, 8);
+      expect(result).toEqual({ day, status: MinAdventDoorStatus.Filled, version: 9, completed: false });
+    });
+
+    it.each([0, 25, 1.5])('rejects invalid day %s before accessing the repository', async (day) => {
+      await expect(
+        service.updateDoorStatus(owner, 'calendar-1', day, {
+          status: MinAdventDoorStatus.Filled,
+          expectedVersion: 8,
+        }),
+      ).rejects.toBeInstanceOf(BadRequestException);
+
+      expect(repository.findById).not.toHaveBeenCalled();
+      expect(repository.closeDoor).not.toHaveBeenCalled();
+    });
+
+    it('rejects a calendar owned by another user without closing a door', async () => {
+      const calendar = currentCalendar('someone-else');
+      repository.findById.mockResolvedValue(calendar);
+
+      await expect(
+        service.updateDoorStatus(owner, calendar.id, 3, {
+          status: MinAdventDoorStatus.Filled,
+          expectedVersion: 8,
+        }),
+      ).rejects.toBeInstanceOf(ForbiddenException);
+
+      expect(repository.closeDoor).not.toHaveBeenCalled();
+    });
+
+    it('propagates repository conflicts', async () => {
+      const calendar = currentCalendar();
+      repository.findById.mockResolvedValue(calendar);
+      repository.closeDoor.mockRejectedValue(new ConflictException({ code: 'DOOR_NOT_OPENED' }));
+
+      await expect(
+        service.updateDoorStatus(owner, calendar.id, 3, {
+          status: MinAdventDoorStatus.Filled,
+          expectedVersion: 8,
+        }),
+      ).rejects.toThrow(ConflictException);
+
+      expect(repository.closeDoor).toHaveBeenCalledWith(owner.id, calendar.id, 3, 8);
     });
   });
 

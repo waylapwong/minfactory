@@ -97,7 +97,7 @@ Bereits OPENED: bei **aktueller** Version `200`, `firstOpened:false` und dieselb
 | HTTP | Fachcode (Beispiel) | Fall |
 | --- | --- | --- |
 | 409 | `VERSION_CONFLICT` | Veraltete globale Version, auch bei OPENED und abgeschlossen; **Vorrang bei jedem PUT** |
-| 409 | `CALENDAR_COMPLETED` | Inhalt/Metadaten/Türstatus bei aktuellem Versionswert nicht mehr änderbar |
+| 409 | `CALENDAR_COMPLETED` | Inhalt/Metadaten/Türstatus nicht änderbar, außer OPENED-Türchen schließen |
 | 409 | `DOOR_EMPTY` | Öffnen einer leeren Tür |
 | 409 | `DOOR_NOT_YET_UNLOCKED` | Öffnen vor dem ausgewählten Dezembertag |
 | 409 | `INVALID_CONTENT` | Fachliche Eingabe verletzt Block-/Längen-/Pflichtregeln |
