@@ -52,7 +52,7 @@ PUT /minadvent/calendars/:id/doors/3
 ```json
 {"day":3,"status":"FILLED","version":3,"completed":false}
 ```
-Mit `blocks: []` wird `EMPTY`. Wenn dadurch ab 25.12. das letzte FILLED verschwindet und ein OPENED vorhanden ist, zeigt der Client **vor dem Speichern** eine Abschlusswarnung; die Antwort darf `completed:true` enthalten. Die ValidationPipe plus fachliche Prüfung erzwingen Pflichtfelder und Grenzen (Titel/Name/Linktitel/Vouchertitel 100, Text sichtbare Zeichen 10000, Gutscheinbeschreibung 2000, gültige HTTP(S)-URL und Blockanzahl 0..10). Kein Nullposition, keine doppelte oder ausgelassene Position.
+Mit `blocks: []` wird `EMPTY`. Wenn dadurch ab 25.12. das letzte FILLED verschwindet und ein OPENED vorhanden ist, zeigt der Client **vor dem Speichern** eine Abschlusswarnung; die Antwort darf `completed:true` enthalten. Die ValidationPipe plus fachliche Prüfung erzwingen Pflichtfelder und Grenzen (Titel/Name/Linktitel/Vouchertitel jeweils höchstens 50 Zeichen, Text höchstens 500 sichtbare Zeichen, Gutscheinbeschreibung höchstens 200 Zeichen, gültige HTTP(S)-URL höchstens 50 Zeichen und Blockanzahl 0..10). Kein Nullposition, keine doppelte oder ausgelassene Position.
 
 Schließen:
 ```json
@@ -111,4 +111,4 @@ Zugriffskontrolle und Tokenvalidität werden vorausgesetzt, bevor Informationen 
 
 Bei `409 VERSION_CONFLICT`: Empfänger informiert; Übersicht erst nach ausdrücklicher Zustimmung nachladen. Wenn die angeklickte Tür inzwischen OPENED ist, deren Inhalt per **GET ohne Animation** abrufen; ist sie weiter FILLED, erst nach erneutem Klick PUT. **Keine automatischen PUT-Retries**. Bei Erstellerkonflikten Eingaben bis zur bestätigten Aktualisierung lokal bewahren. Jede Mutation liest Version, Abschluss und aktuellen Türzustand **innerhalb derselben synchronisierten DB-Transaktion**; erfolgreiche erste Öffnung erhöht Version genau einmal. Letzte Öffnung / letztes FILLED leeren kann `completed=true` auslösen, der auslösende Request bleibt erfolgreich. Ein Linkwiderruf darf gleichzeitig laufende PUTs nicht auf halb-gültigem Link fortsetzen.
 
-Konkrete DTO-Klassennamen und die URL-Maximallänge sind an etablierte Repo-Konventionen anzupassen; für OpenAPI werden die vorgesehenen Felder und Fehlermodelle vollständig annotiert.
+Konkrete DTO-Klassennamen sind an etablierte Repo-Konventionen anzupassen; für OpenAPI werden die vorgesehenen Felder und Fehlermodelle vollständig annotiert.

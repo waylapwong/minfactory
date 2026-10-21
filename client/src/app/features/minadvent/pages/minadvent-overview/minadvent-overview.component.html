@@ -84,11 +84,11 @@
         id="calendar-title"
         label="Kalendertitel"
         [formControlInput]="createForm.controls.title"
-        [maxLength]="100"
+        [maxLength]="50"
         [showCharacterCount]="true"
       />
       @if (createForm.controls.title.touched && createForm.controls.title.invalid) {
-        <p class="mt-1 text-sm text-red-500" aria-live="assertive">Titel ist erforderlich (max. 100 Zeichen).</p>
+        <p class="mt-1 text-sm text-red-500" aria-live="assertive">Titel ist erforderlich (max. 50 Zeichen).</p>
       }
     </div>
     <div>
@@ -96,13 +96,11 @@
         id="recipient-name"
         label="Empfängername"
         [formControlInput]="createForm.controls.recipientName"
-        [maxLength]="100"
+        [maxLength]="50"
         [showCharacterCount]="true"
       />
       @if (createForm.controls.recipientName.touched && createForm.controls.recipientName.invalid) {
-        <p class="mt-1 text-sm text-red-500" aria-live="assertive">
-          Empfängername ist erforderlich (max. 100 Zeichen).
-        </p>
+        <p class="mt-1 text-sm text-red-500" aria-live="assertive">Empfängername ist erforderlich (max. 50 Zeichen).</p>
       }
     </div>
     <div>

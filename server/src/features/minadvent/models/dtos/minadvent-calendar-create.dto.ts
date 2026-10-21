@@ -7,14 +7,14 @@ export class MinAdventCalendarCreateDto {
   @Min(1)
   @Max(9999)
   public year!: number;
-  @ApiProperty({ maxLength: 100 })
+  @ApiProperty({ maxLength: 50 })
   @IsString()
   @MinLength(1)
-  @MaxLength(100)
+  @MaxLength(50)
   public recipientName!: string;
-  @ApiProperty({ maxLength: 100 })
+  @ApiProperty({ maxLength: 50 })
   @IsString()
   @MinLength(1)
-  @MaxLength(100)
+  @MaxLength(50)
   public title!: string;
 }

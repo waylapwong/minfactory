@@ -6,9 +6,9 @@
 
 | Tabelle / Aggregat | Wichtige Spalten | Integrität |
 | --- | --- | --- |
-| `minadvent_calendars` | `id UUID PK`, `owner_id` (bestehende minFactory-User-Relation), `year INT NOT NULL`, `title VARCHAR(100)`, `recipient_name VARCHAR(100)`, `version INT/ BIGINT NOT NULL`, `is_published BOOL`, `active_token` nullable, `created_at`, `updated_at` | Owner-FK, Index (owner,year), maximal ein aktiver Token, Jahr nach Create unveränderlich |
+| `minadvent_calendars` | `id UUID PK`, `owner_id` (bestehende minFactory-User-Relation), `year INT NOT NULL`, `title VARCHAR(50)`, `recipient_name VARCHAR(50)`, `version INT/ BIGINT NOT NULL`, `is_published BOOL`, `active_token` nullable, `created_at`, `updated_at` | Owner-FK, Index (owner,year), maximal ein aktiver Token, Jahr nach Create unveränderlich |
 | `minadvent_doors` | `id UUID PK`, `calendar_id FK`, `day INT`, `status ENUM/VARCHAR` | UNIQUE(calendar_id, day), CHECK day 1–24, pro Kalender genau 24 durch atomare Create-Transaktion |
-| `minadvent_blocks` | `id UUID PK`, `door_id FK`, `position INT`, `type TEXT/LINK/VOUCHER`, typabhängige Nutzdaten | UNIQUE(door_id, position), CHECK position >=1; 0–10 Gesamtzahl serverseitig validieren |
+| `minadvent_blocks` | `id UUID PK`, `door_id FK`, `position INT`, `type TEXT/LINK/VOUCHER`, typabhängige Nutzdaten (Titel VARCHAR(50), URL VARCHAR(50), Beschreibung VARCHAR(200), Text höchstens 500 sichtbare Zeichen) | UNIQUE(door_id, position), CHECK position >=1; 0–10 Gesamtzahl serverseitig validieren |
 
 Die genaue physische Abbildung der Block-Nutzdaten (typabhängige Spalten oder JSON) ist nach bestehendem TypeORM-Modell zu wählen, nicht durch neue Abstraktionshierarchien zu verkomplizieren. `EMPTY` entspricht null Blöcken, `FILLED` mindestens einem Block, `OPENED` hält die Blöcke weiter vor. Der Vollständigkeitsinvariant zwischen Status und Anzahl sowie lückenlose Positionen werden **atomar im Service** geprüft; UNIQUE allein garantiert weder Lückenfreiheit noch die Maximalanzahl.
 

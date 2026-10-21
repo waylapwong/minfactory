@@ -178,11 +178,11 @@ export class MinAdventCalendarService {
     if (input.expectedVersion === undefined || (!input.title && !input.recipientName)) {
       throw new BadRequestException('At least one of title or recipientName is required.');
     }
-    if (input.title !== undefined && !input.title.trim()) {
-      throw new BadRequestException('Title must contain 1 to 100 characters.');
+    if (input.title !== undefined && (!input.title.trim() || input.title.trim().length > 50)) {
+      throw new BadRequestException('Title must contain 1 to 50 characters.');
     }
-    if (input.recipientName !== undefined && !input.recipientName.trim()) {
-      throw new BadRequestException('Recipient name must contain 1 to 100 characters.');
+    if (input.recipientName !== undefined && (!input.recipientName.trim() || input.recipientName.trim().length > 50)) {
+      throw new BadRequestException('Recipient name must contain 1 to 50 characters.');
     }
     const calendar = await this.requireOwnedCalendar(user, id);
     if (input.expectedVersion !== calendar.version) {
@@ -278,7 +278,7 @@ export class MinAdventCalendarService {
   }
 
   private mapLink(input: MinAdventDoorUpdateDto['blocks'][number], block: MinAdventBlock): void {
-    if (typeof input.url !== 'string' || input.url.length > 2048) {
+    if (typeof input.url !== 'string' || input.url.length > 50) {
       this.throwInvalidContent();
     }
     let parsedUrl: URL;
@@ -291,7 +291,7 @@ export class MinAdventCalendarService {
       this.throwInvalidContent();
     }
     const serializedUrl = parsedUrl.toString();
-    if (serializedUrl.length > 2048) {
+    if (serializedUrl.length > 50) {
       this.throwInvalidContent();
     }
     block.title = this.validateTitleAndTrim(input.title);
@@ -299,7 +299,7 @@ export class MinAdventCalendarService {
   }
 
   private mapVoucher(input: MinAdventDoorUpdateDto['blocks'][number], block: MinAdventBlock): void {
-    if (typeof input.description !== 'string' || !input.description.trim() || input.description.length > 2000) {
+    if (typeof input.description !== 'string' || !input.description.trim() || input.description.length > 200) {
       this.throwInvalidContent();
     }
     block.title = this.validateTitleAndTrim(input.title);
@@ -329,7 +329,7 @@ export class MinAdventCalendarService {
       nonTextTags: ['script', 'style', 'textarea', 'option'],
     });
     const visibleCharacters = this.countVisibleCharacters(sanitized);
-    if (visibleCharacters < 1 || visibleCharacters > 10000) {
+    if (visibleCharacters < 1 || visibleCharacters > 500) {
       this.throwInvalidContent();
     }
     return sanitized;
@@ -375,11 +375,11 @@ export class MinAdventCalendarService {
   }
 
   private validateCreate(input: MinAdventCalendarCreateDto): void {
-    if (!input.title?.trim() || input.title.length > 100) {
-      throw new BadRequestException('Title must contain 1 to 100 characters.');
+    if (!input.title?.trim() || input.title.length > 50) {
+      throw new BadRequestException('Title must contain 1 to 50 characters.');
     }
-    if (!input.recipientName?.trim() || input.recipientName.length > 100) {
-      throw new BadRequestException('Recipient name must contain 1 to 100 characters.');
+    if (!input.recipientName?.trim() || input.recipientName.length > 50) {
+      throw new BadRequestException('Recipient name must contain 1 to 50 characters.');
     }
     if (!Number.isInteger(input.year) || input.year < 1 || input.year > 9999) {
       throw new BadRequestException('Year must be an integer between 1 and 9999.');
@@ -387,7 +387,7 @@ export class MinAdventCalendarService {
   }
 
   private validateTitleAndTrim(title: string | null | undefined): string {
-    if (typeof title !== 'string' || !title.trim() || title.trim().length > 100) {
+    if (typeof title !== 'string' || !title.trim() || title.trim().length > 50) {
       this.throwInvalidContent();
     }
     return title.trim();

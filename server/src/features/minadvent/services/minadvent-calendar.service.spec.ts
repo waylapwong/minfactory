@@ -51,6 +51,13 @@ describe('MinAdventCalendarService', () => {
     expect(repository.create).not.toHaveBeenCalled();
   });
 
+  it('rejects calendar titles and recipient names longer than 50 characters', async () => {
+    await expect(service.create(owner, { title: 'T'.repeat(51), recipientName: 'Alex', year: 2026 })).rejects.toThrow();
+    await expect(
+      service.create(owner, { title: 'December', recipientName: 'A'.repeat(51), year: 2026 }),
+    ).rejects.toThrow();
+  });
+
   it('accepts the first and last supported calendar years', async () => {
     await service.create(owner, { title: 'First', recipientName: 'Alex', year: 1 });
     await service.create(owner, { title: 'Last', recipientName: 'Alex', year: 9999 });
@@ -562,6 +569,29 @@ describe('MinAdventCalendarService', () => {
               url: `https://example.org/${'ü'.repeat(400)}`,
             },
           ],
+        }),
+      ).rejects.toMatchObject({ response: expect.objectContaining({ code: 'INVALID_CONTENT' }) });
+    });
+
+    it('rejects content exceeding the updated text, title and voucher description limits', async () => {
+      repository.findById.mockResolvedValue(currentCalendar());
+      captureBlocks();
+      await expect(
+        service.updateDoor(owner, 'calendar-1', 3, {
+          expectedVersion: 4,
+          blocks: [{ position: 1, type: MinAdventBlockType.Text, text: `<p>${'a'.repeat(501)}</p>` }],
+        }),
+      ).rejects.toMatchObject({ response: expect.objectContaining({ code: 'INVALID_CONTENT' }) });
+      await expect(
+        service.updateDoor(owner, 'calendar-1', 3, {
+          expectedVersion: 4,
+          blocks: [{ position: 1, type: MinAdventBlockType.Link, title: 'T'.repeat(51), url: 'https://a.co' }],
+        }),
+      ).rejects.toMatchObject({ response: expect.objectContaining({ code: 'INVALID_CONTENT' }) });
+      await expect(
+        service.updateDoor(owner, 'calendar-1', 3, {
+          expectedVersion: 4,
+          blocks: [{ position: 1, type: MinAdventBlockType.Voucher, title: 'Voucher', description: 'D'.repeat(201) }],
         }),
       ).rejects.toMatchObject({ response: expect.objectContaining({ code: 'INVALID_CONTENT' }) });
     });

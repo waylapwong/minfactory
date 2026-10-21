@@ -5,10 +5,10 @@ export class MinAdventCalendarDto {
   @ApiProperty()
   public id!: string;
 
-  @ApiProperty({ maxLength: 100 })
+  @ApiProperty({ maxLength: 50 })
   public title!: string;
 
-  @ApiProperty({ maxLength: 100 })
+  @ApiProperty({ maxLength: 50 })
   public recipientName!: string;
 
   @ApiProperty()

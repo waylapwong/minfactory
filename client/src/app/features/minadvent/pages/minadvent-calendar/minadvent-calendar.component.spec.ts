@@ -64,9 +64,22 @@ describe('MinAdventCalendarComponent', () => {
 
   describe('closeDoor()', () => {
     it('closes an opened door and keeps its content available for editing', async () => {
-      const calendar = createMinAdventCalendar({ completed: true });
+      const calendar = createMinAdventCalendar({
+        completed: true,
+        doors: [
+          { blocks: [], day: 1, status: 'FILLED' },
+          {
+            blocks: [{ position: 1, text: 'Existing text', type: component.MinAdventBlockType.Text }],
+            day: 2,
+            status: 'OPENED',
+          },
+        ],
+      });
       component.calendar.set(calendar);
       component.selectDoor(calendar.doors[1]);
+      fixture.detectChanges();
+      expect(component.doorForm.disabled).toBeTrue();
+      expect((fixture.nativeElement.querySelector('textarea#door-text-0') as HTMLTextAreaElement).disabled).toBeTrue();
       MINADVENT_CALENDAR_SERVICE_MOCK.closeDoor.and.resolveTo({
         completed: false,
         day: 2,
@@ -79,6 +92,9 @@ describe('MinAdventCalendarComponent', () => {
       expect(MINADVENT_CALENDAR_SERVICE_MOCK.closeDoor).toHaveBeenCalledWith('calendar-id', 2, 1);
       expect(component.selectedDoor()?.status).toBe('FILLED');
       expect(component.isSelectedDoorReadOnly()).toBeFalse();
+      expect(component.doorForm.enabled).toBeTrue();
+      fixture.detectChanges();
+      expect((fixture.nativeElement.querySelector('textarea#door-text-0') as HTMLTextAreaElement).disabled).toBeFalse();
       expect(component.calendar()?.version).toBe(2);
       expect(component.calendar()?.completed).toBeFalse();
     });
@@ -294,9 +310,19 @@ describe('MinAdventCalendarComponent', () => {
   });
 
   describe('saveDoor() conflict recovery', () => {
-    it('reloads the calendar after confirmation while retaining the local draft', async () => {
+    it('shows a refresh action and replaces the draft with the opened door after refresh', async () => {
       const calendar = createMinAdventCalendar();
-      const refreshedCalendar = { ...calendar, version: 2 };
+      const refreshedCalendar = createMinAdventCalendar({
+        version: 2,
+        doors: [
+          {
+            blocks: [{ position: 1, text: 'Server content', type: component.MinAdventBlockType.Text }],
+            day: 1,
+            status: 'OPENED',
+          },
+          { blocks: [], day: 2, status: 'OPENED' },
+        ],
+      });
       component.calendar.set(calendar);
       component.selectDoor(calendar.doors[0]);
       component.addBlock(component.MinAdventBlockType.Text);
@@ -305,17 +331,28 @@ describe('MinAdventCalendarComponent', () => {
         Object.assign(new Error('Version conflict'), { status: 409, error: { code: 'VERSION_CONFLICT' } }),
       );
       MINADVENT_CALENDAR_SERVICE_MOCK.getCalendar.and.resolveTo(refreshedCalendar);
-      const confirmSpy = spyOn(window, 'confirm').and.returnValue(true);
+      const confirmSpy = spyOn(window, 'confirm');
 
       await component.saveDoor();
 
-      expect(confirmSpy).toHaveBeenCalledWith(
-        'Der Kalender wurde geändert. Jetzt aktualisieren? Dein Entwurf bleibt erhalten; beim erneuten Speichern können Änderungen an diesem Türchen überschrieben werden.',
-      );
-      expect(MINADVENT_CALENDAR_SERVICE_MOCK.getCalendar).toHaveBeenCalledWith(calendar.id);
-      expect(component.calendar()?.version).toBe(2);
+      expect(confirmSpy).not.toHaveBeenCalled();
+      expect(component.doorConflictError()).toContain('Der Kalender wurde geändert.');
       expect(component.doorForm.at(0).controls.text.value).toBe('Keep this');
       expect(component.hasUnsavedDoorChanges()).toBeTrue();
+      fixture.detectChanges();
+      const refreshButton = Array.from(
+        fixture.nativeElement.querySelectorAll('min-button button') as NodeListOf<HTMLButtonElement>,
+      ).find((button) => button.textContent.trim() === 'Türchen aktualisieren') as HTMLButtonElement;
+      refreshButton.click();
+      await fixture.whenStable();
+      fixture.detectChanges();
+
+      expect(MINADVENT_CALENDAR_SERVICE_MOCK.getCalendar).toHaveBeenCalledWith(calendar.id);
+      expect(component.calendar()?.version).toBe(2);
+      expect(component.selectedDoor()?.status).toBe('OPENED');
+      expect(component.doorForm.at(0).controls.text.value).toBe('Server content');
+      expect(component.doorForm.disabled).toBeTrue();
+      expect(component.hasUnsavedDoorChanges()).toBeFalse();
       expect(component.selectedDoorDay()).toBe(1);
     });
   });
@@ -412,14 +449,15 @@ describe('MinAdventCalendarComponent', () => {
       MINADVENT_CALENDAR_SERVICE_MOCK.updateDoor.and.rejectWith(
         Object.assign(new Error('Version conflict'), { status: 409, error: { code: 'VERSION_CONFLICT' } }),
       );
-      spyOn(window, 'confirm').and.returnValue(false);
+      const confirmSpy = spyOn(window, 'confirm');
       await component.saveDoor();
 
+      expect(confirmSpy).not.toHaveBeenCalled();
+      expect(component.doorConflictError()).toContain('Der Kalender wurde geändert.');
       expect(component.doorForm.at(0).controls.text.value).toBe('Keep this');
       expect(component.hasUnsavedDoorChanges()).toBeTrue();
       expect(component.selectedDoorDay()).toBe(1);
-      expect(component.isSnackbarOpen()).toBeTrue();
-      expect(component.snackbarMessage()).toContain('nicht aktualisiert');
+      expect(component.isSnackbarOpen()).toBeFalse();
       expect(MINADVENT_CALENDAR_SERVICE_MOCK.getCalendar).not.toHaveBeenCalled();
     });
 
@@ -574,14 +612,15 @@ describe('MinAdventCalendarComponent', () => {
       MINADVENT_CALENDAR_SERVICE_MOCK.updateDoor.and.rejectWith(
         Object.assign(new Error('Version conflict'), { status: 409, error: { code: 'VERSION_CONFLICT' } }),
       );
-      spyOn(window, 'confirm').and.returnValue(false);
+      const confirmSpy = spyOn(window, 'confirm');
       await component.saveDoor();
 
+      expect(confirmSpy).not.toHaveBeenCalled();
+      expect(component.doorConflictError()).toContain('Der Kalender wurde geändert.');
       expect(component.doorForm.at(0).controls.text.value).toBe('Keep this');
       expect(component.hasUnsavedDoorChanges()).toBeTrue();
       expect(component.selectedDoorDay()).toBe(1);
-      expect(component.isSnackbarOpen()).toBeTrue();
-      expect(component.snackbarMessage()).toContain('nicht aktualisiert');
+      expect(component.isSnackbarOpen()).toBeFalse();
       expect(MINADVENT_CALENDAR_SERVICE_MOCK.getCalendar).not.toHaveBeenCalled();
     });
   });

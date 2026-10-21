@@ -87,4 +87,4 @@ sequenceDiagram
 
 ## 6. Offene Umsetzungsdetails
 
-Die konkreten Transaktionshelfer, Pfadnamen für **authentifizierte Ersteller-Ressourcen**, interne Error-Klassen und die technische URL-Maximallänge können an vorhandene Patterns angepasst werden; ihre Semantik aus Fachkonzept und [API](api.md) bleibt verbindlich. Keine neue Pflicht zu Socket.IO, Jobs oder NgRx.
+Die konkreten Transaktionshelfer, Pfadnamen für **authentifizierte Ersteller-Ressourcen**, interne Error-Klassen können an vorhandene Patterns angepasst werden; ihre Semantik aus Fachkonzept und [API](api.md) bleibt verbindlich. Keine neue Pflicht zu Socket.IO, Jobs oder NgRx.

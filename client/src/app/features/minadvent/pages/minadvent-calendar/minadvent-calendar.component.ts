@@ -56,10 +56,10 @@ export class MinAdventCalendarComponent implements OnInit {
     () => this.calendar()?.doors.filter((door) => door.status === 'FILLED').length ?? 0,
   );
   public readonly form = new FormGroup({
-    title: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.maxLength(100)] }),
+    title: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.maxLength(50)] }),
     recipientName: new FormControl('', {
       nonNullable: true,
-      validators: [Validators.required, Validators.maxLength(100)],
+      validators: [Validators.required, Validators.maxLength(50)],
     }),
     year: new FormControl(new Date().getFullYear(), {
       nonNullable: true,
@@ -68,6 +68,7 @@ export class MinAdventCalendarComponent implements OnInit {
   });
   public readonly isClosingDoor = signal(false);
   public readonly isLoading = signal(false);
+  public readonly isRefreshingDoor = signal(false);
   public readonly isSavingDoor = signal(false);
   public readonly isSavingRecipient = signal(false);
   public readonly isSavingTitle = signal(false);
@@ -77,6 +78,7 @@ export class MinAdventCalendarComponent implements OnInit {
     () => this.calendar()?.doors.filter((door) => door.status === 'OPENED').length ?? 0,
   );
   public readonly selectedDoorDay = signal<number | null>(null);
+  public readonly doorConflictError = signal('');
   public readonly selectedDoor = computed(() => {
     const day = this.selectedDoorDay();
     return this.calendar()?.doors.find((door) => door.day === day) ?? null;
@@ -142,6 +144,7 @@ export class MinAdventCalendarComponent implements OnInit {
         doors: calendar.doors.map((item) => (item.day === door.day ? { ...item, status: 'FILLED' } : item)),
         version: result.version,
       });
+      this.syncDoorFormReadOnlyState();
       this.originalDoorBlocks = this.normalizeBlocks(door.blocks);
       this.showSnackbar('Türchen geschlossen. Du kannst den Inhalt jetzt bearbeiten.');
     } catch (error) {
@@ -161,6 +164,7 @@ export class MinAdventCalendarComponent implements OnInit {
       return;
     }
     this.selectedDoorDay.set(null);
+    this.doorConflictError.set('');
     this.closeDoorError.set('');
     this.doorForm.clear();
     this.originalDoorBlocks = [];
@@ -298,20 +302,20 @@ export class MinAdventCalendarComponent implements OnInit {
       const value = block.getRawValue();
       if (value.type === MinAdventBlockType.Text) {
         const visibleText = this.visibleText(value.text);
-        return visibleText.length > 0 && [...visibleText].length <= 10000;
+        return visibleText.length > 0 && [...visibleText].length <= 500;
       }
-      if (!value.title.trim() || value.title.trim().length > 100) {
+      if (!value.title.trim() || value.title.trim().length > 50) {
         return false;
       }
       if (value.type === MinAdventBlockType.Link) {
         try {
           const url = new URL(value.url.trim());
-          return ['http:', 'https:'].includes(url.protocol) && Boolean(url.hostname) && value.url.length <= 2048;
+          return ['http:', 'https:'].includes(url.protocol) && Boolean(url.hostname) && value.url.length <= 50;
         } catch {
           return false;
         }
       }
-      return value.description.trim().length > 0 && value.description.trim().length <= 2000;
+      return value.description.trim().length > 0 && value.description.trim().length <= 200;
     });
   }
 
@@ -399,13 +403,14 @@ export class MinAdventCalendarComponent implements OnInit {
         doors: calendar.doors.map((item) => (item.day === result.day ? updatedDoor : item)),
         version: result.version,
       });
+      this.doorConflictError.set('');
       this.originalDoorBlocks = blocks.map((block) => ({ ...block }));
       this.doorForm.markAsPristine();
       this.doorDraftRevision.update((revision) => revision + 1);
       this.closeDoorDialog();
       this.showSnackbar('Türchen gespeichert.');
     } catch (reason) {
-      await this.handleDoorSaveError(reason);
+      this.handleDoorSaveError(reason);
     } finally {
       this.isSavingDoor.set(false);
     }
@@ -461,8 +466,33 @@ export class MinAdventCalendarComponent implements OnInit {
     if (this.hasUnsavedDoorChanges() && !this.confirmDiscardDoorDraft()) {
       return;
     }
+    this.doorConflictError.set('');
     this.closeDoorError.set('');
     this.loadDoorDraft(door);
+  }
+
+  public async reloadDoorAfterConflict(): Promise<void> {
+    const calendar = this.calendar();
+    const door = this.selectedDoor();
+    if (!calendar || !door || this.isRefreshingDoor()) {
+      return;
+    }
+    this.isRefreshingDoor.set(true);
+    try {
+      const refreshedCalendar = await this.calendarService.getCalendar(calendar.id);
+      const refreshedDoor = refreshedCalendar.doors.find((item) => item.day === door.day);
+      this.calendar.set(refreshedCalendar);
+      if (!refreshedDoor) {
+        this.doorConflictError.set('Das Türchen konnte nicht aktualisiert werden. Bitte lade den Kalender neu.');
+        return;
+      }
+      this.loadDoorDraft(refreshedDoor);
+      this.doorConflictError.set('');
+    } catch {
+      this.doorConflictError.set('Der Kalender konnte nicht aktualisiert werden. Bitte versuche es erneut.');
+    } finally {
+      this.isRefreshingDoor.set(false);
+    }
   }
 
   public async shareCalendar(): Promise<void> {
@@ -504,8 +534,8 @@ export class MinAdventCalendarComponent implements OnInit {
     if (!value.trim()) {
       return 'Die Beschreibung ist erforderlich.';
     }
-    if (value.trim().length > 2000) {
-      return 'Maximal 2.000 Zeichen.';
+    if (value.trim().length > 200) {
+      return 'Maximal 200 Zeichen.';
     }
     return null;
   }
@@ -515,8 +545,8 @@ export class MinAdventCalendarComponent implements OnInit {
     if (count === 0) {
       return 'Der Text darf nicht leer sein.';
     }
-    if (count > 10000) {
-      return 'Der Text darf maximal 10.000 Zeichen enthalten.';
+    if (count > 500) {
+      return 'Der Text darf maximal 500 Zeichen enthalten.';
     }
     return null;
   }
@@ -525,8 +555,8 @@ export class MinAdventCalendarComponent implements OnInit {
     if (!value.trim()) {
       return 'Der Titel ist erforderlich.';
     }
-    if (value.trim().length > 100) {
-      return 'Maximal 100 Zeichen.';
+    if (value.trim().length > 50) {
+      return 'Maximal 50 Zeichen.';
     }
     return null;
   }
@@ -535,8 +565,8 @@ export class MinAdventCalendarComponent implements OnInit {
     if (!value.trim()) {
       return 'Die Adresse ist erforderlich.';
     }
-    if (value.length > 2048) {
-      return 'Die Adresse darf maximal 2.048 Zeichen enthalten.';
+    if (value.length > 50) {
+      return 'Die Adresse darf maximal 50 Zeichen enthalten.';
     }
     try {
       const url = new URL(value.trim());
@@ -549,28 +579,15 @@ export class MinAdventCalendarComponent implements OnInit {
     return null;
   }
 
-  private async handleDoorSaveError(reason: unknown): Promise<void> {
+  private handleDoorSaveError(reason: unknown): void {
     const error = reason as HttpErrorResponse;
     const code = error.error?.code;
     const isConflict = error.status === 409 && ['VERSION_CONFLICT', 'CALENDAR_COMPLETED', 'DOOR_OPENED'].includes(code);
 
     if (error.status === 409 && code === 'VERSION_CONFLICT') {
-      const calendar = this.calendar();
-      if (
-        calendar &&
-        window.confirm(
-          'Der Kalender wurde geändert. Jetzt aktualisieren? Dein Entwurf bleibt erhalten; beim erneuten Speichern können Änderungen an diesem Türchen überschrieben werden.',
-        )
-      ) {
-        try {
-          this.calendar.set(await this.calendarService.getCalendar(calendar.id));
-          this.showSnackbar('Kalender aktualisiert. Dein Türchenentwurf ist erhalten; speichere erneut.');
-        } catch {
-          this.showSnackbar('Der Kalender konnte nicht aktualisiert werden. Dein Türchenentwurf ist erhalten.');
-        }
-        return;
-      }
-      this.showSnackbar('Kalender nicht aktualisiert. Dein Türchenentwurf ist erhalten.');
+      this.doorConflictError.set(
+        'Der Kalender wurde geändert. Aktualisiere das Türchen, um den aktuellen Stand zu laden.',
+      );
       return;
     }
 
@@ -617,8 +634,17 @@ export class MinAdventCalendarComponent implements OnInit {
       }
       this.doorForm.push(form, { emitEvent: false });
     }
+    this.syncDoorFormReadOnlyState();
     this.doorForm.markAsPristine();
     this.doorDraftRevision.update((revision) => revision + 1);
+  }
+
+  private syncDoorFormReadOnlyState(): void {
+    if (this.isSelectedDoorReadOnly()) {
+      this.doorForm.disable({ emitEvent: false });
+    } else {
+      this.doorForm.enable({ emitEvent: false });
+    }
   }
 
   private normalizeBlocks(blocks: MinAdventBlockDto[]): MinAdventBlockDto[] {

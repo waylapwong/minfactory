@@ -24,14 +24,14 @@ Blöcke werden innerhalb eines Türchens mit **fortlaufenden Positionen 1, 2, 3,
 
 | Inhalt | Regel |
 | --- | --- |
-| Kalendertitel | Erforderlich, höchstens **100 Zeichen** |
-| Empfängername | Erforderlich, höchstens **100 Zeichen** |
+| Kalendertitel | Erforderlich, höchstens **50 Zeichen** |
+| Empfängername | Erforderlich, höchstens **50 Zeichen** |
 | Kalenderjahr | Erforderlich, vorbelegt mit aktuellem Jahr; nach Erstellung unveränderlich |
-| Textblock | Nicht leerer einfacher Text; höchstens **10.000 Zeichen** |
-| Linktitel | Erforderlich, höchstens **100 Zeichen** |
-| Linkadresse | Erforderliche gültige **HTTP(S)-URL**; eine konkrete technische Maximallänge wird vor Implementierung festgelegt |
-| Gutscheintitel | Erforderlich, höchstens **100 Zeichen** |
-| Gutscheinbeschreibung | Erforderlich, höchstens **2.000 Zeichen** |
+| Textblock | Nicht leerer einfacher Text; höchstens **500 sichtbare Zeichen** |
+| Linktitel | Erforderlich, höchstens **50 Zeichen** |
+| Linkadresse | Erforderliche gültige **HTTP(S)-URL**, höchstens **50 Zeichen** |
+| Gutscheintitel | Erforderlich, höchstens **50 Zeichen** |
+| Gutscheinbeschreibung | Erforderlich, höchstens **200 Zeichen** |
 | Blockanzahl | **0–10** insgesamt pro Türchen |
 | Position | Lückenlose Ganzzahlen ab **1** |
 
@@ -59,4 +59,4 @@ Beim Ersteller führt `409 VERSION_CONFLICT` zu einer verständlichen Meldung; l
 
 Jeder Fehler besitzt einen **stabilen maschinenlesbaren Code**, anhand dessen das Frontend eine passende Meldung zeigt. Der Status `403` ist Berechtigungsproblemen vorbehalten; fachliche Regeln werden nicht durch Einführung von `422` behandelt. Ungültige Tokens liefern keine Informationen über Existenz oder Fortschritt des Kalenders.
 
-**Offener technischer Detailpunkt:** Die konkrete maximale URL-Länge gehört zur technischen Implementierungsspezifikation, nicht zu den bereits fachlich festgelegten Grenzen.
+Die maximale URL-Länge beträgt fachlich und technisch **50 Zeichen**.
