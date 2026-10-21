@@ -11,6 +11,7 @@ configuration.ts
 encoder.ts
 git_push.sh
 index.ts
+model/get-min-advent-shared-door429-response.ts
 model/min-advent-block-dto.ts
 model/min-advent-block-type.ts
 model/min-advent-calendar-create-dto.ts

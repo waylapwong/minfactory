@@ -9,6 +9,9 @@ import { MinApp } from './shared/enums/minapp.enum';
 async function bootstrap() {
   // APPLICATION
   const application: INestApplication<any> = await NestFactory.create(AppModule);
+  if (process.env.DYNO) {
+    application.getHttpAdapter().getInstance().set('trust proxy', 1);
+  }
 
   // HELMET
   application.use(helmet());

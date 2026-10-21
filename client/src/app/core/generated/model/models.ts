@@ -1,3 +1,4 @@
+export * from './get-min-advent-shared-door429-response';
 export * from './min-advent-block-dto';
 export * from './min-advent-block-type';
 export * from './min-advent-calendar-create-dto';

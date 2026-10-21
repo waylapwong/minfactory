@@ -14,6 +14,7 @@ import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
 import { API_200 } from '../../../shared/decorators/api-200.decorator';
 import { API_400 } from '../../../shared/decorators/api-400.decorator';
+import { API_429 } from '../../../shared/decorators/api-429.decorator';
 import { API_404 } from '../../../shared/decorators/api-404.decorator';
 import { API_409 } from '../../../shared/decorators/api-409.decorator';
 import { API_500 } from '../../../shared/decorators/api-500.decorator';
@@ -38,6 +39,7 @@ export class MinAdventSharedController {
   @ApiOperation({ operationId: 'getMinAdventSharedDoor' })
   @API_200({ type: MinAdventSharedDoorContentDto })
   @API_400()
+  @API_429()
   @API_404()
   @API_409()
   @API_500()
@@ -61,6 +63,7 @@ export class MinAdventSharedController {
   @Header('Referrer-Policy', 'no-referrer')
   @ApiOperation({ operationId: 'getMinAdventSharedCalendar' })
   @API_200({ type: MinAdventSharedCalendarDto })
+  @API_429()
   @API_404()
   @API_500()
   public async get(@Param('token') token: string): Promise<MinAdventSharedCalendarDto> {
@@ -82,6 +85,7 @@ export class MinAdventSharedController {
   @ApiOperation({ operationId: 'openMinAdventSharedDoor' })
   @API_200({ type: MinAdventSharedDoorOpenResponseDto })
   @API_400()
+  @API_429()
   @API_404()
   @API_409()
   @API_500()
