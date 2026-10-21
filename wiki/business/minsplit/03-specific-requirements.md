@@ -2,7 +2,7 @@
 
 ## minSplit | Gruppen, Teilnehmer und Lebenszyklus
 
-> Geplanter fachlicher Soll-Zustand v1.0.0. [Zur Übersicht](../../3-mintools/minsplit/minsplit-home.md)
+> Geplanter fachlicher Soll-Zustand v1.0.0. [Zur Übersicht](README.md)
 
 #### 1. Anlage, Eigentum, Freigabe
 
@@ -54,7 +54,7 @@ Der Ersteller kann seine Gruppe in jeder Phase löschen, auch aus dem **Drei-Pun
 
 ## minSplit | Ausgaben und Kostenverteilung
 
-> Geplanter fachlicher Soll-Zustand v1.0.0. [Zur Übersicht](../../3-mintools/minsplit/minsplit-home.md)
+> Geplanter fachlicher Soll-Zustand v1.0.0. [Zur Übersicht](README.md)
 
 #### 1. Erfassen und Stornieren
 
@@ -62,7 +62,7 @@ Während `AKTIV` kann jeder mit gültigem Gruppenlink **eine** Ausgabe im Modal-
 
 Ausgaben werden **nicht nachträglich bearbeitet oder gelöscht**, sondern in `AKTIV` einzeln storniert und gegebenenfalls als neue Ausgabe erfasst. Das Storno hebt die finanzielle Wirkung auf, lässt Ursprungsereignis und Storno in der Chronik stehen. Stornierte Ausgaben zählen weder zum aktuellen Gesamtbetrag noch zur endgültigen Verteilung. Anzeigen der Ausgaben/Chronik sind zeitlich **neueste zuerst**.
 
-Bei Teilnehmerwechseln in `AKTIV` wird die aktuelle **vorläufige** Kostenverteilung über sämtliche noch gültigen Ausgaben und den nun aktiven Mitgliederbestand neu berechnet. Beim Entfernen eines zahlenden Teilnehmers gilt die gesonderte Übertragungsregel in [Gruppenlebenszyklus](../../3-mintools/minsplit/group-lifecycle.md).
+Bei Teilnehmerwechseln in `AKTIV` wird die aktuelle **vorläufige** Kostenverteilung über sämtliche noch gültigen Ausgaben und den nun aktiven Mitgliederbestand neu berechnet. Beim Entfernen eines zahlenden Teilnehmers gilt die gesonderte Übertragungsregel in [Gruppenlebenszyklus](03-specific-requirements.md).
 
 #### 2. Finale Verteilung in Cent
 
@@ -101,7 +101,7 @@ Beispiel bei fünf Personen und insgesamt 0,06 €: `V=0,05 €`, `r=0,01 €`, 
 
 ## minSplit | Schlussabrechnung und Ausgleichszahlungen
 
-> Geplanter fachlicher Soll-Zustand v1.0.0. [Zur Übersicht](../../3-mintools/minsplit/minsplit-home.md)
+> Geplanter fachlicher Soll-Zustand v1.0.0. [Zur Übersicht](README.md)
 
 #### 1. Einmalig fixierter Zahlungsplan
 
@@ -151,7 +151,7 @@ Der Ersteller darf `IN ABRECHNUNG → GESCHLOSSEN` **jederzeit** wählen. Eine a
 
 ## minSplit | Benutzerabläufe, Ansichten und Grenzfälle
 
-> Geplanter fachlicher Soll-Zustand v1.0.0. [Zur Übersicht](../../3-mintools/minsplit/minsplit-home.md)
+> Geplanter fachlicher Soll-Zustand v1.0.0. [Zur Übersicht](README.md)
 
 #### 1. Ersteller: Gruppe eröffnen und freigeben
 
