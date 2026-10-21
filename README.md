@@ -5,7 +5,7 @@
 
 ## Dokumentation
 
-- [Dokumentation](wiki/home.md)
+- [Dokumentation](wiki/README.md)
 
 ## Installation
 

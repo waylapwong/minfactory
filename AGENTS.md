@@ -258,4 +258,4 @@ Es bewahrt wiederkehrende Repository-Patterns, konkrete Implementierungsreferenz
 - Keine Aufgabenprotokolle, temporären Details oder Vermutungen speichern.
 - Einträge knapp, verständlich und möglichst unabhängig vom ursprünglichen Kontext formulieren.
 
-`agents-memory.md` nur ändern, wenn ein belegter, dauerhaft nützlicher Erkenntnisgewinn oder eine notwendige Korrektur vorliegt.
+`AGENTS_MEMORY.md` nur ändern, wenn ein belegter, dauerhaft nützlicher Erkenntnisgewinn oder eine notwendige Korrektur vorliegt.
