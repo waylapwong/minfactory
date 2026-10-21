@@ -2,7 +2,7 @@
 
 ## minSplit | Sicherheit, Zugriffe und Datenschutz
 
-> **Soll-Konzept v1.0.0** · [Übersicht](../../minsplit/minsplit-home.md)
+> **Soll-Konzept v1.0.0** · [Übersicht](README.md)
 
 #### Authentifizierte Ersteller
 
@@ -30,7 +30,7 @@ Gruppenlöschung verlangt im UI ausdrückliche Bestätigung mit exaktem Gruppenn
 
 ## minSplit | Unit-Tests und Review
 
-> **Soll-Konzept v1.0.0** · [Übersicht](../../minsplit/minsplit-home.md) · [Fachliche Beispiele](../../../business/3-mintools/minsplit/expenses.md)
+> **Soll-Konzept v1.0.0** · [Übersicht](README.md) · [Fachliche Beispiele](../../business/minsplit/03-specific-requirements.md)
 
 #### Teststrategie
 
@@ -67,7 +67,7 @@ Nur isolierte **Unit-Tests**, Backend mit bestehendem Jest/ts-jest, Frontend mit
 
 #### Dokumentations-Review
 
-- Fachliche Source of Truth vollständig geprüft: [Gruppen](../../../business/3-mintools/minsplit/group-lifecycle.md), [Ausgaben](../../../business/3-mintools/minsplit/expenses.md), [Abrechnung](../../../business/3-mintools/minsplit/settlement.md), [Benutzerabläufe](../../../business/3-mintools/minsplit/user-journeys.md).
+- Fachliche Source of Truth vollständig geprüft: [Gruppen](../../business/minsplit/03-specific-requirements.md), [Ausgaben](../../business/minsplit/03-specific-requirements.md), [Abrechnung](../../business/minsplit/03-specific-requirements.md), [Benutzerabläufe](../../business/minsplit/03-specific-requirements.md).
 - API-Authentifizierung und Swagger/Mapper-/Repository-Namensgebung anhand der aktuellen minFactory-Projektkonventionen ausrichten, nicht neue parallele Infrastruktur schaffen.
 - Konsistenz: Rest-Cent werden nie in Ausgleichsplan/Salden aufgenommen; Ersatzbuchungen erhalten neue Sequenzen; nur aktive Personen erscheinen in Abrechnungsbalken; jeder bestätigte Plantransfer führt schließlich alle Salden auf null.
 - Dokumentationsänderung umfasst keine lauffähige Feature-Implementierung; für einen Markdown-only-PR sind keine betroffenen ausführbaren Unit-Tests/Linter vorhanden.
