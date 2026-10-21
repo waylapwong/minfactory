@@ -2,7 +2,7 @@
 
 ## minAdvent | Kalender und Lebenszyklus
 
-> **Geplanter Soll-Zustand v1.0.0.** [Zur Übersicht](../../3-mintools/minadvent/minadvent-home.md)
+> **Geplanter Soll-Zustand v1.0.0.** [Zur Übersicht](README.md)
 
 #### 1. Erstellen und Kalenderjahr
 
@@ -74,7 +74,7 @@ Eigene Kalender können unabhängig von Veröffentlichung, Kalenderjahr und Absc
 
 ## minAdvent | Inhalte, Bearbeitung und Validierung
 
-> **Geplanter Soll-Zustand v1.0.0.** [Zur Übersicht](../../3-mintools/minadvent/minadvent-home.md)
+> **Geplanter Soll-Zustand v1.0.0.** [Zur Übersicht](README.md)
 
 #### 1. Bearbeitungsmodell
 
@@ -139,7 +139,7 @@ Die maximale URL-Länge beträgt fachlich und technisch **50 Zeichen**.
 
 ## minAdvent | Benutzerabläufe und Grenzfälle
 
-> **Geplanter Soll-Zustand v1.0.0.** [Zur Übersicht](../../3-mintools/minadvent/minadvent-home.md)
+> **Geplanter Soll-Zustand v1.0.0.** [Zur Übersicht](README.md)
 
 #### 1. Ersteller: Kalender anlegen und gestalten
 
