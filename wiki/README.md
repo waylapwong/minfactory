@@ -4,6 +4,10 @@
 
 - [Fachliche Dokumentation](business/README.md)
 
-## Technische Dokumenation
+## Technische Dokumentation
 
 - [Technische Dokumentation](technical/README.md)
+
+## Design System
+
+- [minDesign – Design System](design/README.md)
