@@ -1,3 +1,3 @@
 # 12. Glossar
 
-> Noch nicht migriert – siehe #228.
+In diesem Kapitel sind derzeit keine eigenständigen Architekturinformationen dokumentiert.

@@ -1,3 +1,3 @@
 # 6. Laufzeitsicht
 
-> Noch nicht migriert – siehe #228.
+In diesem Kapitel sind derzeit keine eigenständigen Architekturinformationen dokumentiert.

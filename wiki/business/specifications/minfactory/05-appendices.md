@@ -1,3 +1,3 @@
 # 5. Anhänge
 
-> Noch nicht migriert – siehe #228.
+In diesem Kapitel sind derzeit keine eigenständigen fachlichen Anforderungen dokumentiert.

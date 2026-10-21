@@ -1,5 +1,5 @@
 # 5. Anhänge
 
-> Noch nicht migriert – siehe #228.
+In diesem Kapitel sind derzeit keine eigenständigen fachlichen Anforderungen dokumentiert.
 
-Gemeinsame fachliche Vorgaben werden in der [minFactory-SRS](../minfactory/README.md) gepflegt. Hier werden später nur abweichende oder ergänzende Anforderungen dieser minApp dokumentiert.
+Übergreifende Vorgaben: [minFactory](../minfactory/README.md).
