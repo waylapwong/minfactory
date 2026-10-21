@@ -2,7 +2,7 @@
 
 ## minAdvent | Sicherheit und Datenschutz
 
-> **Soll-Konzept v1.0.0** · [Übersicht](../../minadvent/minadvent-home.md)
+> **Soll-Konzept v1.0.0** · [Übersicht](README.md)
 
 #### 1. Authentifizierte Ersteller
 
@@ -36,7 +36,7 @@ Für v1.0.0 ausschließlich isolierte Unit-Tests mit Mocks vorsehen: fremder Kal
 
 ## minAdvent | Teststrategie und Architektur-Review
 
-> **Geplanter Soll-Zustand v1.0.0** · [Übersicht](../../minadvent/minadvent-home.md)
+> **Geplanter Soll-Zustand v1.0.0** · [Übersicht](README.md)
 
 #### 1. Testwerkzeuge und Umfang
 
