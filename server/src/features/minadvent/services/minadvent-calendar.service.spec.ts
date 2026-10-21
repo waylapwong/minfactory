@@ -1,11 +1,11 @@
 import { ConflictException, ForbiddenException } from '@nestjs/common';
 import { MinFactoryUser } from '../../minfactory/models/domains/minfactory-user';
 import { MinAdventCalendarRepositoryMock } from '../mocks/minadvent-calendar.repository.mock';
+import { MinAdventBlock } from '../models/domains/minadvent-block';
 import { MinAdventCalendarEntity } from '../models/entities/minadvent-calendar.entity';
 import { MinAdventDoorEntity } from '../models/entities/minadvent-door.entity';
-import { MinAdventDoorStatus } from '../models/enums/minadvent-door-status.enum';
 import { MinAdventBlockType } from '../models/enums/minadvent-block-type.enum';
-import { MinAdventBlock } from '../models/domains/minadvent-block';
+import { MinAdventDoorStatus } from '../models/enums/minadvent-door-status.enum';
 import { MinAdventCalendarService } from './minadvent-calendar.service';
 
 describe('MinAdventCalendarService', () => {

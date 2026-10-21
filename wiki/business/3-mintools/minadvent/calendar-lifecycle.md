@@ -23,9 +23,9 @@ Alle Regeln für Dezember und Türchen beziehen sich auf das **gewählte Kalende
 | --- | --- | --- |
 | `EMPTY` | Keine Inhaltsblöcke | Der Ersteller speichert mindestens einen gültigen Block → `FILLED`, solange nicht abgeschlossen. |
 | `FILLED` | Inhalt vorhanden, noch nie seit dem letzten Schließen geöffnet | Empfänger öffnet ab dem jeweiligen Dezembertag → `OPENED`; Ersteller entfernt alle Blöcke → `EMPTY`, solange nicht abgeschlossen. |
-| `OPENED` | Durch Empfänger geöffnet | Nur der Ersteller darf bis **einschließlich 24. Dezember des Kalenderjahres** wieder auf `FILLED` schließen. Danach nie mehr. |
+| `OPENED` | Durch Empfänger geöffnet | Der Ersteller darf das Türchen jederzeit wieder auf `FILLED` schließen. |
 
-`OPENED`-Türchen sind nicht editierbar. Ein erlaubtes Schließen stellt `FILLED` wieder her; erst dann kann der Ersteller die Inhalte bearbeiten. Die nächste erfolgreiche Erstöffnung zeigt erneut die kurze Animation. Nur eine Öffnung über den Shared Link setzt `OPENED`. Der Öffnungsstatus wird aufbewahrt, **keine Öffnungszeitpunkte**.
+`OPENED`-Türchen sind nicht editierbar. Schließen stellt `FILLED` wieder her; danach kann der Ersteller die Inhalte bearbeiten. Das gilt auch für abgeschlossene Kalender: Durch das Schließen wird der abgeleitete Abschluss aufgehoben. Die nächste erfolgreiche Erstöffnung zeigt erneut die kurze Animation. Nur eine Öffnung über den Shared Link setzt `OPENED`. Der Öffnungsstatus wird aufbewahrt, **keine Öffnungszeitpunkte**.
 
 ## 4. Datumsregeln
 
@@ -33,11 +33,11 @@ Alle Regeln für Dezember und Türchen beziehen sich auf das **gewählte Kalende
 - **Ab dem 1. Dezember, 00:00 Uhr**: Das 24-Türchen-Raster bleibt dauerhaft sichtbar – auch am 25. Dezember und in späteren Jahren; ein Countdown kehrt nie zurück.
 - Türchen `N` ist ab **N. Dezember, 00:00 Uhr** des Kalenderjahres zeitlich freigegeben. Leere Türchen bleiben dennoch nicht zu öffnen.
 - Ein `FILLED`-Türchen kann auch nach Weihnachten, Jahre später, erstmals geöffnet werden, sofern der Kalender nicht bereits abgeschlossen ist (was bei verbliebenem `FILLED` ohnehin nicht zutrifft).
-- Ein Schließversuch ab **25. Dezember, 00:00 Uhr** wird selbst bei noch unabgeschlossenem Kalender verweigert (fachlicher `409`, keine Mutation oder Versionsänderung).
+- Der Ersteller kann geöffnete Türchen unabhängig vom Kalenderjahr und Kalenderabschluss schließen; die globale Version wird dabei atomar erhöht.
 
 ## 5. Endgültiger Abschluss
 
-`ABGESCHLOSSEN` **ersetzt** einen früher vorgesehenen Archivstatus vollständig. Der Status wird bei relevanten Zugriffen **ohne eigenes persistiertes Statusfeld und ohne Hintergrundjob** aus dem gewählten Kalenderjahr, dem aktuellen Datum in `Europe/Berlin` und den Türchenzuständen bestimmt.
+`ABGESCHLOSSEN` **ersetzt** einen früher vorgesehenen Archivstatus vollständig. Der Status wird bei relevanten Zugriffen **ohne eigenes persistiertes Statusfeld und ohne Hintergrundjob** aus dem gewählten Kalenderjahr, dem aktuellen Datum in `Europe/Berlin` und den Türchenzuständen bestimmt. Ein Ersteller kann den Abschluss durch Schließen eines geöffneten Türchens jederzeit wieder aufheben.
 
 Ein Kalender ist genau dann `ABGESCHLOSSEN`, wenn **alle** Bedingungen zutreffen:
 
@@ -47,9 +47,9 @@ Ein Kalender ist genau dann `ABGESCHLOSSEN`, wenn **alle** Bedingungen zutreffen
 
 `EMPTY` verhindert Abschluss nicht. **24 × `EMPTY`** bleibt unabgeschlossen und bearbeitbar. Kalender vergangener Jahre mit verbliebenem `FILLED` bleiben ebenfalls unabgeschlossen; ihre ungeöffneten Türchen können noch bearbeitet beziehungsweise geöffnet werden.
 
-Sobald die Bedingungen erfüllt sind, tritt der Abschluss **sofort und endgültig** ein – beispielsweise beim Übergang zum 25. Dezember, bei der **letzten erfolgreichen Empfängeröffnung** oder beim **Leeren des letzten `FILLED`-Türchens**, wenn bereits ein `OPENED` vorhanden ist. Vor dem Speichern, das durch Leeren den Abschluss auslöst, erhält der Ersteller einen ausdrücklichen Warnhinweis auf die unumkehrbare Sperre. Bei Wahl eines vergangenen Kalenderjahres und in dessen Bearbeitungsansicht erscheint ebenfalls eine deutliche Warnung vor einem möglichen sofortigen Abschluss durch letzte Öffnung oder Leeren.
+Sobald die Bedingungen erfüllt sind, tritt der Abschluss **sofort** ein – beispielsweise beim Übergang zum 25. Dezember, bei der **letzten erfolgreichen Empfängeröffnung** oder beim **Leeren des letzten `FILLED`-Türchens**, wenn bereits ein `OPENED` vorhanden ist. Vor dem Speichern, das durch Leeren den Abschluss auslöst, erhält der Ersteller einen ausdrücklichen Warnhinweis auf die Schreibsperre. Bei Wahl eines vergangenen Kalenderjahres und in dessen Bearbeitungsansicht erscheint ebenfalls eine deutliche Warnung vor einem möglichen sofortigen Abschluss durch letzte Öffnung oder Leeren. Der Abschluss kann durch Schließen eines `OPENED`-Türchens zurückgesetzt werden.
 
-**Nach dem Abschluss gesperrt:** Titel, Empfängername, Inhaltsblöcke und alle Türchenzustände; kein Zurücksetzen, Schließen oder Nachbefüllen. **Weiter erlaubt:** aktiven Shared Link ansehen, bereits geöffnete Inhalte beliebig oft ohne Animation lesen, veröffentlichen, Freigabe widerrufen, Link erneuern, neu veröffentlichen und Kalender endgültig löschen.
+**Nach dem Abschluss gesperrt:** Titel, Empfängername und Inhaltsblöcke. Der Ersteller kann `OPENED` jederzeit auf `FILLED` zurücksetzen; dadurch wird der abgeleitete Abschluss aufgehoben und Bearbeitung wieder möglich. **Weiter erlaubt:** aktiven Shared Link ansehen, bereits geöffnete Inhalte beliebig oft ohne Animation lesen, veröffentlichen, Freigabe widerrufen, Link erneuern, neu veröffentlichen und Kalender endgültig löschen.
 
 **Beispiele (Kalenderjahr 2022, betrachtet am 25.12.2022 oder später):**
 

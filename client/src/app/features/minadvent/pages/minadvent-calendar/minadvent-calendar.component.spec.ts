@@ -64,7 +64,7 @@ describe('MinAdventCalendarComponent', () => {
 
   describe('closeDoor()', () => {
     it('closes an opened door and keeps its content available for editing', async () => {
-      const calendar = createMinAdventCalendar();
+      const calendar = createMinAdventCalendar({ completed: true });
       component.calendar.set(calendar);
       component.selectDoor(calendar.doors[1]);
       MINADVENT_CALENDAR_SERVICE_MOCK.closeDoor.and.resolveTo({
@@ -80,15 +80,16 @@ describe('MinAdventCalendarComponent', () => {
       expect(component.selectedDoor()?.status).toBe('FILLED');
       expect(component.isSelectedDoorReadOnly()).toBeFalse();
       expect(component.calendar()?.version).toBe(2);
+      expect(component.calendar()?.completed).toBeFalse();
     });
 
-    it('hides the close action from December 25 in Berlin', () => {
-      const calendar = createMinAdventCalendar();
+    it('allows closing an opened door after the Advent period, including completed calendars', () => {
+      const calendar = createMinAdventCalendar({ completed: true });
       component.calendar.set(calendar);
       jasmine.clock().install();
-      jasmine.clock().mockDate(new Date('2026-12-24T23:00:00.000Z'));
+      jasmine.clock().mockDate(new Date('2028-01-01T00:00:00.000Z'));
 
-      expect(component.canCloseDoor(calendar.doors[1])).toBeFalse();
+      expect(component.canCloseDoor(calendar.doors[1])).toBeTrue();
 
       jasmine.clock().uninstall();
     });

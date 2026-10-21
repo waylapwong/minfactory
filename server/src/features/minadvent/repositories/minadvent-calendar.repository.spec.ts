@@ -308,8 +308,6 @@ describe('MinAdventCalendarRepository', () => {
   });
 
   describe('closeDoor()', () => {
-    const validPeriod = { year: 2026, month: 12, day: 24 };
-
     function addOpenedDoor(): MinAdventDoorEntity {
       const door = Object.assign(new MinAdventDoorEntity(), {
         id: 'door-1',
@@ -326,21 +324,23 @@ describe('MinAdventCalendarRepository', () => {
       return door;
     }
 
-    it('checks the expected version before the close deadline or door status', async () => {
+    it('checks the expected version before reading the door status', async () => {
       transaction.calendar.version = 2;
 
-      await expect(
-        repository.closeDoor('owner-1', 'calendar-1', 1, 1, { year: 2026, month: 12, day: 25 }),
-      ).rejects.toMatchObject({ response: expect.objectContaining({ code: 'VERSION_CONFLICT' }) });
+      await expect(repository.closeDoor('owner-1', 'calendar-1', 1, 1)).rejects.toMatchObject({
+        response: expect.objectContaining({ code: 'VERSION_CONFLICT' }),
+      });
 
       expect(transaction.doorRepository.findOne).not.toHaveBeenCalled();
       expect(transaction.doorRepository.update).not.toHaveBeenCalled();
     });
 
-    it('closes an opened door on December 24 and increments the global version once', async () => {
+    it('closes an opened door after the Advent period and increments the global version once', async () => {
+      jest.useFakeTimers();
+      jest.setSystemTime(new Date('2028-01-01T00:00:00.000Z'));
       const door = addOpenedDoor();
 
-      const updated = await repository.closeDoor('owner-1', 'calendar-1', 1, 1, validPeriod);
+      const updated = await repository.closeDoor('owner-1', 'calendar-1', 1, 1);
 
       expect(transaction.calendarQueryBuilder.setLock).toHaveBeenCalledWith('pessimistic_write');
       expect(transaction.doorRepository.update).toHaveBeenCalledWith(
@@ -354,21 +354,6 @@ describe('MinAdventCalendarRepository', () => {
       expect(updated.version).toBe(2);
     });
 
-    it('rejects closing from December 25 onward without changing status or version', async () => {
-      addOpenedDoor();
-
-      await expect(
-        repository.closeDoor('owner-1', 'calendar-1', 1, 1, {
-          year: 2026,
-          month: 12,
-          day: 25,
-        }),
-      ).rejects.toMatchObject({ response: expect.objectContaining({ code: 'DOOR_CLOSE_PERIOD_ENDED' }) });
-
-      expect(transaction.doorRepository.update).not.toHaveBeenCalled();
-      expect(transaction.calendarRepository.update).not.toHaveBeenCalled();
-    });
-
     it('rejects a door that is not OPENED without writing', async () => {
       transaction.doors.push(
         Object.assign(new MinAdventDoorEntity(), {
@@ -379,7 +364,7 @@ describe('MinAdventCalendarRepository', () => {
         }),
       );
 
-      await expect(repository.closeDoor('owner-1', 'calendar-1', 1, 1, validPeriod)).rejects.toMatchObject({
+      await expect(repository.closeDoor('owner-1', 'calendar-1', 1, 1)).rejects.toMatchObject({
         response: expect.objectContaining({ code: 'DOOR_NOT_OPENED' }),
       });
 

@@ -59,7 +59,7 @@ Schließen:
 PUT /minadvent/calendars/:id/doors/3/status
 {"status":"FILLED","expectedVersion":3}
 ```
-Ab 25.12. des Kalenderjahres: `409 DOOR_CLOSE_PERIOD_ENDED`, keine Status-/Versionsänderung.
+Schließen ist unabhängig vom Datum und Kalenderabschluss erlaubt, sofern Türchenstatus `OPENED` und globale Version aktuell sind. Die Mutation setzt `FILLED` und erhöht die Version atomar.
 
 Veröffentlichen, Widerrufen, Erneuern:
 ```json
@@ -100,7 +100,6 @@ Bereits OPENED: bei **aktueller** Version `200`, `firstOpened:false` und dieselb
 | 409 | `CALENDAR_COMPLETED` | Inhalt/Metadaten/Türstatus bei aktuellem Versionswert nicht mehr änderbar |
 | 409 | `DOOR_EMPTY` | Öffnen einer leeren Tür |
 | 409 | `DOOR_NOT_YET_UNLOCKED` | Öffnen vor dem ausgewählten Dezembertag |
-| 409 | `DOOR_CLOSE_PERIOD_ENDED` | Ersteller schließt ab 25.12. |
 | 409 | `INVALID_CONTENT` | Fachliche Eingabe verletzt Block-/Längen-/Pflichtregeln |
 | 403 | `FORBIDDEN` | Ersteller ohne Berechtigung (fremder Kalender) |
 | 400 | `INVALID_REQUEST` | Struktureller Fehler, Tag außerhalb 1–24 |

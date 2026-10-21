@@ -16,20 +16,20 @@ Die Angular-Seite ergänzt die bestehenden `APP_ROUTES` mit lazy geladenem Stand
 | FILLED | EMPTY | Ersteller speichert null Blöcke, Kalender nicht abgeschlossen |
 | FILLED | FILLED | Ersteller ersetzt/reordnet Blöcke, Kalender nicht abgeschlossen |
 | FILLED | OPENED | Empfänger, gültiger aktiver Link, freigegebener Dezembertag, aktuelle globale Version |
-| OPENED | FILLED | Ersteller bis einschließlich 24.12. des Kalenderjahres, aktuelle Version, nicht abgeschlossen |
+| OPENED | FILLED | Ersteller jederzeit, aktuelle Version |
 | OPENED | OPENED | GET immer lesend; PUT nur mit aktueller Version idempotent ohne neue Mutation |
 
 Geöffnete Türchen können nicht direkt editiert werden. Nur der Empfängerzugriff setzt OPENED. Kein `openedAt` und keine besonderen Testrechte.
 
 ## 3. Kalenderabschluss und Zeit
 
-`completed = nowInBerlin >= (year-12-25T00:00 Europe/Berlin) && count(OPENED) >= 1 && count(FILLED) === 0`. Das ist ein **abgeleiteter** Status ohne Datenbankfeld und Hintergrundjob. Er gilt ab dem Zeitpunkt, an dem alle Bedingungen erfüllt sind, und ist aufgrund der danach wirksamen Schreibsperre irreversibel. 24 EMPTY bleibt bearbeitbar; ein aus früheren Jahren stammender Kalender mit einem verbleibenden FILLED ebenso. Öffnen oder Entleeren des letzten FILLED kann eine noch nicht abgeschlossene Kalenderinstanz abschließen. Eine UI-Warnung geht einer solchen Entleerung voraus.
+`completed = nowInBerlin >= (year-12-25T00:00 Europe/Berlin) && count(OPENED) >= 1 && count(FILLED) === 0`. Das ist ein **abgeleiteter** Status ohne Datenbankfeld und Hintergrundjob. Er gilt ab dem Zeitpunkt, an dem alle Bedingungen erfüllt sind. Der Ersteller kann ihn durch Schließen eines `OPENED`-Türchens jederzeit aufheben. 24 EMPTY bleibt bearbeitbar; ein aus früheren Jahren stammender Kalender mit einem verbleibenden FILLED ebenso. Öffnen oder Entleeren des letzten FILLED kann eine noch nicht abgeschlossene Kalenderinstanz abschließen. Eine UI-Warnung geht einer solchen Entleerung voraus.
 
-Serverseitige Uhrzeit als austauschbare Clock/Time-Provider-Abhängigkeit für reproduzierbare Tests; DST-Regeln der IANA-Zone `Europe/Berlin` anwenden, UTC-Timestamps speichern. Countdown endet unwiderruflich am 1.12. des ausgewählten Kalenderjahres, Raster bleibt danach dauerhaft sichtbar. Türchen N wird ab N.12. 00:00 verfügbar; Schließen ist ab 25.12. 00:00 verboten (`409 DOOR_CLOSE_PERIOD_ENDED`).
+Serverseitige Uhrzeit als austauschbare Clock/Time-Provider-Abhängigkeit für reproduzierbare Tests; DST-Regeln der IANA-Zone `Europe/Berlin` anwenden, UTC-Timestamps speichern. Countdown endet unwiderruflich am 1.12. des ausgewählten Kalenderjahres, Raster bleibt danach dauerhaft sichtbar. Türchen N wird ab N.12. 00:00 verfügbar; geöffnete Türchen kann der Ersteller unabhängig vom Datum schließen. Dadurch kann ein abgeleiteter Abschluss aufgehoben werden.
 
 ## 4. Transaktions- und Konsistenzregeln
 
-Alle mutierenden Requests, einschließlich Linkverwaltung und Löschen, werden gegen den **einen** Kalender-Aggregatzustand serialisiert (beispielsweise durch Sperren der Kalenderzeile per `SELECT ... FOR UPDATE` in einer MySQL/TypeORM-Transaktion). Nach Autorisierung und Tokenprüfung erfolgt im transaktionalen kritischen Abschnitt die erwartete Versionenkontrolle **vor** fachlichen Zustandsverletzungen. Bei Veraltung: `409 VERSION_CONFLICT` ohne Seiteneffekt, auch bei einem PUT auf bereits OPENED. Danach abgeschlossenen Kalender prüfen: Inhalte/Türchen/Stammdaten gesperrt (`409 CALENDAR_COMPLETED`), Linkverwaltung und Löschung erlaubt. Zum Abschluss kann eine erfolgreiche Mutation genau einmal die Version erhöhen; die reine Zeitumstellung bzw. Ableitung nie.
+Alle mutierenden Requests, einschließlich Linkverwaltung und Löschen, werden gegen den **einen** Kalender-Aggregatzustand serialisiert (beispielsweise durch Sperren der Kalenderzeile per `SELECT ... FOR UPDATE` in einer MySQL/TypeORM-Transaktion). Nach Autorisierung und Tokenprüfung erfolgt im transaktionalen kritischen Abschnitt die erwartete Versionenkontrolle **vor** fachlichen Zustandsverletzungen. Bei Veraltung: `409 VERSION_CONFLICT` ohne Seiteneffekt, auch bei einem PUT auf bereits OPENED. Danach abgeschlossenen Kalender prüfen: direkte Inhalts-/Metadatenänderungen sind gesperrt (`409 CALENDAR_COMPLETED`); das Schließen eines `OPENED`-Türchens bleibt erlaubt und kann den Abschluss aufheben. Linkverwaltung und Löschung bleiben ebenfalls erlaubt. Zum Abschluss kann eine erfolgreiche Mutation genau einmal die Version erhöhen; die reine Zeitumstellung bzw. Ableitung nie.
 
 Konkurrierende Öffnung und Widerruf: erste erfolgreiche Transaktion gewinnt; bei späterem Widerruf mit veralteter Version 409, bei vorherigem Widerruf ist der Token neutral nicht mehr verfügbar. Eine erfolgreiche letzte Öffnung antwortet noch mit Inhalt, `firstOpened: true` und dem neu berechneten `completed: true`, bevor spätere Änderungen gesperrt sind.
 

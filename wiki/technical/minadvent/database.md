@@ -26,7 +26,7 @@ completed = berlinNow >= Dec 25 00:00(calendar.year)
          && EXISTS door.status = OPENED
          && NOT EXISTS door.status = FILLED
 ```
-Die Abfrage des Türchenzustands findet in derselben Datenbanksnapshot-/Sperrstrategie wie die Mutation statt. Eine Statusänderung kann den Abschluss bewirken und wird noch erfolgreich abgeschlossen. Weitere mutierende Inhalts-/Türchenrequests scheitern mit `409 CALENDAR_COMPLETED`; Linkoperationen und Delete bleiben erlaubt.
+Die Abfrage des Türchenzustands findet in derselben Datenbanksnapshot-/Sperrstrategie wie die Mutation statt. Eine Statusänderung kann den Abschluss bewirken und wird noch erfolgreich abgeschlossen. Inhalts-/Metadatenänderungen scheitern mit `409 CALENDAR_COMPLETED`; der Ersteller darf ein `OPENED`-Türchen weiterhin schließen, wodurch der abgeleitete Abschluss aufgehoben wird. Linkoperationen und Delete bleiben ebenfalls erlaubt.
 
 Zeitstempel `created_at` / `updated_at` UTC, keine einzelnen `openedAt`-Felder. Kalenderjahr ist ein fachliches Integerfeld und **kein** Datum, das beim Jahreswechsel geändert wird. Die lokale Berlin-Zeit wird zur Entscheidungszeit berechnet.
 
