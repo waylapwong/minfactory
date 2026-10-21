@@ -1,6 +1,6 @@
-# minFactory – Fachliche Produktspezifikation (SRS)
+# minfactory – Fachliche Produktspezifikation (SRS)
 
-Grundgerüst nach ISO/IEC/IEEE 29148. **Die bestehenden Fachinhalte werden erst in #228 migriert.**
+Übergreifende Dokumentation der Plattform.
 
 ## Kapitel
 

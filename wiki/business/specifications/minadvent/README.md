@@ -1,8 +1,8 @@
-# minAdvent – Fachliche Produktspezifikation (SRS)
+# minadvent – Fachliche Produktspezifikation (SRS)
 
-Grundgerüst nach ISO/IEC/IEEE 29148. **Die bestehenden Fachinhalte werden erst in #228 migriert.**
+Produktspezifische Dokumentation; gemeinsame Anforderungen sind unter [minFactory](../minfactory/README.md) dokumentiert.
 
-Gemeinsame fachliche Anforderungen: [minFactory-SRS](../minfactory/README.md).
+> Die übernommenen Spezifikationen enthalten ausdrücklich geplante Soll-Zustände. Diese sind nicht automatisch bereits implementiert.
 
 ## Kapitel
 

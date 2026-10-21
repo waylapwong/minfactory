@@ -1,8 +1,8 @@
-# minAdvent – Technische Architekturdokumentation (arc42)
+# minadvent – Technische Architekturdokumentation (arc42)
 
-Grundgerüst gemäß der originalen arc42-Kapitelstruktur. **Bestehende technische Inhalte werden erst in #228 migriert.**
+Produktspezifische Dokumentation; gemeinsame Architekturkonzepte sind unter [minFactory](../minfactory/README.md) dokumentiert.
 
-Gemeinsame technische Konzepte: [minFactory-arc42](../minfactory/README.md).
+> Die übernommenen Spezifikationen enthalten ausdrücklich geplante Soll-Zustände. Diese sind nicht automatisch bereits implementiert.
 
 ## Kapitel
 

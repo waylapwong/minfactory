@@ -1,8 +1,6 @@
-# minRPS – Fachliche Produktspezifikation (SRS)
+# minrps – Fachliche Produktspezifikation (SRS)
 
-Grundgerüst nach ISO/IEC/IEEE 29148. **Die bestehenden Fachinhalte werden erst in #228 migriert.**
-
-Gemeinsame fachliche Anforderungen: [minFactory-SRS](../minfactory/README.md).
+Produktspezifische Dokumentation; gemeinsame Anforderungen sind unter [minFactory](../minfactory/README.md) dokumentiert.
 
 ## Kapitel
 

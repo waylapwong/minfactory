@@ -1,6 +1,6 @@
-# minFactory – Technische Architekturdokumentation (arc42)
+# minfactory – Technische Architekturdokumentation (arc42)
 
-Grundgerüst gemäß der originalen arc42-Kapitelstruktur. **Bestehende technische Inhalte werden erst in #228 migriert.**
+Übergreifende Dokumentation der Plattform.
 
 ## Kapitel
 

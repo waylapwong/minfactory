@@ -1,8 +1,6 @@
-# minRPG – Technische Architekturdokumentation (arc42)
+# minrpg – Technische Architekturdokumentation (arc42)
 
-Grundgerüst gemäß der originalen arc42-Kapitelstruktur. **Bestehende technische Inhalte werden erst in #228 migriert.**
-
-Gemeinsame technische Konzepte: [minFactory-arc42](../minfactory/README.md).
+Produktspezifische Dokumentation; gemeinsame Architekturkonzepte sind unter [minFactory](../minfactory/README.md) dokumentiert.
 
 ## Kapitel
 
