@@ -36,6 +36,12 @@
             <min-badge [color]="Color.Gray">Abgeschlossen</min-badge>
           }
         </div>
+        @if (isPastCalendarYear()) {
+          <output aria-live="polite" class="block border-l-4 border-amber-600 bg-amber-50 p-3 text-sm">
+            Bei einem vergangenen Kalenderjahr kann der Kalender sofort endgültig abgeschlossen werden, sobald
+            mindestens ein Türchen geöffnet und kein Türchen mehr befüllt ist.
+          </output>
+        }
         <section aria-labelledby="sharing-heading" class="rounded-lg border-4 border-gray-300 bg-white p-4">
           <min-h2 id="sharing-heading" class="mb-3">Freigabe</min-h2>
           @if (current.published) {

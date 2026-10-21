@@ -372,6 +372,36 @@ describe('MinAdventCalendarService', () => {
       expect(result?.blocks[0].text).toBe('<p>Surprise</p>');
     });
 
+    it('completes when the last filled door is opened after the deadline', async () => {
+      jest.useFakeTimers();
+      jest.setSystemTime(new Date('2026-12-24T23:00:00.000Z'));
+      repository.openSharedDoor.mockResolvedValue({
+        calendar: Object.assign(new MinAdventCalendarEntity(), {
+          id: 'calendar-1',
+          year: 2026,
+          version: 6,
+          doors: Array.from({ length: 24 }, (_, index) =>
+            Object.assign(new MinAdventDoorEntity(), {
+              day: index + 1,
+              status: index === 0 ? MinAdventDoorStatus.Opened : MinAdventDoorStatus.Empty,
+              blocks: [],
+            }),
+          ),
+        }),
+        firstOpened: true,
+      });
+
+      const result = await service.openSharedDoor('a'.repeat(64), 1, { expectedVersion: 5 });
+
+      expect(result).toMatchObject({
+        day: 1,
+        status: MinAdventDoorStatus.Opened,
+        version: 6,
+        firstOpened: true,
+        completed: true,
+      });
+    });
+
     it('does not retry a stale open request', async () => {
       repository.openSharedDoor.mockRejectedValue(new ConflictException({ code: 'VERSION_CONFLICT' }));
 

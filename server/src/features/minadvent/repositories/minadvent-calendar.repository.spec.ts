@@ -377,18 +377,53 @@ describe('MinAdventCalendarRepository', () => {
         response: expect.objectContaining({ code: 'VERSION_CONFLICT' }),
       });
 
-      expect(transaction.doorRepository.findOne).not.toHaveBeenCalled();
+      expect(transaction.doorQueryBuilder.getMany).not.toHaveBeenCalled();
       expect(transaction.doorRepository.update).not.toHaveBeenCalled();
+    });
+
+    it('returns a version conflict before checking an already completed calendar', async () => {
+      jest.useFakeTimers();
+      jest.setSystemTime(new Date('2026-12-24T23:00:00.000Z'));
+      transaction.calendar.version = 2;
+      transaction.doors.push(Object.assign(new MinAdventDoorEntity(), { day: 1, status: MinAdventDoorStatus.Opened }));
+
+      await expect(repository.closeDoor('owner-1', 'calendar-1', 1, 1)).rejects.toMatchObject({
+        response: expect.objectContaining({ code: 'VERSION_CONFLICT' }),
+      });
+
+      expect(transaction.doorQueryBuilder.getMany).not.toHaveBeenCalled();
+      expect(transaction.doorRepository.update).not.toHaveBeenCalled();
+    });
+
+    it('rejects status changes after completion without writing', async () => {
+      jest.useFakeTimers();
+      jest.setSystemTime(new Date('2026-12-24T23:00:00.000Z'));
+      transaction.doors.push(
+        Object.assign(new MinAdventDoorEntity(), { id: 'door-1', day: 1, status: MinAdventDoorStatus.Opened }),
+        ...Array.from({ length: 23 }, (_, index) =>
+          Object.assign(new MinAdventDoorEntity(), { day: index + 2, status: MinAdventDoorStatus.Empty }),
+        ),
+      );
+
+      await expect(repository.closeDoor('owner-1', 'calendar-1', 1, 1)).rejects.toMatchObject({
+        response: expect.objectContaining({ code: 'CALENDAR_COMPLETED' }),
+      });
+
+      expect(transaction.doorQueryBuilder.setLock).toHaveBeenCalledWith('pessimistic_write');
+      expect(transaction.doorRepository.update).not.toHaveBeenCalled();
+      expect(transaction.calendarRepository.update).not.toHaveBeenCalled();
     });
 
     it('closes an opened door after the Advent period and increments the global version once', async () => {
       jest.useFakeTimers();
       jest.setSystemTime(new Date('2028-01-01T00:00:00.000Z'));
       const door = addOpenedDoor();
+      transaction.doors.push(Object.assign(new MinAdventDoorEntity(), { day: 2, status: MinAdventDoorStatus.Filled }));
 
       const updated = await repository.closeDoor('owner-1', 'calendar-1', 1, 1);
 
       expect(transaction.calendarQueryBuilder.setLock).toHaveBeenCalledWith('pessimistic_write');
+      expect(transaction.doorQueryBuilder.setLock).toHaveBeenCalledWith('pessimistic_write');
       expect(transaction.doorRepository.update).toHaveBeenCalledWith(
         { id: door.id },
         { status: MinAdventDoorStatus.Filled },

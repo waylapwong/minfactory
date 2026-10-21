@@ -21,5 +21,33 @@ describe('MinAdventEntityMapper', () => {
 
       expect(MinAdventEntityMapper.toDomain(calendar).completed).toBe(true);
     });
+
+    it('keeps a calendar with 24 empty doors editable after the deadline', () => {
+      jest.setSystemTime(new Date('2026-12-24T23:00:00.000Z'));
+      const calendar = Object.assign(new MinAdventCalendarEntity(), {
+        year: 2026,
+        doors: Array.from({ length: 24 }, (_, index) =>
+          Object.assign(new MinAdventDoorEntity(), { day: index + 1, status: MinAdventDoorStatus.Empty, blocks: [] }),
+        ),
+      });
+
+      expect(MinAdventEntityMapper.toDomain(calendar).completed).toBe(false);
+    });
+
+    it('completes with one opened door and 23 empty doors after the deadline', () => {
+      jest.setSystemTime(new Date('2026-12-24T23:00:00.000Z'));
+      const calendar = Object.assign(new MinAdventCalendarEntity(), {
+        year: 2026,
+        doors: Array.from({ length: 24 }, (_, index) =>
+          Object.assign(new MinAdventDoorEntity(), {
+            day: index + 1,
+            status: index === 0 ? MinAdventDoorStatus.Opened : MinAdventDoorStatus.Empty,
+            blocks: [],
+          }),
+        ),
+      });
+
+      expect(MinAdventEntityMapper.toDomain(calendar).completed).toBe(true);
+    });
   });
 });

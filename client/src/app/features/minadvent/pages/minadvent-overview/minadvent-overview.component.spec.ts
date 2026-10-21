@@ -115,6 +115,17 @@ describe('MinAdventOverviewComponent', () => {
       expect(component.createForm.controls.title.touched).toBeTrue();
       expect(component.createForm.controls.recipientName.touched).toBeTrue();
     });
+
+    it('shows the completion warning when the selected calendar year is in the past', () => {
+      component.createForm.controls.year.setValue(1);
+      component.openCreateDialog();
+      fixture.detectChanges();
+
+      expect(component.isPastCalendarYear()).toBeTrue();
+      expect(fixture.nativeElement.querySelector('output[aria-live="polite"]')?.textContent).toContain(
+        'sofort endgültig abgeschlossen',
+      );
+    });
   });
 
   describe('createCalendar()', () => {

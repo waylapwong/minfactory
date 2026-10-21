@@ -41,7 +41,18 @@ export class MinAdventCalendarRepository {
           message: 'Der Kalender wurde zwischenzeitlich geändert.',
         });
       }
-      const door = await doorRepository.findOne({ where: { calendarId, day } });
+      const doors = await doorRepository
+        .createQueryBuilder('door')
+        .setLock('pessimistic_write')
+        .where('door.calendarId = :calendarId', { calendarId })
+        .getMany();
+      if (MinAdventEntityMapper.toDomain({ ...calendar, doors }).completed) {
+        throw new ConflictException({
+          code: 'CALENDAR_COMPLETED',
+          message: 'Abgeschlossene Kalender können nicht mehr bearbeitet werden.',
+        });
+      }
+      const door = doors.find((candidate) => candidate.day === day);
       if (!door) {
         throw new NotFoundException('Door not found.');
       }
