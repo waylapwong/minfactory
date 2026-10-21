@@ -8,7 +8,7 @@
 
 minAdvent ist ein persönlich gestaltbarer Adventskalender innerhalb von minFactory. Ein angemeldeter **Ersteller** legt beliebig viele voneinander unabhängige Kalender an, gestaltet bis zu 24 Türchen und veröffentlicht jeden Kalender ausdrücklich für **genau einen namentlich angesprochenen Empfänger**. Der Empfänger benötigt keinen Account. Wer den geheimen Shared Link besitzt, kann den Kalender ansehen und freigeschaltete Türchen öffnen; die angegebene Empfängeridentität wird technisch nicht überprüft.
 
-Die geplante technische Umsetzung ist unter [minAdvent – Technische Spezifikation](../../../../technical/minadvent/minadvent-home.md) dokumentiert.
+Die geplante technische Umsetzung ist unter [minAdvent – Technische Spezifikation](../../../technical/minadvent/minadvent-home.md) dokumentiert.
 
 #### 2. Dokumentationsübersicht
 
