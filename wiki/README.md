@@ -2,8 +2,8 @@
 
 ## Fachliche Dokumentation
 
-- [Fachliche Dokumentation](business/business-home.md)
+- [Fachliche Dokumentation](business/README.md)
 
 ## Technische Dokumenation
 
-- [Technische Dokumentation](technical/technical-home.md)
+- [Technische Dokumentation](technical/README.md)
