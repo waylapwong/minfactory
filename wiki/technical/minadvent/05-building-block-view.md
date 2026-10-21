@@ -2,7 +2,7 @@
 
 ## minAdvent | REST-API-Vertrag
 
-> **Geplante API, nicht implementiert.** [Übersicht](../../minadvent/minadvent-home.md). Pfade der authentifizierten Ersteller-Ressourcen sind Vorschläge; die drei Shared-Pfade sind fachlich vereinbart. DTO-Beispiele zeigen den fachlichen Kern.
+> **Geplante API, nicht implementiert.** [Übersicht](README.md). Pfade der authentifizierten Ersteller-Ressourcen sind Vorschläge; die drei Shared-Pfade sind fachlich vereinbart. DTO-Beispiele zeigen den fachlichen Kern.
 
 #### 1. Endpunkte
 
@@ -119,7 +119,7 @@ Konkrete DTO-Klassennamen sind an etablierte Repo-Konventionen anzupassen; für 
 
 ## minAdvent | Datenmodell und Migrationen
 
-> **Soll-Konzept v1.0.0** · [Übersicht](../../minadvent/minadvent-home.md)
+> **Soll-Konzept v1.0.0** · [Übersicht](README.md)
 
 #### 1. Relationales Modell (Vorschlag)
 
@@ -161,7 +161,7 @@ Zeitstempel `created_at` / `updated_at` UTC, keine einzelnen `openedAt`-Felder. 
 
 ## minAdvent | Angular-Frontend
 
-> **Soll-Konzept v1.0.0** · [Übersicht](../../minadvent/minadvent-home.md)
+> **Soll-Konzept v1.0.0** · [Übersicht](README.md)
 
 #### 1. Integration und Routen
 
