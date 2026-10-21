@@ -1,4 +1,3 @@
-import { NotFoundException } from '@nestjs/common';
 import { MinAdventSharedCalendarServiceMock } from '../mocks/minadvent-shared-calendar.service.mock';
 import { MinAdventCalendarService } from '../services/minadvent-calendar.service';
 import { MinAdventSharedController } from './minadvent-shared.controller';
@@ -23,6 +22,30 @@ describe('MinAdventSharedController', () => {
 
     it('returns the neutral 404 error for an unavailable token', async () => {
       await expect(controller.get('b'.repeat(64))).rejects.toMatchObject({
+        status: 404,
+        response: {
+          code: 'SHARED_CALENDAR_UNAVAILABLE',
+          message: 'Dieser Adventskalender ist nicht verfügbar.',
+        },
+      });
+    });
+  });
+
+  describe('getDoor()', () => {
+    it('returns the same neutral 404 error for an unavailable token', async () => {
+      await expect(controller.getDoor('b'.repeat(64), 1)).rejects.toMatchObject({
+        status: 404,
+        response: {
+          code: 'SHARED_CALENDAR_UNAVAILABLE',
+          message: 'Dieser Adventskalender ist nicht verfügbar.',
+        },
+      });
+    });
+  });
+
+  describe('openDoor()', () => {
+    it('returns the same neutral 404 error for an unavailable token', async () => {
+      await expect(controller.openDoor('b'.repeat(64), 1, { expectedVersion: 1 })).rejects.toMatchObject({
         status: 404,
         response: {
           code: 'SHARED_CALENDAR_UNAVAILABLE',
