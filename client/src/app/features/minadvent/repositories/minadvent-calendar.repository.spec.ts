@@ -11,6 +11,7 @@ describe('MinAdventCalendarRepository', () => {
 
   beforeEach(() => {
     MINADVENT_API_SERVICE_MOCK.createMinAdventCalendar.calls.reset();
+    MINADVENT_API_SERVICE_MOCK.deleteMinAdventCalendar.calls.reset();
     MINADVENT_API_SERVICE_MOCK.getMinAdventCalendar.calls.reset();
     MINADVENT_API_SERVICE_MOCK.getMinAdventCalendars.calls.reset();
     MINADVENT_API_SERVICE_MOCK.getMinAdventSharedCalendar.calls.reset();
@@ -60,6 +61,18 @@ describe('MinAdventCalendarRepository', () => {
 
       expect(MINADVENT_API_SERVICE_MOCK.getMinAdventCalendar).toHaveBeenCalledWith('calendar-id');
       expect(result).toBe(MINADVENT_CALENDAR_DTO_MOCK);
+    });
+  });
+
+  describe('delete()', () => {
+    it('deletes a calendar through the generated API service with its expected version', async () => {
+      MINADVENT_API_SERVICE_MOCK.deleteMinAdventCalendar.and.returnValue(of(undefined));
+
+      await expectAsync(repository.delete('calendar-id', 3)).toBeResolvedTo(undefined);
+
+      expect(MINADVENT_API_SERVICE_MOCK.deleteMinAdventCalendar).toHaveBeenCalledWith('calendar-id', {
+        expectedVersion: 3,
+      });
     });
   });
 

@@ -1,4 +1,4 @@
-import { ConflictException } from '@nestjs/common';
+import { ConflictException, ForbiddenException, NotFoundException } from '@nestjs/common';
 import { MinAdventCalendarTransactionMock } from '../mocks/minadvent-calendar-transaction.mock';
 import { MinAdventCalendar } from '../models/domains/minadvent-calendar';
 import { MinAdventBlock } from '../models/domains/minadvent-block';
@@ -41,6 +41,52 @@ describe('MinAdventCalendarRepository', () => {
     ).toBe(true);
     expect(transaction.doorRepository.save).toHaveBeenCalledTimes(1);
     expect(transaction.doorRepository.save.mock.calls[0][0]).toHaveLength(24);
+  });
+
+  describe('delete()', () => {
+    it('deletes published calendars with the expected version so foreign-key cascades remove all content', async () => {
+      transaction.calendar.isPublished = true;
+      transaction.calendar.activeToken = 'a'.repeat(64);
+
+      await repository.delete('owner-1', 'calendar-1', 1);
+
+      expect(transaction.dataSource.transaction).toHaveBeenCalledTimes(1);
+      expect(transaction.calendarQueryBuilder.setLock).toHaveBeenCalledWith('pessimistic_write');
+      expect(transaction.calendarQueryBuilder.where).toHaveBeenCalledWith('calendar.id = :calendarId', {
+        calendarId: 'calendar-1',
+      });
+      expect(transaction.calendarRepository.delete).toHaveBeenCalledWith({
+        id: 'calendar-1',
+        ownerId: 'owner-1',
+        version: 1,
+      });
+    });
+
+    it('rejects calendars owned by another user without deleting them', async () => {
+      await expect(repository.delete('someone-else', 'calendar-1', 1)).rejects.toBeInstanceOf(ForbiddenException);
+
+      expect(transaction.calendarRepository.delete).not.toHaveBeenCalled();
+    });
+
+    it('returns not found for an unknown calendar', async () => {
+      transaction.calendarQueryBuilder.getOne.mockResolvedValue(null);
+
+      await expect(repository.delete('owner-1', 'calendar-1', 1)).rejects.toBeInstanceOf(NotFoundException);
+
+      expect(transaction.calendarRepository.delete).not.toHaveBeenCalled();
+    });
+
+    it('rejects stale versions without deleting the calendar or its shared token', async () => {
+      transaction.calendar.version = 2;
+      transaction.calendar.isPublished = true;
+      transaction.calendar.activeToken = 'a'.repeat(64);
+
+      await expect(repository.delete('owner-1', 'calendar-1', 1)).rejects.toMatchObject({
+        response: expect.objectContaining({ code: 'VERSION_CONFLICT' }),
+      });
+
+      expect(transaction.calendarRepository.delete).not.toHaveBeenCalled();
+    });
   });
 
   it('updates metadata only when owner and expected global version still match', async () => {

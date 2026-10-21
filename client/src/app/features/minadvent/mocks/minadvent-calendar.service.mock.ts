@@ -6,6 +6,7 @@ export const MINADVENT_CALENDARS_SIGNAL = signal<MinAdventCalendar[]>([]);
 export const MINADVENT_CALENDAR_SERVICE_MOCK = {
   calendars: MINADVENT_CALENDARS_SIGNAL.asReadonly(),
   createCalendar: jasmine.createSpy('createCalendar'),
+  deleteCalendar: jasmine.createSpy('deleteCalendar'),
   getCalendar: jasmine.createSpy('getCalendar'),
   getSharedCalendar: jasmine.createSpy('getSharedCalendar'),
   getSharedDoor: jasmine.createSpy('getSharedDoor'),

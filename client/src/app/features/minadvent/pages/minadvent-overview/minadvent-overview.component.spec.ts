@@ -18,6 +18,7 @@ describe('MinAdventOverviewComponent', () => {
     MINADVENT_CALENDARS_SIGNAL.set([]);
     MINADVENT_CALENDAR_SERVICE_MOCK.loadCalendars.calls.reset();
     MINADVENT_CALENDAR_SERVICE_MOCK.createCalendar.calls.reset();
+    MINADVENT_CALENDAR_SERVICE_MOCK.deleteCalendar.calls.reset();
     MINADVENT_CALENDAR_SERVICE_MOCK.loadCalendars.and.resolveTo();
     ROUTING_SERVICE_MOCK.navigateToMinAdventCalendar.calls.reset();
     ROUTING_SERVICE_MOCK.navigateToApps.calls.reset();
@@ -147,6 +148,46 @@ describe('MinAdventOverviewComponent', () => {
       expect(MINADVENT_CALENDAR_SERVICE_MOCK.createCalendar).not.toHaveBeenCalled();
       expect(component.createForm.controls.title.touched).toBeTrue();
       expect(component.createForm.controls.recipientName.touched).toBeTrue();
+    });
+  });
+
+  describe('deleteCalendar()', () => {
+    it('opens delete confirmation without navigating when the card delete button is clicked', () => {
+      const calendar = createMinAdventCalendar({ id: 'calendar-to-delete' });
+      MINADVENT_CALENDARS_SIGNAL.set([calendar]);
+      fixture.detectChanges();
+      const deleteButton = fixture.nativeElement.querySelector(
+        'min-card-button button[aria-label="Kalender endgültig löschen"]',
+      ) as HTMLButtonElement;
+
+      deleteButton.click();
+      fixture.detectChanges();
+
+      expect(component.calendarToDelete()).toBe(calendar);
+      expect(component.isCreateDialogOpen()).toBeFalse();
+      expect(ROUTING_SERVICE_MOCK.navigateToMinAdventCalendar).not.toHaveBeenCalled();
+    });
+
+    it('confirms deletion with the calendar version and closes the dialog after success', async () => {
+      const calendar = createMinAdventCalendar({ id: 'calendar-to-delete', version: 7 });
+      component.openDeleteDialog(calendar, new MouseEvent('click'));
+      MINADVENT_CALENDAR_SERVICE_MOCK.deleteCalendar.and.resolveTo();
+
+      await component.confirmDeleteCalendar();
+
+      expect(MINADVENT_CALENDAR_SERVICE_MOCK.deleteCalendar).toHaveBeenCalledWith(calendar.id, 7);
+      expect(component.calendarToDelete()).toBeNull();
+    });
+
+    it('keeps the confirmation open and shows an error when deletion fails', async () => {
+      const calendar = createMinAdventCalendar({ id: 'calendar-to-delete' });
+      component.openDeleteDialog(calendar, new MouseEvent('click'));
+      MINADVENT_CALENDAR_SERVICE_MOCK.deleteCalendar.and.rejectWith(new Error('Version conflict'));
+
+      await component.confirmDeleteCalendar();
+
+      expect(component.calendarToDelete()).toBe(calendar);
+      expect(component.deleteError()).toContain('Der Kalender konnte nicht gelöscht werden');
     });
   });
 });

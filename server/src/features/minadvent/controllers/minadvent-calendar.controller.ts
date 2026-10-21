@@ -2,6 +2,7 @@ import { AuthorizationGuard, Can } from '@nestjs/authorization';
 import {
   Body,
   Controller,
+  Delete,
   Get,
   HttpCode,
   Param,
@@ -17,6 +18,7 @@ import { FirebaseGuard } from '../../../core/authentication/guards/firebase.guar
 import { UserRolePolicy } from '../../../core/authorization/policies/user-role.policy';
 import { API_200 } from '../../../shared/decorators/api-200.decorator';
 import { API_201 } from '../../../shared/decorators/api-201.decorator';
+import { API_204 } from '../../../shared/decorators/api-204.decorator';
 import { API_400 } from '../../../shared/decorators/api-400.decorator';
 import { API_401 } from '../../../shared/decorators/api-401.decorator';
 import { API_403 } from '../../../shared/decorators/api-403.decorator';
@@ -37,6 +39,7 @@ import { MinAdventSharingUpdateDto } from '../models/dtos/minadvent-sharing-upda
 import { MinAdventSharingResponseDto } from '../models/dtos/minadvent-sharing-response.dto';
 import { MinAdventTokenRotationDto } from '../models/dtos/minadvent-token-rotation.dto';
 import { MinAdventDoorStatusUpdateDto } from '../models/dtos/minadvent-door-status-update.dto';
+import { MinAdventCalendarDeleteDto } from '../models/dtos/minadvent-calendar-delete.dto';
 
 @Controller('minadvent/calendars')
 @ApiTags(MinApp.MinAdvent)
@@ -101,6 +104,25 @@ export class MinAdventCalendarController {
     @Body() input: MinAdventCalendarUpdateDto,
   ): Promise<MinAdventCalendarDto> {
     return this.calendarService.update(user, id, input);
+  }
+
+  @Delete(':id')
+  @HttpCode(204)
+  @ApiOperation({ operationId: 'deleteMinAdventCalendar' })
+  @API_PARAM_ID()
+  @API_204()
+  @API_400()
+  @API_401()
+  @API_403()
+  @API_404()
+  @API_409()
+  @API_500()
+  public async delete(
+    @User() user: MinFactoryUser,
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() input: MinAdventCalendarDeleteDto,
+  ): Promise<void> {
+    await this.calendarService.delete(user, id, input);
   }
 
   @Put(':id/doors/:day')

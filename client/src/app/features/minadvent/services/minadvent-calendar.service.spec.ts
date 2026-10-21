@@ -10,6 +10,7 @@ describe('MinAdventCalendarService', () => {
 
   beforeEach(() => {
     MINADVENT_CALENDAR_REPOSITORY_MOCK.create.calls.reset();
+    MINADVENT_CALENDAR_REPOSITORY_MOCK.delete.calls.reset();
     MINADVENT_CALENDAR_REPOSITORY_MOCK.get.calls.reset();
     MINADVENT_CALENDAR_REPOSITORY_MOCK.getAll.calls.reset();
     MINADVENT_CALENDAR_REPOSITORY_MOCK.getSharedCalendar.calls.reset();
@@ -60,6 +61,32 @@ describe('MinAdventCalendarService', () => {
 
       expect(MINADVENT_CALENDAR_REPOSITORY_MOCK.get).toHaveBeenCalledWith('calendar-id');
       expect(result.id).toBe('calendar-id');
+    });
+  });
+
+  describe('deleteCalendar()', () => {
+    it('removes a calendar from the cached list after the repository confirms deletion', async () => {
+      MINADVENT_CALENDAR_REPOSITORY_MOCK.getAll.and.resolveTo([
+        createMinAdventCalendarDto({ id: 'to-delete', version: 4 }),
+        createMinAdventCalendarDto({ id: 'keep' }),
+      ]);
+      MINADVENT_CALENDAR_REPOSITORY_MOCK.delete.and.resolveTo(undefined);
+      await service.loadCalendars();
+
+      await service.deleteCalendar('to-delete', 4);
+
+      expect(MINADVENT_CALENDAR_REPOSITORY_MOCK.delete).toHaveBeenCalledWith('to-delete', 4);
+      expect(service.calendars().map((calendar) => calendar.id)).toEqual(['keep']);
+    });
+
+    it('keeps the cached calendar when deletion fails', async () => {
+      MINADVENT_CALENDAR_REPOSITORY_MOCK.getAll.and.resolveTo([createMinAdventCalendarDto({ id: 'to-delete' })]);
+      MINADVENT_CALENDAR_REPOSITORY_MOCK.delete.and.rejectWith(new Error('Version conflict'));
+      await service.loadCalendars();
+
+      await expectAsync(service.deleteCalendar('to-delete', 1)).toBeRejected();
+
+      expect(service.calendars().map((calendar) => calendar.id)).toEqual(['to-delete']);
     });
   });
 
