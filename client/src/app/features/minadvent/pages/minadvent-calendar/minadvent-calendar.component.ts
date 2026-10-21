@@ -121,7 +121,12 @@ export class MinAdventCalendarComponent implements OnInit {
   }
 
   public canCloseDoor(door: MinAdventDoor): boolean {
-    return Boolean(this.calendar()) && door.status === 'OPENED';
+    return Boolean(this.calendar()) && !this.calendar()?.completed && door.status === 'OPENED';
+  }
+
+  public isPastCalendarYear(): boolean {
+    const calendar = this.calendar();
+    return calendar !== null && calendar.year < this.getCurrentBerlinYear();
   }
 
   public canDeactivate(): boolean {
@@ -144,6 +149,7 @@ export class MinAdventCalendarComponent implements OnInit {
         doors: calendar.doors.map((item) => (item.day === door.day ? { ...item, status: 'FILLED' } : item)),
         version: result.version,
       });
+      this.syncMetadataReadOnlyState();
       this.syncDoorFormReadOnlyState();
       this.originalDoorBlocks = this.normalizeBlocks(door.blocks);
       this.showSnackbar('Türchen geschlossen. Du kannst den Inhalt jetzt bearbeiten.');
@@ -205,6 +211,7 @@ export class MinAdventCalendarComponent implements OnInit {
           ? { ...current, completed: response.completed, published: response.published, version: response.version }
           : current,
       );
+      this.syncMetadataReadOnlyState();
       this.sharedUrl.set(response.sharedUrl ? new URL(response.sharedUrl, window.location.origin).toString() : '');
       this.sharingDialogAction.set(null);
     } catch (error) {
@@ -327,6 +334,7 @@ export class MinAdventCalendarComponent implements OnInit {
     const calendar = this.calendar();
     return (
       !calendar ||
+      calendar.completed ||
       this.form.controls.recipientName.invalid ||
       this.isSavingRecipient() ||
       this.form.controls.recipientName.value === calendar.recipientName
@@ -342,6 +350,7 @@ export class MinAdventCalendarComponent implements OnInit {
     const calendar = this.calendar();
     return (
       !calendar ||
+      calendar.completed ||
       this.form.controls.title.invalid ||
       this.isSavingTitle() ||
       this.form.controls.title.value === calendar.title
@@ -379,6 +388,7 @@ export class MinAdventCalendarComponent implements OnInit {
       const refreshedCalendar = await this.calendarService.getCalendar(calendar.id);
       const refreshedDoor = refreshedCalendar.doors.find((item) => item.day === door.day);
       this.calendar.set(refreshedCalendar);
+      this.syncMetadataReadOnlyState();
       if (!refreshedDoor) {
         this.doorConflictError.set('Das Türchen konnte nicht aktualisiert werden. Bitte lade den Kalender neu.');
         return;
@@ -427,6 +437,7 @@ export class MinAdventCalendarComponent implements OnInit {
         doors: calendar.doors.map((item) => (item.day === result.day ? updatedDoor : item)),
         version: result.version,
       });
+      this.syncMetadataReadOnlyState();
       this.doorConflictError.set('');
       this.originalDoorBlocks = blocks.map((block) => ({ ...block }));
       this.doorForm.markAsPristine();
@@ -444,7 +455,7 @@ export class MinAdventCalendarComponent implements OnInit {
     const calendar = this.calendar();
     const control = this.form.controls.recipientName;
     control.markAsTouched();
-    if (!calendar || control.invalid || control.value === calendar.recipientName) {
+    if (!calendar || calendar.completed || control.invalid || control.value === calendar.recipientName) {
       return;
     }
     this.isSavingRecipient.set(true);
@@ -456,6 +467,7 @@ export class MinAdventCalendarComponent implements OnInit {
           expectedVersion: calendar.version,
         }),
       );
+      this.syncMetadataReadOnlyState();
     } catch {
       this.error.set('Der Empfängername konnte nicht gespeichert werden. Bitte lade den Kalender neu.');
     } finally {
@@ -467,7 +479,7 @@ export class MinAdventCalendarComponent implements OnInit {
     const calendar = this.calendar();
     const control = this.form.controls.title;
     control.markAsTouched();
-    if (!calendar || control.invalid || control.value === calendar.title) {
+    if (!calendar || calendar.completed || control.invalid || control.value === calendar.title) {
       return;
     }
     this.isSavingTitle.set(true);
@@ -479,6 +491,7 @@ export class MinAdventCalendarComponent implements OnInit {
           expectedVersion: calendar.version,
         }),
       );
+      this.syncMetadataReadOnlyState();
     } catch {
       this.error.set('Der Titel konnte nicht gespeichert werden. Bitte lade den Kalender neu.');
     } finally {
@@ -538,6 +551,10 @@ export class MinAdventCalendarComponent implements OnInit {
       return 'Maximal 200 Zeichen.';
     }
     return null;
+  }
+
+  private getCurrentBerlinYear(): number {
+    return Number(new Intl.DateTimeFormat('en', { timeZone: 'Europe/Berlin', year: 'numeric' }).format(new Date()));
   }
 
   private getTextFieldError(value: string): string | null {
@@ -603,6 +620,7 @@ export class MinAdventCalendarComponent implements OnInit {
     try {
       const calendar = await this.calendarService.getCalendar(id);
       this.calendar.set(calendar);
+      this.syncMetadataReadOnlyState();
       this.form.controls.title.setValue(calendar.title);
       this.form.controls.recipientName.setValue(calendar.recipientName);
       this.form.controls.year.setValue(calendar.year);
@@ -701,6 +719,17 @@ export class MinAdventCalendarComponent implements OnInit {
       this.doorForm.disable({ emitEvent: false });
     } else {
       this.doorForm.enable({ emitEvent: false });
+    }
+  }
+
+  private syncMetadataReadOnlyState(): void {
+    const controls = [this.form.controls.title, this.form.controls.recipientName];
+    for (const control of controls) {
+      if (this.calendar()?.completed) {
+        control.disable({ emitEvent: false });
+      } else {
+        control.enable({ emitEvent: false });
+      }
     }
   }
 

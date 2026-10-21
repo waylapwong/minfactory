@@ -129,6 +129,10 @@ export class MinAdventOverviewComponent implements OnInit {
     this.isCreateDialogOpen.set(true);
   }
 
+  public isPastCalendarYear(): boolean {
+    return this.createForm.controls.year.value < this.getCurrentBerlinYear();
+  }
+
   public openDeleteDialog(calendar: MinAdventCalendar, event: MouseEvent): void {
     event.stopPropagation();
     this.deleteError.set('');
@@ -139,5 +143,9 @@ export class MinAdventOverviewComponent implements OnInit {
     if (!this.isDeleting()) {
       this.calendarToDelete.set(null);
     }
+  }
+
+  private getCurrentBerlinYear(): number {
+    return Number(new Intl.DateTimeFormat('en', { timeZone: 'Europe/Berlin', year: 'numeric' }).format(new Date()));
   }
 }

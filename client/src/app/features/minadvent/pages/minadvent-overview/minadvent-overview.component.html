@@ -125,6 +125,12 @@
           Bitte gib ein Kalenderjahr zwischen 1 und 9999 ein.
         </p>
       }
+      @if (isPastCalendarYear()) {
+        <output aria-live="polite" class="mt-2 block border-l-4 border-amber-600 bg-amber-50 p-3 text-sm">
+          Bei einem vergangenen Kalenderjahr kann der Kalender sofort endgültig abgeschlossen werden, sobald mindestens
+          ein Türchen geöffnet und kein Türchen mehr befüllt ist.
+        </output>
+      }
     </div>
     @if (createError()) {
       <p role="alert" class="text-sm text-red-600">{{ createError() }}</p>

@@ -52,6 +52,19 @@ describe('MinAdventCalendarComponent', () => {
       expect(component.form.getRawValue()).toEqual({ recipientName: 'Alex', title: 'Adventskalender', year: 2026 });
       expect(component.isLoading()).toBeFalse();
     });
+
+    it('disables metadata fields for a completed calendar', async () => {
+      MINADVENT_CALENDAR_SERVICE_MOCK.getCalendar.and.resolveTo(createMinAdventCalendar({ completed: true }));
+      MINADVENT_ACTIVATED_ROUTE_MOCK.snapshot.paramMap = convertToParamMap({ id: 'calendar-id' });
+
+      component.ngOnInit();
+      await fixture.whenStable();
+
+      expect(component.form.controls.title.disabled).toBeTrue();
+      expect(component.form.controls.recipientName.disabled).toBeTrue();
+      expect(component.isTitleSaveDisabled()).toBeTrue();
+      expect(component.isRecipientSaveDisabled()).toBeTrue();
+    });
   });
 
   describe('getDoorStatusLabel()', () => {
@@ -65,7 +78,7 @@ describe('MinAdventCalendarComponent', () => {
   describe('closeDoor()', () => {
     it('closes an opened door and keeps its content available for editing', async () => {
       const calendar = createMinAdventCalendar({
-        completed: true,
+        completed: false,
         doors: [
           { blocks: [], day: 1, status: 'FILLED' },
           {
@@ -99,15 +112,27 @@ describe('MinAdventCalendarComponent', () => {
       expect(component.calendar()?.completed).toBeFalse();
     });
 
-    it('allows closing an opened door after the Advent period, including completed calendars', () => {
+    it('does not allow closing an opened door after the calendar is completed', async () => {
       const calendar = createMinAdventCalendar({ completed: true });
       component.calendar.set(calendar);
-      jasmine.clock().install();
-      jasmine.clock().mockDate(new Date('2028-01-01T00:00:00.000Z'));
+      component.selectDoor(calendar.doors[1]);
 
-      expect(component.canCloseDoor(calendar.doors[1])).toBeTrue();
+      expect(component.canCloseDoor(calendar.doors[1])).toBeFalse();
+      await component.closeDoor();
 
-      jasmine.clock().uninstall();
+      expect(MINADVENT_CALENDAR_SERVICE_MOCK.closeDoor).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('isPastCalendarYear()', () => {
+    it('shows the warning for a calendar from a past year', () => {
+      component.calendar.set(createMinAdventCalendar({ year: 1 }));
+      fixture.detectChanges();
+
+      expect(component.isPastCalendarYear()).toBeTrue();
+      expect(fixture.nativeElement.querySelector('output[aria-live="polite"]')?.textContent).toContain(
+        'sofort endgültig abgeschlossen',
+      );
     });
   });
 
@@ -438,6 +463,62 @@ describe('MinAdventCalendarComponent', () => {
       expect(component.selectedDoorDay()).toBeNull();
       expect(component.isSnackbarOpen()).toBeTrue();
       expect(component.snackbarMessage()).toBe('Türchen gespeichert.');
+    });
+
+    it('asks before clearing the last filled door and keeps the draft when cancelled', async () => {
+      const calendar = createMinAdventCalendar({
+        year: 1,
+        doors: [
+          {
+            blocks: [{ position: 1, text: 'Surprise', type: component.MinAdventBlockType.Text }],
+            day: 1,
+            status: 'FILLED',
+          },
+          { blocks: [], day: 2, status: 'OPENED' },
+          ...Array.from({ length: 22 }, (_, index) => ({ blocks: [], day: index + 3, status: 'EMPTY' as const })),
+        ],
+      });
+      component.calendar.set(calendar);
+      component.selectDoor(calendar.doors[0]);
+      component.removeBlock(0);
+      const confirmSpy = spyOn(window, 'confirm').and.returnValue(false);
+
+      await component.saveDoor();
+
+      expect(confirmSpy).toHaveBeenCalledWith('Dieses Türchen leeren und den Kalender abschließen?');
+      expect(MINADVENT_CALENDAR_SERVICE_MOCK.updateDoor).not.toHaveBeenCalled();
+      expect(component.hasUnsavedDoorChanges()).toBeTrue();
+    });
+
+    it('adopts the completed status and incremented version after clearing the last filled door', async () => {
+      const calendar = createMinAdventCalendar({
+        year: 1,
+        doors: [
+          {
+            blocks: [{ position: 1, text: 'Surprise', type: component.MinAdventBlockType.Text }],
+            day: 1,
+            status: 'FILLED',
+          },
+          { blocks: [], day: 2, status: 'OPENED' },
+          ...Array.from({ length: 22 }, (_, index) => ({ blocks: [], day: index + 3, status: 'EMPTY' as const })),
+        ],
+      });
+      component.calendar.set(calendar);
+      component.selectDoor(calendar.doors[0]);
+      component.removeBlock(0);
+      spyOn(window, 'confirm').and.returnValue(true);
+      MINADVENT_CALENDAR_SERVICE_MOCK.updateDoor.and.resolveTo({
+        completed: true,
+        day: 1,
+        status: 'EMPTY',
+        version: calendar.version + 1,
+      });
+
+      await component.saveDoor();
+
+      expect(component.calendar()?.completed).toBeTrue();
+      expect(component.calendar()?.version).toBe(calendar.version + 1);
+      expect(component.calendar()?.doors[0].status).toBe('EMPTY');
     });
 
     it('preserves the local draft after a version conflict without confirmation', async () => {
