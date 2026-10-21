@@ -204,10 +204,27 @@ Vor Abschluss einer Implementierung prüfen:
 
 - Die Umsetzung an den Anforderungen und Akzeptanzkriterien des Issues ausrichten.
 - Bestehende relevante technische Dokumentation berücksichtigen.
-- Nach abgeschlossener und verifizierter Implementierung nur tatsächlich erledigte Checkboxen im Abschnitt `Umsetzung` abhaken.
+- Nach abgeschlossener Implementierung das GitHub-Issue eigenständig aktualisieren.
+- Im Abschnitt `Umsetzung` alle tatsächlich abgeschlossenen und verifizierten Checkboxen von `[ ]` auf `[x]` setzen.
+- Bereits abgehakte Punkte unverändert lassen.
+- Nicht abgeschlossene oder nicht verifizierte Punkte offen lassen.
 - Akzeptanzkriterien für die Prüfung durch den Auftraggeber unverändert lassen.
 - Nicht verifizierte CI/CD-Prüfungen offen lassen.
 - Keine nicht durchgeführten Arbeiten als abgeschlossen kennzeichnen.
+- Andere Inhalte und Metadaten des Issues nicht unbeabsichtigt verändern.
+- Die Aktualisierung des Issues ist Bestandteil des Implementierungsauftrags und benötigt keine gesonderte Aufforderung.
+
+## GitHub Pull Requests
+
+- Bei der Aufforderung, PR-Review-Kommentare abzuarbeiten, alle offenen Review-Threads des Pull Requests prüfen.
+- Relevante Kommentare anhand des aktuellen Codes bewerten und erforderliche Änderungen umsetzen.
+- Betroffene Tests und Prüfungen ausführen.
+- Nach erfolgreicher Umsetzung und Veröffentlichung der Änderungen die zugehörigen Review-Threads eigenständig als `Resolved` markieren.
+- Kommentare nur dann resolven, wenn die angesprochenen Probleme tatsächlich behoben oder nachvollziehbar geklärt wurden.
+- Bei fachlich unzutreffenden oder bereits erledigten Kommentaren die Entscheidung begründen und den Thread anschließend resolven.
+- Nicht behobene oder ungeklärte Review-Threads offen lassen.
+- Auf Review-Kommentare bei Bedarf antworten, um die vorgenommenen Änderungen oder Entscheidungen zu dokumentieren.
+- Das Resolven der bearbeiteten Review-Threads ist Bestandteil des Review-Auftrags und benötigt keine gesonderte Aufforderung.
 
 ## Agent Memory
 

@@ -17,6 +17,8 @@ describe('MinAdventCalendarRepository', () => {
     MINADVENT_API_SERVICE_MOCK.getMinAdventSharedDoor.calls.reset();
     MINADVENT_API_SERVICE_MOCK.openMinAdventSharedDoor.calls.reset();
     MINADVENT_API_SERVICE_MOCK.updateMinAdventCalendar.calls.reset();
+    MINADVENT_API_SERVICE_MOCK.updateMinAdventDoor.calls.reset();
+    MINADVENT_API_SERVICE_MOCK.updateMinAdventDoorStatus.calls.reset();
 
     TestBed.configureTestingModule({
       providers: [
@@ -121,6 +123,20 @@ describe('MinAdventCalendarRepository', () => {
 
       expect(MINADVENT_API_SERVICE_MOCK.updateMinAdventCalendar).toHaveBeenCalledWith('calendar-id', input);
       expect(result).toBe(MINADVENT_CALENDAR_DTO_MOCK);
+    });
+  });
+
+  describe('updateDoorStatus()', () => {
+    it('sends FILLED and the expected version through the generated API service', async () => {
+      const response = { completed: false, day: 4, status: 'FILLED', version: 9 } as never;
+      MINADVENT_API_SERVICE_MOCK.updateMinAdventDoorStatus.and.returnValue(of(response));
+
+      await expectAsync(repository.updateDoorStatus('calendar-id', 4, 8)).toBeResolvedTo(response);
+
+      expect(MINADVENT_API_SERVICE_MOCK.updateMinAdventDoorStatus).toHaveBeenCalledWith('calendar-id', 4, {
+        status: 'FILLED',
+        expectedVersion: 8,
+      });
     });
   });
 });

@@ -324,6 +324,68 @@ export class MinAdventCalendarRepository {
     });
   }
 
+  public async closeDoor(
+    ownerId: string,
+    calendarId: string,
+    day: number,
+    expectedVersion: number,
+    currentDate: { year: number; month: number; day: number },
+  ): Promise<MinAdventCalendarEntity> {
+    return this.dataSource.transaction(async (manager) => {
+      const calendarRepository = manager.getRepository(MinAdventCalendarEntity);
+      const doorRepository = manager.getRepository(MinAdventDoorEntity);
+      const calendar = await calendarRepository
+        .createQueryBuilder('calendar')
+        .setLock('pessimistic_write')
+        .where('calendar.id = :calendarId AND calendar.ownerId = :ownerId', { calendarId, ownerId })
+        .getOne();
+      if (!calendar) {
+        throw new NotFoundException('Calendar not found.');
+      }
+      if (calendar.version !== expectedVersion) {
+        throw new ConflictException({
+          code: 'VERSION_CONFLICT',
+          message: 'Der Kalender wurde zwischenzeitlich geändert.',
+        });
+      }
+      if (
+        currentDate.year > calendar.year ||
+        (currentDate.year === calendar.year && currentDate.month >= 12 && currentDate.day >= 25)
+      ) {
+        throw new ConflictException({
+          code: 'DOOR_CLOSE_PERIOD_ENDED',
+          message: 'Türchen können nach dem 24. Dezember nicht mehr geschlossen werden.',
+        });
+      }
+      const door = await doorRepository.findOne({ where: { calendarId, day } });
+      if (!door) {
+        throw new NotFoundException('Door not found.');
+      }
+      if (door.status !== MinAdventDoorStatus.Opened) {
+        throw new ConflictException({
+          code: 'DOOR_NOT_OPENED',
+          message: 'Nur geöffnete Türchen können geschlossen werden.',
+        });
+      }
+      await doorRepository.update({ id: door.id }, { status: MinAdventDoorStatus.Filled });
+      const result = await calendarRepository.update(
+        { id: calendarId, ownerId, version: expectedVersion },
+        { version: expectedVersion + 1 },
+      );
+      if (!result.affected) {
+        throw new ConflictException({
+          code: 'VERSION_CONFLICT',
+          message: 'Der Kalender wurde zwischenzeitlich geändert.',
+        });
+      }
+      const updated = await this.findById(calendarId, calendarRepository);
+      if (!updated) {
+        throw new NotFoundException('Calendar not found.');
+      }
+      return updated;
+    });
+  }
+
   private blocksEqual(current: MinAdventBlockEntity[], requested: MinAdventBlock[]): boolean {
     return (
       current.length === requested.length &&

@@ -18,6 +18,7 @@ describe('MinAdventCalendarComponent', () => {
     MINADVENT_CALENDAR_SERVICE_MOCK.getSharing.calls.reset();
     MINADVENT_CALENDAR_SERVICE_MOCK.updateCalendar.calls.reset();
     MINADVENT_CALENDAR_SERVICE_MOCK.updateDoor.calls.reset();
+    MINADVENT_CALENDAR_SERVICE_MOCK.closeDoor.calls.reset();
     MINADVENT_CALENDAR_SERVICE_MOCK.updateSharing.calls.reset();
     MINADVENT_CALENDAR_SERVICE_MOCK.rotateSharingToken.calls.reset();
 
@@ -58,6 +59,38 @@ describe('MinAdventCalendarComponent', () => {
       expect(component.getDoorStatusLabel('EMPTY')).toBe('Leer');
       expect(component.getDoorStatusLabel('FILLED')).toBe('Befüllt');
       expect(component.getDoorStatusLabel('OPENED')).toBe('Geöffnet');
+    });
+  });
+
+  describe('closeDoor()', () => {
+    it('closes an opened door and keeps its content available for editing', async () => {
+      const calendar = createMinAdventCalendar();
+      component.calendar.set(calendar);
+      component.selectDoor(calendar.doors[1]);
+      MINADVENT_CALENDAR_SERVICE_MOCK.closeDoor.and.resolveTo({
+        completed: false,
+        day: 2,
+        status: 'FILLED',
+        version: 2,
+      });
+
+      await component.closeDoor();
+
+      expect(MINADVENT_CALENDAR_SERVICE_MOCK.closeDoor).toHaveBeenCalledWith('calendar-id', 2, 1);
+      expect(component.selectedDoor()?.status).toBe('FILLED');
+      expect(component.isSelectedDoorReadOnly()).toBeFalse();
+      expect(component.calendar()?.version).toBe(2);
+    });
+
+    it('hides the close action from December 25 in Berlin', () => {
+      const calendar = createMinAdventCalendar();
+      component.calendar.set(calendar);
+      jasmine.clock().install();
+      jasmine.clock().mockDate(new Date('2026-12-24T23:00:00.000Z'));
+
+      expect(component.canCloseDoor(calendar.doors[1])).toBeFalse();
+
+      jasmine.clock().uninstall();
     });
   });
 

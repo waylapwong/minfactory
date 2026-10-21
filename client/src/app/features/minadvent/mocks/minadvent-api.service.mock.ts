@@ -6,4 +6,6 @@ export const MINADVENT_API_SERVICE_MOCK = {
   getMinAdventSharedDoor: jasmine.createSpy('getMinAdventSharedDoor'),
   openMinAdventSharedDoor: jasmine.createSpy('openMinAdventSharedDoor'),
   updateMinAdventCalendar: jasmine.createSpy('updateMinAdventCalendar'),
+  updateMinAdventDoor: jasmine.createSpy('updateMinAdventDoor'),
+  updateMinAdventDoorStatus: jasmine.createSpy('updateMinAdventDoorStatus'),
 };

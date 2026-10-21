@@ -29,6 +29,7 @@ import { MinAdventSharedDoorContentDto } from '../models/dtos/minadvent-shared-d
 import { MinAdventSharedDoorOpenDto } from '../models/dtos/minadvent-shared-door-open.dto';
 import { MinAdventSharedDoorOpenResponseDto } from '../models/dtos/minadvent-shared-door-open-response.dto';
 import { MinAdventDoorStatus } from '../models/enums/minadvent-door-status.enum';
+import { MinAdventDoorStatusUpdateDto } from '../models/dtos/minadvent-door-status-update.dto';
 
 @Injectable()
 export class MinAdventCalendarService {
@@ -102,6 +103,34 @@ export class MinAdventCalendarService {
     const updatedEntity = await this.calendarRepository.replaceDoorBlocks(user.id, id, day, input.expectedVersion, () =>
       this.validateAndMapBlocks(input.blocks),
     );
+    const updatedCalendar = MinAdventEntityMapper.toDomain(updatedEntity);
+    const updatedDoor = updatedCalendar.doors.find((door) => door.day === day);
+    if (!updatedDoor) {
+      throw new NotFoundException('Door not found.');
+    }
+    return MinAdventDomainMapper.toDoorUpdateResponse(updatedDoor, updatedCalendar);
+  }
+
+  public async updateDoorStatus(
+    user: MinFactoryUser,
+    id: string,
+    day: number,
+    input: MinAdventDoorStatusUpdateDto,
+  ): Promise<MinAdventDoorUpdateResponseDto> {
+    if (!Number.isInteger(day) || day < 1 || day > 24) {
+      throw new BadRequestException('Day must be an integer between 1 and 24.');
+    }
+    await this.requireOwnedCalendar(user, id);
+    const now = Object.fromEntries(
+      new Intl.DateTimeFormat('en', { timeZone: 'Europe/Berlin', year: 'numeric', month: 'numeric', day: 'numeric' })
+        .formatToParts(new Date())
+        .map((part) => [part.type, Number(part.value)]),
+    );
+    const updatedEntity = await this.calendarRepository.closeDoor(user.id, id, day, input.expectedVersion, {
+      year: now['year'],
+      month: now['month'],
+      day: now['day'],
+    });
     const updatedCalendar = MinAdventEntityMapper.toDomain(updatedEntity);
     const updatedDoor = updatedCalendar.doors.find((door) => door.day === day);
     if (!updatedDoor) {

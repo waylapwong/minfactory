@@ -81,6 +81,25 @@ export class MinAdventCalendarService {
     return result;
   }
 
+  public async closeDoor(id: string, day: number, expectedVersion: number): Promise<MinAdventDoorUpdateResponseDto> {
+    const result = await this.repository.updateDoorStatus(id, day, expectedVersion);
+    this.cachedCalendars.update((calendars) =>
+      calendars.map((calendar) =>
+        calendar.id !== id
+          ? calendar
+          : {
+              ...calendar,
+              completed: result.completed,
+              doors: calendar.doors.map((door) =>
+                door.day === result.day ? { ...door, status: result.status } : door,
+              ),
+              version: result.version,
+            },
+      ),
+    );
+    return result;
+  }
+
   public getSharing(id: string): Promise<MinAdventSharingResponseDto> {
     return this.repository.getSharing(id);
   }

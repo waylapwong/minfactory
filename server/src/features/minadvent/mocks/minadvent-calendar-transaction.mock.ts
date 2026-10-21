@@ -34,6 +34,13 @@ export class MinAdventCalendarTransactionMock {
   public readonly doorRepository = {
     create: jest.fn((value: Partial<MinAdventDoorEntity>) => value),
     find: jest.fn().mockImplementation(() => Promise.resolve(this.doors)),
+    findOne: jest
+      .fn()
+      .mockImplementation(({ where }: { where: { calendarId: string; day: number } }) =>
+        Promise.resolve(
+          this.doors.find((door) => door.calendarId === where.calendarId && door.day === where.day) ?? null,
+        ),
+      ),
     save: jest.fn().mockResolvedValue([]),
     update: jest.fn().mockResolvedValue({ affected: 1 }),
     createQueryBuilder: jest.fn(() => this.doorQueryBuilder),

@@ -15,6 +15,7 @@ describe('MinAdventCalendarService', () => {
     MINADVENT_CALENDAR_REPOSITORY_MOCK.getSharedCalendar.calls.reset();
     MINADVENT_CALENDAR_REPOSITORY_MOCK.update.calls.reset();
     MINADVENT_CALENDAR_REPOSITORY_MOCK.updateDoor.calls.reset();
+    MINADVENT_CALENDAR_REPOSITORY_MOCK.updateDoorStatus.calls.reset();
 
     TestBed.configureTestingModule({
       providers: [
@@ -127,6 +128,26 @@ describe('MinAdventCalendarService', () => {
       expect(result.version).toBe(2);
       expect(service.calendars()[0].version).toBe(2);
       expect(service.calendars()[0].doors[0].blocks).toEqual([{ position: 1, text: '<p>Surprise</p>', type: 'TEXT' }]);
+    });
+  });
+
+  describe('closeDoor()', () => {
+    it('sets the door back to FILLED and updates the cached version', async () => {
+      MINADVENT_CALENDAR_REPOSITORY_MOCK.getAll.and.resolveTo([createMinAdventCalendarDto()]);
+      MINADVENT_CALENDAR_REPOSITORY_MOCK.updateDoorStatus.and.resolveTo({
+        completed: false,
+        day: 2,
+        status: 'FILLED',
+        version: 2,
+      });
+      await service.loadCalendars();
+
+      const result = await service.closeDoor('calendar-id', 2, 1);
+
+      expect(MINADVENT_CALENDAR_REPOSITORY_MOCK.updateDoorStatus).toHaveBeenCalledWith('calendar-id', 2, 1);
+      expect(result.status).toBe('FILLED');
+      expect(service.calendars()[0].doors.find((door) => door.day === 2)?.status).toBe('FILLED');
+      expect(service.calendars()[0].version).toBe(2);
     });
   });
 });

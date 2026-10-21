@@ -54,6 +54,8 @@ export class MinAdventCalendarComponent implements OnInit {
   public readonly doorForm = new FormArray<DoorBlockForm>([]);
   public readonly doorDraftRevision = signal(0);
   public readonly isSavingDoor = signal(false);
+  public readonly isClosingDoor = signal(false);
+  public readonly closeDoorError = signal('');
   public readonly isSnackbarOpen = signal(false);
   public readonly snackbarMessage = signal('');
   public readonly selectedDoorDay = signal<number | null>(null);
@@ -293,6 +295,7 @@ export class MinAdventCalendarComponent implements OnInit {
     if (this.hasUnsavedDoorChanges() && !this.confirmDiscardDoorDraft()) {
       return;
     }
+    this.closeDoorError.set('');
     this.loadDoorDraft(door);
   }
 
@@ -301,6 +304,7 @@ export class MinAdventCalendarComponent implements OnInit {
       return;
     }
     this.selectedDoorDay.set(null);
+    this.closeDoorError.set('');
     this.doorForm.clear();
     this.originalDoorBlocks = [];
     this.doorDraftRevision.update((revision) => revision + 1);
@@ -405,6 +409,56 @@ export class MinAdventCalendarComponent implements OnInit {
   public isSelectedDoorReadOnly(): boolean {
     const door = this.selectedDoor();
     return !door || door.status === 'OPENED' || Boolean(this.calendar()?.completed);
+  }
+
+  public canCloseDoor(door: MinAdventDoor): boolean {
+    const calendar = this.calendar();
+    if (!calendar || door.status !== 'OPENED' || calendar.completed) {
+      return false;
+    }
+    const parts = new Intl.DateTimeFormat('en', {
+      timeZone: 'Europe/Berlin',
+      year: 'numeric',
+      month: 'numeric',
+      day: 'numeric',
+    }).formatToParts(new Date());
+    const current = Object.fromEntries(parts.map((part) => [part.type, Number(part.value)]));
+    return (
+      current['year'] < calendar.year ||
+      (current['year'] === calendar.year && (current['month'] < 12 || (current['month'] === 12 && current['day'] < 25)))
+    );
+  }
+
+  public async closeDoor(): Promise<void> {
+    const calendar = this.calendar();
+    const door = this.selectedDoor();
+    if (!calendar || !door || !this.canCloseDoor(door) || this.isClosingDoor()) {
+      return;
+    }
+    this.isClosingDoor.set(true);
+    this.closeDoorError.set('');
+    try {
+      const result = await this.calendarService.closeDoor(calendar.id, door.day, calendar.version);
+      this.calendar.set({
+        ...calendar,
+        completed: result.completed,
+        doors: calendar.doors.map((item) => (item.day === door.day ? { ...item, status: 'FILLED' } : item)),
+        version: result.version,
+      });
+      this.originalDoorBlocks = this.normalizeBlocks(door.blocks);
+      this.showSnackbar('TÃ¼rchen geschlossen. Du kannst den Inhalt jetzt bearbeiten.');
+    } catch (error) {
+      const code = (error as HttpErrorResponse).error?.code;
+      if (code === 'VERSION_CONFLICT') {
+        this.closeDoorError.set('Der Kalender wurde zwischenzeitlich geÃ¤ndert. Lade ihn neu und versuche es erneut.');
+      } else if (code === 'DOOR_CLOSE_PERIOD_ENDED') {
+        this.closeDoorError.set('Die SchlieÃŸzeit ist abgelaufen.');
+      } else {
+        this.closeDoorError.set('Das TÃ¼rchen konnte nicht geschlossen werden. Bitte versuche es erneut.');
+      }
+    } finally {
+      this.isClosingDoor.set(false);
+    }
   }
 
   public isDoorFormValid(): boolean {

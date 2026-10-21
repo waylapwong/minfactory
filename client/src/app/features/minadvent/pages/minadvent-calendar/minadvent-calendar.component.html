@@ -178,6 +178,17 @@
               </min-badge>
             </div>
             <section>
+              @if (canCloseDoor(door)) {
+                <div class="mb-4 rounded-lg border-2 border-blue-700 bg-blue-50 p-3">
+                  <p class="mb-2 text-sm">Dieses TÃ¼rchen kann geschlossen und danach bearbeitet werden.</p>
+                  <min-button [color]="Color.White" [isDisabled]="isClosingDoor()" (clicked)="closeDoor()">
+                    {{ isClosingDoor() ? 'SchlieÃŸt â€¦' : 'TÃ¼rchen schlieÃŸen' }}
+                  </min-button>
+                </div>
+              }
+              @if (closeDoorError()) {
+                <p class="mb-4 text-sm text-red-700" role="alert">{{ closeDoorError() }}</p>
+              }
               @if (door.status === 'OPENED' || current.completed) {
                 <output aria-live="polite" class="mb-4 block border-l-4 border-gray-500 bg-gray-100 p-3 text-sm">
                   {{

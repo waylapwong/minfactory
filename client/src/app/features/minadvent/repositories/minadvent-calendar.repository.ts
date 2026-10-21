@@ -10,6 +10,7 @@ import { MinAdventTokenRotationDto } from '../../../core/generated/model/min-adv
 import { MinAdventSharedCalendarDto } from '../../../core/generated/model/min-advent-shared-calendar-dto';
 import { MinAdventSharedDoorContentDto } from '../../../core/generated/model/min-advent-shared-door-content-dto';
 import { MinAdventSharedDoorOpenResponseDto } from '../../../core/generated/model/min-advent-shared-door-open-response-dto';
+import { MinAdventDoorUpdateResponseDto } from '../../../core/generated/model/min-advent-door-update-response-dto';
 
 @Injectable({ providedIn: 'root' })
 export class MinAdventCalendarRepository {
@@ -49,6 +50,10 @@ export class MinAdventCalendarRepository {
 
   public updateDoor(id: string, day: number, input: MinAdventDoorUpdateDto) {
     return firstValueFrom(this.api.updateMinAdventDoor(id, day, input));
+  }
+
+  public updateDoorStatus(id: string, day: number, expectedVersion: number): Promise<MinAdventDoorUpdateResponseDto> {
+    return firstValueFrom(this.api.updateMinAdventDoorStatus(id, day, { status: 'FILLED', expectedVersion }));
   }
 
   public getSharing(id: string): Promise<MinAdventSharingResponseDto> {
