@@ -10,10 +10,10 @@ minSplit verwaltet gemeinsame Euro-Ausgaben einer Gruppe, verteilt den **verrech
 
 #### 2. Dokumentationsübersicht
 
-- [Gruppen, Teilnehmer und Lebenszyklus](../../3-mintools/minsplit/group-lifecycle.md)
-- [Ausgaben und Kostenverteilung](../../3-mintools/minsplit/expenses.md)
-- [Schlussabrechnung und Ausgleichszahlungen](../../3-mintools/minsplit/settlement.md)
-- [Benutzerabläufe, Ansichten und Grenzfälle](../../3-mintools/minsplit/user-journeys.md)
+- [Gruppen, Teilnehmer und Lebenszyklus](03-specific-requirements.md)
+- [Ausgaben und Kostenverteilung](03-specific-requirements.md)
+- [Schlussabrechnung und Ausgleichszahlungen](03-specific-requirements.md)
+- [Benutzerabläufe, Ansichten und Grenzfälle](03-specific-requirements.md)
 
 Alle Detailseiten gelten gemeinsam. Beträge werden fachlich in **ganzen Cent** betrachtet; Geldbeträge werden als Euro angezeigt.
 
