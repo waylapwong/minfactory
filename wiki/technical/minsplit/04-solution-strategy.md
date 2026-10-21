@@ -6,7 +6,7 @@
 
 #### Einordnung
 
-Neues Feature `server/src/features/minsplit/` mit NestJS-Modul im bestehenden `FeaturesModule`, Domain-/Service-/Repository-Grenzen und richtungsgetrennten DTO-/Domain-/Entity-Mappern gemäß [AGENTS.md](../../../../AGENTS.md). `client/src/app/features/minsplit/` verwendet lazy geladene Angular Standalone-Seiten, Signals, Reactive Forms, Tailwind und Shared-Dialoge. Die bestehenden Firebase-/minFactory-Guards schützen Erstelleraktionen; öffentliche Linkzugriffe besitzen einen separaten Controller ohne Login-Guard. Business-Logik, Cent-Berechnung und Versionsprüfung liegen im Backend.
+Neues Feature `server/src/features/minsplit/` mit NestJS-Modul im bestehenden `FeaturesModule`, Domain-/Service-/Repository-Grenzen und richtungsgetrennten DTO-/Domain-/Entity-Mappern gemäß [AGENTS.md](../../../AGENTS.md). `client/src/app/features/minsplit/` verwendet lazy geladene Angular Standalone-Seiten, Signals, Reactive Forms, Tailwind und Shared-Dialoge. Die bestehenden Firebase-/minFactory-Guards schützen Erstelleraktionen; öffentliche Linkzugriffe besitzen einen separaten Controller ohne Login-Guard. Business-Logik, Cent-Berechnung und Versionsprüfung liegen im Backend.
 
 #### Gruppenphasen
 
