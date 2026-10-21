@@ -8,17 +8,17 @@
 
 minAdvent ist ein persönlich gestaltbarer Adventskalender innerhalb von minFactory. Ein angemeldeter **Ersteller** legt beliebig viele voneinander unabhängige Kalender an, gestaltet bis zu 24 Türchen und veröffentlicht jeden Kalender ausdrücklich für **genau einen namentlich angesprochenen Empfänger**. Der Empfänger benötigt keinen Account. Wer den geheimen Shared Link besitzt, kann den Kalender ansehen und freigeschaltete Türchen öffnen; die angegebene Empfängeridentität wird technisch nicht überprüft.
 
-Die geplante technische Umsetzung ist unter [minAdvent – Technische Spezifikation](../../../technical/minadvent/minadvent-home.md) dokumentiert.
+Die geplante technische Umsetzung ist unter [minAdvent – Technische Spezifikation](../../technical/minadvent/README.md) dokumentiert.
 
 #### 2. Dokumentationsübersicht
 
-- [Kalender, Lebenszyklus und Freigabe](../../3-mintools/minadvent/calendar-lifecycle.md): Kalenderjahr, Veröffentlichung, Türchenzustände, Abschluss, Löschen.
-- [Inhalte und Validierung](../../3-mintools/minadvent/content-and-validation.md): Blöcke, Editor, Stammdaten, Speichern, Versionierung.
-- [Benutzerabläufe und Fehlerfälle](../../3-mintools/minadvent/user-journeys.md): Ersteller-/Empfängeransichten, Countdown, Öffnung, Konflikte, Tests und Grenzfälle.
+- [Kalender, Lebenszyklus und Freigabe](03-specific-requirements.md): Kalenderjahr, Veröffentlichung, Türchenzustände, Abschluss, Löschen.
+- [Inhalte und Validierung](03-specific-requirements.md): Blöcke, Editor, Stammdaten, Speichern, Versionierung.
+- [Benutzerabläufe und Fehlerfälle](03-specific-requirements.md): Ersteller-/Empfängeransichten, Countdown, Öffnung, Konflikte, Tests und Grenzfälle.
 
 Alle Regeln der drei Detailseiten gelten gemeinsam. Im Zweifel sind Datum und Zustand serverseitig maßgeblich; zeitbezogene Entscheidungen folgen **Europe/Berlin**.
 
-Die Verifikation für v1.0.0 verwendet ausschließlich Unit-Tests mit Mocks; die fachlichen Anforderungen und Zustandsregeln bleiben davon unberührt. Details stehen in der [technischen Teststrategie](../../../technical/minadvent/testing.md).
+Die Verifikation für v1.0.0 verwendet ausschließlich Unit-Tests mit Mocks; die fachlichen Anforderungen und Zustandsregeln bleiben davon unberührt. Details stehen in der [technischen Teststrategie](../../technical/minadvent/08-crosscutting-concepts.md).
 
 #### 3. Rollen und Ansichten
 
