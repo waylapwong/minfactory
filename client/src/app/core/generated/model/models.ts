@@ -1,6 +1,7 @@
 export * from './min-advent-block-dto';
 export * from './min-advent-block-type';
 export * from './min-advent-calendar-create-dto';
+export * from './min-advent-calendar-delete-dto';
 export * from './min-advent-calendar-dto';
 export * from './min-advent-calendar-update-dto';
 export * from './min-advent-door-dto';

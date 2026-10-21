@@ -14,6 +14,7 @@ index.ts
 model/min-advent-block-dto.ts
 model/min-advent-block-type.ts
 model/min-advent-calendar-create-dto.ts
+model/min-advent-calendar-delete-dto.ts
 model/min-advent-calendar-dto.ts
 model/min-advent-calendar-update-dto.ts
 model/min-advent-door-dto.ts

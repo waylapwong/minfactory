@@ -16,7 +16,7 @@ export interface MinAdventBlockDto {
     description?: string | null;
     position: number;
     /**
-     * Sanitized HTML with a limited formatting allowlist.
+     * Sanitized HTML with a limited formatting allowlist; maximum 500 visible characters.
      */
     text?: string | null;
     title?: string | null;

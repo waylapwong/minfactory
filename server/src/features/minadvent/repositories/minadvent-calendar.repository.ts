@@ -1,4 +1,4 @@
-import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
+import { ConflictException, ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DataSource, Repository } from 'typeorm';
 import { MinAdventDomainMapper } from '../mapper/minadvent-domain.mapper';
@@ -86,6 +86,36 @@ export class MinAdventCalendarRepository {
         throw new NotFoundException('Calendar not found.');
       }
       return createdCalendar;
+    });
+  }
+
+  public async delete(ownerId: string, calendarId: string, expectedVersion: number): Promise<void> {
+    await this.dataSource.transaction(async (manager) => {
+      const repository = manager.getRepository(MinAdventCalendarEntity);
+      const calendar = await repository
+        .createQueryBuilder('calendar')
+        .setLock('pessimistic_write')
+        .where('calendar.id = :calendarId', { calendarId })
+        .getOne();
+      if (!calendar) {
+        throw new NotFoundException('Calendar not found.');
+      }
+      if (calendar.ownerId !== ownerId) {
+        throw new ForbiddenException('You do not own this calendar.');
+      }
+      if (calendar.version !== expectedVersion) {
+        throw new ConflictException({
+          code: 'VERSION_CONFLICT',
+          message: 'Der Kalender wurde zwischenzeitlich geändert.',
+        });
+      }
+      const result = await repository.delete({ id: calendarId, ownerId, version: expectedVersion });
+      if (!result.affected) {
+        throw new ConflictException({
+          code: 'VERSION_CONFLICT',
+          message: 'Der Kalender wurde zwischenzeitlich geändert.',
+        });
+      }
     });
   }
 

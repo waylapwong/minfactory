@@ -44,6 +44,11 @@ export class MinAdventCalendarService {
     return calendar;
   }
 
+  public async deleteCalendar(id: string, expectedVersion: number): Promise<void> {
+    await this.repository.delete(id, expectedVersion);
+    this.cachedCalendars.update((calendars) => calendars.filter((calendar) => calendar.id !== id));
+  }
+
   public async getCalendar(id: string): Promise<MinAdventCalendar> {
     return MinAdventDomainMapper.toCalendar(await this.repository.get(id));
   }
