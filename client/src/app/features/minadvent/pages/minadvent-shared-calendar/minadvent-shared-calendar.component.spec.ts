@@ -150,6 +150,9 @@ describe('MinAdventSharedCalendarComponent', () => {
       expect(component.animateDoor()).toBeTrue();
       expect(component.calendar()?.version).toBe(2);
       fixture.detectChanges();
+      const animatedContent = fixture.nativeElement.querySelector('.minadvent-first-open') as HTMLElement;
+      expect(animatedContent).toBeTruthy();
+      expect(getComputedStyle(animatedContent).animationName).toContain('minadvent-door-reveal');
       expect(fixture.nativeElement.querySelector('min-dialog')).toBeTruthy();
     });
 
@@ -168,6 +171,8 @@ describe('MinAdventSharedCalendarComponent', () => {
       expect(MINADVENT_CALENDAR_SERVICE_MOCK.getSharedDoor).toHaveBeenCalledWith('shared-token', 1);
       expect(MINADVENT_CALENDAR_SERVICE_MOCK.openSharedDoor).not.toHaveBeenCalled();
       expect(component.animateDoor()).toBeFalse();
+      fixture.detectChanges();
+      expect(fixture.nativeElement.querySelector('.minadvent-first-open')).toBeNull();
     });
 
     it('shows correctly encoded German error messages when opening a door fails', async () => {
@@ -183,7 +188,7 @@ describe('MinAdventSharedCalendarComponent', () => {
       expect(component.doorError()).not.toContain('TÃ');
     });
 
-    it('requires a confirmed reload after a lost opening response instead of retrying it', async () => {
+    it('opens a reload dialog after a lost opening response instead of retrying it', async () => {
       MINADVENT_CALENDAR_SERVICE_MOCK.getSharedCalendar.and.resolveTo(createMinAdventSharedCalendarDto());
       MINADVENT_CALENDAR_SERVICE_MOCK.openSharedDoor.and.rejectWith(new HttpErrorResponse({ status: 0 }));
       fixture.detectChanges();
@@ -193,14 +198,64 @@ describe('MinAdventSharedCalendarComponent', () => {
       await component.selectDoor(1);
 
       expect(component.reloadRequired()).toBeTrue();
+      expect(component.reloadDialogOpen()).toBeFalse();
       expect(MINADVENT_CALENDAR_SERVICE_MOCK.openSharedDoor).toHaveBeenCalledTimes(1);
+      fixture.detectChanges();
+      const reloadButton = Array.from(
+        fixture.nativeElement.querySelectorAll('button') as NodeListOf<HTMLButtonElement>,
+      ).find((button) => button.textContent.trim() === 'Übersicht neu laden') as HTMLButtonElement;
+      reloadButton.click();
+      fixture.detectChanges();
+      expect(component.reloadDialogOpen()).toBeTrue();
+      expect(fixture.nativeElement.querySelector('min-dialog')).toBeTruthy();
+      expect(fixture.nativeElement.textContent).toContain('Abbrechen');
+      expect(fixture.nativeElement.textContent).toContain('Übersicht neu laden');
 
-      spyOn(window, 'confirm').and.returnValue(true);
+      const confirmSpy = spyOn(window, 'confirm');
       await component.reloadAfterConflict();
 
-      expect(window.confirm).toHaveBeenCalled();
+      expect(confirmSpy).not.toHaveBeenCalled();
       expect(MINADVENT_CALENDAR_SERVICE_MOCK.getSharedCalendar).toHaveBeenCalledTimes(2);
       expect(MINADVENT_CALENDAR_SERVICE_MOCK.openSharedDoor).toHaveBeenCalledTimes(1);
+      expect(component.reloadDialogOpen()).toBeFalse();
+    });
+
+    it('closes the reload dialog without discarding the reload action', async () => {
+      MINADVENT_CALENDAR_SERVICE_MOCK.getSharedCalendar.and.resolveTo(createMinAdventSharedCalendarDto());
+      MINADVENT_CALENDAR_SERVICE_MOCK.openSharedDoor.and.rejectWith(new HttpErrorResponse({ status: 0 }));
+      fixture.detectChanges();
+      await fixture.whenStable();
+      component.now.set(Date.UTC(2026, 11, 1, 0, 0));
+
+      await component.selectDoor(1);
+      component.openReloadDialog();
+      fixture.detectChanges();
+      const cancelButton = Array.from(
+        fixture.nativeElement.querySelectorAll('min-button button') as NodeListOf<HTMLButtonElement>,
+      ).find((button) => button.textContent.trim() === 'Abbrechen') as HTMLButtonElement;
+      cancelButton.click();
+
+      expect(component.reloadDialogOpen()).toBeFalse();
+      expect(component.reloadRequired()).toBeTrue();
+      expect(MINADVENT_CALENDAR_SERVICE_MOCK.getSharedCalendar).toHaveBeenCalledTimes(1);
+    });
+
+    it('shows the reload dialog after a version conflict', async () => {
+      MINADVENT_CALENDAR_SERVICE_MOCK.getSharedCalendar.and.resolveTo(createMinAdventSharedCalendarDto());
+      MINADVENT_CALENDAR_SERVICE_MOCK.openSharedDoor.and.rejectWith(new HttpErrorResponse({ status: 409 }));
+      fixture.detectChanges();
+      await fixture.whenStable();
+      component.now.set(Date.UTC(2026, 11, 1, 0, 0));
+
+      await component.selectDoor(1);
+
+      expect(component.reloadRequired()).toBeTrue();
+      expect(component.reloadDialogOpen()).toBeTrue();
+      fixture.detectChanges();
+      expect(fixture.nativeElement.querySelector('min-dialog')).toBeTruthy();
+      expect(fixture.nativeElement.querySelector('section[role="alert"]')).toBeNull();
+      expect(fixture.nativeElement.textContent).toContain('Abbrechen');
+      expect(fixture.nativeElement.textContent).toContain('Übersicht neu laden');
     });
   });
 });

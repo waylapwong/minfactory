@@ -38,4 +38,4 @@ Für v1.0.0 sind ausschließlich Unit-Tests vorgesehen: Backend mit Jest/ts-jest
 
 ## 4. Konkret vor Umsetzung zu entscheiden
 
-Die vertragliche HTTP-Semantik ist verbindlich; kleinere umsetzungsabhängige Details bleiben im späteren Implementierungsticket zu bestätigen: URL-Maximallänge, tatsächliche Ersteller-Routen/-DTO-Bezeichner, physische Block-Payload-Abbildung, genaue Rate-Limits, Rollout/DB_SYNCHRONIZE-Strategie und konkrete Account-Löschwiederaufnahme. Sie dürfen die beschriebenen Fachregeln nicht ändern. Dokumentations-PR implementiert keine Funktionalität.
+Die vertragliche HTTP-Semantik ist verbindlich; kleinere umsetzungsabhängige Details bleiben im späteren Implementierungsticket zu bestätigen: tatsächliche Ersteller-Routen/-DTO-Bezeichner, physische Block-Payload-Abbildung, genaue Rate-Limits, Rollout/DB_SYNCHRONIZE-Strategie und konkrete Account-Löschwiederaufnahme. Sie dürfen die beschriebenen Fachregeln nicht ändern. Dokumentations-PR implementiert keine Funktionalität.

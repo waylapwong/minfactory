@@ -1,5 +1,5 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, computed, HostListener, OnInit, signal } from '@angular/core';
+import { Component, HostListener, OnInit, computed, signal } from '@angular/core';
 import { FormArray, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { MinAdventBlockDto } from '../../../../core/generated/model/min-advent-block-dto';
@@ -18,14 +18,6 @@ import { TextareaComponent } from '../../../../shared/components/textarea/textar
 import { Color } from '../../../../shared/enums/color.enum';
 import { MinAdventDoor } from '../../models/minadvent-calendar.model';
 import { MinAdventCalendarService } from '../../services/minadvent-calendar.service';
-
-type DoorBlockForm = FormGroup<{
-  description: FormControl<string>;
-  text: FormControl<string>;
-  title: FormControl<string>;
-  type: FormControl<MinAdventBlockType>;
-  url: FormControl<string>;
-}>;
 
 @Component({
   selector: 'min-advent-calendar',
@@ -46,54 +38,59 @@ type DoorBlockForm = FormGroup<{
 })
 export class MinAdventCalendarComponent implements OnInit {
   public readonly Color: typeof Color = Color;
+  public readonly MinAdventBlockType = MinAdventBlockType;
   public readonly calendar = signal<Awaited<ReturnType<MinAdventCalendarService['getCalendar']>> | null>(null);
-  public readonly sharedUrl = signal('');
-  public readonly sharingDialogAction = signal<'publish' | 'revoke' | 'rotate' | null>(null);
-  public readonly sharingError = signal('');
-  public readonly isSharing = signal(false);
-  public readonly doorForm = new FormArray<DoorBlockForm>([]);
+  public readonly closeDoorError = signal('');
+  public readonly doorBlockTypeOptions: readonly SelectOption[] = [
+    { label: 'Text', value: MinAdventBlockType.Text },
+    { label: 'Link', value: MinAdventBlockType.Link },
+    { label: 'Gutschein', value: MinAdventBlockType.Voucher },
+  ];
+  public readonly doorConflictError = signal('');
   public readonly doorDraftRevision = signal(0);
-  public readonly isSavingDoor = signal(false);
-  public readonly isSnackbarOpen = signal(false);
-  public readonly snackbarMessage = signal('');
-  public readonly selectedDoorDay = signal<number | null>(null);
-  public readonly selectedDoor = computed(() => {
-    const day = this.selectedDoorDay();
-    return this.calendar()?.doors.find((door) => door.day === day) ?? null;
-  });
+  public readonly doorForm = new FormArray<DoorBlockForm>([]);
   public readonly emptyDoorCount = computed(
     () => this.calendar()?.doors.filter((door) => door.status === 'EMPTY').length ?? 0,
   );
+  public readonly error = signal('');
   public readonly filledDoorCount = computed(
     () => this.calendar()?.doors.filter((door) => door.status === 'FILLED').length ?? 0,
   );
-  public readonly openedDoorCount = computed(
-    () => this.calendar()?.doors.filter((door) => door.status === 'OPENED').length ?? 0,
-  );
-  public readonly error = signal('');
   public readonly form = new FormGroup({
-    title: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.maxLength(100)] }),
+    title: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.maxLength(50)] }),
     recipientName: new FormControl('', {
       nonNullable: true,
-      validators: [Validators.required, Validators.maxLength(100)],
+      validators: [Validators.required, Validators.maxLength(50)],
     }),
     year: new FormControl(new Date().getFullYear(), {
       nonNullable: true,
       validators: [Validators.required, Validators.min(1), Validators.max(9999), Validators.pattern(/^\d+$/)],
     }),
   });
+  public readonly isClosingDoor = signal(false);
   public readonly isLoading = signal(false);
+  public readonly isRefreshingDoor = signal(false);
+  public readonly isSavingDoor = signal(false);
   public readonly isSavingRecipient = signal(false);
   public readonly isSavingTitle = signal(false);
-  public readonly MinAdventBlockType = MinAdventBlockType;
-  public readonly doorBlockTypeOptions: readonly SelectOption[] = [
-    { label: 'Text', value: MinAdventBlockType.Text },
-    { label: 'Link', value: MinAdventBlockType.Link },
-    { label: 'Gutschein', value: MinAdventBlockType.Voucher },
-  ];
+  public readonly isSharing = signal(false);
+  public readonly isSnackbarOpen = signal(false);
+  public readonly openedDoorCount = computed(
+    () => this.calendar()?.doors.filter((door) => door.status === 'OPENED').length ?? 0,
+  );
+  public readonly selectedDoorDay = signal<number | null>(null);
+  public readonly selectedDoor = computed(() => {
+    const day = this.selectedDoorDay();
+    return this.calendar()?.doors.find((door) => door.day === day) ?? null;
+  });
+  public readonly sharedUrl = signal('');
+  public readonly sharingDialogAction = signal<'publish' | 'revoke' | 'rotate' | null>(null);
+  public readonly sharingError = signal('');
+  public readonly snackbarMessage = signal('');
+
+  private readonly originalTextByForm = new WeakMap<DoorBlockForm, string>();
 
   private originalDoorBlocks: MinAdventBlockDto[] = [];
-  private readonly originalTextByForm = new WeakMap<DoorBlockForm, string>();
 
   constructor(
     private readonly route: ActivatedRoute,
@@ -108,14 +105,76 @@ export class MinAdventCalendarComponent implements OnInit {
     }
   }
 
-  public getDoorStatusLabel(status: MinAdventDoor['status']): string {
-    switch (status) {
-      case 'EMPTY':
-        return 'Leer';
-      case 'FILLED':
-        return 'Befüllt';
-      case 'OPENED':
-        return 'Geöffnet';
+  @HostListener('window:beforeunload', ['$event'])
+  public warnBeforeUnload(event: BeforeUnloadEvent): void {
+    if (this.hasUnsavedDoorChanges()) {
+      event.preventDefault();
+    }
+  }
+
+  public addBlock(type: MinAdventBlockType): void {
+    if (this.doorForm.length >= 10 || this.isSelectedDoorReadOnly()) {
+      return;
+    }
+    this.doorForm.push(this.createBlockForm({ position: this.doorForm.length + 1, type }));
+    this.onDoorDraftChanged();
+  }
+
+  public canCloseDoor(door: MinAdventDoor): boolean {
+    return Boolean(this.calendar()) && door.status === 'OPENED';
+  }
+
+  public canDeactivate(): boolean {
+    return this.confirmDiscardDoorDraft();
+  }
+
+  public async closeDoor(): Promise<void> {
+    const calendar = this.calendar();
+    const door = this.selectedDoor();
+    if (!calendar || !door || !this.canCloseDoor(door) || this.isClosingDoor()) {
+      return;
+    }
+    this.isClosingDoor.set(true);
+    this.closeDoorError.set('');
+    try {
+      const result = await this.calendarService.closeDoor(calendar.id, door.day, calendar.version);
+      this.calendar.set({
+        ...calendar,
+        completed: result.completed,
+        doors: calendar.doors.map((item) => (item.day === door.day ? { ...item, status: 'FILLED' } : item)),
+        version: result.version,
+      });
+      this.syncDoorFormReadOnlyState();
+      this.originalDoorBlocks = this.normalizeBlocks(door.blocks);
+      this.showSnackbar('Türchen geschlossen. Du kannst den Inhalt jetzt bearbeiten.');
+    } catch (error) {
+      const code = (error as HttpErrorResponse).error?.code;
+      if (code === 'VERSION_CONFLICT') {
+        this.closeDoorError.set('Der Kalender wurde zwischenzeitlich geändert. Lade ihn neu und versuche es erneut.');
+      } else {
+        this.closeDoorError.set('Das Türchen konnte nicht geschlossen werden. Bitte versuche es erneut.');
+      }
+    } finally {
+      this.isClosingDoor.set(false);
+    }
+  }
+
+  public closeDoorDialog(): void {
+    if (!this.confirmDiscardDoorDraft()) {
+      return;
+    }
+    this.selectedDoorDay.set(null);
+    this.doorConflictError.set('');
+    this.closeDoorError.set('');
+    this.doorForm.clear();
+    this.originalDoorBlocks = [];
+    this.doorDraftRevision.update((revision) => revision + 1);
+  }
+
+  public closeSharingDialog(): void {
+    if (!this.isSharing()) {
+      this.sharingDialogAction.set(null);
+      this.sharingError.set('');
     }
   }
 
@@ -124,16 +183,8 @@ export class MinAdventCalendarComponent implements OnInit {
     this.snackbarMessage.set('');
   }
 
-  public openSharingDialog(action: 'publish' | 'revoke' | 'rotate'): void {
-    this.sharingError.set('');
-    this.sharingDialogAction.set(action);
-  }
-
-  public closeSharingDialog(): void {
-    if (!this.isSharing()) {
-      this.sharingDialogAction.set(null);
-      this.sharingError.set('');
-    }
+  public confirmDiscardDoorDraft(): boolean {
+    return !this.hasUnsavedDoorChanges() || window.confirm('Ungespeicherte Türchenänderungen verwerfen?');
   }
 
   public async confirmSharingAction(): Promise<void> {
@@ -176,30 +227,35 @@ export class MinAdventCalendarComponent implements OnInit {
     }
   }
 
-  public async shareCalendar(): Promise<void> {
-    if (!navigator.share) {
-      await this.copySharedUrl();
-      return;
+  public countVisibleCharacters(text: string): number {
+    return [...this.normalizeText(text).trim()].length;
+  }
+
+  public getDoorFieldError(index: number, field: 'text' | 'title' | 'url' | 'description'): string | null {
+    const block = this.doorForm.at(index);
+    if (!block) {
+      return null;
     }
-    try {
-      await navigator.share({ title: 'Adventskalender', url: this.sharedUrl() });
-    } catch (error) {
-      if (!(error instanceof DOMException && error.name === 'AbortError')) {
-        this.sharingError.set('Der Kalender konnte nicht geteilt werden.');
-      }
+    switch (field) {
+      case 'text':
+        return this.getTextFieldError(block.controls.text.value);
+      case 'title':
+        return this.getTitleFieldError(block.controls.title.value);
+      case 'url':
+        return this.getUrlFieldError(block.controls.url.value);
+      case 'description':
+        return this.getDescriptionFieldError(block.controls.description.value);
     }
   }
 
-  public getSharingDialogTitle(): string {
-    switch (this.sharingDialogAction()) {
-      case 'publish':
-        return 'Kalender veröffentlichen?';
-      case 'revoke':
-        return 'Freigabe widerrufen?';
-      case 'rotate':
-        return 'Freigabelink erneuern?';
-      default:
-        return '';
+  public getDoorStatusLabel(status: MinAdventDoor['status']): string {
+    switch (status) {
+      case 'EMPTY':
+        return 'Leer';
+      case 'FILLED':
+        return 'Befüllt';
+      case 'OPENED':
+        return 'Geöffnet';
     }
   }
 
@@ -216,31 +272,172 @@ export class MinAdventCalendarComponent implements OnInit {
     }
   }
 
-  private async loadCalendar(id: string): Promise<void> {
-    this.isLoading.set(true);
-    try {
-      const calendar = await this.calendarService.getCalendar(id);
-      this.calendar.set(calendar);
-      this.form.controls.title.setValue(calendar.title);
-      this.form.controls.recipientName.setValue(calendar.recipientName);
-      this.form.controls.year.setValue(calendar.year);
-      if (calendar.published) {
+  public getSharingDialogTitle(): string {
+    switch (this.sharingDialogAction()) {
+      case 'publish':
+        return 'Kalender veröffentlichen?';
+      case 'revoke':
+        return 'Freigabe widerrufen?';
+      case 'rotate':
+        return 'Freigabelink erneuern?';
+      default:
+        return '';
+    }
+  }
+
+  public hasUnsavedDoorChanges(): boolean {
+    this.doorDraftRevision();
+    return JSON.stringify(this.toBlocks()) !== JSON.stringify(this.originalDoorBlocks);
+  }
+
+  public isDoorFieldInvalid(index: number, field: 'text' | 'title' | 'url' | 'description'): boolean {
+    return this.doorForm.at(index).controls[field].touched && Boolean(this.getDoorFieldError(index, field));
+  }
+
+  public isDoorFormValid(): boolean {
+    if (this.doorForm.length > 10) {
+      return false;
+    }
+    return this.doorForm.controls.every((block) => {
+      const value = block.getRawValue();
+      if (value.type === MinAdventBlockType.Text) {
+        const visibleText = this.visibleText(value.text);
+        return visibleText.length > 0 && [...visibleText].length <= 500;
+      }
+      if (!value.title.trim() || value.title.trim().length > 50) {
+        return false;
+      }
+      if (value.type === MinAdventBlockType.Link) {
         try {
-          const sharing = await this.calendarService.getSharing(id);
-          this.sharedUrl.set(sharing.sharedUrl ? new URL(sharing.sharedUrl, window.location.origin).toString() : '');
+          const url = new URL(value.url.trim());
+          return ['http:', 'https:'].includes(url.protocol) && Boolean(url.hostname) && value.url.length <= 50;
         } catch {
-          this.sharingError.set('Der Freigabelink konnte nicht geladen werden.');
+          return false;
         }
       }
-    } catch {
-      this.error.set('Der Kalender konnte nicht geladen werden.');
-    } finally {
-      this.isLoading.set(false);
+      return value.description.trim().length > 0 && value.description.trim().length <= 200;
+    });
+  }
+
+  public isDoorSaveDisabled(): boolean {
+    return !this.hasUnsavedDoorChanges() || !this.isDoorFormValid() || this.isSavingDoor();
+  }
+
+  public isRecipientSaveDisabled(): boolean {
+    const calendar = this.calendar();
+    return (
+      !calendar ||
+      this.form.controls.recipientName.invalid ||
+      this.isSavingRecipient() ||
+      this.form.controls.recipientName.value === calendar.recipientName
+    );
+  }
+
+  public isSelectedDoorReadOnly(): boolean {
+    const door = this.selectedDoor();
+    return !door || door.status === 'OPENED' || Boolean(this.calendar()?.completed);
+  }
+
+  public isTitleSaveDisabled(): boolean {
+    const calendar = this.calendar();
+    return (
+      !calendar ||
+      this.form.controls.title.invalid ||
+      this.isSavingTitle() ||
+      this.form.controls.title.value === calendar.title
+    );
+  }
+
+  public moveBlock(index: number, offset: number): void {
+    const target = index + offset;
+    if (target < 0 || target >= this.doorForm.length) {
+      return;
     }
+    const block = this.doorForm.at(index);
+    this.doorForm.removeAt(index, { emitEvent: false });
+    this.doorForm.insert(target, block, { emitEvent: false });
+    this.onDoorDraftChanged();
   }
 
   public navigateBack(): void {
     this.routingService.navigateToMinAdvent();
+  }
+
+  public openSharingDialog(action: 'publish' | 'revoke' | 'rotate'): void {
+    this.sharingError.set('');
+    this.sharingDialogAction.set(action);
+  }
+
+  public async reloadDoorAfterConflict(): Promise<void> {
+    const calendar = this.calendar();
+    const door = this.selectedDoor();
+    if (!calendar || !door || this.isRefreshingDoor()) {
+      return;
+    }
+    this.isRefreshingDoor.set(true);
+    try {
+      const refreshedCalendar = await this.calendarService.getCalendar(calendar.id);
+      const refreshedDoor = refreshedCalendar.doors.find((item) => item.day === door.day);
+      this.calendar.set(refreshedCalendar);
+      if (!refreshedDoor) {
+        this.doorConflictError.set('Das Türchen konnte nicht aktualisiert werden. Bitte lade den Kalender neu.');
+        return;
+      }
+      this.loadDoorDraft(refreshedDoor);
+      this.doorConflictError.set('');
+    } catch {
+      this.doorConflictError.set('Der Kalender konnte nicht aktualisiert werden. Bitte versuche es erneut.');
+    } finally {
+      this.isRefreshingDoor.set(false);
+    }
+  }
+
+  public removeBlock(index: number): void {
+    this.doorForm.removeAt(index);
+    this.onDoorDraftChanged();
+  }
+
+  public async saveDoor(): Promise<void> {
+    const calendar = this.calendar();
+    const door = this.selectedDoor();
+    if (!calendar || !door || this.isSelectedDoorReadOnly()) {
+      return;
+    }
+    if (!this.hasUnsavedDoorChanges()) {
+      return;
+    }
+    if (!this.isDoorFormValid()) {
+      this.doorForm.markAllAsTouched();
+      return;
+    }
+    const blocks = this.toBlocks();
+    if (this.shouldCancelDoorSave(door, blocks)) {
+      return;
+    }
+    this.isSavingDoor.set(true);
+    try {
+      const result = await this.calendarService.updateDoor(calendar.id, door.day, {
+        expectedVersion: calendar.version,
+        blocks,
+      });
+      const updatedDoor: MinAdventDoor = { ...door, blocks, status: result.status };
+      this.calendar.set({
+        ...calendar,
+        completed: result.completed,
+        doors: calendar.doors.map((item) => (item.day === result.day ? updatedDoor : item)),
+        version: result.version,
+      });
+      this.doorConflictError.set('');
+      this.originalDoorBlocks = blocks.map((block) => ({ ...block }));
+      this.doorForm.markAsPristine();
+      this.doorDraftRevision.update((revision) => revision + 1);
+      this.closeDoorDialog();
+      this.showSnackbar('Türchen gespeichert.');
+    } catch (reason) {
+      this.handleDoorSaveError(reason);
+    } finally {
+      this.isSavingDoor.set(false);
+    }
   }
 
   public async saveRecipient(): Promise<void> {
@@ -293,17 +490,135 @@ export class MinAdventCalendarComponent implements OnInit {
     if (this.hasUnsavedDoorChanges() && !this.confirmDiscardDoorDraft()) {
       return;
     }
+    this.doorConflictError.set('');
+    this.closeDoorError.set('');
     this.loadDoorDraft(door);
   }
 
-  public closeDoorDialog(): void {
-    if (!this.confirmDiscardDoorDraft()) {
+  public async shareCalendar(): Promise<void> {
+    if (!navigator.share) {
+      await this.copySharedUrl();
       return;
     }
-    this.selectedDoorDay.set(null);
-    this.doorForm.clear();
-    this.originalDoorBlocks = [];
-    this.doorDraftRevision.update((revision) => revision + 1);
+    try {
+      await navigator.share({ title: 'Adventskalender', url: this.sharedUrl() });
+    } catch (error) {
+      if (!(error instanceof DOMException && error.name === 'AbortError')) {
+        this.sharingError.set('Der Kalender konnte nicht geteilt werden.');
+      }
+    }
+  }
+
+  public updateDoorField(): void {
+    this.onDoorDraftChanged();
+  }
+
+  public updateTextBlock(index: number, text: string): void {
+    const control = this.doorForm.at(index).controls.text;
+    control.setValue(this.normalizeText(text));
+    control.markAsDirty();
+    this.onDoorDraftChanged();
+  }
+
+  private createBlockForm(block?: Partial<MinAdventBlockDto>): DoorBlockForm {
+    return new FormGroup({
+      description: new FormControl(block?.description ?? '', { nonNullable: true }),
+      text: new FormControl(block?.text ?? '', { nonNullable: true }),
+      title: new FormControl(block?.title ?? '', { nonNullable: true }),
+      type: new FormControl(block?.type ?? MinAdventBlockType.Text, { nonNullable: true }),
+      url: new FormControl(block?.url ?? '', { nonNullable: true }),
+    });
+  }
+
+  private getDescriptionFieldError(value: string): string | null {
+    if (!value.trim()) {
+      return 'Die Beschreibung ist erforderlich.';
+    }
+    if (value.trim().length > 200) {
+      return 'Maximal 200 Zeichen.';
+    }
+    return null;
+  }
+
+  private getTextFieldError(value: string): string | null {
+    const count = this.countVisibleCharacters(value);
+    if (count === 0) {
+      return 'Der Text darf nicht leer sein.';
+    }
+    if (count > 500) {
+      return 'Der Text darf maximal 500 Zeichen enthalten.';
+    }
+    return null;
+  }
+
+  private getTitleFieldError(value: string): string | null {
+    if (!value.trim()) {
+      return 'Der Titel ist erforderlich.';
+    }
+    if (value.trim().length > 50) {
+      return 'Maximal 50 Zeichen.';
+    }
+    return null;
+  }
+
+  private getUrlFieldError(value: string): string | null {
+    if (!value.trim()) {
+      return 'Die Adresse ist erforderlich.';
+    }
+    if (value.length > 50) {
+      return 'Die Adresse darf maximal 50 Zeichen enthalten.';
+    }
+    try {
+      const url = new URL(value.trim());
+      if (!['http:', 'https:'].includes(url.protocol) || !url.hostname) {
+        return 'Bitte gib eine gültige HTTP(S)-Adresse ein.';
+      }
+    } catch {
+      return 'Bitte gib eine gültige HTTP(S)-Adresse ein.';
+    }
+    return null;
+  }
+
+  private handleDoorSaveError(reason: unknown): void {
+    const error = reason as HttpErrorResponse;
+    const code = error.error?.code;
+    const isConflict = error.status === 409 && ['VERSION_CONFLICT', 'CALENDAR_COMPLETED', 'DOOR_OPENED'].includes(code);
+
+    if (error.status === 409 && code === 'VERSION_CONFLICT') {
+      this.doorConflictError.set(
+        'Der Kalender wurde geändert. Aktualisiere das Türchen, um den aktuellen Stand zu laden.',
+      );
+      return;
+    }
+
+    this.showSnackbar(
+      isConflict
+        ? 'Das Türchen konnte wegen einer Kalenderänderung nicht gespeichert werden. Bitte lade den Kalender neu.'
+        : 'Das Türchen konnte nicht gespeichert werden. Bitte versuche es erneut.',
+    );
+  }
+
+  private async loadCalendar(id: string): Promise<void> {
+    this.isLoading.set(true);
+    try {
+      const calendar = await this.calendarService.getCalendar(id);
+      this.calendar.set(calendar);
+      this.form.controls.title.setValue(calendar.title);
+      this.form.controls.recipientName.setValue(calendar.recipientName);
+      this.form.controls.year.setValue(calendar.year);
+      if (calendar.published) {
+        try {
+          const sharing = await this.calendarService.getSharing(id);
+          this.sharedUrl.set(sharing.sharedUrl ? new URL(sharing.sharedUrl, window.location.origin).toString() : '');
+        } catch {
+          this.sharingError.set('Der Freigabelink konnte nicht geladen werden.');
+        }
+      }
+    } catch {
+      this.error.set('Der Kalender konnte nicht geladen werden.');
+    } finally {
+      this.isLoading.set(false);
+    }
   }
 
   private loadDoorDraft(door: MinAdventDoor): void {
@@ -319,250 +634,9 @@ export class MinAdventCalendarComponent implements OnInit {
       }
       this.doorForm.push(form, { emitEvent: false });
     }
+    this.syncDoorFormReadOnlyState();
     this.doorForm.markAsPristine();
     this.doorDraftRevision.update((revision) => revision + 1);
-  }
-
-  public addBlock(type: MinAdventBlockType): void {
-    if (this.doorForm.length >= 10 || this.isSelectedDoorReadOnly()) {
-      return;
-    }
-    this.doorForm.push(this.createBlockForm({ position: this.doorForm.length + 1, type }));
-    this.onDoorDraftChanged();
-  }
-
-  public removeBlock(index: number): void {
-    this.doorForm.removeAt(index);
-    this.onDoorDraftChanged();
-  }
-
-  public moveBlock(index: number, offset: number): void {
-    const target = index + offset;
-    if (target < 0 || target >= this.doorForm.length) {
-      return;
-    }
-    const block = this.doorForm.at(index);
-    this.doorForm.removeAt(index, { emitEvent: false });
-    this.doorForm.insert(target, block, { emitEvent: false });
-    this.onDoorDraftChanged();
-  }
-
-  public updateTextBlock(index: number, text: string): void {
-    const control = this.doorForm.at(index).controls.text;
-    control.setValue(this.normalizeText(text));
-    control.markAsDirty();
-    this.onDoorDraftChanged();
-  }
-
-  public updateDoorField(): void {
-    this.onDoorDraftChanged();
-  }
-
-  public isDoorFieldInvalid(index: number, field: 'text' | 'title' | 'url' | 'description'): boolean {
-    return this.doorForm.at(index).controls[field].touched && Boolean(this.getDoorFieldError(index, field));
-  }
-
-  public hasUnsavedDoorChanges(): boolean {
-    this.doorDraftRevision();
-    return JSON.stringify(this.toBlocks()) !== JSON.stringify(this.originalDoorBlocks);
-  }
-
-  public confirmDiscardDoorDraft(): boolean {
-    return !this.hasUnsavedDoorChanges() || window.confirm('Ungespeicherte Türchenänderungen verwerfen?');
-  }
-
-  public isTitleSaveDisabled(): boolean {
-    const calendar = this.calendar();
-    return (
-      !calendar ||
-      this.form.controls.title.invalid ||
-      this.isSavingTitle() ||
-      this.form.controls.title.value === calendar.title
-    );
-  }
-
-  public isRecipientSaveDisabled(): boolean {
-    const calendar = this.calendar();
-    return (
-      !calendar ||
-      this.form.controls.recipientName.invalid ||
-      this.isSavingRecipient() ||
-      this.form.controls.recipientName.value === calendar.recipientName
-    );
-  }
-
-  public canDeactivate(): boolean {
-    return this.confirmDiscardDoorDraft();
-  }
-
-  @HostListener('window:beforeunload', ['$event'])
-  public warnBeforeUnload(event: BeforeUnloadEvent): void {
-    if (this.hasUnsavedDoorChanges()) {
-      event.preventDefault();
-    }
-  }
-
-  public isSelectedDoorReadOnly(): boolean {
-    const door = this.selectedDoor();
-    return !door || door.status === 'OPENED' || Boolean(this.calendar()?.completed);
-  }
-
-  public isDoorFormValid(): boolean {
-    if (this.doorForm.length > 10) {
-      return false;
-    }
-    return this.doorForm.controls.every((block) => {
-      const value = block.getRawValue();
-      if (value.type === MinAdventBlockType.Text) {
-        const visibleText = this.visibleText(value.text);
-        return visibleText.length > 0 && [...visibleText].length <= 10000;
-      }
-      if (!value.title.trim() || value.title.trim().length > 100) {
-        return false;
-      }
-      if (value.type === MinAdventBlockType.Link) {
-        try {
-          const url = new URL(value.url.trim());
-          return ['http:', 'https:'].includes(url.protocol) && Boolean(url.hostname) && value.url.length <= 2048;
-        } catch {
-          return false;
-        }
-      }
-      return value.description.trim().length > 0 && value.description.trim().length <= 2000;
-    });
-  }
-
-  public isDoorSaveDisabled(): boolean {
-    return !this.hasUnsavedDoorChanges() || !this.isDoorFormValid() || this.isSavingDoor();
-  }
-
-  public countVisibleCharacters(text: string): number {
-    return [...this.normalizeText(text).trim()].length;
-  }
-
-  public getDoorFieldError(index: number, field: 'text' | 'title' | 'url' | 'description'): string | null {
-    const block = this.doorForm.at(index);
-    if (!block) {
-      return null;
-    }
-    switch (field) {
-      case 'text':
-        return this.getTextFieldError(block.controls.text.value);
-      case 'title':
-        return this.getTitleFieldError(block.controls.title.value);
-      case 'url':
-        return this.getUrlFieldError(block.controls.url.value);
-      case 'description':
-        return this.getDescriptionFieldError(block.controls.description.value);
-    }
-  }
-
-  public async saveDoor(): Promise<void> {
-    const calendar = this.calendar();
-    const door = this.selectedDoor();
-    if (!calendar || !door || this.isSelectedDoorReadOnly()) {
-      return;
-    }
-    if (!this.hasUnsavedDoorChanges()) {
-      return;
-    }
-    if (!this.isDoorFormValid()) {
-      this.doorForm.markAllAsTouched();
-      return;
-    }
-    const blocks = this.toBlocks();
-    if (this.shouldCancelDoorSave(door, blocks)) {
-      return;
-    }
-    this.isSavingDoor.set(true);
-    try {
-      const result = await this.calendarService.updateDoor(calendar.id, door.day, {
-        expectedVersion: calendar.version,
-        blocks,
-      });
-      const updatedDoor: MinAdventDoor = { ...door, blocks, status: result.status };
-      this.calendar.set({
-        ...calendar,
-        completed: result.completed,
-        doors: calendar.doors.map((item) => (item.day === result.day ? updatedDoor : item)),
-        version: result.version,
-      });
-      this.originalDoorBlocks = blocks.map((block) => ({ ...block }));
-      this.doorForm.markAsPristine();
-      this.doorDraftRevision.update((revision) => revision + 1);
-      this.closeDoorDialog();
-      this.showSnackbar('Türchen gespeichert.');
-    } catch (reason) {
-      await this.handleDoorSaveError(reason);
-    } finally {
-      this.isSavingDoor.set(false);
-    }
-  }
-
-  private shouldCancelDoorSave(door: MinAdventDoor, blocks: MinAdventBlockDto[]): boolean {
-    return (
-      this.willCompleteCalendar(door, blocks) && !window.confirm('Dieses Türchen leeren und den Kalender abschließen?')
-    );
-  }
-
-  private async handleDoorSaveError(reason: unknown): Promise<void> {
-    const error = reason as HttpErrorResponse;
-    const code = error.error?.code;
-    const isConflict = error.status === 409 && ['VERSION_CONFLICT', 'CALENDAR_COMPLETED', 'DOOR_OPENED'].includes(code);
-
-    if (error.status === 409 && code === 'VERSION_CONFLICT') {
-      const calendar = this.calendar();
-      if (
-        calendar &&
-        window.confirm(
-          'Der Kalender wurde geändert. Jetzt aktualisieren? Dein Entwurf bleibt erhalten; beim erneuten Speichern können Änderungen an diesem Türchen überschrieben werden.',
-        )
-      ) {
-        try {
-          this.calendar.set(await this.calendarService.getCalendar(calendar.id));
-          this.showSnackbar('Kalender aktualisiert. Dein Türchenentwurf ist erhalten; speichere erneut.');
-        } catch {
-          this.showSnackbar('Der Kalender konnte nicht aktualisiert werden. Dein Türchenentwurf ist erhalten.');
-        }
-        return;
-      }
-      this.showSnackbar('Kalender nicht aktualisiert. Dein Türchenentwurf ist erhalten.');
-      return;
-    }
-
-    this.showSnackbar(
-      isConflict
-        ? 'Das Türchen konnte wegen einer Kalenderänderung nicht gespeichert werden. Bitte lade den Kalender neu.'
-        : 'Das Türchen konnte nicht gespeichert werden. Bitte versuche es erneut.',
-    );
-  }
-
-  private createBlockForm(block?: Partial<MinAdventBlockDto>): DoorBlockForm {
-    return new FormGroup({
-      description: new FormControl(block?.description ?? '', { nonNullable: true }),
-      text: new FormControl(block?.text ?? '', { nonNullable: true }),
-      title: new FormControl(block?.title ?? '', { nonNullable: true }),
-      type: new FormControl(block?.type ?? MinAdventBlockType.Text, { nonNullable: true }),
-      url: new FormControl(block?.url ?? '', { nonNullable: true }),
-    });
-  }
-
-  private toBlocks(): MinAdventBlockDto[] {
-    return this.normalizeBlocks(
-      this.doorForm.controls.map((block, index) => {
-        const value = block.getRawValue();
-        let text = value.text;
-        if (value.type === MinAdventBlockType.Text) {
-          const originalText = this.originalTextByForm.get(block);
-          if (originalText !== undefined && value.text === this.normalizeText(originalText)) {
-            text = originalText;
-          } else {
-            text = this.normalizeText(value.text);
-          }
-        }
-        return { ...value, position: index + 1, text };
-      }),
-    );
   }
 
   private normalizeBlocks(blocks: MinAdventBlockDto[]): MinAdventBlockDto[] {
@@ -587,68 +661,6 @@ export class MinAdventCalendarComponent implements OnInit {
     });
   }
 
-  private onDoorDraftChanged(): void {
-    this.doorDraftRevision.update((revision) => revision + 1);
-  }
-
-  private showSnackbar(message: string): void {
-    this.snackbarMessage.set(message);
-    this.isSnackbarOpen.set(true);
-  }
-
-  private getTextFieldError(value: string): string | null {
-    const count = this.countVisibleCharacters(value);
-    if (count === 0) {
-      return 'Der Text darf nicht leer sein.';
-    }
-    if (count > 10000) {
-      return 'Der Text darf maximal 10.000 Zeichen enthalten.';
-    }
-    return null;
-  }
-
-  private getTitleFieldError(value: string): string | null {
-    if (!value.trim()) {
-      return 'Der Titel ist erforderlich.';
-    }
-    if (value.trim().length > 100) {
-      return 'Maximal 100 Zeichen.';
-    }
-    return null;
-  }
-
-  private getUrlFieldError(value: string): string | null {
-    if (!value.trim()) {
-      return 'Die Adresse ist erforderlich.';
-    }
-    if (value.length > 2048) {
-      return 'Die Adresse darf maximal 2.048 Zeichen enthalten.';
-    }
-    try {
-      const url = new URL(value.trim());
-      if (!['http:', 'https:'].includes(url.protocol) || !url.hostname) {
-        return 'Bitte gib eine gültige HTTP(S)-Adresse ein.';
-      }
-    } catch {
-      return 'Bitte gib eine gültige HTTP(S)-Adresse ein.';
-    }
-    return null;
-  }
-
-  private getDescriptionFieldError(value: string): string | null {
-    if (!value.trim()) {
-      return 'Die Beschreibung ist erforderlich.';
-    }
-    if (value.trim().length > 2000) {
-      return 'Maximal 2.000 Zeichen.';
-    }
-    return null;
-  }
-
-  private visibleText(html: string): string {
-    return this.normalizeText(html).trim();
-  }
-
   private normalizeText(value: string): string {
     if (!/<[a-z][^>]*>/i.test(value)) {
       return value.replace(/\r\n?/g, '\n');
@@ -669,6 +681,29 @@ export class MinAdventCalendarComponent implements OnInit {
     return text;
   }
 
+  private onDoorDraftChanged(): void {
+    this.doorDraftRevision.update((revision) => revision + 1);
+  }
+
+  private shouldCancelDoorSave(door: MinAdventDoor, blocks: MinAdventBlockDto[]): boolean {
+    return (
+      this.willCompleteCalendar(door, blocks) && !window.confirm('Dieses Türchen leeren und den Kalender abschließen?')
+    );
+  }
+
+  private showSnackbar(message: string): void {
+    this.snackbarMessage.set(message);
+    this.isSnackbarOpen.set(true);
+  }
+
+  private syncDoorFormReadOnlyState(): void {
+    if (this.isSelectedDoorReadOnly()) {
+      this.doorForm.disable({ emitEvent: false });
+    } else {
+      this.doorForm.enable({ emitEvent: false });
+    }
+  }
+
   private textFromNode(node: Node): string {
     if (node.nodeType === Node.TEXT_NODE) {
       return node.textContent ?? '';
@@ -681,6 +716,28 @@ export class MinAdventCalendarComponent implements OnInit {
       .map((child) => this.textFromNode(child))
       .join('');
     return node instanceof HTMLElement && ['DIV', 'LI', 'P'].includes(node.tagName) ? `${text}\n` : text;
+  }
+
+  private toBlocks(): MinAdventBlockDto[] {
+    return this.normalizeBlocks(
+      this.doorForm.controls.map((block, index) => {
+        const value = block.getRawValue();
+        let text = value.text;
+        if (value.type === MinAdventBlockType.Text) {
+          const originalText = this.originalTextByForm.get(block);
+          if (originalText !== undefined && value.text === this.normalizeText(originalText)) {
+            text = originalText;
+          } else {
+            text = this.normalizeText(value.text);
+          }
+        }
+        return { ...value, position: index + 1, text };
+      }),
+    );
+  }
+
+  private visibleText(html: string): string {
+    return this.normalizeText(html).trim();
   }
 
   private willCompleteCalendar(door: MinAdventDoor, blocks: MinAdventBlockDto[]): boolean {
@@ -707,3 +764,11 @@ export class MinAdventCalendarComponent implements OnInit {
     );
   }
 }
+
+type DoorBlockForm = FormGroup<{
+  description: FormControl<string>;
+  text: FormControl<string>;
+  title: FormControl<string>;
+  type: FormControl<MinAdventBlockType>;
+  url: FormControl<string>;
+}>;

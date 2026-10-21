@@ -7,8 +7,8 @@
 1. Angemeldeter Ersteller legt mit Titel, Empfängername und Kalenderjahr einen neuen Kalender an. Kalenderjahr ist mit dem aktuellen Jahr vorbelegt; vergangene/zukünftige Jahre sind zulässig.
 2. Kalender erscheint in der Verwaltung mit 24 leeren Türchen; der Ersteller befüllt beliebige Türen unabhängig von deren Dezemberdatum und speichert **jedes Türchen vollständig und separat**.
 3. Der Ersteller verwendet bis zu zehn gemischte Inhaltsblöcke in 1-basierter Reihenfolge. Ein Türchen darf leer bleiben. Titel und Empfängername sind separat speicherbar; das Kalenderjahr bleibt unveränderlich.
-4. Ersteller kann jederzeit vor dem endgültigen Abschluss ausdrücklich veröffentlichen, zurückziehen oder Link erneuern; **Freigabeverwaltung bleibt nach Abschluss möglich**. Veröffentlichungsaktionen verändern keine Inhalte oder Öffnungszustände.
-5. Bei Wahl eines Jahres in der Vergangenheit und in der anschließenden Bearbeitung weist die Oberfläche darauf hin, dass die letzte Öffnung oder das Leeren des letzten befüllten Türchens unmittelbar und irreversibel abschließen kann. **Vor dem Speichern**, das das letzte `FILLED` entfernt und dadurch abschließt, erscheint eine gesonderte Warnung.
+4. Ersteller kann jederzeit ausdrücklich veröffentlichen, zurückziehen oder den Link erneuern; **Freigabeverwaltung bleibt nach Abschluss möglich**. Veröffentlichungsaktionen verändern keine Inhalte oder Öffnungszustände.
+5. Bei Wahl eines Jahres in der Vergangenheit und in der anschließenden Bearbeitung weist die Oberfläche darauf hin, dass die letzte Öffnung oder das Leeren des letzten befüllten Türchens unmittelbar den Nur-Lesen-Abschluss auslösen kann. **Vor dem Speichern**, das das letzte `FILLED` entfernt und dadurch abschließt, erscheint eine gesonderte Warnung. Der Ersteller kann den Abschluss später durch Schließen eines `OPENED`-Türchens aufheben.
 
 Die Erstelleransicht zeigt das 24er-Raster, die Zustände, „X von 24 Türchen befüllt“, den Öffnungsstand und die Freigabe. Es gibt **keinen Vorschauzugriff auf die Empfängeransicht aus der Erstelleroberfläche**. Wer die Empfängeransicht erproben möchte, verwendet einen gewöhnlichen Kalender und dessen freigegebenen Link; Testen umgeht weder die Datums- noch die Abschlussregeln.
 
@@ -21,7 +21,7 @@ Die Erstelleransicht zeigt das 24er-Raster, die Zustände, „X von 24 Türchen 
 5. Bei `OPENED` wird der Inhalt über einen **rein lesenden Abruf** erneut angezeigt, ohne Animation und ohne Versionsänderung. Der Dialog kann geschlossen werden, hat aber keine Vor/Zurück-Türchen-Navigation.
 6. `EMPTY` kann nicht geöffnet werden; zeitlich noch gesperrte `FILLED`-Türchen ebenfalls nicht. Empfänger sehen Statusunterschiede, aber **keinen Fortschrittszähler**, keinen Fortschrittsbalken und keine Reaktionsfunktion.
 
-Der Kalenderüberblick enthält **nur Kalenderinformationen, globale Version und Türchenzustände**, keine Inhaltsblöcke. Ein lesender Detailabruf liefert Inhalt ausschließlich, wenn das Türchen bei der serverseitigen Prüfung **aktuell `OPENED`** ist. Wurde es zwischenzeitlich vor Ablauf des 24. Dezember durch den Ersteller wieder geschlossen, darf der Abruf **keinen** Inhalt liefern und **keinen** Öffnungszustand ändern. Nach Aktualisierung kann der Empfänger es erneut öffnen; dies zählt wieder als Erstöffnung mit Animation.
+Der Kalenderüberblick enthält **nur Kalenderinformationen, globale Version und Türchenzustände**, keine Inhaltsblöcke. Ein lesender Detailabruf liefert Inhalt ausschließlich, wenn das Türchen bei der serverseitigen Prüfung **aktuell `OPENED`** ist. Wurde es zwischenzeitlich durch den Ersteller wieder geschlossen, darf der Abruf **keinen** Inhalt liefern und **keinen** Öffnungszustand ändern. Nach Aktualisierung kann der Empfänger es erneut öffnen; dies zählt wieder als Erstöffnung mit Animation.
 
 ## 3. Empfänger: Versionskonflikt und Netzwerkausfall
 
@@ -35,10 +35,9 @@ Das Frontend zeigt eine verständliche Meldung und aktualisiert den Überblick *
 
 ## 4. Ersteller: schließen, Abschluss und Löschen
 
-- Der Ersteller darf ein geöffnetes Türchen **bis einschließlich 24. Dezember des Kalenderjahres** zurück nach `FILLED` setzen, selbst wenn der Kalender bereits veröffentlicht ist. Das macht den Inhalt wieder editierbar. Ein späterer Empfänger-`PUT` kann es mit neuer Version nochmals öffnen und löst erneut eine Animation aus.
-- Ab dem **25. Dezember 00:00 Uhr** darf **kein** Türchen mehr geschlossen werden, auch bei noch nicht abgeschlossenem Kalender. Die UI blendet den Button aus; serverseitig folgt `409 DOOR_CLOSE_PERIOD_ENDED` ohne Seiteneffekt.
-- Ein Kalender wird frühestens nach Ablauf seines 24. Dezember endgültig `ABGESCHLOSSEN`, wenn **mindestens eine Tür `OPENED`** und **keine `FILLED`** ist. Leere Türen verhindern den Abschluss nicht. Die letzte Türöffnung **oder** das Leeren des letzten befüllten Türchens kann den Abschluss auslösen.
-- Abschluss wirkt unmittelbar auf spätere Aktionen; **der auslösende erfolgreiche Vorgang wird regulär abgeschlossen** und liefert seine neuen Zustände bzw. Inhalte. Danach sind Inhalte, Titel, Empfänger und Türchenzustände unveränderlich. Veröffentlichungs-/Widerrufs-/Rotationsaktionen, Lesen bereits geöffneter Türchen und Löschen bleiben erlaubt.
+- Der Ersteller darf geöffnete Türchen jederzeit zurück nach `FILLED` setzen, auch bei veröffentlichten oder abgeschlossenen Kalendern. Das hebt einen abgeleiteten Abschluss auf und macht den Inhalt wieder editierbar. Ein späterer Empfänger-`PUT` kann es mit neuer Version nochmals öffnen und löst erneut eine Animation aus.
+- Ein Kalender wird frühestens nach Ablauf seines 24. Dezember `ABGESCHLOSSEN`, wenn **mindestens eine Tür `OPENED`** und **keine `FILLED`** ist. Leere Türen verhindern den Abschluss nicht. Die letzte Türöffnung **oder** das Leeren des letzten befüllten Türchens kann den Abschluss auslösen; der Ersteller kann ihn später durch Schließen eines geöffneten Türchens wieder aufheben.
+- Abschluss wirkt auf spätere Aktionen; **der auslösende erfolgreiche Vorgang wird regulär abgeschlossen** und liefert seine neuen Zustände bzw. Inhalte. Danach sind Inhalte, Titel und Empfänger unveränderlich. Der Ersteller kann weiterhin `OPENED`-Türchen schließen; das setzt den Status auf `FILLED`, hebt den abgeleiteten Abschluss auf und ermöglicht die Bearbeitung wieder. Veröffentlichungs-/Widerrufs-/Rotationsaktionen, Lesen bereits geöffneter Türchen und Löschen bleiben ebenfalls erlaubt.
 - Löschen erfordert eine Sicherheitsbestätigung und entfernt alle zugehörigen Daten unwiderruflich. Nach Accountlöschung sind sämtliche Kalender und Freigaben weg.
 
 ## 5. Konflikt-, Berechtigungs- und Zeitgrenzen
@@ -46,11 +45,10 @@ Das Frontend zeigt eine verständliche Meldung und aktualisiert den Überblick *
 | Ausgangslage | Aktion | Erwartetes Ergebnis |
 | --- | --- | --- |
 | Version veraltet; Kalender inzwischen abgeschlossen | Ersteller speichert | **409 VERSION_CONFLICT hat Vorrang**, Entwurf bleibt lokal, erst nach bestätigter Aktualisierung nur lesbar. |
-| Aktuelle Version; Kalender abgeschlossen | Ersteller bearbeitet Inhalt | **409 CALENDAR_COMPLETED**, keine Änderung. |
+| Aktuelle Version; Kalender abgeschlossen | Ersteller bearbeitet Inhalt direkt | **409 CALENDAR_COMPLETED**, keine Änderung; zunächst kann ein geöffnetes Türchen geschlossen werden. |
 | Aktuelle Version; leeres Türchen | Empfänger versucht Öffnen | **409 DOOR_EMPTY**, kein Inhalt, keine Zustandsänderung. |
 | Aktuelle Version; Türchendatum noch nicht erreicht | Empfänger versucht Öffnen | **409 DOOR_NOT_YET_UNLOCKED**. |
-| 24. Dezember des Kalenderjahres, 23:59 | Ersteller schließt geöffnetes Türchen | Erlaubt bei passender Version. |
-| 25. Dezember, 00:00 | Ersteller versucht Schließen | **409 DOOR_CLOSE_PERIOD_ENDED**, unverändert. |
+| Beliebiges Datum, Kalender eventuell abgeschlossen | Ersteller schließt geöffnetes Türchen | Erlaubt bei passender Version; Abschlussstatus wird neu abgeleitet. |
 | 25. Dezember, 00:00; 1 OPENED, 23 EMPTY | System bewertet Zustand | **ABGESCHLOSSEN**, ohne eigene Daten- oder Versionsänderung. |
 | Kalender vergangenes Jahr, 24 EMPTY | Ersteller beginnt Befüllen | Weiter bearbeitbar, weil kein OPENED. |
 | Kalender vergangenes Jahr, 1 OPENED, 1 FILLED | Ersteller leert letztes FILLED | Vorabwarnung; Speichern erfolgreich, danach sofort ABGESCHLOSSEN. |

@@ -12,7 +12,7 @@
 6. **Eine** globale Kalender-Version für alle Mutationen, keine zusätzlichen Türchen- oder Freigabeversionen.
 7. Versionskontrolle und berechnete Abschlussbedingung werden atomar innerhalb derselben synchronisierten Transaktion geprüft.
 8. `ABGESCHLOSSEN` ab 25.12. 00:00 Europe/Berlin, mindestens einem `OPENED`, keinem `FILLED`; ohne gespeichertes Abschlussfeld oder Cron.
-9. Abschluss sperrt Inhalte, Metadaten und Türchenstatus endgültig, aber **nicht** Linkverwaltung, lesenden Empfängerzugriff oder Löschen.
+9. Abschluss sperrt direkte Inhalts- und Metadatenänderungen, aber der Ersteller kann geöffnete Türchen jederzeit schließen; dadurch wird der abgeleitete Abschluss aufgehoben. Linkverwaltung, lesender Empfängerzugriff und Löschen bleiben ebenfalls erlaubt.
 10. Shared Token frühestens bei ausdrücklicher Veröffentlichung, mindestens 256 Bit Zufall; Widerruf, Rotation und Wiederveröffentlichung sind atomar.
 11. Ressourcenorientierte REST-Schnittstellen: `PUT` für Erstöffnung, `GET` ausschließlich für bereits geöffnete Inhalte; kein `/open` oder `/close`-Action-Endpunkt.
 12. Strikte Version **für jeden PUT**, auch bereits `OPENED`: veraltet stets `409 VERSION_CONFLICT`; bei aktueller Version bleibt wiederholtes Öffnen idempotent.

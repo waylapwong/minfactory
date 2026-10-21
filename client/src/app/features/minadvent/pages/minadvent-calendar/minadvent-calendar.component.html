@@ -97,7 +97,7 @@
                 id="edit-calendar-title"
                 label="Kalendertitel"
                 [formControlInput]="form.controls.title"
-                [maxLength]="100"
+                [maxLength]="50"
                 [showCharacterCount]="true"
               />
             </div>
@@ -112,7 +112,7 @@
             </min-button>
           </div>
           @if (form.controls.title.touched && form.controls.title.invalid) {
-            <p class="text-sm text-red-500" aria-live="assertive">Titel ist erforderlich (max. 100 Zeichen).</p>
+            <p class="text-sm text-red-500" aria-live="assertive">Titel ist erforderlich (max. 50 Zeichen).</p>
           }
         </div>
         <div class="flex flex-col gap-2">
@@ -122,7 +122,7 @@
                 id="edit-recipient-name"
                 label="Empfängername"
                 [formControlInput]="form.controls.recipientName"
-                [maxLength]="100"
+                [maxLength]="50"
                 [showCharacterCount]="true"
               />
             </div>
@@ -137,7 +137,7 @@
             </min-button>
           </div>
           @if (form.controls.recipientName.touched && form.controls.recipientName.invalid) {
-            <p class="text-sm text-red-500" aria-live="assertive">Empfängername ist erforderlich (max. 100 Zeichen).</p>
+            <p class="text-sm text-red-500" aria-live="assertive">Empfängername ist erforderlich (max. 50 Zeichen).</p>
           }
         </div>
         <section aria-labelledby="doors-heading">
@@ -178,6 +178,29 @@
               </min-badge>
             </div>
             <section>
+              @if (canCloseDoor(door)) {
+                <div class="mb-4 rounded-lg border-4 border-blue-700 bg-blue-50 p-3">
+                  <p class="mb-2 text-sm">Dieses Türchen kann geschlossen und danach bearbeitet werden.</p>
+                  <min-button [color]="Color.White" [isDisabled]="isClosingDoor()" (clicked)="closeDoor()">
+                    {{ isClosingDoor() ? 'Schließt …' : 'Türchen wieder schließen' }}
+                  </min-button>
+                </div>
+              }
+              @if (closeDoorError()) {
+                <p class="mb-4 text-sm text-red-700" role="alert">{{ closeDoorError() }}</p>
+              }
+              @if (doorConflictError()) {
+                <div class="mb-4 flex flex-col items-start gap-2" role="alert">
+                  <p class="text-sm text-red-700">{{ doorConflictError() }}</p>
+                  <min-button
+                    [color]="Color.Blue"
+                    [isDisabled]="isRefreshingDoor()"
+                    (clicked)="reloadDoorAfterConflict()"
+                  >
+                    {{ isRefreshingDoor() ? 'Aktualisiert …' : 'Türchen aktualisieren' }}
+                  </min-button>
+                </div>
+              }
               @if (door.status === 'OPENED' || current.completed) {
                 <output aria-live="polite" class="mb-4 block border-l-4 border-gray-500 bg-gray-100 p-3 text-sm">
                   {{
@@ -262,7 +285,7 @@
                         [id]="'door-text-' + index"
                         label="Text"
                         [formControlInput]="block.controls.text"
-                        [maxLength]="10000"
+                        [maxLength]="500"
                         [rows]="3"
                         [showCharacterCount]="true"
                         [isInvalid]="isDoorFieldInvalid(index, 'text')"
@@ -276,7 +299,7 @@
                         [id]="'block-title-' + index"
                         [label]="block.controls.type.value === MinAdventBlockType.Link ? 'Linktitel' : 'Gutscheintitel'"
                         [formControlInput]="block.controls.title"
-                        [maxLength]="100"
+                        [maxLength]="50"
                         [showCharacterCount]="true"
                         [isInvalid]="isDoorFieldInvalid(index, 'title')"
                         (valueChanged)="updateDoorField()"
@@ -290,7 +313,7 @@
                           label="HTTP(S)-Adresse"
                           type="url"
                           [formControlInput]="block.controls.url"
-                          [maxLength]="2048"
+                          [maxLength]="50"
                           [showCharacterCount]="true"
                           [isInvalid]="isDoorFieldInvalid(index, 'url')"
                           (valueChanged)="updateDoorField()"
@@ -303,7 +326,7 @@
                           [id]="'block-description-' + index"
                           label="Beschreibung"
                           [formControlInput]="block.controls.description"
-                          [maxLength]="2000"
+                          [maxLength]="200"
                           [rows]="3"
                           [showCharacterCount]="true"
                           [isInvalid]="isDoorFieldInvalid(index, 'description')"

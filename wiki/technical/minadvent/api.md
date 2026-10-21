@@ -52,14 +52,14 @@ PUT /minadvent/calendars/:id/doors/3
 ```json
 {"day":3,"status":"FILLED","version":3,"completed":false}
 ```
-Mit `blocks: []` wird `EMPTY`. Wenn dadurch ab 25.12. das letzte FILLED verschwindet und ein OPENED vorhanden ist, zeigt der Client **vor dem Speichern** eine Abschlusswarnung; die Antwort darf `completed:true` enthalten. Die ValidationPipe plus fachliche Prüfung erzwingen Pflichtfelder und Grenzen (Titel/Name/Linktitel/Vouchertitel 100, Text sichtbare Zeichen 10000, Gutscheinbeschreibung 2000, gültige HTTP(S)-URL und Blockanzahl 0..10). Kein Nullposition, keine doppelte oder ausgelassene Position.
+Mit `blocks: []` wird `EMPTY`. Wenn dadurch ab 25.12. das letzte FILLED verschwindet und ein OPENED vorhanden ist, zeigt der Client **vor dem Speichern** eine Abschlusswarnung; die Antwort darf `completed:true` enthalten. Die ValidationPipe plus fachliche Prüfung erzwingen Pflichtfelder und Grenzen (Titel/Name/Linktitel/Vouchertitel jeweils höchstens 50 Zeichen, Text höchstens 500 sichtbare Zeichen, Gutscheinbeschreibung höchstens 200 Zeichen, gültige HTTP(S)-URL höchstens 50 Zeichen und Blockanzahl 0..10). Kein Nullposition, keine doppelte oder ausgelassene Position.
 
 Schließen:
 ```json
 PUT /minadvent/calendars/:id/doors/3/status
 {"status":"FILLED","expectedVersion":3}
 ```
-Ab 25.12. des Kalenderjahres: `409 DOOR_CLOSE_PERIOD_ENDED`, keine Status-/Versionsänderung.
+Schließen ist unabhängig vom Datum und Kalenderabschluss erlaubt, sofern Türchenstatus `OPENED` und globale Version aktuell sind. Die Mutation setzt `FILLED` und erhöht die Version atomar.
 
 Veröffentlichen, Widerrufen, Erneuern:
 ```json
@@ -97,10 +97,9 @@ Bereits OPENED: bei **aktueller** Version `200`, `firstOpened:false` und dieselb
 | HTTP | Fachcode (Beispiel) | Fall |
 | --- | --- | --- |
 | 409 | `VERSION_CONFLICT` | Veraltete globale Version, auch bei OPENED und abgeschlossen; **Vorrang bei jedem PUT** |
-| 409 | `CALENDAR_COMPLETED` | Inhalt/Metadaten/Türstatus bei aktuellem Versionswert nicht mehr änderbar |
+| 409 | `CALENDAR_COMPLETED` | Inhalt/Metadaten/Türstatus nicht änderbar, außer OPENED-Türchen schließen |
 | 409 | `DOOR_EMPTY` | Öffnen einer leeren Tür |
 | 409 | `DOOR_NOT_YET_UNLOCKED` | Öffnen vor dem ausgewählten Dezembertag |
-| 409 | `DOOR_CLOSE_PERIOD_ENDED` | Ersteller schließt ab 25.12. |
 | 409 | `INVALID_CONTENT` | Fachliche Eingabe verletzt Block-/Längen-/Pflichtregeln |
 | 403 | `FORBIDDEN` | Ersteller ohne Berechtigung (fremder Kalender) |
 | 400 | `INVALID_REQUEST` | Struktureller Fehler, Tag außerhalb 1–24 |
@@ -112,4 +111,4 @@ Zugriffskontrolle und Tokenvalidität werden vorausgesetzt, bevor Informationen 
 
 Bei `409 VERSION_CONFLICT`: Empfänger informiert; Übersicht erst nach ausdrücklicher Zustimmung nachladen. Wenn die angeklickte Tür inzwischen OPENED ist, deren Inhalt per **GET ohne Animation** abrufen; ist sie weiter FILLED, erst nach erneutem Klick PUT. **Keine automatischen PUT-Retries**. Bei Erstellerkonflikten Eingaben bis zur bestätigten Aktualisierung lokal bewahren. Jede Mutation liest Version, Abschluss und aktuellen Türzustand **innerhalb derselben synchronisierten DB-Transaktion**; erfolgreiche erste Öffnung erhöht Version genau einmal. Letzte Öffnung / letztes FILLED leeren kann `completed=true` auslösen, der auslösende Request bleibt erfolgreich. Ein Linkwiderruf darf gleichzeitig laufende PUTs nicht auf halb-gültigem Link fortsetzen.
 
-Konkrete DTO-Klassennamen und die URL-Maximallänge sind an etablierte Repo-Konventionen anzupassen; für OpenAPI werden die vorgesehenen Felder und Fehlermodelle vollständig annotiert.
+Konkrete DTO-Klassennamen sind an etablierte Repo-Konventionen anzupassen; für OpenAPI werden die vorgesehenen Felder und Fehlermodelle vollständig annotiert.

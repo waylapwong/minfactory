@@ -68,14 +68,14 @@
       <output role="status" aria-live="polite" class="text-center text-gray-700">Türcheninhalt wird geladen …</output>
     }
 
-    @if (doorError()) {
+    @if (doorError() && !reloadDialogOpen()) {
       <section role="alert" class="flex flex-col items-center gap-3 text-center">
         <p class="text-gray-800">{{ doorError() }}</p>
         @if (reloadRequired()) {
           <button
             type="button"
             class="rounded border-2 border-gray-800 px-4 py-2 font-semibold text-gray-900 focus-visible:outline-4 focus-visible:outline-blue-700"
-            (click)="reloadAfterConflict()"
+            (click)="openReloadDialog()"
           >
             Übersicht neu laden
           </button>
@@ -83,12 +83,22 @@
       </section>
     }
 
+    @if (reloadDialogOpen()) {
+      <min-dialog title="Übersicht neu laden?" [isOpen]="true" (closed)="cancelReloadDialog()">
+        <p class="mb-4 text-gray-800">{{ doorError() }}</p>
+        <div class="flex flex-wrap justify-end gap-2">
+          <min-button [color]="Color.Gray" (clicked)="cancelReloadDialog()">Abbrechen</min-button>
+          <min-button [color]="Color.Blue" (clicked)="reloadAfterConflict()">Übersicht neu laden</min-button>
+        </div>
+      </min-dialog>
+    }
+
     @if (selectedDoor(); as content) {
       <min-dialog [title]="'T&#252;rchen ' + content.day" [isOpen]="true" (closed)="closeDoor()">
         <div dialog-subtitle class="mb-3">
           <min-badge [color]="Color.Blue">{{ getDoorStatusLabel(content.status) }}</min-badge>
         </div>
-        <div class="flex flex-col gap-4" [class.animate-[door-reveal_450ms_ease-out]]="animateDoor()">
+        <div class="flex flex-col gap-4" [class.minadvent-first-open]="animateDoor()">
           @for (block of content.blocks; track block.position) {
             @if (block.type === 'TEXT') {
               <section

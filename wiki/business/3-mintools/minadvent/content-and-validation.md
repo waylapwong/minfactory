@@ -4,7 +4,7 @@
 
 ## 1. Bearbeitungsmodell
 
-Die Erstelleransicht enthält genau 24 nummerierte Türchen mit sichtbar unterschiedlichen Zuständen `EMPTY`, `FILLED`, `OPENED` sowie „X von 24 Türchen befüllt“. Der Ersteller bearbeitet nur eigene, **noch nicht geöffnete** Türchen, solange der Kalender nicht `ABGESCHLOSSEN` ist. Ein geöffnetes Türchen kann bis einschließlich 24. Dezember des gewählten Jahres vom Ersteller geschlossen und danach neu bearbeitet werden; nach diesem Datum ist Schließen ausgeschlossen, auch wenn der Kalender noch nicht abgeschlossen ist.
+Die Erstelleransicht enthält genau 24 nummerierte Türchen mit sichtbar unterschiedlichen Zuständen `EMPTY`, `FILLED`, `OPENED` sowie „X von 24 Türchen befüllt“. Der Ersteller bearbeitet nur eigene, **noch nicht geöffnete** Türchen, solange der Kalender nicht `ABGESCHLOSSEN` ist. Ein geöffnetes Türchen kann jederzeit vom Ersteller geschlossen und danach neu bearbeitet werden; das gilt auch für abgeschlossene Kalender, deren abgeleiteter Abschluss durch das Schließen aufgehoben wird.
 
 **Manuelles Speichern:** Der Ersteller speichert **jeweils ein ganzes Türchen** einschließlich aller Blöcke durch eine einzige ausdrückliche Aktion. Es gibt weder automatisches Speichern noch ein kalenderweites Sammelspeichern. Kalendertitel und Empfängername werden getrennt davon gespeichert. Werden ungespeicherte Änderungen verlassen, erscheint eine Warnung; insbesondere bei Versionskonflikten bleiben Eingaben zunächst lokal erhalten. Verwerfen und Neuladen benötigen eine ausdrückliche Bestätigung.
 
@@ -18,20 +18,20 @@ Pro Türchen sind **0 bis maximal 10 Inhaltsblöcke insgesamt** zulässig, frei 
 | Link | Titel, HTTP(S)-URL | Anklickbarer externer Inhalt. |
 | Gutschein | Titel, Beschreibung | Titel und Beschreibung als normale Formularfelder; die Beschreibung ist wie beim Textblock ein mehrzeiliges Textfeld. Anzeige eines Gutscheins, **keine digitale Einlösung**. |
 
-Blöcke werden innerhalb eines Türchens mit **fortlaufenden Positionen 1, 2, 3, …** gespeichert und in dieser Reihenfolge angezeigt. Es gibt keine Position 0, doppelte Positionen oder Lücken. Blöcke dürfen ohne zusätzliche Rückfrage entfernt werden. Wenn alle Blöcke entfernt und gespeichert sind, ist das Türchen `EMPTY` (gegebenenfalls führt genau das nach Weihnachten zum endgültigen Abschluss).
+Blöcke werden innerhalb eines Türchens mit **fortlaufenden Positionen 1, 2, 3, …** gespeichert und in dieser Reihenfolge angezeigt. Es gibt keine Position 0, doppelte Positionen oder Lücken. Blöcke dürfen ohne zusätzliche Rückfrage entfernt werden. Wenn alle Blöcke entfernt und gespeichert sind, ist das Türchen `EMPTY` (gegebenenfalls führt genau das nach Weihnachten zum Abschluss; ein späteres Schließen eines geöffneten Türchens hebt ihn wieder auf).
 
 ## 3. Pflichtfelder und Grenzen
 
 | Inhalt | Regel |
 | --- | --- |
-| Kalendertitel | Erforderlich, höchstens **100 Zeichen** |
-| Empfängername | Erforderlich, höchstens **100 Zeichen** |
+| Kalendertitel | Erforderlich, höchstens **50 Zeichen** |
+| Empfängername | Erforderlich, höchstens **50 Zeichen** |
 | Kalenderjahr | Erforderlich, vorbelegt mit aktuellem Jahr; nach Erstellung unveränderlich |
-| Textblock | Nicht leerer einfacher Text; höchstens **10.000 Zeichen** |
-| Linktitel | Erforderlich, höchstens **100 Zeichen** |
-| Linkadresse | Erforderliche gültige **HTTP(S)-URL**; eine konkrete technische Maximallänge wird vor Implementierung festgelegt |
-| Gutscheintitel | Erforderlich, höchstens **100 Zeichen** |
-| Gutscheinbeschreibung | Erforderlich, höchstens **2.000 Zeichen** |
+| Textblock | Nicht leerer einfacher Text; höchstens **500 sichtbare Zeichen** |
+| Linktitel | Erforderlich, höchstens **50 Zeichen** |
+| Linkadresse | Erforderliche gültige **HTTP(S)-URL**, höchstens **50 Zeichen** |
+| Gutscheintitel | Erforderlich, höchstens **50 Zeichen** |
+| Gutscheinbeschreibung | Erforderlich, höchstens **200 Zeichen** |
 | Blockanzahl | **0–10** insgesamt pro Türchen |
 | Position | Lückenlose Ganzzahlen ab **1** |
 
@@ -45,18 +45,18 @@ Jeder zustandsändernde Request muss die **aktuelle erwartete globale Version** 
 
 Ein echter Versionskonflikt hat Vorrang vor sonstigen fachlichen Regelverletzungen, auch wenn unterschiedliche Türchen betroffen sind. Der Verlierer konkurrierender Änderungen erhält `409` ohne Teiländerung. Speichern, Öffnen, Schließen, Widerruf und Linkerneuerung werden konsistent atomar geordnet; globale Version und abgeleiteter Abschluss werden **innerhalb derselben synchronisierten Transaktion** geprüft. Der endgültige Abschluss darf durch parallele Schreibvorgänge nicht umgangen werden.
 
-Beim Ersteller führt `409 VERSION_CONFLICT` zu einer verständlichen Meldung; lokale Entwürfe werden zunächst bewahrt. Erst nach ausdrücklicher Bestätigung wird neu geladen beziehungsweise verworfen. Ist der Kalender mittlerweile `ABGESCHLOSSEN`, endet die Bearbeitbarkeit endgültig.
+Beim Ersteller führt `409 VERSION_CONFLICT` zu einer verständlichen Meldung; lokale Entwürfe werden zunächst bewahrt. Erst nach ausdrücklicher Bestätigung wird neu geladen beziehungsweise verworfen. Ist der Kalender mittlerweile `ABGESCHLOSSEN`, sind direkte Inhaltsänderungen gesperrt; das Schließen eines `OPENED`-Türchens bleibt möglich und hebt den abgeleiteten Abschluss auf.
 
 ## 5. Fachliche Fehler und Rückmeldungen
 
 | Fehlerart | Status | Beispielcode / Verhalten |
 | --- | --- | --- |
 | Veraltete globale Version | **409** | `VERSION_CONFLICT`, Vorrang bei `PUT` |
-| Fachliche Regelverletzung / Zustandskonflikt | **409** | `CALENDAR_COMPLETED`, `DOOR_EMPTY`, `DOOR_NOT_YET_UNLOCKED`, `DOOR_CLOSE_PERIOD_ENDED`, Inhalts- und Feldvalidierung |
+| Fachliche Regelverletzung / Zustandskonflikt | **409** | `CALENDAR_COMPLETED`, `DOOR_EMPTY`, `DOOR_NOT_YET_UNLOCKED`, `DOOR_NOT_OPENED`, Inhalts- und Feldvalidierung |
 | Unzureichende Berechtigung | **403** | Fremden Kalender bearbeiten |
 | Formal fehlerhafter Request | **400** | Ungültige JSON-Struktur, Türchennummer außerhalb 1–24 |
 | Ungültiger, ersetzter oder widerrufener Shared Link | **404** | Einheitlich: „Dieser Adventskalender ist nicht verfügbar.“ |
 
 Jeder Fehler besitzt einen **stabilen maschinenlesbaren Code**, anhand dessen das Frontend eine passende Meldung zeigt. Der Status `403` ist Berechtigungsproblemen vorbehalten; fachliche Regeln werden nicht durch Einführung von `422` behandelt. Ungültige Tokens liefern keine Informationen über Existenz oder Fortschritt des Kalenders.
 
-**Offener technischer Detailpunkt:** Die konkrete maximale URL-Länge gehört zur technischen Implementierungsspezifikation, nicht zu den bereits fachlich festgelegten Grenzen.
+Die maximale URL-Länge beträgt fachlich und technisch **50 Zeichen**.

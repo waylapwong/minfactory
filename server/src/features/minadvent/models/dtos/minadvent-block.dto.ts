@@ -2,7 +2,7 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { MinAdventBlockType } from '../enums/minadvent-block-type.enum';
 
 export class MinAdventBlockDto {
-  @ApiPropertyOptional({ type: String, nullable: true, maxLength: 2000 })
+  @ApiPropertyOptional({ type: String, nullable: true, maxLength: 200 })
   public description?: string | null;
 
   @ApiProperty({ minimum: 1, maximum: 10 })
@@ -11,17 +11,16 @@ export class MinAdventBlockDto {
   @ApiPropertyOptional({
     type: String,
     nullable: true,
-    maxLength: 10000,
-    description: 'Sanitized HTML with a limited formatting allowlist.',
+    description: 'Sanitized HTML with a limited formatting allowlist; maximum 500 visible characters.',
   })
   public text?: string | null;
 
-  @ApiPropertyOptional({ type: String, nullable: true, maxLength: 100 })
+  @ApiPropertyOptional({ type: String, nullable: true, maxLength: 50 })
   public title?: string | null;
 
   @ApiProperty({ enum: MinAdventBlockType, enumName: 'MinAdventBlockType' })
   public type!: MinAdventBlockType;
 
-  @ApiPropertyOptional({ type: String, nullable: true, maxLength: 2048, format: 'uri' })
+  @ApiPropertyOptional({ type: String, nullable: true, maxLength: 50, format: 'uri' })
   public url?: string | null;
 }

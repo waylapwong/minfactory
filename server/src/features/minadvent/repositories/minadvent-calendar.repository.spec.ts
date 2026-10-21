@@ -306,4 +306,70 @@ describe('MinAdventCalendarRepository', () => {
       expect(transaction.calendarRepository.update).not.toHaveBeenCalled();
     });
   });
+
+  describe('closeDoor()', () => {
+    function addOpenedDoor(): MinAdventDoorEntity {
+      const door = Object.assign(new MinAdventDoorEntity(), {
+        id: 'door-1',
+        calendarId: 'calendar-1',
+        day: 1,
+        status: MinAdventDoorStatus.Opened,
+      });
+      transaction.doors.push(door);
+      transaction.calendarRepository.findOne.mockResolvedValue({
+        ...transaction.calendar,
+        version: 2,
+        doors: [{ ...door, status: MinAdventDoorStatus.Filled, blocks: [] }],
+      });
+      return door;
+    }
+
+    it('checks the expected version before reading the door status', async () => {
+      transaction.calendar.version = 2;
+
+      await expect(repository.closeDoor('owner-1', 'calendar-1', 1, 1)).rejects.toMatchObject({
+        response: expect.objectContaining({ code: 'VERSION_CONFLICT' }),
+      });
+
+      expect(transaction.doorRepository.findOne).not.toHaveBeenCalled();
+      expect(transaction.doorRepository.update).not.toHaveBeenCalled();
+    });
+
+    it('closes an opened door after the Advent period and increments the global version once', async () => {
+      jest.useFakeTimers();
+      jest.setSystemTime(new Date('2028-01-01T00:00:00.000Z'));
+      const door = addOpenedDoor();
+
+      const updated = await repository.closeDoor('owner-1', 'calendar-1', 1, 1);
+
+      expect(transaction.calendarQueryBuilder.setLock).toHaveBeenCalledWith('pessimistic_write');
+      expect(transaction.doorRepository.update).toHaveBeenCalledWith(
+        { id: door.id },
+        { status: MinAdventDoorStatus.Filled },
+      );
+      expect(transaction.calendarRepository.update).toHaveBeenCalledWith(
+        { id: 'calendar-1', ownerId: 'owner-1', version: 1 },
+        { version: 2 },
+      );
+      expect(updated.version).toBe(2);
+    });
+
+    it('rejects a door that is not OPENED without writing', async () => {
+      transaction.doors.push(
+        Object.assign(new MinAdventDoorEntity(), {
+          id: 'door-1',
+          calendarId: 'calendar-1',
+          day: 1,
+          status: MinAdventDoorStatus.Filled,
+        }),
+      );
+
+      await expect(repository.closeDoor('owner-1', 'calendar-1', 1, 1)).rejects.toMatchObject({
+        response: expect.objectContaining({ code: 'DOOR_NOT_OPENED' }),
+      });
+
+      expect(transaction.doorRepository.update).not.toHaveBeenCalled();
+      expect(transaction.calendarRepository.update).not.toHaveBeenCalled();
+    });
+  });
 });

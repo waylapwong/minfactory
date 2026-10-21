@@ -4,7 +4,7 @@ import { MinAdventDoorEntity } from './minadvent-door.entity';
 
 @Entity({ name: 'minadvent_blocks' })
 export class MinAdventBlockEntity {
-  @Column({ name: 'description', type: 'varchar', length: 2000, nullable: true })
+  @Column({ name: 'description', type: 'varchar', length: 200, nullable: true })
   public description!: string | null;
   @Column({ name: 'door_id', type: 'varchar', length: 36 })
   public doorId!: string;
@@ -12,11 +12,11 @@ export class MinAdventBlockEntity {
   public position!: number;
   @Column({ name: 'text', type: 'longtext', nullable: true })
   public text!: string | null;
-  @Column({ name: 'title', type: 'varchar', length: 100, nullable: true })
+  @Column({ name: 'title', type: 'varchar', length: 50, nullable: true })
   public title!: string | null;
   @Column({ name: 'type', type: 'varchar', length: 10 })
   public type!: MinAdventBlockType;
-  @Column({ name: 'url', type: 'varchar', length: 2048, nullable: true })
+  @Column({ name: 'url', type: 'varchar', length: 50, nullable: true })
   public url!: string | null;
   @ManyToOne(() => MinAdventDoorEntity, (door) => door.blocks, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'door_id' })

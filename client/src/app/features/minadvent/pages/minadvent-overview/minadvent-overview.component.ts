@@ -31,10 +31,10 @@ export class MinAdventOverviewComponent implements OnInit {
   public readonly Color: typeof Color = Color;
   public readonly createError = signal('');
   public readonly createForm = new FormGroup({
-    title: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.maxLength(100)] }),
+    title: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.maxLength(50)] }),
     recipientName: new FormControl('', {
       nonNullable: true,
-      validators: [Validators.required, Validators.maxLength(100)],
+      validators: [Validators.required, Validators.maxLength(50)],
     }),
     year: new FormControl(new Date().getFullYear(), {
       nonNullable: true,

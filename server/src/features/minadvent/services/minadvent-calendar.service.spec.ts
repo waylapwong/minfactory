@@ -1,11 +1,11 @@
-import { ConflictException, ForbiddenException } from '@nestjs/common';
+import { BadRequestException, ConflictException, ForbiddenException } from '@nestjs/common';
 import { MinFactoryUser } from '../../minfactory/models/domains/minfactory-user';
 import { MinAdventCalendarRepositoryMock } from '../mocks/minadvent-calendar.repository.mock';
+import { MinAdventBlock } from '../models/domains/minadvent-block';
 import { MinAdventCalendarEntity } from '../models/entities/minadvent-calendar.entity';
 import { MinAdventDoorEntity } from '../models/entities/minadvent-door.entity';
-import { MinAdventDoorStatus } from '../models/enums/minadvent-door-status.enum';
 import { MinAdventBlockType } from '../models/enums/minadvent-block-type.enum';
-import { MinAdventBlock } from '../models/domains/minadvent-block';
+import { MinAdventDoorStatus } from '../models/enums/minadvent-door-status.enum';
 import { MinAdventCalendarService } from './minadvent-calendar.service';
 
 describe('MinAdventCalendarService', () => {
@@ -49,6 +49,13 @@ describe('MinAdventCalendarService', () => {
     await expect(service.create(owner, { title: 'December', recipientName: 'Alex', year: 0 })).rejects.toThrow();
     await expect(service.create(owner, { title: 'December', recipientName: 'Alex', year: 10000 })).rejects.toThrow();
     expect(repository.create).not.toHaveBeenCalled();
+  });
+
+  it('rejects calendar titles and recipient names longer than 50 characters', async () => {
+    await expect(service.create(owner, { title: 'T'.repeat(51), recipientName: 'Alex', year: 2026 })).rejects.toThrow();
+    await expect(
+      service.create(owner, { title: 'December', recipientName: 'A'.repeat(51), year: 2026 }),
+    ).rejects.toThrow();
   });
 
   it('accepts the first and last supported calendar years', async () => {
@@ -375,6 +382,77 @@ describe('MinAdventCalendarService', () => {
     });
   });
 
+  describe('updateDoorStatus()', () => {
+    const currentCalendar = (calendarOwnerId = owner.id): MinAdventCalendarEntity =>
+      Object.assign(new MinAdventCalendarEntity(), {
+        id: 'calendar-1',
+        ownerId: calendarOwnerId,
+        year: 2026,
+        version: 8,
+        doors: [],
+      });
+
+    it.each([1, 24])('closes boundary day %i and maps the updated response', async (day) => {
+      const calendar = currentCalendar();
+      const updatedCalendar = Object.assign(new MinAdventCalendarEntity(), {
+        ...calendar,
+        version: 9,
+        doors: [Object.assign(new MinAdventDoorEntity(), { day, status: MinAdventDoorStatus.Filled })],
+      });
+      repository.findById.mockResolvedValue(calendar);
+      repository.closeDoor.mockResolvedValue(updatedCalendar);
+
+      const result = await service.updateDoorStatus(owner, calendar.id, day, {
+        status: MinAdventDoorStatus.Filled,
+        expectedVersion: 8,
+      });
+
+      expect(repository.closeDoor).toHaveBeenCalledWith(owner.id, calendar.id, day, 8);
+      expect(result).toEqual({ day, status: MinAdventDoorStatus.Filled, version: 9, completed: false });
+    });
+
+    it.each([0, 25, 1.5])('rejects invalid day %s before accessing the repository', async (day) => {
+      await expect(
+        service.updateDoorStatus(owner, 'calendar-1', day, {
+          status: MinAdventDoorStatus.Filled,
+          expectedVersion: 8,
+        }),
+      ).rejects.toBeInstanceOf(BadRequestException);
+
+      expect(repository.findById).not.toHaveBeenCalled();
+      expect(repository.closeDoor).not.toHaveBeenCalled();
+    });
+
+    it('rejects a calendar owned by another user without closing a door', async () => {
+      const calendar = currentCalendar('someone-else');
+      repository.findById.mockResolvedValue(calendar);
+
+      await expect(
+        service.updateDoorStatus(owner, calendar.id, 3, {
+          status: MinAdventDoorStatus.Filled,
+          expectedVersion: 8,
+        }),
+      ).rejects.toBeInstanceOf(ForbiddenException);
+
+      expect(repository.closeDoor).not.toHaveBeenCalled();
+    });
+
+    it('propagates repository conflicts', async () => {
+      const calendar = currentCalendar();
+      repository.findById.mockResolvedValue(calendar);
+      repository.closeDoor.mockRejectedValue(new ConflictException({ code: 'DOOR_NOT_OPENED' }));
+
+      await expect(
+        service.updateDoorStatus(owner, calendar.id, 3, {
+          status: MinAdventDoorStatus.Filled,
+          expectedVersion: 8,
+        }),
+      ).rejects.toThrow(ConflictException);
+
+      expect(repository.closeDoor).toHaveBeenCalledWith(owner.id, calendar.id, 3, 8);
+    });
+  });
+
   describe('updateDoor()', () => {
     const currentCalendar = (): MinAdventCalendarEntity =>
       Object.assign(new MinAdventCalendarEntity(), {
@@ -491,6 +569,29 @@ describe('MinAdventCalendarService', () => {
               url: `https://example.org/${'ü'.repeat(400)}`,
             },
           ],
+        }),
+      ).rejects.toMatchObject({ response: expect.objectContaining({ code: 'INVALID_CONTENT' }) });
+    });
+
+    it('rejects content exceeding the updated text, title and voucher description limits', async () => {
+      repository.findById.mockResolvedValue(currentCalendar());
+      captureBlocks();
+      await expect(
+        service.updateDoor(owner, 'calendar-1', 3, {
+          expectedVersion: 4,
+          blocks: [{ position: 1, type: MinAdventBlockType.Text, text: `<p>${'a'.repeat(501)}</p>` }],
+        }),
+      ).rejects.toMatchObject({ response: expect.objectContaining({ code: 'INVALID_CONTENT' }) });
+      await expect(
+        service.updateDoor(owner, 'calendar-1', 3, {
+          expectedVersion: 4,
+          blocks: [{ position: 1, type: MinAdventBlockType.Link, title: 'T'.repeat(51), url: 'https://a.co' }],
+        }),
+      ).rejects.toMatchObject({ response: expect.objectContaining({ code: 'INVALID_CONTENT' }) });
+      await expect(
+        service.updateDoor(owner, 'calendar-1', 3, {
+          expectedVersion: 4,
+          blocks: [{ position: 1, type: MinAdventBlockType.Voucher, title: 'Voucher', description: 'D'.repeat(201) }],
         }),
       ).rejects.toMatchObject({ response: expect.objectContaining({ code: 'INVALID_CONTENT' }) });
     });

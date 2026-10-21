@@ -36,6 +36,7 @@ import { MinAdventCalendarService } from '../services/minadvent-calendar.service
 import { MinAdventSharingUpdateDto } from '../models/dtos/minadvent-sharing-update.dto';
 import { MinAdventSharingResponseDto } from '../models/dtos/minadvent-sharing-response.dto';
 import { MinAdventTokenRotationDto } from '../models/dtos/minadvent-token-rotation.dto';
+import { MinAdventDoorStatusUpdateDto } from '../models/dtos/minadvent-door-status-update.dto';
 
 @Controller('minadvent/calendars')
 @ApiTags(MinApp.MinAdvent)
@@ -120,6 +121,26 @@ export class MinAdventCalendarController {
     @Body() input: MinAdventDoorUpdateDto,
   ): Promise<MinAdventDoorUpdateResponseDto> {
     return this.calendarService.updateDoor(user, id, day, input);
+  }
+
+  @Put(':id/doors/:day/status')
+  @HttpCode(200)
+  @ApiOperation({ operationId: 'updateMinAdventDoorStatus' })
+  @API_PARAM_ID()
+  @API_200({ type: MinAdventDoorUpdateResponseDto })
+  @API_400()
+  @API_401()
+  @API_403()
+  @API_404()
+  @API_409()
+  @API_500()
+  public updateDoorStatus(
+    @User() user: MinFactoryUser,
+    @Param('id', ParseUUIDPipe) id: string,
+    @Param('day', ParseIntPipe) day: number,
+    @Body() input: MinAdventDoorStatusUpdateDto,
+  ): Promise<MinAdventDoorUpdateResponseDto> {
+    return this.calendarService.updateDoorStatus(user, id, day, input);
   }
 
   @Get(':id/sharing')

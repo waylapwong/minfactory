@@ -17,6 +17,7 @@ model/min-advent-calendar-create-dto.ts
 model/min-advent-calendar-dto.ts
 model/min-advent-calendar-update-dto.ts
 model/min-advent-door-dto.ts
+model/min-advent-door-status-update-dto.ts
 model/min-advent-door-status.ts
 model/min-advent-door-update-dto.ts
 model/min-advent-door-update-response-dto.ts

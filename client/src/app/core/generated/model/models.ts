@@ -5,6 +5,7 @@ export * from './min-advent-calendar-dto';
 export * from './min-advent-calendar-update-dto';
 export * from './min-advent-door-dto';
 export * from './min-advent-door-status';
+export * from './min-advent-door-status-update-dto';
 export * from './min-advent-door-update-dto';
 export * from './min-advent-door-update-response-dto';
 export * from './min-advent-shared-calendar-dto';

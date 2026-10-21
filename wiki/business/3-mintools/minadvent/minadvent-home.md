@@ -22,7 +22,7 @@ Die Verifikation für v1.0.0 verwendet ausschließlich Unit-Tests mit Mocks; die
 
 | Rolle | Zugang | Berechtigungen |
 | --- | --- | --- |
-| Ersteller | Angemeldeter minFactory-Nutzer | Eigene Kalender anlegen, Titel und Empfängername ändern, ungeöffnete Türchen bearbeiten, bis zum erlaubten Datum geöffnete Türchen schließen, Freigabe verwalten und löschen; jeweils nur soweit der Kalenderzustand es erlaubt. |
+| Ersteller | Angemeldeter minFactory-Nutzer | Eigene Kalender anlegen, Titel und Empfängername ändern, ungeöffnete Türchen bearbeiten, geöffnete Türchen jederzeit schließen und danach bearbeiten, Freigabe verwalten und löschen; jeweils nur soweit der Kalenderzustand es erlaubt. |
 | Empfänger | Aktiver Shared Link, ohne Anmeldung | Kalender anzeigen, datumsbedingt verfügbare befüllte Türchen erstmals öffnen und bereits geöffnete Türchen lesen. |
 | Andere angemeldete Nutzer | Kein Eigentümerzugriff | Dürfen fremde Kalender nicht verwalten. Linkbesitz berechtigt nur zum Empfängerzugriff. |
 
