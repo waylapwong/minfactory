@@ -2,7 +2,7 @@
 
 ## minSplit | REST-API und Fehlervertrag
 
-> **Geplante Schnittstelle; nicht implementiert.** [Übersicht](../../minsplit/minsplit-home.md). Pfade sind konsistente Implementierungsvorschläge und vor Umsetzung gegen die bestehende API-Namenskonvention zu prüfen.
+> **Geplante Schnittstelle; nicht implementiert.** [Übersicht](README.md). Pfade sind konsistente Implementierungsvorschläge und vor Umsetzung gegen die bestehende API-Namenskonvention zu prüfen.
 
 #### Endpunkte
 
@@ -96,7 +96,7 @@ Fehlerobjekt folgt dem bestehenden minFactory-Fehlermodell mit stabilem `code` u
 
 ## minSplit | Datenmodell, Integrität und Migrationen
 
-> **Soll-Konzept v1.0.0** · [Übersicht](../../minsplit/minsplit-home.md)
+> **Soll-Konzept v1.0.0** · [Übersicht](README.md)
 
 #### Relationales Modell
 
@@ -132,7 +132,7 @@ Exakte User-FK-Spalte, konkrete MySQL-Kollation und vorhandenes Migrationen-Depl
 
 ## minSplit | Angular-Frontend und UI-Zustände
 
-> **Soll-Konzept v1.0.0** · [Übersicht](../../minsplit/minsplit-home.md) · [Fachliche Benutzerabläufe](../../../business/3-mintools/minsplit/user-journeys.md)
+> **Soll-Konzept v1.0.0** · [Übersicht](README.md) · [Fachliche Benutzerabläufe](../../business/minsplit/03-specific-requirements.md)
 
 #### Architektur
 
