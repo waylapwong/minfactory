@@ -2,7 +2,7 @@
 
 ## minAdvent | Technische Spezifikation v1.0.0
 
-> **Geplanter Soll-Zustand, nicht implementiert.** Verbindliche Fachanforderungen: [minAdvent fachlich](../../../business/3-mintools/minadvent/minadvent-home.md), [#175](https://github.com/waylapwong/minfactory/issues/175). Auftrag: [#176](https://github.com/waylapwong/minfactory/issues/176). Der technische Entwurf ist Ausgangspunkt für spätere, getrennte Implementierungstickets.
+> **Geplanter Soll-Zustand, nicht implementiert.** Verbindliche Fachanforderungen: [minAdvent fachlich](../../business/minadvent/README.md), [#175](https://github.com/waylapwong/minfactory/issues/175). Auftrag: [#176](https://github.com/waylapwong/minfactory/issues/176). Der technische Entwurf ist Ausgangspunkt für spätere, getrennte Implementierungstickets.
 
 #### Architekturentscheidungen
 
@@ -24,11 +24,11 @@
 
 #### Kapitel
 
-- [Architektur und kritische Abläufe](../../minadvent/architecture.md)
-- [Datenmodell und Migrationen](../../minadvent/database.md)
-- [REST-API und Fehlervertrag](../../minadvent/api.md)
-- [Angular-Frontend](../../minadvent/frontend.md)
-- [Sicherheit und Datenschutz](../../minadvent/security.md)
-- [Teststrategie und Architektur-Review](../../minadvent/testing.md)
+- [Architektur und kritische Abläufe](04-solution-strategy.md)
+- [Datenmodell und Migrationen](05-building-block-view.md)
+- [REST-API und Fehlervertrag](05-building-block-view.md)
+- [Angular-Frontend](05-building-block-view.md)
+- [Sicherheit und Datenschutz](08-crosscutting-concepts.md)
+- [Teststrategie und Architektur-Review](08-crosscutting-concepts.md)
 
 **Nicht Gegenstand dieses Tickets:** Änderungen an Produktivcode, Datenbank oder generiertem Client. Die konkreten Bezeichner im technischen Entwurf sind Vorschläge, keine zwingend vorgegebenen Klassennamen.
