@@ -46,6 +46,7 @@ export class MinAdventCalendarComponent implements OnInit {
     { label: 'Link', value: MinAdventBlockType.Link },
     { label: 'Gutschein', value: MinAdventBlockType.Voucher },
   ];
+  public readonly doorConflictError = signal('');
   public readonly doorDraftRevision = signal(0);
   public readonly doorForm = new FormArray<DoorBlockForm>([]);
   public readonly emptyDoorCount = computed(
@@ -78,7 +79,6 @@ export class MinAdventCalendarComponent implements OnInit {
     () => this.calendar()?.doors.filter((door) => door.status === 'OPENED').length ?? 0,
   );
   public readonly selectedDoorDay = signal<number | null>(null);
-  public readonly doorConflictError = signal('');
   public readonly selectedDoor = computed(() => {
     const day = this.selectedDoorDay();
     return this.calendar()?.doors.find((door) => door.day === day) ?? null;
@@ -368,6 +368,30 @@ export class MinAdventCalendarComponent implements OnInit {
     this.sharingDialogAction.set(action);
   }
 
+  public async reloadDoorAfterConflict(): Promise<void> {
+    const calendar = this.calendar();
+    const door = this.selectedDoor();
+    if (!calendar || !door || this.isRefreshingDoor()) {
+      return;
+    }
+    this.isRefreshingDoor.set(true);
+    try {
+      const refreshedCalendar = await this.calendarService.getCalendar(calendar.id);
+      const refreshedDoor = refreshedCalendar.doors.find((item) => item.day === door.day);
+      this.calendar.set(refreshedCalendar);
+      if (!refreshedDoor) {
+        this.doorConflictError.set('Das Türchen konnte nicht aktualisiert werden. Bitte lade den Kalender neu.');
+        return;
+      }
+      this.loadDoorDraft(refreshedDoor);
+      this.doorConflictError.set('');
+    } catch {
+      this.doorConflictError.set('Der Kalender konnte nicht aktualisiert werden. Bitte versuche es erneut.');
+    } finally {
+      this.isRefreshingDoor.set(false);
+    }
+  }
+
   public removeBlock(index: number): void {
     this.doorForm.removeAt(index);
     this.onDoorDraftChanged();
@@ -469,30 +493,6 @@ export class MinAdventCalendarComponent implements OnInit {
     this.doorConflictError.set('');
     this.closeDoorError.set('');
     this.loadDoorDraft(door);
-  }
-
-  public async reloadDoorAfterConflict(): Promise<void> {
-    const calendar = this.calendar();
-    const door = this.selectedDoor();
-    if (!calendar || !door || this.isRefreshingDoor()) {
-      return;
-    }
-    this.isRefreshingDoor.set(true);
-    try {
-      const refreshedCalendar = await this.calendarService.getCalendar(calendar.id);
-      const refreshedDoor = refreshedCalendar.doors.find((item) => item.day === door.day);
-      this.calendar.set(refreshedCalendar);
-      if (!refreshedDoor) {
-        this.doorConflictError.set('Das Türchen konnte nicht aktualisiert werden. Bitte lade den Kalender neu.');
-        return;
-      }
-      this.loadDoorDraft(refreshedDoor);
-      this.doorConflictError.set('');
-    } catch {
-      this.doorConflictError.set('Der Kalender konnte nicht aktualisiert werden. Bitte versuche es erneut.');
-    } finally {
-      this.isRefreshingDoor.set(false);
-    }
   }
 
   public async shareCalendar(): Promise<void> {
@@ -639,14 +639,6 @@ export class MinAdventCalendarComponent implements OnInit {
     this.doorDraftRevision.update((revision) => revision + 1);
   }
 
-  private syncDoorFormReadOnlyState(): void {
-    if (this.isSelectedDoorReadOnly()) {
-      this.doorForm.disable({ emitEvent: false });
-    } else {
-      this.doorForm.enable({ emitEvent: false });
-    }
-  }
-
   private normalizeBlocks(blocks: MinAdventBlockDto[]): MinAdventBlockDto[] {
     return blocks.map((block, index) => {
       if (block.type === MinAdventBlockType.Text) {
@@ -702,6 +694,14 @@ export class MinAdventCalendarComponent implements OnInit {
   private showSnackbar(message: string): void {
     this.snackbarMessage.set(message);
     this.isSnackbarOpen.set(true);
+  }
+
+  private syncDoorFormReadOnlyState(): void {
+    if (this.isSelectedDoorReadOnly()) {
+      this.doorForm.disable({ emitEvent: false });
+    } else {
+      this.doorForm.enable({ emitEvent: false });
+    }
   }
 
   private textFromNode(node: Node): string {

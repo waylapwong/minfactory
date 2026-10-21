@@ -3,13 +3,13 @@ import { MinAdventCalendarCreateDto } from '../../../core/generated/model/min-ad
 import { MinAdventCalendarUpdateDto } from '../../../core/generated/model/min-advent-calendar-update-dto';
 import { MinAdventDoorUpdateDto } from '../../../core/generated/model/min-advent-door-update-dto';
 import { MinAdventDoorUpdateResponseDto } from '../../../core/generated/model/min-advent-door-update-response-dto';
-import { MinAdventSharingResponseDto } from '../../../core/generated/model/min-advent-sharing-response-dto';
 import { MinAdventSharedCalendarDto } from '../../../core/generated/model/min-advent-shared-calendar-dto';
+import { MinAdventSharedDoorContentDto } from '../../../core/generated/model/min-advent-shared-door-content-dto';
+import { MinAdventSharedDoorOpenResponseDto } from '../../../core/generated/model/min-advent-shared-door-open-response-dto';
+import { MinAdventSharingResponseDto } from '../../../core/generated/model/min-advent-sharing-response-dto';
 import { MinAdventDomainMapper } from '../mapper/minadvent-domain.mapper';
 import { MinAdventCalendar } from '../models/minadvent-calendar.model';
 import { MinAdventCalendarRepository } from '../repositories/minadvent-calendar.repository';
-import { MinAdventSharedDoorContentDto } from '../../../core/generated/model/min-advent-shared-door-content-dto';
-import { MinAdventSharedDoorOpenResponseDto } from '../../../core/generated/model/min-advent-shared-door-open-response-dto';
 
 @Injectable({ providedIn: 'root' })
 export class MinAdventCalendarService {
@@ -18,6 +18,25 @@ export class MinAdventCalendarService {
   private readonly cachedCalendars: WritableSignal<MinAdventCalendar[]> = signal([]);
 
   constructor(private readonly repository: MinAdventCalendarRepository) {}
+
+  public async closeDoor(id: string, day: number, expectedVersion: number): Promise<MinAdventDoorUpdateResponseDto> {
+    const result = await this.repository.updateDoorStatus(id, day, expectedVersion);
+    this.cachedCalendars.update((calendars) =>
+      calendars.map((calendar) =>
+        calendar.id !== id
+          ? calendar
+          : {
+              ...calendar,
+              completed: result.completed,
+              doors: calendar.doors.map((door) =>
+                door.day === result.day ? { ...door, status: result.status } : door,
+              ),
+              version: result.version,
+            },
+      ),
+    );
+    return result;
+  }
 
   public async createCalendar(input: MinAdventCalendarCreateDto): Promise<MinAdventCalendar> {
     const calendar = MinAdventDomainMapper.toCalendar(await this.repository.create(input));
@@ -37,6 +56,15 @@ export class MinAdventCalendarService {
     return this.repository.getSharedDoor(token, day);
   }
 
+  public getSharing(id: string): Promise<MinAdventSharingResponseDto> {
+    return this.repository.getSharing(id);
+  }
+
+  public async loadCalendars(): Promise<void> {
+    const dtos = await this.repository.getAll();
+    this.cachedCalendars.set(dtos.map(MinAdventDomainMapper.toCalendar));
+  }
+
   public openSharedDoor(
     token: string,
     day: number,
@@ -45,9 +73,10 @@ export class MinAdventCalendarService {
     return this.repository.openSharedDoor(token, day, expectedVersion);
   }
 
-  public async loadCalendars(): Promise<void> {
-    const dtos = await this.repository.getAll();
-    this.cachedCalendars.set(dtos.map(MinAdventDomainMapper.toCalendar));
+  public async rotateSharingToken(id: string, expectedVersion: number): Promise<MinAdventSharingResponseDto> {
+    const response = await this.repository.rotateSharingToken(id, { expectedVersion });
+    this.updateCachedSharing(id, response);
+    return response;
   }
 
   public async updateCalendar(id: string, input: MinAdventCalendarUpdateDto): Promise<MinAdventCalendar> {
@@ -81,41 +110,12 @@ export class MinAdventCalendarService {
     return result;
   }
 
-  public async closeDoor(id: string, day: number, expectedVersion: number): Promise<MinAdventDoorUpdateResponseDto> {
-    const result = await this.repository.updateDoorStatus(id, day, expectedVersion);
-    this.cachedCalendars.update((calendars) =>
-      calendars.map((calendar) =>
-        calendar.id !== id
-          ? calendar
-          : {
-              ...calendar,
-              completed: result.completed,
-              doors: calendar.doors.map((door) =>
-                door.day === result.day ? { ...door, status: result.status } : door,
-              ),
-              version: result.version,
-            },
-      ),
-    );
-    return result;
-  }
-
-  public getSharing(id: string): Promise<MinAdventSharingResponseDto> {
-    return this.repository.getSharing(id);
-  }
-
   public async updateSharing(
     id: string,
     published: boolean,
     expectedVersion: number,
   ): Promise<MinAdventSharingResponseDto> {
     const response = await this.repository.updateSharing(id, { published, expectedVersion });
-    this.updateCachedSharing(id, response);
-    return response;
-  }
-
-  public async rotateSharingToken(id: string, expectedVersion: number): Promise<MinAdventSharingResponseDto> {
-    const response = await this.repository.rotateSharingToken(id, { expectedVersion });
     this.updateCachedSharing(id, response);
     return response;
   }

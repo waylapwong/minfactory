@@ -150,6 +150,9 @@ describe('MinAdventSharedCalendarComponent', () => {
       expect(component.animateDoor()).toBeTrue();
       expect(component.calendar()?.version).toBe(2);
       fixture.detectChanges();
+      const animatedContent = fixture.nativeElement.querySelector('.minadvent-first-open') as HTMLElement;
+      expect(animatedContent).toBeTruthy();
+      expect(getComputedStyle(animatedContent).animationName).toContain('minadvent-door-reveal');
       expect(fixture.nativeElement.querySelector('min-dialog')).toBeTruthy();
     });
 
@@ -168,6 +171,8 @@ describe('MinAdventSharedCalendarComponent', () => {
       expect(MINADVENT_CALENDAR_SERVICE_MOCK.getSharedDoor).toHaveBeenCalledWith('shared-token', 1);
       expect(MINADVENT_CALENDAR_SERVICE_MOCK.openSharedDoor).not.toHaveBeenCalled();
       expect(component.animateDoor()).toBeFalse();
+      fixture.detectChanges();
+      expect(fixture.nativeElement.querySelector('.minadvent-first-open')).toBeNull();
     });
 
     it('shows correctly encoded German error messages when opening a door fails', async () => {

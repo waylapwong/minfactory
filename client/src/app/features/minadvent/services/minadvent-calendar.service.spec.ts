@@ -1,7 +1,7 @@
 import { provideZonelessChangeDetection } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
-import { MINADVENT_CALENDAR_REPOSITORY_MOCK } from '../mocks/minadvent-calendar.repository.mock';
 import { createMinAdventCalendarDto, createMinAdventSharedCalendarDto } from '../mocks/minadvent-calendar.mock';
+import { MINADVENT_CALENDAR_REPOSITORY_MOCK } from '../mocks/minadvent-calendar.repository.mock';
 import { MinAdventCalendarRepository } from '../repositories/minadvent-calendar.repository';
 import { MinAdventCalendarService } from './minadvent-calendar.service';
 

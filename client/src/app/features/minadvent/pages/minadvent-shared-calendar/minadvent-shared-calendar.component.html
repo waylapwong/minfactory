@@ -98,7 +98,7 @@
         <div dialog-subtitle class="mb-3">
           <min-badge [color]="Color.Blue">{{ getDoorStatusLabel(content.status) }}</min-badge>
         </div>
-        <div class="flex flex-col gap-4" [class.animate-[door-reveal_450ms_ease-out]]="animateDoor()">
+        <div class="flex flex-col gap-4" [class.minadvent-first-open]="animateDoor()">
           @for (block of content.blocks; track block.position) {
             @if (block.type === 'TEXT') {
               <section

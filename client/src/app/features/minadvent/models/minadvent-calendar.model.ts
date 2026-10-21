@@ -11,13 +11,13 @@ export interface MinAdventCalendar {
   year: number;
 }
 
+export interface MinAdventCalendarGroup {
+  calendars: MinAdventCalendar[];
+  year: number;
+}
+
 export interface MinAdventDoor {
   blocks: MinAdventBlockDto[];
   day: number;
   status: 'EMPTY' | 'FILLED' | 'OPENED';
-}
-
-export interface MinAdventCalendarGroup {
-  calendars: MinAdventCalendar[];
-  year: number;
 }
