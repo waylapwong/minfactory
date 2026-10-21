@@ -1,5 +1,3 @@
 # `minRPG` | Home
 
-## 1. Allgemeines
-
-`minRPG` ist ein Mini Rollenspiel.
+Die Dokumentation wurde nach [SRS](../../specifications/minrpg/01-introduction.md) überführt.

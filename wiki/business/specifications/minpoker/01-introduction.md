@@ -1,5 +1,7 @@
 # 1. Einleitung
 
-> Noch nicht migriert – siehe #228.
+## `minPoker` | Home
 
-Gemeinsame fachliche Vorgaben werden in der [minFactory-SRS](../minfactory/README.md) gepflegt. Hier werden später nur abweichende oder ergänzende Anforderungen dieser minApp dokumentiert.
+#### 1. Allgemeines
+
+`minPoker` ist ein Mini Poker Spiel.

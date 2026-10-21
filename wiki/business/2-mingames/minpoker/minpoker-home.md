@@ -1,5 +1,3 @@
 # `minPoker` | Home
 
-## 1. Allgemeines
-
-`minPoker` ist ein Mini Poker Spiel.
+Die Dokumentation wurde nach [SRS](../../specifications/minpoker/01-introduction.md) überführt.
