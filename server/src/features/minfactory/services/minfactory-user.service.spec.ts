@@ -224,6 +224,21 @@ describe('MinFactoryUserService', () => {
       expect(callOrder).toEqual(['firebase', 'db']);
     });
 
+    it('should resume DB deletion when Firebase was deleted before a database failure', async () => {
+      const databaseError = new Error('Database unavailable');
+      MINFACTORY_USER_REPOSITORY_MOCK.deleteById.mockRejectedValueOnce(databaseError).mockResolvedValueOnce(undefined);
+      AUTHENTICATION_SERVICE_MOCK.deleteUser
+        .mockResolvedValueOnce(undefined)
+        .mockRejectedValueOnce({ code: 'auth/user-not-found' });
+
+      await expect(userService.deleteMe(user, 'test-request-id')).rejects.toBe(databaseError);
+      await userService.deleteMe(user, 'test-request-id');
+
+      expect(AUTHENTICATION_SERVICE_MOCK.deleteUser).toHaveBeenCalledTimes(2);
+      expect(MINFACTORY_USER_REPOSITORY_MOCK.deleteById).toHaveBeenCalledTimes(2);
+      expect(MINFACTORY_USER_REPOSITORY_MOCK.deleteById).toHaveBeenLastCalledWith(user.id, 'test-request-id');
+    });
+
     it('should propagate error when Firebase deletion fails with unexpected error', async () => {
       AUTHENTICATION_SERVICE_MOCK.deleteUser.mockRejectedValue(new Error('Firebase error'));
 
