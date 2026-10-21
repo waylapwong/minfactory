@@ -22,6 +22,7 @@ export class MinAdventCalendarTransactionMock {
     create: jest.fn((value: Partial<MinAdventCalendarEntity>) => value),
     save: jest.fn().mockResolvedValue(this.calendar),
     update: jest.fn().mockResolvedValue({ affected: 1 }),
+    delete: jest.fn().mockResolvedValue({ affected: 1 }),
     findOne: jest.fn().mockResolvedValue({ ...this.calendar, doors: [] }),
     createQueryBuilder: jest.fn(() => this.calendarQueryBuilder),
   };

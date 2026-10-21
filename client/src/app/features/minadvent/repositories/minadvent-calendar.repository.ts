@@ -20,6 +20,10 @@ export class MinAdventCalendarRepository {
     return firstValueFrom(this.api.createMinAdventCalendar(input));
   }
 
+  public delete(id: string, expectedVersion: number): Promise<void> {
+    return firstValueFrom(this.api.deleteMinAdventCalendar(id, { expectedVersion }));
+  }
+
   public get(id: string) {
     return firstValueFrom(this.api.getMinAdventCalendar(id));
   }

@@ -15,6 +15,7 @@ import { MinAdventEntityMapper } from '../mapper/minadvent-entity.mapper';
 import { MinAdventBlock } from '../models/domains/minadvent-block';
 import { MinAdventCalendar } from '../models/domains/minadvent-calendar';
 import { MinAdventCalendarCreateDto } from '../models/dtos/minadvent-calendar-create.dto';
+import { MinAdventCalendarDeleteDto } from '../models/dtos/minadvent-calendar-delete.dto';
 import { MinAdventCalendarUpdateDto } from '../models/dtos/minadvent-calendar-update.dto';
 import { MinAdventCalendarDto } from '../models/dtos/minadvent-calendar.dto';
 import { MinAdventDoorStatusUpdateDto } from '../models/dtos/minadvent-door-status-update.dto';
@@ -39,6 +40,10 @@ export class MinAdventCalendarService {
     this.validateCreate(input);
     const domain = MinAdventDtoMapper.toDomain(input, user.id);
     return MinAdventDomainMapper.toDto(MinAdventEntityMapper.toDomain(await this.calendarRepository.create(domain)));
+  }
+
+  public async delete(user: MinFactoryUser, id: string, input: MinAdventCalendarDeleteDto): Promise<void> {
+    await this.calendarRepository.delete(user.id, id, input.expectedVersion);
   }
 
   public async get(user: MinFactoryUser, id: string): Promise<MinAdventCalendarDto> {

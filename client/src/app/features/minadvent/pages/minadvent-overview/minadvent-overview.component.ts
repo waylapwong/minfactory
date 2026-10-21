@@ -9,7 +9,7 @@ import { H1Component } from '../../../../shared/components/h1/h1.component';
 import { H2Component } from '../../../../shared/components/h2/h2.component';
 import { InputComponent } from '../../../../shared/components/input/input.component';
 import { Color } from '../../../../shared/enums/color.enum';
-import { MinAdventCalendarGroup } from '../../models/minadvent-calendar.model';
+import { MinAdventCalendar, MinAdventCalendarGroup } from '../../models/minadvent-calendar.model';
 import { MinAdventCalendarService } from '../../services/minadvent-calendar.service';
 
 @Component({
@@ -30,6 +30,7 @@ import { MinAdventCalendarService } from '../../services/minadvent-calendar.serv
 export class MinAdventOverviewComponent implements OnInit {
   public readonly Color: typeof Color = Color;
   public readonly createError = signal('');
+  public readonly calendarToDelete = signal<MinAdventCalendar | null>(null);
   public readonly createForm = new FormGroup({
     title: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.maxLength(50)] }),
     recipientName: new FormControl('', {
@@ -58,7 +59,9 @@ export class MinAdventOverviewComponent implements OnInit {
   });
   public readonly isCreateDialogOpen = signal(false);
   public readonly isCreating = signal(false);
+  public readonly isDeleting = signal(false);
   public readonly isLoading = signal(true);
+  public readonly deleteError = signal('');
 
   constructor(
     public readonly routingService: RoutingService,
@@ -88,6 +91,26 @@ export class MinAdventOverviewComponent implements OnInit {
     }
   }
 
+  public async confirmDeleteCalendar(): Promise<void> {
+    const calendar = this.calendarToDelete();
+    if (!calendar || this.isDeleting()) {
+      return;
+    }
+
+    this.isDeleting.set(true);
+    this.deleteError.set('');
+    try {
+      await this.calendarService.deleteCalendar(calendar.id, calendar.version);
+      this.calendarToDelete.set(null);
+    } catch {
+      this.deleteError.set(
+        'Der Kalender konnte nicht gelöscht werden. Bitte lade die Liste neu und versuche es erneut.',
+      );
+    } finally {
+      this.isDeleting.set(false);
+    }
+  }
+
   public async loadCalendars(): Promise<void> {
     this.isLoading.set(true);
     this.error.set('');
@@ -104,5 +127,17 @@ export class MinAdventOverviewComponent implements OnInit {
   public openCreateDialog(): void {
     this.createError.set('');
     this.isCreateDialogOpen.set(true);
+  }
+
+  public openDeleteDialog(calendar: MinAdventCalendar, event: MouseEvent): void {
+    event.stopPropagation();
+    this.deleteError.set('');
+    this.calendarToDelete.set(calendar);
+  }
+
+  public closeDeleteDialog(): void {
+    if (!this.isDeleting()) {
+      this.calendarToDelete.set(null);
+    }
   }
 }
