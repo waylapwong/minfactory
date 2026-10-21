@@ -2,7 +2,7 @@
 
 ## minSplit | Architektur, Zustandslogik und Konsistenz
 
-> **Soll-Konzept v1.0.0** · [Übersicht](../../minsplit/minsplit-home.md) · [Fachlicher Lebenszyklus](../../../business/3-mintools/minsplit/group-lifecycle.md)
+> **Soll-Konzept v1.0.0** · [Übersicht](README.md) · [Fachlicher Lebenszyklus](../../business/minsplit/03-specific-requirements.md)
 
 #### Einordnung
 
