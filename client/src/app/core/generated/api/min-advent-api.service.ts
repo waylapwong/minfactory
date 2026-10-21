@@ -19,6 +19,8 @@ import { CustomHttpParameterCodec }                          from '../encoder';
 import { Observable }                                        from 'rxjs';
 
 // @ts-ignore
+import { GetMinAdventSharedDoor429Response } from '../model/get-min-advent-shared-door429-response';
+// @ts-ignore
 import { MinAdventCalendarCreateDto } from '../model/min-advent-calendar-create-dto';
 // @ts-ignore
 import { MinAdventCalendarDeleteDto } from '../model/min-advent-calendar-delete-dto';
