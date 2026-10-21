@@ -2,7 +2,7 @@
 
 ## minSplit | Technische Spezifikation v1.0.0
 
-> **Geplanter Soll-Zustand; nicht als bereits implementiert zu verstehen.** Verbindliche Fachbasis: [minSplit fachlich](../../../business/3-mintools/minsplit/minsplit-home.md) und die dort verlinkten Detailseiten. Dokumentationsauftrag: [#202](https://github.com/waylapwong/minfactory/issues/202). Der Produktumfang entspricht dem fachlich definierten Gesamtumfang, unabhängig von der späteren Aufteilung auf Entwicklungs-Milestones bis v0.5.0.
+> **Geplanter Soll-Zustand; nicht als bereits implementiert zu verstehen.** Verbindliche Fachbasis: [minSplit fachlich](../../business/minsplit/README.md) und die dort verlinkten Detailseiten. Dokumentationsauftrag: [#202](https://github.com/waylapwong/minfactory/issues/202). Der Produktumfang entspricht dem fachlich definierten Gesamtumfang, unabhängig von der späteren Aufteilung auf Entwicklungs-Milestones bis v0.5.0.
 
 #### Architekturentscheidungen
 
@@ -21,11 +21,11 @@
 
 #### Kapitel
 
-- [Architektur, Gruppenphasen und Transaktionen](../../minsplit/architecture.md)
-- [Datenbank, Integrität und Migrationen](../../minsplit/database.md)
-- [REST-API und Fehlervertrag](../../minsplit/api.md)
-- [Angular-Frontend und Visualisierungen](../../minsplit/frontend.md)
-- [Sicherheit, Freigabelinks und Datenschutz](../../minsplit/security.md)
-- [Unit-Tests, Rechenbeispiele und Review](../../minsplit/testing.md)
+- [Architektur, Gruppenphasen und Transaktionen](04-solution-strategy.md)
+- [Datenbank, Integrität und Migrationen](05-building-block-view.md)
+- [REST-API und Fehlervertrag](05-building-block-view.md)
+- [Angular-Frontend und Visualisierungen](05-building-block-view.md)
+- [Sicherheit, Freigabelinks und Datenschutz](08-crosscutting-concepts.md)
+- [Unit-Tests, Rechenbeispiele und Review](08-crosscutting-concepts.md)
 
 **Nicht Bestandteil von #202:** Featurecode, echte Migrationen, generierte Clients oder API-/Integrations-/E2E-Tests.
