@@ -20,7 +20,7 @@ describe('MinAdventSharedController', () => {
       expect(calendarService.getSharedCalendar).toHaveBeenCalledWith('a'.repeat(64));
     });
 
-    it('returns the neutral 404 error for an unavailable token', async () => {
+    it('returns a neutral 404 for a token whose calendar was deleted', async () => {
       await expect(controller.get('b'.repeat(64))).rejects.toMatchObject({
         status: 404,
         response: {
