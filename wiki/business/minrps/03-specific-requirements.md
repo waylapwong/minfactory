@@ -106,7 +106,7 @@ Diese Seite beschreibt beobachtbare Funktionen und fachlich relevante Grenzen de
 
 Für die Prüfung des dokumentierten Ist-Zustands:
 
-- [Frontend – minRPS-Seiten und Dienste](../../../../client/src/app/features/minrps)
-- [Backend – minRPS-Domain, Services, Controller und WebSocket-Gateway](../../../../server/src/features/minrps)
+- [Frontend – minRPS-Seiten und Dienste](../../../client/src/app/features/minrps)
+- [Backend – minRPS-Domain, Services, Controller und WebSocket-Gateway](../../../server/src/features/minrps)
 
 Die Dokumentation ist fachlich ausgerichtet. Die verlinkten Quellen dienen dem Abgleich, nicht als zusätzliche Funktionszusagen.
