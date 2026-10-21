@@ -4,17 +4,17 @@ Fachliche Produktspezifikationen (SRS).
 
 ## Plattform
 
-- [minFactory](specifications/minfactory/README.md)
+- [minFactory](minfactory/README.md)
 
 ## minGames
 
-- [minPoker](specifications/minpoker/README.md)
-- [minRPG](specifications/minrpg/README.md)
-- [minRPS](specifications/minrps/README.md)
+- [minPoker](minpoker/README.md)
+- [minRPG](minrpg/README.md)
+- [minRPS](minrps/README.md)
 
 ## minTools
 
-- [minAdvent](specifications/minadvent/README.md)
-- [minSplit](specifications/minsplit/README.md)
+- [minAdvent](minadvent/README.md)
+- [minSplit](minsplit/README.md)
 
 [Dokumentationskonventionen](../documentation-conventions.md)
