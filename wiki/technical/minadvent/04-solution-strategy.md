@@ -2,7 +2,7 @@
 
 ## minAdvent | Architektur und Zustandslogik
 
-> **Soll-Konzept v1.0.0** · [Übersicht](../../minadvent/minadvent-home.md) · [Fachlicher Lebenszyklus](../../../business/3-mintools/minadvent/calendar-lifecycle.md)
+> **Soll-Konzept v1.0.0** · [Übersicht](README.md) · [Fachlicher Lebenszyklus](../../business/minadvent/03-specific-requirements.md)
 
 #### 1. Einordnung in minFactory
 
@@ -89,4 +89,4 @@ sequenceDiagram
 
 #### 6. Offene Umsetzungsdetails
 
-Die konkreten Transaktionshelfer, Pfadnamen für **authentifizierte Ersteller-Ressourcen**, interne Error-Klassen können an vorhandene Patterns angepasst werden; ihre Semantik aus Fachkonzept und [API](../../minadvent/api.md) bleibt verbindlich. Keine neue Pflicht zu Socket.IO, Jobs oder NgRx.
+Die konkreten Transaktionshelfer, Pfadnamen für **authentifizierte Ersteller-Ressourcen**, interne Error-Klassen können an vorhandene Patterns angepasst werden; ihre Semantik aus Fachkonzept und [API](05-building-block-view.md) bleibt verbindlich. Keine neue Pflicht zu Socket.IO, Jobs oder NgRx.
