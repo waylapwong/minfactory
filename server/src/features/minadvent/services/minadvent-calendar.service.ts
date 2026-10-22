@@ -61,7 +61,7 @@ export class MinAdventCalendarService {
     const calendar = MinAdventEntityMapper.toDomain(entity);
     const response = new MinAdventSharedCalendarDto();
     response.title = calendar.title;
-    response.recipientName = calendar.recipientName;
+    response.recipientName = calendar.recipient;
     response.year = calendar.year;
     response.version = calendar.version;
     response.completed = calendar.completed;
@@ -166,7 +166,7 @@ export class MinAdventCalendarService {
         message: 'Der Kalender wurde zwischenzeitlich geändert.',
       });
     }
-    if (!current.isPublished) {
+    if (!current.shared) {
       throw new ConflictException({ code: 'CALENDAR_NOT_PUBLISHED', message: 'Der Kalender ist nicht freigegeben.' });
     }
     const updated = MinAdventEntityMapper.toDomain(
@@ -197,7 +197,7 @@ export class MinAdventCalendarService {
       });
     }
     const updatedDomain = MinAdventDtoMapper.applyMetadataUpdate(input, calendar);
-    if (updatedDomain.title === calendar.title && updatedDomain.recipientName === calendar.recipientName) {
+    if (updatedDomain.title === calendar.title && updatedDomain.recipient === calendar.recipient) {
       return MinAdventDomainMapper.toDto(calendar);
     }
     updatedDomain.version += 1;
@@ -257,7 +257,7 @@ export class MinAdventCalendarService {
         message: 'Der Kalender wurde zwischenzeitlich geändert.',
       });
     }
-    if (current.isPublished === input.published) {
+    if (current.shared === input.published) {
       return this.toSharingResponse(current);
     }
     const token = input.published ? this.createToken() : null;
@@ -346,11 +346,11 @@ export class MinAdventCalendarService {
 
   private toSharingResponse(calendar: MinAdventCalendar): MinAdventSharingResponseDto {
     const response = new MinAdventSharingResponseDto();
-    response.published = calendar.isPublished;
+    response.published = calendar.shared;
     response.version = calendar.version;
     response.completed = calendar.completed;
-    if (calendar.activeToken) {
-      response.sharedUrl = `/minadvent/shared/${calendar.activeToken}`;
+    if (calendar.shareToken) {
+      response.sharedUrl = `/minadvent/shared/${calendar.shareToken}`;
     }
     return response;
   }

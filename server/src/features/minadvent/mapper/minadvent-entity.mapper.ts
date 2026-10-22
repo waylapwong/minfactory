@@ -13,10 +13,10 @@ export class MinAdventEntityMapper {
     domain.ownerId = entity.ownerId;
     domain.year = entity.year;
     domain.title = entity.title;
-    domain.recipientName = entity.recipientName;
+    domain.recipient = entity.recipientName;
     domain.version = entity.version;
-    domain.isPublished = entity.isPublished;
-    domain.activeToken = entity.activeToken;
+    domain.shared = entity.isPublished;
+    domain.shareToken = entity.activeToken;
     domain.createdAt = entity.createdAt;
     domain.updatedAt = entity.updatedAt;
     domain.doors = [...(entity.doors ?? [])]

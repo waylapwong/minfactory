@@ -105,7 +105,7 @@ describe('MinAdventCalendarRepository', () => {
     expect(transaction.doorQueryBuilder.setLock).toHaveBeenCalledWith('pessimistic_write');
     expect(transaction.calendarRepository.update).toHaveBeenCalledWith(
       { id: calendar.id, ownerId: calendar.ownerId, version: 4 },
-      { title: calendar.title, recipientName: calendar.recipientName, version: 5 },
+      { title: calendar.title, recipientName: calendar.recipient, version: 5 },
     );
   });
 

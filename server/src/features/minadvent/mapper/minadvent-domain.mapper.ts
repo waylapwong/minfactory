@@ -23,16 +23,16 @@ export class MinAdventDomainMapper {
     const dto = new MinAdventCalendarDto();
     dto.id = domain.id;
     dto.title = domain.title;
-    dto.recipientName = domain.recipientName;
+    dto.recipient = domain.recipient;
     dto.year = domain.year;
     dto.version = domain.version;
-    dto.published = domain.isPublished;
+    dto.shared = domain.shared;
     dto.completed = domain.completed;
     dto.doors = domain.doors.map((door) => {
       const doorDto = new MinAdventDoorDto();
       doorDto.day = door.day;
       doorDto.status = door.status;
-      doorDto.blocks = door.contents.map((block) => MinAdventDomainMapper.toBlockDto(block));
+      doorDto.contents = door.contents.map((block) => MinAdventDomainMapper.toBlockDto(block));
       return doorDto;
     });
     return dto;
@@ -66,10 +66,10 @@ export class MinAdventDomainMapper {
     entity.ownerId = domain.ownerId;
     entity.year = domain.year;
     entity.title = domain.title;
-    entity.recipientName = domain.recipientName;
+    entity.recipientName = domain.recipient;
     entity.version = domain.version;
-    entity.isPublished = domain.isPublished;
-    entity.activeToken = domain.activeToken;
+    entity.isPublished = domain.shared;
+    entity.activeToken = domain.shareToken;
     entity.createdAt = domain.createdAt;
     entity.updatedAt = domain.updatedAt;
     return entity;

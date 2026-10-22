@@ -360,7 +360,7 @@ export class MinAdventCalendarRepository {
 
       const result = await calendarRepository.update(
         { id: calendar.id, ownerId: calendar.ownerId, version: expectedVersion },
-        { title: calendar.title, recipientName: calendar.recipientName, version: expectedVersion + 1 },
+        { title: calendar.title, recipientName: calendar.recipient, version: expectedVersion + 1 },
       );
       if (!result.affected) {
         throw new ConflictException({

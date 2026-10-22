@@ -9,7 +9,7 @@ export class MinAdventDtoMapper {
     return {
       ...domain,
       title: dto.title?.trim() ?? domain.title,
-      recipientName: dto.recipientName?.trim() ?? domain.recipientName,
+      recipient: dto.recipientName?.trim() ?? domain.recipient,
     };
   }
 
@@ -17,7 +17,7 @@ export class MinAdventDtoMapper {
     const domain = new MinAdventCalendar();
     domain.ownerId = ownerId;
     domain.title = dto.title.trim();
-    domain.recipientName = dto.recipientName.trim();
+    domain.recipient = dto.recipientName.trim();
     domain.year = dto.year;
     domain.doors = Array.from({ length: 24 }, (_, index) => {
       const door = new MinAdventDoor();
