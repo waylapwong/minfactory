@@ -1,7 +1,7 @@
 import { ConflictException, ForbiddenException, NotFoundException } from '@nestjs/common';
 import { MinAdventCalendarTransactionMock } from '../mocks/minadvent-calendar-transaction.mock';
 import { MinAdventCalendar } from '../models/domains/minadvent-calendar';
-import { MinAdventBlock } from '../models/domains/minadvent-block';
+import { MinAdventDoorContent } from '../models/domains/minadvent-block';
 import { MinAdventDoorEntity } from '../models/entities/minadvent-door.entity';
 import { MinAdventBlockEntity } from '../models/entities/minadvent-block.entity';
 import { MinAdventDoorStatus } from '../models/enums/minadvent-door-status.enum';
@@ -206,7 +206,7 @@ describe('MinAdventCalendarRepository', () => {
       });
 
       const result = await repository.replaceDoorBlocks('owner-1', 'calendar-1', 3, 1, () => [
-        Object.assign(new MinAdventBlock(), block),
+        Object.assign(new MinAdventDoorContent(), block),
       ]);
 
       expect(transaction.calendarQueryBuilder.setLock).toHaveBeenCalledWith('pessimistic_write');
@@ -243,7 +243,7 @@ describe('MinAdventCalendarRepository', () => {
       transaction.blockRepository.find.mockResolvedValue([existing]);
 
       await repository.replaceDoorBlocks('owner-1', 'calendar-1', 3, 1, () => [
-        Object.assign(new MinAdventBlock(), existing),
+        Object.assign(new MinAdventDoorContent(), existing),
       ]);
 
       expect(transaction.blockRepository.delete).not.toHaveBeenCalled();

@@ -1,5 +1,5 @@
 import { MinAdventCalendarEntity } from '../models/entities/minadvent-calendar.entity';
-import { MinAdventBlock } from '../models/domains/minadvent-block';
+import { MinAdventDoorContent } from '../models/domains/minadvent-block';
 
 export class MinAdventCalendarRepositoryMock {
   public create = jest
@@ -22,7 +22,7 @@ export class MinAdventCalendarRepositoryMock {
     .fn<Promise<MinAdventCalendarEntity>, [string, string, number, number]>()
     .mockResolvedValue(new MinAdventCalendarEntity());
   public replaceDoorBlocks = jest
-    .fn<Promise<MinAdventCalendarEntity>, [string, string, number, number, () => MinAdventBlock[]]>()
+    .fn<Promise<MinAdventCalendarEntity>, [string, string, number, number, () => MinAdventDoorContent[]]>()
     .mockResolvedValue(new MinAdventCalendarEntity());
   public updateSharing = jest
     .fn<Promise<MinAdventCalendarEntity>, [string, string, number, boolean, string | null]>()

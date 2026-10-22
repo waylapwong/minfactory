@@ -8,7 +8,7 @@ function createContext(
   method: string,
   ip: string,
   setHeader = jest.fn(),
-  handler: (...args: never[]) => unknown = MinAdventSharedController.prototype.get,
+  handler: (...args: never[]) => unknown = MinAdventSharedController.prototype.getMinAdventSharedCalendar,
 ): ExecutionContext {
   const request = { method, ip, socket: { remoteAddress: ip }, headers: {} };
   const response = { setHeader };

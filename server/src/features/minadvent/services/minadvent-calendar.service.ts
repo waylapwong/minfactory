@@ -12,7 +12,7 @@ import { MinFactoryUser } from '../../minfactory/models/domains/minfactory-user'
 import { MinAdventDomainMapper } from '../mapper/minadvent-domain.mapper';
 import { MinAdventDtoMapper } from '../mapper/minadvent-dto.mapper';
 import { MinAdventEntityMapper } from '../mapper/minadvent-entity.mapper';
-import { MinAdventBlock } from '../models/domains/minadvent-block';
+import { MinAdventDoorContent } from '../models/domains/minadvent-block';
 import { MinAdventCalendar } from '../models/domains/minadvent-calendar';
 import { MinAdventCalendarCreateDto } from '../models/dtos/minadvent-calendar-create.dto';
 import { MinAdventCalendarDeleteDto } from '../models/dtos/minadvent-calendar-delete.dto';
@@ -28,7 +28,7 @@ import { MinAdventSharedDoorOpenDto } from '../models/dtos/minadvent-shared-door
 import { MinAdventSharingResponseDto } from '../models/dtos/minadvent-sharing-response.dto';
 import { MinAdventSharingUpdateDto } from '../models/dtos/minadvent-sharing-update.dto';
 import { MinAdventTokenRotationDto } from '../models/dtos/minadvent-token-rotation.dto';
-import { MinAdventBlockType } from '../models/enums/minadvent-block-type.enum';
+import { MinAdventDoorContentType } from '../models/enums/minadvent-door-content-type.enum';
 import { MinAdventDoorStatus } from '../models/enums/minadvent-door-status.enum';
 import { MinAdventCalendarRepository } from '../repositories/minadvent-calendar.repository';
 
@@ -88,7 +88,7 @@ export class MinAdventCalendarService {
     const response = new MinAdventSharedDoorContentDto();
     response.day = door.day;
     response.status = door.status;
-    response.blocks = door.blocks.map(MinAdventDomainMapper.toBlockDto);
+    response.blocks = door.contents.map(MinAdventDomainMapper.toBlockDto);
     return response;
   }
 
@@ -144,7 +144,7 @@ export class MinAdventCalendarService {
       response.version = calendar.version;
       response.completed = calendar.completed;
       response.firstOpened = result.firstOpened;
-      response.blocks = door.blocks.map(MinAdventDomainMapper.toBlockDto);
+      response.blocks = door.contents.map(MinAdventDomainMapper.toBlockDto);
       return response;
     } catch (error) {
       if (error instanceof NotFoundException) {
@@ -282,7 +282,7 @@ export class MinAdventCalendarService {
     return Number(new Intl.DateTimeFormat('en', { timeZone: 'Europe/Berlin', year: 'numeric' }).format(new Date()));
   }
 
-  private mapLink(input: MinAdventDoorUpdateDto['blocks'][number], block: MinAdventBlock): void {
+  private mapLink(input: MinAdventDoorUpdateDto['blocks'][number], block: MinAdventDoorContent): void {
     if (typeof input.url !== 'string' || input.url.length > 50) {
       this.throwInvalidContent();
     }
@@ -303,7 +303,7 @@ export class MinAdventCalendarService {
     block.url = serializedUrl;
   }
 
-  private mapVoucher(input: MinAdventDoorUpdateDto['blocks'][number], block: MinAdventBlock): void {
+  private mapVoucher(input: MinAdventDoorUpdateDto['blocks'][number], block: MinAdventDoorContent): void {
     if (typeof input.description !== 'string' || !input.description.trim() || input.description.length > 200) {
       this.throwInvalidContent();
     }
@@ -355,16 +355,16 @@ export class MinAdventCalendarService {
     return response;
   }
 
-  private validateAndMapBlock(input: MinAdventDoorUpdateDto['blocks'][number], index: number): MinAdventBlock {
-    if (input?.position !== index + 1 || !Object.values(MinAdventBlockType).includes(input.type)) {
+  private validateAndMapBlock(input: MinAdventDoorUpdateDto['blocks'][number], index: number): MinAdventDoorContent {
+    if (input?.position !== index + 1 || !Object.values(MinAdventDoorContentType).includes(input.type)) {
       this.throwInvalidContent();
     }
-    const block = new MinAdventBlock();
+    const block = new MinAdventDoorContent();
     block.position = input.position;
     block.type = input.type;
-    if (input.type === MinAdventBlockType.Text) {
+    if (input.type === MinAdventDoorContentType.Text) {
       block.text = this.sanitizeText(input.text);
-    } else if (input.type === MinAdventBlockType.Link) {
+    } else if (input.type === MinAdventDoorContentType.Link) {
       this.mapLink(input, block);
     } else {
       this.mapVoucher(input, block);
@@ -372,7 +372,7 @@ export class MinAdventCalendarService {
     return block;
   }
 
-  private validateAndMapBlocks(inputs: MinAdventDoorUpdateDto['blocks']): MinAdventBlock[] {
+  private validateAndMapBlocks(inputs: MinAdventDoorUpdateDto['blocks']): MinAdventDoorContent[] {
     if (!Array.isArray(inputs) || inputs.length > 10) {
       this.throwInvalidContent();
     }

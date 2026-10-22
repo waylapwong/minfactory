@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { DataSource, Repository } from 'typeorm';
 import { MinAdventDomainMapper } from '../mapper/minadvent-domain.mapper';
 import { MinAdventEntityMapper } from '../mapper/minadvent-entity.mapper';
-import { MinAdventBlock } from '../models/domains/minadvent-block';
+import { MinAdventDoorContent } from '../models/domains/minadvent-block';
 import { MinAdventCalendar } from '../models/domains/minadvent-calendar';
 import { MinAdventBlockEntity } from '../models/entities/minadvent-block.entity';
 import { MinAdventCalendarEntity } from '../models/entities/minadvent-calendar.entity';
@@ -243,7 +243,7 @@ export class MinAdventCalendarRepository {
     calendarId: string,
     day: number,
     expectedVersion: number,
-    createBlocks: () => MinAdventBlock[],
+    createBlocks: () => MinAdventDoorContent[],
   ): Promise<MinAdventCalendarEntity> {
     return this.dataSource.transaction(async (manager) => {
       const calendarRepository = manager.getRepository(MinAdventCalendarEntity);
@@ -417,7 +417,7 @@ export class MinAdventCalendarRepository {
     });
   }
 
-  private blocksEqual(current: MinAdventBlockEntity[], requested: MinAdventBlock[]): boolean {
+  private blocksEqual(current: MinAdventBlockEntity[], requested: MinAdventDoorContent[]): boolean {
     return (
       current.length === requested.length &&
       current.every((block, index) => {

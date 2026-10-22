@@ -1,5 +1,5 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { MinAdventBlockType } from '../enums/minadvent-block-type.enum';
+import { MinAdventDoorContentType } from '../enums/minadvent-door-content-type.enum';
 
 export class MinAdventBlockDto {
   @ApiPropertyOptional({ type: String, nullable: true, maxLength: 200 })
@@ -18,8 +18,8 @@ export class MinAdventBlockDto {
   @ApiPropertyOptional({ type: String, nullable: true, maxLength: 50 })
   public title?: string | null;
 
-  @ApiProperty({ enum: MinAdventBlockType, enumName: 'MinAdventBlockType' })
-  public type!: MinAdventBlockType;
+  @ApiProperty({ enum: MinAdventDoorContentType, enumName: 'MinAdventBlockType' })
+  public type!: MinAdventDoorContentType;
 
   @ApiPropertyOptional({ type: String, nullable: true, maxLength: 50, format: 'uri' })
   public url?: string | null;

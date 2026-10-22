@@ -1,10 +1,10 @@
-import { MinAdventBlockType } from '../enums/minadvent-block-type.enum';
+import { MinAdventDoorContentType } from '../enums/minadvent-door-content-type.enum';
 
-export class MinAdventBlock {
-  public description: string | null = null;
-  public position: number = 1;
-  public text: string | null = null;
-  public title: string | null = null;
-  public type: MinAdventBlockType = MinAdventBlockType.Text;
-  public url: string | null = null;
+export class MinAdventDoorContent {
+  public description: string;
+  public position: number;
+  public text: string;
+  public title: string;
+  public type: MinAdventDoorContentType;
+  public url: string;
 }

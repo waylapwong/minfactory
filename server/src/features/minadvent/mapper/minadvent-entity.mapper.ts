@@ -3,7 +3,7 @@ import { MinAdventDoor } from '../models/domains/minadvent-door';
 import { MinAdventCalendarEntity } from '../models/entities/minadvent-calendar.entity';
 import { MinAdventDoorEntity } from '../models/entities/minadvent-door.entity';
 import { MinAdventDoorStatus } from '../models/enums/minadvent-door-status.enum';
-import { MinAdventBlock } from '../models/domains/minadvent-block';
+import { MinAdventDoorContent } from '../models/domains/minadvent-block';
 import { MinAdventBlockEntity } from '../models/entities/minadvent-block.entity';
 
 export class MinAdventEntityMapper {
@@ -25,10 +25,10 @@ export class MinAdventEntityMapper {
         const door = new MinAdventDoor();
         door.day = entityDoor.day;
         door.status = entityDoor.status;
-        door.blocks = [...(entityDoor.blocks ?? [])]
+        door.contents = [...(entityDoor.blocks ?? [])]
           .sort((left, right) => left.position - right.position)
           .map((entityBlock) => {
-            const block = new MinAdventBlock();
+            const block = new MinAdventDoorContent();
             block.description = entityBlock.description;
             block.position = entityBlock.position;
             block.text = entityBlock.text;
@@ -51,7 +51,7 @@ export class MinAdventEntityMapper {
     return entity;
   }
 
-  public static toBlockEntities(blocks: MinAdventBlock[], doorId: string): MinAdventBlockEntity[] {
+  public static toBlockEntities(blocks: MinAdventDoorContent[], doorId: string): MinAdventBlockEntity[] {
     return blocks.map((block) => Object.assign(new MinAdventBlockEntity(), { ...block, doorId }));
   }
 

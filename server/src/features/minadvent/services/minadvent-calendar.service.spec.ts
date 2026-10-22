@@ -1,10 +1,10 @@
 import { BadRequestException, ConflictException, ForbiddenException } from '@nestjs/common';
 import { MinFactoryUser } from '../../minfactory/models/domains/minfactory-user';
 import { MinAdventCalendarRepositoryMock } from '../mocks/minadvent-calendar.repository.mock';
-import { MinAdventBlock } from '../models/domains/minadvent-block';
+import { MinAdventDoorContent } from '../models/domains/minadvent-block';
 import { MinAdventCalendarEntity } from '../models/entities/minadvent-calendar.entity';
 import { MinAdventDoorEntity } from '../models/entities/minadvent-door.entity';
-import { MinAdventBlockType } from '../models/enums/minadvent-block-type.enum';
+import { MinAdventDoorContentType } from '../models/enums/minadvent-door-content-type.enum';
 import { MinAdventDoorStatus } from '../models/enums/minadvent-door-status.enum';
 import { MinAdventCalendarService } from './minadvent-calendar.service';
 
@@ -293,7 +293,7 @@ describe('MinAdventCalendarService', () => {
             Object.assign(new MinAdventDoorEntity(), {
               day: 2,
               status: MinAdventDoorStatus.Opened,
-              blocks: [{ position: 1, type: MinAdventBlockType.Text, text: '<p>Surprise</p>' }],
+              blocks: [{ position: 1, type: MinAdventDoorContentType.Text, text: '<p>Surprise</p>' }],
             }),
           ],
         }),
@@ -305,7 +305,7 @@ describe('MinAdventCalendarService', () => {
         blocks: [
           {
             position: 1,
-            type: MinAdventBlockType.Text,
+            type: MinAdventDoorContentType.Text,
             text: '<p>Surprise</p>',
             title: undefined,
             url: undefined,
@@ -347,7 +347,7 @@ describe('MinAdventCalendarService', () => {
             Object.assign(new MinAdventDoorEntity(), {
               day: 2,
               status: MinAdventDoorStatus.Opened,
-              blocks: [{ position: 1, type: MinAdventBlockType.Text, text: '<p>Surprise</p>' }],
+              blocks: [{ position: 1, type: MinAdventDoorContentType.Text, text: '<p>Surprise</p>' }],
             }),
           ],
         }),
@@ -495,8 +495,8 @@ describe('MinAdventCalendarService', () => {
         doors: [Object.assign(new MinAdventDoorEntity(), { id: 'door-3', day: 3, status: MinAdventDoorStatus.Empty })],
       });
 
-    const captureBlocks = (): MinAdventBlock[][] => {
-      const saved: MinAdventBlock[][] = [];
+    const captureBlocks = (): MinAdventDoorContent[][] => {
+      const saved: MinAdventDoorContent[][] = [];
       repository.replaceDoorBlocks.mockImplementation((_ownerId, _id, day, expectedVersion, createBlocks) => {
         const blocks = createBlocks();
         saved.push(blocks);
@@ -517,7 +517,7 @@ describe('MinAdventCalendarService', () => {
       const empty = await service.updateDoor(owner, 'calendar-1', 3, { expectedVersion: 4, blocks: [] });
       const tenBlocks = Array.from({ length: 10 }, (_, index) => ({
         position: index + 1,
-        type: MinAdventBlockType.Text,
+        type: MinAdventDoorContentType.Text,
         text: `<p>${index}</p>`,
       }));
       await service.updateDoor(owner, 'calendar-1', 3, { expectedVersion: 5, blocks: tenBlocks });
@@ -533,7 +533,7 @@ describe('MinAdventCalendarService', () => {
       captureBlocks();
       const elevenBlocks = Array.from({ length: 11 }, (_, index) => ({
         position: index + 1,
-        type: MinAdventBlockType.Text,
+        type: MinAdventDoorContentType.Text,
         text: '<p>Text</p>',
       }));
 
@@ -545,7 +545,7 @@ describe('MinAdventCalendarService', () => {
       await expect(
         service.updateDoor(owner, 'calendar-1', 3, {
           expectedVersion: 4,
-          blocks: [{ position: 2, type: MinAdventBlockType.Text, text: '<p>Text</p>' }],
+          blocks: [{ position: 2, type: MinAdventDoorContentType.Text, text: '<p>Text</p>' }],
         }),
       ).rejects.toMatchObject({ response: expect.objectContaining({ code: 'INVALID_CONTENT' }) });
     });
@@ -559,11 +559,16 @@ describe('MinAdventCalendarService', () => {
         blocks: [
           {
             position: 1,
-            type: MinAdventBlockType.Text,
+            type: MinAdventDoorContentType.Text,
             text: '<p><strong>Hello</strong><script>alert(1)</script></p>',
           },
-          { position: 2, type: MinAdventBlockType.Link, title: ' Song ', url: 'https://example.org/song' },
-          { position: 3, type: MinAdventBlockType.Voucher, title: ' Coffee ', description: ' A coffee together ' },
+          { position: 2, type: MinAdventDoorContentType.Link, title: ' Song ', url: 'https://example.org/song' },
+          {
+            position: 3,
+            type: MinAdventDoorContentType.Voucher,
+            title: ' Coffee ',
+            description: ' A coffee together ',
+          },
         ],
       });
 
@@ -573,13 +578,13 @@ describe('MinAdventCalendarService', () => {
       await expect(
         service.updateDoor(owner, 'calendar-1', 3, {
           expectedVersion: 4,
-          blocks: [{ position: 1, type: MinAdventBlockType.Text, text: '<p><br></p>' }],
+          blocks: [{ position: 1, type: MinAdventDoorContentType.Text, text: '<p><br></p>' }],
         }),
       ).rejects.toMatchObject({ response: expect.objectContaining({ code: 'INVALID_CONTENT' }) });
       await expect(
         service.updateDoor(owner, 'calendar-1', 3, {
           expectedVersion: 4,
-          blocks: [{ position: 1, type: MinAdventBlockType.Link, title: 'Link', url: 'javascript:alert(1)' }],
+          blocks: [{ position: 1, type: MinAdventDoorContentType.Link, title: 'Link', url: 'javascript:alert(1)' }],
         }),
       ).rejects.toMatchObject({ response: expect.objectContaining({ code: 'INVALID_CONTENT' }) });
     });
@@ -594,7 +599,7 @@ describe('MinAdventCalendarService', () => {
           blocks: [
             {
               position: 1,
-              type: MinAdventBlockType.Link,
+              type: MinAdventDoorContentType.Link,
               title: 'Unicode URL',
               url: `https://example.org/${'ü'.repeat(400)}`,
             },
@@ -609,19 +614,21 @@ describe('MinAdventCalendarService', () => {
       await expect(
         service.updateDoor(owner, 'calendar-1', 3, {
           expectedVersion: 4,
-          blocks: [{ position: 1, type: MinAdventBlockType.Text, text: `<p>${'a'.repeat(501)}</p>` }],
+          blocks: [{ position: 1, type: MinAdventDoorContentType.Text, text: `<p>${'a'.repeat(501)}</p>` }],
         }),
       ).rejects.toMatchObject({ response: expect.objectContaining({ code: 'INVALID_CONTENT' }) });
       await expect(
         service.updateDoor(owner, 'calendar-1', 3, {
           expectedVersion: 4,
-          blocks: [{ position: 1, type: MinAdventBlockType.Link, title: 'T'.repeat(51), url: 'https://a.co' }],
+          blocks: [{ position: 1, type: MinAdventDoorContentType.Link, title: 'T'.repeat(51), url: 'https://a.co' }],
         }),
       ).rejects.toMatchObject({ response: expect.objectContaining({ code: 'INVALID_CONTENT' }) });
       await expect(
         service.updateDoor(owner, 'calendar-1', 3, {
           expectedVersion: 4,
-          blocks: [{ position: 1, type: MinAdventBlockType.Voucher, title: 'Voucher', description: 'D'.repeat(201) }],
+          blocks: [
+            { position: 1, type: MinAdventDoorContentType.Voucher, title: 'Voucher', description: 'D'.repeat(201) },
+          ],
         }),
       ).rejects.toMatchObject({ response: expect.objectContaining({ code: 'INVALID_CONTENT' }) });
     });

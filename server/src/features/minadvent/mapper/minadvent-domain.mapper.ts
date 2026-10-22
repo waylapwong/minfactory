@@ -6,7 +6,7 @@ import { MinAdventCalendarEntity } from '../models/entities/minadvent-calendar.e
 import { MinAdventDoorEntity } from '../models/entities/minadvent-door.entity';
 import { MinAdventBlockDto } from '../models/dtos/minadvent-block.dto';
 import { MinAdventDoorUpdateResponseDto } from '../models/dtos/minadvent-door-update-response.dto';
-import { MinAdventBlock } from '../models/domains/minadvent-block';
+import { MinAdventDoorContent } from '../models/domains/minadvent-block';
 
 export class MinAdventDomainMapper {
   public static toDoorEntities(domain: MinAdventCalendar, calendarId: string): MinAdventDoorEntity[] {
@@ -32,13 +32,13 @@ export class MinAdventDomainMapper {
       const doorDto = new MinAdventDoorDto();
       doorDto.day = door.day;
       doorDto.status = door.status;
-      doorDto.blocks = door.blocks.map((block) => MinAdventDomainMapper.toBlockDto(block));
+      doorDto.blocks = door.contents.map((block) => MinAdventDomainMapper.toBlockDto(block));
       return doorDto;
     });
     return dto;
   }
 
-  public static toBlockDto(domain: MinAdventBlock): MinAdventBlockDto {
+  public static toBlockDto(domain: MinAdventDoorContent): MinAdventBlockDto {
     return {
       description: domain.description,
       position: domain.position,

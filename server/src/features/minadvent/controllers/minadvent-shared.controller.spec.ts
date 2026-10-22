@@ -27,7 +27,7 @@ describe('MinAdventSharedController', () => {
       const response = { title: 'December' };
       MINADVENT_SHARED_CALENDAR_SERVICE_MOCK.getSharedCalendar.mockResolvedValue(response);
 
-      await expect(controller.get('a'.repeat(64))).resolves.toBe(response);
+      await expect(controller.getMinAdventSharedCalendar('a'.repeat(64))).resolves.toBe(response);
       expect(MINADVENT_SHARED_CALENDAR_SERVICE_MOCK.getSharedCalendar).toHaveBeenCalled();
     });
   });
@@ -37,7 +37,7 @@ describe('MinAdventSharedController', () => {
       const response = { day: 1 };
       MINADVENT_SHARED_CALENDAR_SERVICE_MOCK.getSharedDoor.mockResolvedValue(response);
 
-      await expect(controller.getDoor('a'.repeat(64), 1)).resolves.toBe(response);
+      await expect(controller.getMinAdventSharedDoor('a'.repeat(64), 1)).resolves.toBe(response);
       expect(MINADVENT_SHARED_CALENDAR_SERVICE_MOCK.getSharedDoor).toHaveBeenCalled();
     });
   });
