@@ -133,6 +133,12 @@ Verbindliche Entwicklungsregeln stehen in `AGENTS.md`.
 - OpenAPI-Artefakte müssen aus dem Backend generiert werden; manuelle Anpassungen können bei der nächsten Generierung verloren gehen.
 - Der Befehl `npm run check` führt `format:all` aus und kann dadurch auch nicht auftragsbezogene Dateien formatieren.
 
+### Weitere Testkonventionen
+
+- NestJS-Unit-Tests fÃ¼r Controller ebenfalls mit `Test.createTestingModule()` aufsetzen und alle injizierten AbhÃ¤ngigkeiten als Mocks Ã¼ber `{ provide: Token, useValue: MOCK }` registrieren; vorhandene Mocks erweitern und wiederverwenden, fehlende als einfache `const`-Objekte mit `jest.fn()` anlegen.
+- Wenn die NestJS-Testing-API passende `override...()`-Methoden fÃ¼r eine AbhÃ¤ngigkeit bietet und diese funktionieren, sie zum Ersetzen verwenden (zum Beispiel `.overrideGuard(...).useValue(...)` fÃ¼r Guards); `useValue`-Provider fÃ¼r gewÃ¶hnliche Provider beibehalten.
+- `it()`-Beschreibungen beginnen mit `should`; falls eine Bedingung dazugehÃ¶rt, das Format `should ..., if ...` verwenden.
+
 ## Pflegehinweise
 
 - Neue Einträge nur bei bestätigtem und langfristig nützlichem Erkenntnisgewinn ergänzen.
