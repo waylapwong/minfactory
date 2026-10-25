@@ -6,7 +6,7 @@ export class MinAdventBlockDto {
   public description?: string | null;
 
   @ApiProperty({ minimum: 1, maximum: 10 })
-  public position!: number;
+  public position: number;
 
   @ApiPropertyOptional({
     type: String,
@@ -19,7 +19,7 @@ export class MinAdventBlockDto {
   public title?: string | null;
 
   @ApiProperty({ enum: MinAdventBlockType, enumName: 'MinAdventBlockType' })
-  public type!: MinAdventBlockType;
+  public type: MinAdventBlockType;
 
   @ApiPropertyOptional({ type: String, nullable: true, maxLength: 50, format: 'uri' })
   public url?: string | null;

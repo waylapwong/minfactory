@@ -5,5 +5,5 @@ export class MinAdventSharedDoorOpenDto {
   @ApiProperty({ minimum: 1 })
   @IsInt()
   @Min(1)
-  public expectedVersion!: number;
+  public expectedVersion: number;
 }

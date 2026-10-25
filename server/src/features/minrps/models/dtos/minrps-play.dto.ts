@@ -6,5 +6,5 @@ export class MinRpsPlayDto {
   @ApiProperty({ enum: MinRpsMove, enumName: 'MinRpsMove', example: MinRpsMove.Rock, required: true })
   @IsEnum(MinRpsMove)
   @IsNotEmpty()
-  public player1Move!: MinRpsMove;
+  public player1Move: MinRpsMove;
 }

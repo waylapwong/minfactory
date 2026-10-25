@@ -6,7 +6,7 @@ export class MinAdventCalendarUpdateDto {
   @IsInt()
   @Min(1)
   @Max(9999)
-  public expectedVersion!: number;
+  public expectedVersion: number;
   @ApiPropertyOptional({ maxLength: 50 })
   @IsOptional()
   @IsString()

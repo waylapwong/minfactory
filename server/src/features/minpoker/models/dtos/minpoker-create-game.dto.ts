@@ -9,10 +9,10 @@ export class MinPokerCreateGameDto {
     example: MinPokerGameVisibility.Public,
   })
   @IsEnum(MinPokerGameVisibility)
-  public visibility!: MinPokerGameVisibility;
+  public visibility: MinPokerGameVisibility;
   @ApiProperty({ example: 'Test Name', maxLength: 32, minLength: 2, required: true })
   @IsString()
   @MaxLength(32)
   @MinLength(2)
-  public name!: string;
+  public name: string;
 }

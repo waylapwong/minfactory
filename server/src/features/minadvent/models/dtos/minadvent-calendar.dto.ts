@@ -3,26 +3,26 @@ import { MinAdventDoorDto } from './minadvent-door.dto';
 
 export class MinAdventCalendarDto {
   @ApiProperty()
-  public id!: string;
+  public id: string;
 
   @ApiProperty({ maxLength: 50 })
-  public title!: string;
+  public title: string;
 
   @ApiProperty({ maxLength: 50 })
-  public recipientName!: string;
+  public recipientName: string;
 
   @ApiProperty()
-  public year!: number;
+  public year: number;
 
   @ApiProperty()
-  public version!: number;
+  public version: number;
 
   @ApiProperty()
-  public published!: boolean;
+  public published: boolean;
 
   @ApiProperty()
-  public completed!: boolean;
+  public completed: boolean;
 
   @ApiProperty({ type: [MinAdventDoorDto] })
-  public doors!: MinAdventDoorDto[];
+  public doors: MinAdventDoorDto[];
 }

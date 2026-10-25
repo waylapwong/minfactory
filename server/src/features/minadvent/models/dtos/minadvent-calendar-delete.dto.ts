@@ -5,5 +5,5 @@ export class MinAdventCalendarDeleteDto {
   @ApiProperty()
   @IsInt()
   @Min(1)
-  public expectedVersion!: number;
+  public expectedVersion: number;
 }

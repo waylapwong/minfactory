@@ -1,3 +1,3 @@
 export class MinPokerMatchConnectedEvent {
-  public playerId!: string;
+  declare public playerId: string;
 }

@@ -6,15 +6,15 @@ export class MinAdventCalendarCreateDto {
   @IsInt()
   @Min(1)
   @Max(9999)
-  public year!: number;
+  public year: number;
   @ApiProperty({ maxLength: 50 })
   @IsString()
   @MinLength(1)
   @MaxLength(50)
-  public recipientName!: string;
+  public recipientName: string;
   @ApiProperty({ maxLength: 50 })
   @IsString()
   @MinLength(1)
   @MaxLength(50)
-  public title!: string;
+  public title: string;
 }

@@ -5,10 +5,10 @@ import { MinAdventBlockDto } from './minadvent-block.dto';
 export class MinAdventDoorUpdateDto {
   @ApiProperty({ type: [MinAdventBlockDto], maxItems: 10 })
   @IsArray()
-  public blocks!: MinAdventBlockDto[];
+  public blocks: MinAdventBlockDto[];
 
   @ApiProperty({ minimum: 1 })
   @IsInt()
   @Min(1)
-  public expectedVersion!: number;
+  public expectedVersion: number;
 }

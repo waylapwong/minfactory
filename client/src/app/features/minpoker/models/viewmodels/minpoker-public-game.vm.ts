@@ -1,13 +1,13 @@
 import { MinPokerGameVisibility } from '../../../../core/generated';
 
 export class MinPokerPublicGameVm {
-  public bigBlind!: number;
-  public createdAt!: Date;
-  public id!: string;
-  public maxPlayerCount!: number;
-  public name!: string;
-  public observerCount!: number;
-  public playerCount!: number;
-  public smallBlind!: number;
-  public visibility!: MinPokerGameVisibility;
+  declare public bigBlind: number;
+  declare public createdAt: Date;
+  declare public id: string;
+  declare public maxPlayerCount: number;
+  declare public name: string;
+  declare public observerCount: number;
+  declare public playerCount: number;
+  declare public smallBlind: number;
+  declare public visibility: MinPokerGameVisibility;
 }

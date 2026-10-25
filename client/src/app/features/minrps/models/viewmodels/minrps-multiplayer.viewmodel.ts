@@ -1,18 +1,18 @@
 import { MinRpsMove, MinRpsResult } from '../../../../core/generated';
 
 export class MinRpsMultiplayerViewModel {
-  public canTakeHeroSeat!: boolean;
-  public canTakeVillainSeat!: boolean;
-  public gameId!: string;
-  public heroHasSelectedMove!: boolean;
-  public heroIsWinning!: boolean;
-  public heroMove!: MinRpsMove;
-  public heroName!: string;
-  public isObserver!: boolean;
-  public result!: MinRpsResult;
+  declare public canTakeHeroSeat: boolean;
+  declare public canTakeVillainSeat: boolean;
+  declare public gameId: string;
+  declare public heroHasSelectedMove: boolean;
+  declare public heroIsWinning: boolean;
+  declare public heroMove: MinRpsMove;
+  declare public heroName: string;
+  declare public isObserver: boolean;
+  declare public result: MinRpsResult;
   public resultHistory: MinRpsResult[] = [];
-  public villainHasSelectedMove!: boolean;
-  public villainIsWinning!: boolean;
-  public villainMove!: MinRpsMove;
-  public villainName!: string;
+  declare public villainHasSelectedMove: boolean;
+  declare public villainIsWinning: boolean;
+  declare public villainMove: MinRpsMove;
+  declare public villainName: string;
 }

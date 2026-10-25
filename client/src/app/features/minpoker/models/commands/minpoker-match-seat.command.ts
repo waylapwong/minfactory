@@ -1,7 +1,7 @@
 export class MinPokerMatchSeatCommand {
-  public avatar!: string;
-  public matchId!: string;
-  public playerId!: string;
-  public playerName!: string;
-  public seat!: number;
+  declare public avatar: string;
+  declare public matchId: string;
+  declare public playerId: string;
+  declare public playerName: string;
+  declare public seat: number;
 }

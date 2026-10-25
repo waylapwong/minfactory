@@ -1,4 +1,4 @@
 export class MinPokerMatchPauseCommand {
-  public matchId!: string;
-  public playerId!: string;
+  declare public matchId: string;
+  declare public playerId: string;
 }

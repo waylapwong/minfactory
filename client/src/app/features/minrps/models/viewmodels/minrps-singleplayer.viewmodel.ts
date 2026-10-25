@@ -1,10 +1,10 @@
 import { MinRpsMove, MinRpsResult } from '../../../../core/generated';
 
 export class MinRpsSingleplayerViewModel {
-  public player1IsWinning!: boolean;
-  public player1Move!: MinRpsMove;
-  public player2IsWinning!: boolean;
-  public player2Move!: MinRpsMove;
+  declare public player1IsWinning: boolean;
+  declare public player1Move: MinRpsMove;
+  declare public player2IsWinning: boolean;
+  declare public player2Move: MinRpsMove;
   public resultHistory: MinRpsResult[] = [];
-  public result!: MinRpsResult;
+  declare public result: MinRpsResult;
 }

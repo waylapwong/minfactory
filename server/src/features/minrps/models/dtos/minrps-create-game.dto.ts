@@ -8,5 +8,5 @@ export class MinRpsCreateGameDto {
   @MaxLength(16)
   @MinLength(2)
   @Transform(({ value }) => value.trim())
-  public name!: string;
+  public name: string;
 }

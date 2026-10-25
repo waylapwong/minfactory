@@ -10,6 +10,7 @@ Verbindliche Entwicklungsregeln stehen in `AGENTS.md`.
 
 ### Domain Models
 
+- Model-Felder ohne Definite-Assignment-Assertion (`!`) deklarieren; im strikt typisierten Client `declare` verwenden, im Server normale Felddeklarationen.
 - `MinPokerGame` kapselt fachliche Zustandsübergänge und Invarianten wie Sitzplatzbelegung, Spielstart, Pausieren und Fortsetzen.
 - Domain Models können über Konstruktoren mit `Partial<T>` initialisiert werden; bestehende Modelle wie `MinPokerGame` als Referenz verwenden.
 - Fachliche Regelverletzungen werden in Domain-Methoden geprüft; `MinPokerGame` verwendet dafür `GameRuleException`.
