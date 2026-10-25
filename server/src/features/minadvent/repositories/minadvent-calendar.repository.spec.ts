@@ -21,12 +21,13 @@ describe('MinAdventCalendarRepository', () => {
   });
 
   it('persists the calendar and exactly 24 empty doors in one transaction', async () => {
-    const calendar = new MinAdventCalendar();
+    const calendar: MinAdventCalendar = new MinAdventCalendar();
     calendar.title = 'December';
     calendar.ownerId = 'owner-1';
     calendar.year = 2026;
     calendar.doors = Array.from({ length: 24 }, (_, index) => ({ day: index + 1, status: MinAdventDoorStatus.Empty }));
-    const created = await repository.create(calendar);
+    const created: import('C:/Users/wayla/Desktop/Projekte/minfactory/server/src/features/minadvent/models/entities/minadvent-calendar.entity').MinAdventCalendarEntity =
+      await repository.create(calendar);
 
     expect(transaction.calendarRepository.create.mock.calls[0][0].id).toBeUndefined();
     expect(created.id).toBe('calendar-1');
@@ -91,12 +92,13 @@ describe('MinAdventCalendarRepository', () => {
 
   it('updates metadata only when owner and expected global version still match', async () => {
     transaction.calendar.version = 4;
-    const calendar = Object.assign(new MinAdventCalendar(), {
-      id: 'calendar-1',
-      ownerId: 'owner-1',
-      title: 'Updated title',
-      recipientName: 'Alex',
-    });
+    const calendar: MinAdventCalendar & { id: string; ownerId: string; title: string; recipientName: string } =
+      Object.assign(new MinAdventCalendar(), {
+        id: 'calendar-1',
+        ownerId: 'owner-1',
+        title: 'Updated title',
+        recipientName: 'Alex',
+      });
 
     await repository.update(calendar, 4);
 
@@ -111,9 +113,12 @@ describe('MinAdventCalendarRepository', () => {
 
   it('rejects a concurrent update when the expected version no longer matches', async () => {
     transaction.calendar.version = 5;
-    const calendar = Object.assign(new MinAdventCalendar(), { id: 'calendar-1', ownerId: 'owner-1' });
+    const calendar: MinAdventCalendar & { id: string; ownerId: string } = Object.assign(new MinAdventCalendar(), {
+      id: 'calendar-1',
+      ownerId: 'owner-1',
+    });
 
-    const error = await repository.update(calendar, 4).catch((reason: unknown) => reason);
+    const error: unknown = await repository.update(calendar, 4).catch((reason: unknown) => reason);
 
     expect(error).toBeInstanceOf(ConflictException);
     expect((error as ConflictException).getResponse()).toEqual(expect.objectContaining({ code: 'VERSION_CONFLICT' }));
@@ -124,13 +129,14 @@ describe('MinAdventCalendarRepository', () => {
     jest.useFakeTimers();
     jest.setSystemTime(new Date('2026-12-24T23:00:00.000Z'));
     transaction.doors.push(Object.assign(new MinAdventDoorEntity(), { day: 1, status: MinAdventDoorStatus.Opened }));
-    const calendar = Object.assign(new MinAdventCalendar(), {
-      id: 'calendar-1',
-      ownerId: 'owner-1',
-      title: 'Updated title',
-      recipientName: 'Alex',
-    });
-    const error = await repository.update(calendar, 1).catch((reason: unknown) => reason);
+    const calendar: MinAdventCalendar & { id: string; ownerId: string; title: string; recipientName: string } =
+      Object.assign(new MinAdventCalendar(), {
+        id: 'calendar-1',
+        ownerId: 'owner-1',
+        title: 'Updated title',
+        recipientName: 'Alex',
+      });
+    const error: unknown = await repository.update(calendar, 1).catch((reason: unknown) => reason);
 
     expect(error).toBeInstanceOf(ConflictException);
     expect((error as ConflictException).getResponse()).toEqual(expect.objectContaining({ code: 'CALENDAR_COMPLETED' }));
@@ -183,14 +189,22 @@ describe('MinAdventCalendarRepository', () => {
     });
 
     it('replaces all blocks and increments the calendar version once', async () => {
-      const door = Object.assign(new MinAdventDoorEntity(), {
-        id: 'door-3',
-        calendarId: 'calendar-1',
-        day: 3,
-        status: MinAdventDoorStatus.Empty,
-      });
+      const door: MinAdventDoorEntity & { id: string; calendarId: string; day: number; status: MinAdventDoorStatus } =
+        Object.assign(new MinAdventDoorEntity(), {
+          id: 'door-3',
+          calendarId: 'calendar-1',
+          day: 3,
+          status: MinAdventDoorStatus.Empty,
+        });
       transaction.doors.push(door);
-      const block = Object.assign(new MinAdventBlockEntity(), {
+      const block: MinAdventBlockEntity & {
+        position: number;
+        type: string;
+        text: string;
+        title: null;
+        url: null;
+        description: null;
+      } = Object.assign(new MinAdventBlockEntity(), {
         position: 1,
         type: 'TEXT',
         text: '<p>Surprise</p>',
@@ -205,9 +219,10 @@ describe('MinAdventCalendarRepository', () => {
         doors: [{ ...door, status: MinAdventDoorStatus.Filled, blocks: [block] }],
       });
 
-      const result = await repository.replaceDoorBlocks('owner-1', 'calendar-1', 3, 1, () => [
-        Object.assign(new MinAdventBlock(), block),
-      ]);
+      const result: import('C:/Users/wayla/Desktop/Projekte/minfactory/server/src/features/minadvent/models/entities/minadvent-calendar.entity').MinAdventCalendarEntity =
+        await repository.replaceDoorBlocks('owner-1', 'calendar-1', 3, 1, () => [
+          Object.assign(new MinAdventBlock(), block),
+        ]);
 
       expect(transaction.calendarQueryBuilder.setLock).toHaveBeenCalledWith('pessimistic_write');
       expect(transaction.doorQueryBuilder.setLock).toHaveBeenCalledWith('pessimistic_write');
@@ -225,7 +240,14 @@ describe('MinAdventCalendarRepository', () => {
     });
 
     it('does not increment the version when blocks are unchanged', async () => {
-      const existing = Object.assign(new MinAdventBlockEntity(), {
+      const existing: MinAdventBlockEntity & {
+        position: number;
+        type: string;
+        text: string;
+        title: null;
+        url: null;
+        description: null;
+      } = Object.assign(new MinAdventBlockEntity(), {
         position: 1,
         type: 'TEXT',
         text: '<p>Same</p>',
@@ -233,12 +255,13 @@ describe('MinAdventCalendarRepository', () => {
         url: null,
         description: null,
       });
-      const door = Object.assign(new MinAdventDoorEntity(), {
-        id: 'door-3',
-        calendarId: 'calendar-1',
-        day: 3,
-        status: MinAdventDoorStatus.Filled,
-      });
+      const door: MinAdventDoorEntity & { id: string; calendarId: string; day: number; status: MinAdventDoorStatus } =
+        Object.assign(new MinAdventDoorEntity(), {
+          id: 'door-3',
+          calendarId: 'calendar-1',
+          day: 3,
+          status: MinAdventDoorStatus.Filled,
+        });
       transaction.doors.push(door);
       transaction.blockRepository.find.mockResolvedValue([existing]);
 
@@ -266,21 +289,23 @@ describe('MinAdventCalendarRepository', () => {
     });
 
     it('opens FILLED atomically and increments the version once', async () => {
-      const door = Object.assign(new MinAdventDoorEntity(), {
-        id: 'door-1',
-        calendarId: 'calendar-1',
-        day: 1,
-        status: MinAdventDoorStatus.Filled,
-      });
+      const door: MinAdventDoorEntity & { id: string; calendarId: string; day: number; status: MinAdventDoorStatus } =
+        Object.assign(new MinAdventDoorEntity(), {
+          id: 'door-1',
+          calendarId: 'calendar-1',
+          day: 1,
+          status: MinAdventDoorStatus.Filled,
+        });
       transaction.calendar.activeToken = 'a'.repeat(64);
       transaction.doors.push(door);
-      const block = Object.assign(new MinAdventBlockEntity(), {
-        id: 'block-1',
-        doorId: door.id,
-        position: 1,
-        type: 'TEXT',
-        text: '<p>Surprise</p>',
-      });
+      const block: MinAdventBlockEntity & { id: string; doorId: string; position: number; type: string; text: string } =
+        Object.assign(new MinAdventBlockEntity(), {
+          id: 'block-1',
+          doorId: door.id,
+          position: 1,
+          type: 'TEXT',
+          text: '<p>Surprise</p>',
+        });
       transaction.blockRepository.find.mockResolvedValue([block]);
       transaction.calendarRepository.findOne.mockResolvedValue({
         ...transaction.calendar,
@@ -288,7 +313,10 @@ describe('MinAdventCalendarRepository', () => {
         doors: [{ ...door, status: MinAdventDoorStatus.Opened, blocks: [block] }],
       });
 
-      const result = await repository.openSharedDoor('a'.repeat(64), 1, 1, { year: 2026, month: 12, day: 1 });
+      const result: {
+        calendar: import('C:/Users/wayla/Desktop/Projekte/minfactory/server/src/features/minadvent/models/entities/minadvent-calendar.entity').MinAdventCalendarEntity;
+        firstOpened: boolean;
+      } = await repository.openSharedDoor('a'.repeat(64), 1, 1, { year: 2026, month: 12, day: 1 });
 
       expect(transaction.calendarQueryBuilder.setLock).toHaveBeenCalledWith('pessimistic_write');
       expect(transaction.calendarQueryBuilder.where).toHaveBeenCalledWith(
@@ -329,13 +357,19 @@ describe('MinAdventCalendarRepository', () => {
     });
 
     it('returns already opened content without a mutation when the expected version is current', async () => {
-      const door = Object.assign(new MinAdventDoorEntity(), {
-        id: 'door-1',
-        calendarId: 'calendar-1',
-        day: 1,
-        status: MinAdventDoorStatus.Opened,
-      });
-      const filledDoor = Object.assign(new MinAdventDoorEntity(), {
+      const door: MinAdventDoorEntity & { id: string; calendarId: string; day: number; status: MinAdventDoorStatus } =
+        Object.assign(new MinAdventDoorEntity(), {
+          id: 'door-1',
+          calendarId: 'calendar-1',
+          day: 1,
+          status: MinAdventDoorStatus.Opened,
+        });
+      const filledDoor: MinAdventDoorEntity & {
+        id: string;
+        calendarId: string;
+        day: number;
+        status: MinAdventDoorStatus;
+      } = Object.assign(new MinAdventDoorEntity(), {
         id: 'door-2',
         calendarId: 'calendar-1',
         day: 2,
@@ -343,7 +377,10 @@ describe('MinAdventCalendarRepository', () => {
       });
       transaction.doors.push(door, filledDoor);
 
-      const result = await repository.openSharedDoor('a'.repeat(64), 1, 1, { year: 2026, month: 12, day: 1 });
+      const result: {
+        calendar: import('C:/Users/wayla/Desktop/Projekte/minfactory/server/src/features/minadvent/models/entities/minadvent-calendar.entity').MinAdventCalendarEntity;
+        firstOpened: boolean;
+      } = await repository.openSharedDoor('a'.repeat(64), 1, 1, { year: 2026, month: 12, day: 1 });
 
       expect(result.firstOpened).toBe(false);
       expect(result.calendar.doors).toHaveLength(2);
@@ -355,12 +392,13 @@ describe('MinAdventCalendarRepository', () => {
 
   describe('closeDoor()', () => {
     function addOpenedDoor(): MinAdventDoorEntity {
-      const door = Object.assign(new MinAdventDoorEntity(), {
-        id: 'door-1',
-        calendarId: 'calendar-1',
-        day: 1,
-        status: MinAdventDoorStatus.Opened,
-      });
+      const door: MinAdventDoorEntity & { id: string; calendarId: string; day: number; status: MinAdventDoorStatus } =
+        Object.assign(new MinAdventDoorEntity(), {
+          id: 'door-1',
+          calendarId: 'calendar-1',
+          day: 1,
+          status: MinAdventDoorStatus.Opened,
+        });
       transaction.doors.push(door);
       transaction.calendarRepository.findOne.mockResolvedValue({
         ...transaction.calendar,
@@ -417,10 +455,11 @@ describe('MinAdventCalendarRepository', () => {
     it('closes an opened door after the Advent period and increments the global version once', async () => {
       jest.useFakeTimers();
       jest.setSystemTime(new Date('2028-01-01T00:00:00.000Z'));
-      const door = addOpenedDoor();
+      const door: MinAdventDoorEntity = addOpenedDoor();
       transaction.doors.push(Object.assign(new MinAdventDoorEntity(), { day: 2, status: MinAdventDoorStatus.Filled }));
 
-      const updated = await repository.closeDoor('owner-1', 'calendar-1', 1, 1);
+      const updated: import('C:/Users/wayla/Desktop/Projekte/minfactory/server/src/features/minadvent/models/entities/minadvent-calendar.entity').MinAdventCalendarEntity =
+        await repository.closeDoor('owner-1', 'calendar-1', 1, 1);
 
       expect(transaction.calendarQueryBuilder.setLock).toHaveBeenCalledWith('pessimistic_write');
       expect(transaction.doorQueryBuilder.setLock).toHaveBeenCalledWith('pessimistic_write');

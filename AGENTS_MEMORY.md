@@ -10,7 +10,7 @@ Verbindliche Entwicklungsregeln stehen in `AGENTS.md`.
 
 ### Domain Models
 
-- Model-Felder ohne Definite-Assignment-Assertion (`!`) deklarieren; im strikt typisierten Client `declare` verwenden, im Server normale Felddeklarationen.
+- Model-Felder ohne Definite-Assignment-Assertion (`!`) deklarieren; im Client `strictPropertyInitialization: false` verwenden und normale Felddeklarationen beibehalten.
 - `MinPokerGame` kapselt fachliche Zustandsübergänge und Invarianten wie Sitzplatzbelegung, Spielstart, Pausieren und Fortsetzen.
 - Domain Models können über Konstruktoren mit `Partial<T>` initialisiert werden; bestehende Modelle wie `MinPokerGame` als Referenz verwenden.
 - Fachliche Regelverletzungen werden in Domain-Methoden geprüft; `MinPokerGame` verwendet dafür `GameRuleException`.
@@ -91,6 +91,10 @@ Verbindliche Entwicklungsregeln stehen in `AGENTS.md`.
 - Die Room-Systeme kapseln Join-, Leave- und Cleanup-Vorgänge für Socket-Rooms.
 - `MinPokerGateway` versendet spielerspezifische Hand-Events gezielt statt an alle Spieler zu broadcasten.
 - Match-Updates werden über die zugehörigen Socket-Rooms verteilt.
+
+## Typisierung
+
+- Bei Variablen immer explizite Typannotationen ergänzen, auch für `const` und `let`; Schleifenwerte bei Bedarf über typisierte Callbacks annotieren.
 
 ## Testing
 

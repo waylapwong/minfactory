@@ -1,7 +1,7 @@
 import { MinRpsMove } from '../../../../core/generated';
 
 export class MinRpsMatchPlayPayload {
-  declare public matchId: string;
-  declare public playerId: string;
-  declare public playerMove: MinRpsMove;
+  public matchId: string;
+  public playerId: string;
+  public playerMove: MinRpsMove;
 }

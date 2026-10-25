@@ -11,7 +11,7 @@ import { MinAdventBlock } from '../models/domains/minadvent-block';
 export class MinAdventDomainMapper {
   public static toDoorEntities(domain: MinAdventCalendar, calendarId: string): MinAdventDoorEntity[] {
     return domain.doors.map((door) => {
-      const entity = new MinAdventDoorEntity();
+      const entity: MinAdventDoorEntity = new MinAdventDoorEntity();
       entity.calendarId = calendarId;
       entity.day = door.day;
       entity.status = door.status;
@@ -20,7 +20,7 @@ export class MinAdventDomainMapper {
   }
 
   public static toDto(domain: MinAdventCalendar): MinAdventCalendarDto {
-    const dto = new MinAdventCalendarDto();
+    const dto: MinAdventCalendarDto = new MinAdventCalendarDto();
     dto.id = domain.id;
     dto.title = domain.title;
     dto.recipientName = domain.recipientName;
@@ -29,7 +29,7 @@ export class MinAdventDomainMapper {
     dto.published = domain.isPublished;
     dto.completed = domain.completed;
     dto.doors = domain.doors.map((door) => {
-      const doorDto = new MinAdventDoorDto();
+      const doorDto: MinAdventDoorDto = new MinAdventDoorDto();
       doorDto.day = door.day;
       doorDto.status = door.status;
       doorDto.blocks = door.blocks.map((block) => MinAdventDomainMapper.toBlockDto(block));
@@ -50,7 +50,7 @@ export class MinAdventDomainMapper {
   }
 
   public static toDoorUpdateResponse(day: MinAdventDoor, calendar: MinAdventCalendar): MinAdventDoorUpdateResponseDto {
-    const dto = new MinAdventDoorUpdateResponseDto();
+    const dto: MinAdventDoorUpdateResponseDto = new MinAdventDoorUpdateResponseDto();
     dto.day = day.day;
     dto.status = day.status;
     dto.version = calendar.version;
@@ -59,7 +59,7 @@ export class MinAdventDomainMapper {
   }
 
   public static toEntity(domain: MinAdventCalendar): MinAdventCalendarEntity {
-    const entity = new MinAdventCalendarEntity();
+    const entity: MinAdventCalendarEntity = new MinAdventCalendarEntity();
     if (domain.id) {
       entity.id = domain.id;
     }

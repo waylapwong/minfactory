@@ -77,17 +77,18 @@ describe('MinAdventCalendarComponent', () => {
 
   describe('closeDoor()', () => {
     it('closes an opened door and keeps its content available for editing', async () => {
-      const calendar = createMinAdventCalendar({
-        completed: false,
-        doors: [
-          { blocks: [], day: 1, status: 'FILLED' },
-          {
-            blocks: [{ position: 1, text: 'Existing text', type: component.MinAdventBlockType.Text }],
-            day: 2,
-            status: 'OPENED',
-          },
-        ],
-      });
+      const calendar: import('../../models/minadvent-calendar.model').MinAdventCalendar =
+        createMinAdventCalendar({
+          completed: false,
+          doors: [
+            { blocks: [], day: 1, status: 'FILLED' },
+            {
+              blocks: [{ position: 1, text: 'Existing text', type: component.MinAdventBlockType.Text }],
+              day: 2,
+              status: 'OPENED',
+            },
+          ],
+        });
       component.calendar.set(calendar);
       component.selectDoor(calendar.doors[1]);
       fixture.detectChanges();
@@ -113,7 +114,8 @@ describe('MinAdventCalendarComponent', () => {
     });
 
     it('does not allow closing an opened door after the calendar is completed', async () => {
-      const calendar = createMinAdventCalendar({ completed: true });
+      const calendar: import('../../models/minadvent-calendar.model').MinAdventCalendar =
+        createMinAdventCalendar({ completed: true });
       component.calendar.set(calendar);
       component.selectDoor(calendar.doors[1]);
 
@@ -138,7 +140,16 @@ describe('MinAdventCalendarComponent', () => {
 
   describe('confirmSharingAction()', () => {
     it('publishes an empty calendar using its current version and displays the returned link', async () => {
-      const calendar = { ...createMinAdventCalendar(), doors: [] };
+      const calendar: {
+        doors: never[];
+        completed: boolean;
+        id: string;
+        published: boolean;
+        recipientName: string;
+        title: string;
+        version: number;
+        year: number;
+      } = { ...createMinAdventCalendar(), doors: [] };
       component.calendar.set(calendar);
       component.openSharingDialog('publish');
       MINADVENT_CALENDAR_SERVICE_MOCK.updateSharing.and.resolveTo({
@@ -157,7 +168,7 @@ describe('MinAdventCalendarComponent', () => {
       expect(component.sharingDialogAction()).toBeNull();
 
       fixture.detectChanges();
-      const sharedLink = fixture.nativeElement.querySelector('a') as HTMLAnchorElement;
+      const sharedLink: HTMLAnchorElement = fixture.nativeElement.querySelector('a') as HTMLAnchorElement;
       expect(sharedLink.target).toBe('_blank');
       expect(sharedLink.rel).toBe('noopener noreferrer');
     });
@@ -165,12 +176,16 @@ describe('MinAdventCalendarComponent', () => {
 
   describe('navigateBack()', () => {
     it('should delegate discard confirmation to the route guard', () => {
-      const calendar = createMinAdventCalendar();
+      const calendar: import('../../models/minadvent-calendar.model').MinAdventCalendar =
+        createMinAdventCalendar();
       component.calendar.set(calendar);
       component.selectDoor(calendar.doors[0]);
       component.addBlock(component.MinAdventBlockType.Text);
       spyOn(component.routingService, 'navigateToMinAdvent');
-      const confirmSpy = spyOn(window, 'confirm').and.returnValue(false);
+      const confirmSpy: jasmine.Spy<((message?: string) => boolean) & ((message?: string) => boolean)> = spyOn(
+        window,
+        'confirm',
+      ).and.returnValue(false);
 
       component.navigateBack();
 
@@ -183,7 +198,8 @@ describe('MinAdventCalendarComponent', () => {
 
   describe('saveTitle()', () => {
     it('should save a changed title using the calendar version', async () => {
-      const calendar = createMinAdventCalendar();
+      const calendar: import('../../models/minadvent-calendar.model').MinAdventCalendar =
+        createMinAdventCalendar();
       MINADVENT_CALENDAR_SERVICE_MOCK.updateCalendar.and.resolveTo({ ...calendar, title: 'Neuer Titel' });
       component.calendar.set(calendar);
       component.form.controls.title.setValue('Neuer Titel');
@@ -199,7 +215,8 @@ describe('MinAdventCalendarComponent', () => {
     });
 
     it('should not save an unchanged title', async () => {
-      const calendar = createMinAdventCalendar();
+      const calendar: import('../../models/minadvent-calendar.model').MinAdventCalendar =
+        createMinAdventCalendar();
       component.calendar.set(calendar);
       component.form.controls.title.setValue(calendar.title);
 
@@ -210,7 +227,8 @@ describe('MinAdventCalendarComponent', () => {
     });
 
     it('should not save an unchanged title', async () => {
-      const calendar = createMinAdventCalendar();
+      const calendar: import('../../models/minadvent-calendar.model').MinAdventCalendar =
+        createMinAdventCalendar();
       component.calendar.set(calendar);
       component.form.controls.title.setValue(calendar.title);
 
@@ -223,7 +241,8 @@ describe('MinAdventCalendarComponent', () => {
 
   describe('saveRecipient()', () => {
     it('should save a changed recipient using the calendar version', async () => {
-      const calendar = createMinAdventCalendar();
+      const calendar: import('../../models/minadvent-calendar.model').MinAdventCalendar =
+        createMinAdventCalendar();
       MINADVENT_CALENDAR_SERVICE_MOCK.updateCalendar.and.resolveTo({ ...calendar, recipientName: 'Sam' });
       component.calendar.set(calendar);
       component.form.controls.recipientName.setValue('Sam');
@@ -239,7 +258,8 @@ describe('MinAdventCalendarComponent', () => {
     });
 
     it('should not save an unchanged recipient', async () => {
-      const calendar = createMinAdventCalendar();
+      const calendar: import('../../models/minadvent-calendar.model').MinAdventCalendar =
+        createMinAdventCalendar();
       component.calendar.set(calendar);
       component.form.controls.recipientName.setValue(calendar.recipientName);
 
@@ -252,7 +272,8 @@ describe('MinAdventCalendarComponent', () => {
 
   describe('selectDoor()', () => {
     it('loads a door draft and warns before replacing unsaved changes', () => {
-      const calendar = createMinAdventCalendar();
+      const calendar: import('../../models/minadvent-calendar.model').MinAdventCalendar =
+        createMinAdventCalendar();
       component.calendar.set(calendar);
       fixture.detectChanges();
       (fixture.nativeElement.querySelector('[aria-label="Türchen 1, Status Befüllt"]') as HTMLButtonElement).click();
@@ -271,7 +292,8 @@ describe('MinAdventCalendarComponent', () => {
     });
 
     it('renders a native type select and multiline text area without rich-text editing', () => {
-      const calendar = createMinAdventCalendar();
+      const calendar: import('../../models/minadvent-calendar.model').MinAdventCalendar =
+        createMinAdventCalendar();
       component.calendar.set(calendar);
       component.selectDoor(calendar.doors[0]);
       component.addBlock(component.MinAdventBlockType.Text);
@@ -286,7 +308,8 @@ describe('MinAdventCalendarComponent', () => {
 
   describe('updateTextBlock()', () => {
     it('converts legacy paragraph markup to plain text with preserved line breaks', () => {
-      const calendar = createMinAdventCalendar();
+      const calendar: import('../../models/minadvent-calendar.model').MinAdventCalendar =
+        createMinAdventCalendar();
       component.calendar.set(calendar);
       component.selectDoor(calendar.doors[0]);
       component.addBlock(component.MinAdventBlockType.Text);
@@ -299,17 +322,19 @@ describe('MinAdventCalendarComponent', () => {
 
   describe('formatted text preservation', () => {
     it('preserves existing formatted text when another block changes', async () => {
-      const formattedText = '<p><strong>Keep</strong> the formatting</p>';
-      const calendar = createMinAdventCalendar({
-        doors: [
-          {
-            blocks: [{ position: 1, text: formattedText, type: component.MinAdventBlockType.Text }],
-            day: 1,
-            status: 'FILLED',
-          },
-          { blocks: [], day: 2, status: 'OPENED' },
-        ],
-      });
+      const formattedText: '<p><strong>Keep</strong> the formatting</p>' =
+        '<p><strong>Keep</strong> the formatting</p>';
+      const calendar: import('../../models/minadvent-calendar.model').MinAdventCalendar =
+        createMinAdventCalendar({
+          doors: [
+            {
+              blocks: [{ position: 1, text: formattedText, type: component.MinAdventBlockType.Text }],
+              day: 1,
+              status: 'FILLED',
+            },
+            { blocks: [], day: 2, status: 'OPENED' },
+          ],
+        });
       component.calendar.set(calendar);
       component.selectDoor(calendar.doors[0]);
       expect(component.doorForm.at(0).controls.text.value).toBe('Keep the formatting');
@@ -336,18 +361,20 @@ describe('MinAdventCalendarComponent', () => {
 
   describe('saveDoor() conflict recovery', () => {
     it('shows a refresh action and replaces the draft with the opened door after refresh', async () => {
-      const calendar = createMinAdventCalendar();
-      const refreshedCalendar = createMinAdventCalendar({
-        version: 2,
-        doors: [
-          {
-            blocks: [{ position: 1, text: 'Server content', type: component.MinAdventBlockType.Text }],
-            day: 1,
-            status: 'OPENED',
-          },
-          { blocks: [], day: 2, status: 'OPENED' },
-        ],
-      });
+      const calendar: import('../../models/minadvent-calendar.model').MinAdventCalendar =
+        createMinAdventCalendar();
+      const refreshedCalendar: import('../../models/minadvent-calendar.model').MinAdventCalendar =
+        createMinAdventCalendar({
+          version: 2,
+          doors: [
+            {
+              blocks: [{ position: 1, text: 'Server content', type: component.MinAdventBlockType.Text }],
+              day: 1,
+              status: 'OPENED',
+            },
+            { blocks: [], day: 2, status: 'OPENED' },
+          ],
+        });
       component.calendar.set(calendar);
       component.selectDoor(calendar.doors[0]);
       component.addBlock(component.MinAdventBlockType.Text);
@@ -356,7 +383,10 @@ describe('MinAdventCalendarComponent', () => {
         Object.assign(new Error('Version conflict'), { status: 409, error: { code: 'VERSION_CONFLICT' } }),
       );
       MINADVENT_CALENDAR_SERVICE_MOCK.getCalendar.and.resolveTo(refreshedCalendar);
-      const confirmSpy = spyOn(window, 'confirm');
+      const confirmSpy: jasmine.Spy<((message?: string) => boolean) & ((message?: string) => boolean)> = spyOn(
+        window,
+        'confirm',
+      );
 
       await component.saveDoor();
 
@@ -365,7 +395,7 @@ describe('MinAdventCalendarComponent', () => {
       expect(component.doorForm.at(0).controls.text.value).toBe('Keep this');
       expect(component.hasUnsavedDoorChanges()).toBeTrue();
       fixture.detectChanges();
-      const refreshButton = Array.from(
+      const refreshButton: HTMLButtonElement = Array.from(
         fixture.nativeElement.querySelectorAll('min-button button') as NodeListOf<HTMLButtonElement>,
       ).find((button) => button.textContent.trim() === 'Türchen aktualisieren') as HTMLButtonElement;
       refreshButton.click();
@@ -384,7 +414,8 @@ describe('MinAdventCalendarComponent', () => {
 
   describe('closeDoorDialog()', () => {
     it('should keep the dialog open when discarding a draft is cancelled', () => {
-      const calendar = createMinAdventCalendar();
+      const calendar: import('../../models/minadvent-calendar.model').MinAdventCalendar =
+        createMinAdventCalendar();
       component.calendar.set(calendar);
       fixture.detectChanges();
       (fixture.nativeElement.querySelector('[aria-label="Türchen 1, Status Befüllt"]') as HTMLButtonElement).click();
@@ -403,7 +434,8 @@ describe('MinAdventCalendarComponent', () => {
 
   describe('saveDoor()', () => {
     it('should disable saving unchanged doors and reject empty required text', async () => {
-      const calendar = createMinAdventCalendar();
+      const calendar: import('../../models/minadvent-calendar.model').MinAdventCalendar =
+        createMinAdventCalendar();
       component.calendar.set(calendar);
       component.selectDoor(calendar.doors[0]);
 
@@ -423,7 +455,8 @@ describe('MinAdventCalendarComponent', () => {
     });
 
     it('should report empty link and voucher fields', () => {
-      const calendar = createMinAdventCalendar();
+      const calendar: import('../../models/minadvent-calendar.model').MinAdventCalendar =
+        createMinAdventCalendar();
       component.calendar.set(calendar);
       component.selectDoor(calendar.doors[0]);
       component.addBlock(component.MinAdventBlockType.Link);
@@ -437,7 +470,8 @@ describe('MinAdventCalendarComponent', () => {
     });
 
     it('saves the complete block list and adopts global version and status', async () => {
-      const calendar = createMinAdventCalendar();
+      const calendar: import('../../models/minadvent-calendar.model').MinAdventCalendar =
+        createMinAdventCalendar();
       component.calendar.set(calendar);
       component.selectDoor(calendar.doors[0]);
       component.addBlock(component.MinAdventBlockType.Text);
@@ -466,22 +500,26 @@ describe('MinAdventCalendarComponent', () => {
     });
 
     it('asks before clearing the last filled door and keeps the draft when cancelled', async () => {
-      const calendar = createMinAdventCalendar({
-        year: 1,
-        doors: [
-          {
-            blocks: [{ position: 1, text: 'Surprise', type: component.MinAdventBlockType.Text }],
-            day: 1,
-            status: 'FILLED',
-          },
-          { blocks: [], day: 2, status: 'OPENED' },
-          ...Array.from({ length: 22 }, (_, index) => ({ blocks: [], day: index + 3, status: 'EMPTY' as const })),
-        ],
-      });
+      const calendar: import('../../models/minadvent-calendar.model').MinAdventCalendar =
+        createMinAdventCalendar({
+          year: 1,
+          doors: [
+            {
+              blocks: [{ position: 1, text: 'Surprise', type: component.MinAdventBlockType.Text }],
+              day: 1,
+              status: 'FILLED',
+            },
+            { blocks: [], day: 2, status: 'OPENED' },
+            ...Array.from({ length: 22 }, (_, index) => ({ blocks: [], day: index + 3, status: 'EMPTY' as const })),
+          ],
+        });
       component.calendar.set(calendar);
       component.selectDoor(calendar.doors[0]);
       component.removeBlock(0);
-      const confirmSpy = spyOn(window, 'confirm').and.returnValue(false);
+      const confirmSpy: jasmine.Spy<((message?: string) => boolean) & ((message?: string) => boolean)> = spyOn(
+        window,
+        'confirm',
+      ).and.returnValue(false);
 
       await component.saveDoor();
 
@@ -491,18 +529,19 @@ describe('MinAdventCalendarComponent', () => {
     });
 
     it('adopts the completed status and incremented version after clearing the last filled door', async () => {
-      const calendar = createMinAdventCalendar({
-        year: 1,
-        doors: [
-          {
-            blocks: [{ position: 1, text: 'Surprise', type: component.MinAdventBlockType.Text }],
-            day: 1,
-            status: 'FILLED',
-          },
-          { blocks: [], day: 2, status: 'OPENED' },
-          ...Array.from({ length: 22 }, (_, index) => ({ blocks: [], day: index + 3, status: 'EMPTY' as const })),
-        ],
-      });
+      const calendar: import('../../models/minadvent-calendar.model').MinAdventCalendar =
+        createMinAdventCalendar({
+          year: 1,
+          doors: [
+            {
+              blocks: [{ position: 1, text: 'Surprise', type: component.MinAdventBlockType.Text }],
+              day: 1,
+              status: 'FILLED',
+            },
+            { blocks: [], day: 2, status: 'OPENED' },
+            ...Array.from({ length: 22 }, (_, index) => ({ blocks: [], day: index + 3, status: 'EMPTY' as const })),
+          ],
+        });
       component.calendar.set(calendar);
       component.selectDoor(calendar.doors[0]);
       component.removeBlock(0);
@@ -522,7 +561,8 @@ describe('MinAdventCalendarComponent', () => {
     });
 
     it('preserves the local draft after a version conflict without confirmation', async () => {
-      const calendar = createMinAdventCalendar();
+      const calendar: import('../../models/minadvent-calendar.model').MinAdventCalendar =
+        createMinAdventCalendar();
       component.calendar.set(calendar);
       component.selectDoor(calendar.doors[0]);
       component.addBlock(component.MinAdventBlockType.Text);
@@ -530,7 +570,10 @@ describe('MinAdventCalendarComponent', () => {
       MINADVENT_CALENDAR_SERVICE_MOCK.updateDoor.and.rejectWith(
         Object.assign(new Error('Version conflict'), { status: 409, error: { code: 'VERSION_CONFLICT' } }),
       );
-      const confirmSpy = spyOn(window, 'confirm');
+      const confirmSpy: jasmine.Spy<((message?: string) => boolean) & ((message?: string) => boolean)> = spyOn(
+        window,
+        'confirm',
+      );
       await component.saveDoor();
 
       expect(confirmSpy).not.toHaveBeenCalled();
@@ -543,7 +586,8 @@ describe('MinAdventCalendarComponent', () => {
     });
 
     it('should not save an unchanged recipient', async () => {
-      const calendar = createMinAdventCalendar();
+      const calendar: import('../../models/minadvent-calendar.model').MinAdventCalendar =
+        createMinAdventCalendar();
       component.calendar.set(calendar);
       component.form.controls.recipientName.setValue(calendar.recipientName);
 
@@ -556,7 +600,8 @@ describe('MinAdventCalendarComponent', () => {
 
   describe('selectDoor()', () => {
     it('loads a door draft and warns before replacing unsaved changes', () => {
-      const calendar = createMinAdventCalendar();
+      const calendar: import('../../models/minadvent-calendar.model').MinAdventCalendar =
+        createMinAdventCalendar();
       component.calendar.set(calendar);
       fixture.detectChanges();
       (fixture.nativeElement.querySelector('[aria-label="Türchen 1, Status Befüllt"]') as HTMLButtonElement).click();
@@ -575,7 +620,8 @@ describe('MinAdventCalendarComponent', () => {
     });
 
     it('renders a native type select and multiline text area without rich-text editing', () => {
-      const calendar = createMinAdventCalendar();
+      const calendar: import('../../models/minadvent-calendar.model').MinAdventCalendar =
+        createMinAdventCalendar();
       component.calendar.set(calendar);
       component.selectDoor(calendar.doors[0]);
       component.addBlock(component.MinAdventBlockType.Text);
@@ -590,7 +636,8 @@ describe('MinAdventCalendarComponent', () => {
 
   describe('updateTextBlock()', () => {
     it('converts legacy paragraph markup to plain text with preserved line breaks', () => {
-      const calendar = createMinAdventCalendar();
+      const calendar: import('../../models/minadvent-calendar.model').MinAdventCalendar =
+        createMinAdventCalendar();
       component.calendar.set(calendar);
       component.selectDoor(calendar.doors[0]);
       component.addBlock(component.MinAdventBlockType.Text);
@@ -603,7 +650,8 @@ describe('MinAdventCalendarComponent', () => {
 
   describe('closeDoorDialog()', () => {
     it('should keep the dialog open when discarding a draft is cancelled', () => {
-      const calendar = createMinAdventCalendar();
+      const calendar: import('../../models/minadvent-calendar.model').MinAdventCalendar =
+        createMinAdventCalendar();
       component.calendar.set(calendar);
       fixture.detectChanges();
       (fixture.nativeElement.querySelector('[aria-label="Türchen 1, Status Befüllt"]') as HTMLButtonElement).click();
@@ -622,7 +670,8 @@ describe('MinAdventCalendarComponent', () => {
 
   describe('saveDoor()', () => {
     it('should disable saving unchanged doors and reject empty required text', async () => {
-      const calendar = createMinAdventCalendar();
+      const calendar: import('../../models/minadvent-calendar.model').MinAdventCalendar =
+        createMinAdventCalendar();
       component.calendar.set(calendar);
       component.selectDoor(calendar.doors[0]);
 
@@ -642,7 +691,8 @@ describe('MinAdventCalendarComponent', () => {
     });
 
     it('should report empty link and voucher fields', () => {
-      const calendar = createMinAdventCalendar();
+      const calendar: import('../../models/minadvent-calendar.model').MinAdventCalendar =
+        createMinAdventCalendar();
       component.calendar.set(calendar);
       component.selectDoor(calendar.doors[0]);
       component.addBlock(component.MinAdventBlockType.Link);
@@ -656,7 +706,8 @@ describe('MinAdventCalendarComponent', () => {
     });
 
     it('saves the complete block list and adopts global version and status', async () => {
-      const calendar = createMinAdventCalendar();
+      const calendar: import('../../models/minadvent-calendar.model').MinAdventCalendar =
+        createMinAdventCalendar();
       component.calendar.set(calendar);
       component.selectDoor(calendar.doors[0]);
       component.addBlock(component.MinAdventBlockType.Text);
@@ -685,7 +736,8 @@ describe('MinAdventCalendarComponent', () => {
     });
 
     it('preserves the local draft after a version conflict without confirmation', async () => {
-      const calendar = createMinAdventCalendar();
+      const calendar: import('../../models/minadvent-calendar.model').MinAdventCalendar =
+        createMinAdventCalendar();
       component.calendar.set(calendar);
       component.selectDoor(calendar.doors[0]);
       component.addBlock(component.MinAdventBlockType.Text);
@@ -693,7 +745,10 @@ describe('MinAdventCalendarComponent', () => {
       MINADVENT_CALENDAR_SERVICE_MOCK.updateDoor.and.rejectWith(
         Object.assign(new Error('Version conflict'), { status: 409, error: { code: 'VERSION_CONFLICT' } }),
       );
-      const confirmSpy = spyOn(window, 'confirm');
+      const confirmSpy: jasmine.Spy<((message?: string) => boolean) & ((message?: string) => boolean)> = spyOn(
+        window,
+        'confirm',
+      );
       await component.saveDoor();
 
       expect(confirmSpy).not.toHaveBeenCalled();

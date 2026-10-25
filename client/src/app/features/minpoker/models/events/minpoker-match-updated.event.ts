@@ -9,13 +9,13 @@ export interface MinPokerMatchUpdatedPlayerEvent {
 }
 
 export class MinPokerMatchUpdatedEvent {
-  declare public bigBlind: number;
-  declare public creatorId: string;
-  declare public matchId: string;
-  declare public name: string;
-  declare public observerIds: string[];
-  declare public players: MinPokerMatchUpdatedPlayerEvent[];
-  declare public smallBlind: number;
-  declare public status: MinPokerGameStatus;
-  declare public tableSize: number;
+  public bigBlind: number;
+  public creatorId: string;
+  public matchId: string;
+  public name: string;
+  public observerIds: string[];
+  public players: MinPokerMatchUpdatedPlayerEvent[];
+  public smallBlind: number;
+  public status: MinPokerGameStatus;
+  public tableSize: number;
 }

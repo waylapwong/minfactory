@@ -41,7 +41,8 @@ describe('MinAdventCalendarService', () => {
       MINADVENT_CALENDAR_REPOSITORY_MOCK.create.and.resolveTo(createMinAdventCalendarDto({ id: 'created' }));
       await service.loadCalendars();
 
-      const result = await service.createCalendar({ recipientName: 'Alex', title: 'Neu', year: 2026 });
+      const result: import('../models/minadvent-calendar.model').MinAdventCalendar =
+        await service.createCalendar({ recipientName: 'Alex', title: 'Neu', year: 2026 });
 
       expect(MINADVENT_CALENDAR_REPOSITORY_MOCK.create).toHaveBeenCalledWith({
         recipientName: 'Alex',
@@ -57,7 +58,8 @@ describe('MinAdventCalendarService', () => {
     it('should get and map a calendar by id', async () => {
       MINADVENT_CALENDAR_REPOSITORY_MOCK.get.and.resolveTo(createMinAdventCalendarDto());
 
-      const result = await service.getCalendar('calendar-id');
+      const result: import('../models/minadvent-calendar.model').MinAdventCalendar =
+        await service.getCalendar('calendar-id');
 
       expect(MINADVENT_CALENDAR_REPOSITORY_MOCK.get).toHaveBeenCalledWith('calendar-id');
       expect(result.id).toBe('calendar-id');
@@ -94,7 +96,8 @@ describe('MinAdventCalendarService', () => {
     it('should pass the shared token to the repository', async () => {
       MINADVENT_CALENDAR_REPOSITORY_MOCK.getSharedCalendar.and.resolveTo(createMinAdventSharedCalendarDto());
 
-      const result = await service.getSharedCalendar('shared-token');
+      const result: import('../../../core/generated').MinAdventSharedCalendarDto =
+        await service.getSharedCalendar('shared-token');
 
       expect(MINADVENT_CALENDAR_REPOSITORY_MOCK.getSharedCalendar).toHaveBeenCalledWith('shared-token');
       expect(result.title).toBe('Adventskalender');
@@ -103,8 +106,12 @@ describe('MinAdventCalendarService', () => {
 
   describe('loadCalendars()', () => {
     it('should load and map calendars into the signal cache', async () => {
-      const first = createMinAdventCalendarDto({ id: 'first-calendar' });
-      const second = createMinAdventCalendarDto({ id: 'second-calendar' });
+      const first: import('../../../core/generated').MinAdventCalendarDto = createMinAdventCalendarDto({
+        id: 'first-calendar',
+      });
+      const second: import('../../../core/generated').MinAdventCalendarDto = createMinAdventCalendarDto({
+        id: 'second-calendar',
+      });
       MINADVENT_CALENDAR_REPOSITORY_MOCK.getAll.and.resolveTo([first, second]);
 
       await service.loadCalendars();
@@ -120,7 +127,8 @@ describe('MinAdventCalendarService', () => {
       MINADVENT_CALENDAR_REPOSITORY_MOCK.update.and.resolveTo(createMinAdventCalendarDto({ title: 'Aktualisiert' }));
       await service.loadCalendars();
 
-      const result = await service.updateCalendar('calendar-id', { expectedVersion: 1, title: 'Aktualisiert' });
+      const result: import('../models/minadvent-calendar.model').MinAdventCalendar =
+        await service.updateCalendar('calendar-id', { expectedVersion: 1, title: 'Aktualisiert' });
 
       expect(MINADVENT_CALENDAR_REPOSITORY_MOCK.update).toHaveBeenCalledWith('calendar-id', {
         expectedVersion: 1,
@@ -143,10 +151,11 @@ describe('MinAdventCalendarService', () => {
       });
       await service.loadCalendars();
 
-      const result = await service.updateDoor('calendar-id', 1, {
-        blocks: [{ position: 1, text: '<p>Surprise</p>', type: 'TEXT' }],
-        expectedVersion: 1,
-      });
+      const result: import('../../../core/generated').MinAdventDoorUpdateResponseDto =
+        await service.updateDoor('calendar-id', 1, {
+          blocks: [{ position: 1, text: '<p>Surprise</p>', type: 'TEXT' }],
+          expectedVersion: 1,
+        });
 
       expect(MINADVENT_CALENDAR_REPOSITORY_MOCK.updateDoor).toHaveBeenCalledWith('calendar-id', 1, {
         blocks: [{ position: 1, text: '<p>Surprise</p>', type: 'TEXT' }],
@@ -169,7 +178,11 @@ describe('MinAdventCalendarService', () => {
       });
       await service.loadCalendars();
 
-      const result = await service.closeDoor('calendar-id', 2, 1);
+      const result: import('../../../core/generated').MinAdventDoorUpdateResponseDto = await service.closeDoor(
+        'calendar-id',
+        2,
+        1,
+      );
 
       expect(MINADVENT_CALENDAR_REPOSITORY_MOCK.updateDoorStatus).toHaveBeenCalledWith('calendar-id', 2, 1);
       expect(result.status).toBe('FILLED');

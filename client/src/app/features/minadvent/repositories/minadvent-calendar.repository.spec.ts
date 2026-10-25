@@ -42,7 +42,11 @@ describe('MinAdventCalendarRepository', () => {
     it('should create a calendar through the API service', async () => {
       MINADVENT_API_SERVICE_MOCK.createMinAdventCalendar.and.returnValue(of(MINADVENT_CALENDAR_DTO_MOCK));
 
-      const result = await repository.create({ recipientName: 'Alex', title: 'Adventskalender', year: 2026 });
+      const result: import('../../../core/generated').MinAdventCalendarDto = await repository.create({
+        recipientName: 'Alex',
+        title: 'Adventskalender',
+        year: 2026,
+      });
 
       expect(MINADVENT_API_SERVICE_MOCK.createMinAdventCalendar).toHaveBeenCalledWith({
         recipientName: 'Alex',
@@ -57,7 +61,8 @@ describe('MinAdventCalendarRepository', () => {
     it('should get a calendar by id through the API service', async () => {
       MINADVENT_API_SERVICE_MOCK.getMinAdventCalendar.and.returnValue(of(MINADVENT_CALENDAR_DTO_MOCK));
 
-      const result = await repository.get('calendar-id');
+      const result: import('../../../core/generated').MinAdventCalendarDto =
+        await repository.get('calendar-id');
 
       expect(MINADVENT_API_SERVICE_MOCK.getMinAdventCalendar).toHaveBeenCalledWith('calendar-id');
       expect(result).toBe(MINADVENT_CALENDAR_DTO_MOCK);
@@ -80,7 +85,7 @@ describe('MinAdventCalendarRepository', () => {
     it('should get all calendars through the API service', async () => {
       MINADVENT_API_SERVICE_MOCK.getMinAdventCalendars.and.returnValue(of([MINADVENT_CALENDAR_DTO_MOCK]));
 
-      const result = await repository.getAll();
+      const result: import('../../../core/generated').MinAdventCalendarDto[] = await repository.getAll();
 
       expect(MINADVENT_API_SERVICE_MOCK.getMinAdventCalendars).toHaveBeenCalled();
       expect(result).toEqual([MINADVENT_CALENDAR_DTO_MOCK]);
@@ -91,7 +96,8 @@ describe('MinAdventCalendarRepository', () => {
     it('should fetch a shared calendar by token through the API service', async () => {
       MINADVENT_API_SERVICE_MOCK.getMinAdventSharedCalendar.and.returnValue(of(MINADVENT_SHARED_CALENDAR_DTO_MOCK));
 
-      const result = await repository.getSharedCalendar('shared-token');
+      const result: import('../../../core/generated').MinAdventSharedCalendarDto =
+        await repository.getSharedCalendar('shared-token');
 
       expect(MINADVENT_API_SERVICE_MOCK.getMinAdventSharedCalendar).toHaveBeenCalledWith('shared-token');
       expect(result).toBe(MINADVENT_SHARED_CALENDAR_DTO_MOCK);
@@ -100,7 +106,7 @@ describe('MinAdventCalendarRepository', () => {
 
   describe('getSharedDoor()', () => {
     it('gets content through the generated API service', async () => {
-      const response = { day: 2, status: 'OPENED', blocks: [] } as never;
+      const response: never = { day: 2, status: 'OPENED', blocks: [] } as never;
       MINADVENT_API_SERVICE_MOCK.getMinAdventSharedDoor.and.returnValue(of(response));
 
       await expectAsync(repository.getSharedDoor('shared-token', 2)).toBeResolvedTo(response);
@@ -110,7 +116,7 @@ describe('MinAdventCalendarRepository', () => {
 
   describe('openSharedDoor()', () => {
     it('opens content through the generated API service with the current version', async () => {
-      const response = {
+      const response: never = {
         day: 2,
         status: 'OPENED',
         version: 3,
@@ -129,10 +135,13 @@ describe('MinAdventCalendarRepository', () => {
 
   describe('update()', () => {
     it('should update a calendar by id through the API service', async () => {
-      const input = { expectedVersion: 1, title: 'Neuer Titel' };
+      const input: { expectedVersion: number; title: string } = { expectedVersion: 1, title: 'Neuer Titel' };
       MINADVENT_API_SERVICE_MOCK.updateMinAdventCalendar.and.returnValue(of(MINADVENT_CALENDAR_DTO_MOCK));
 
-      const result = await repository.update('calendar-id', input);
+      const result: import('../../../core/generated').MinAdventCalendarDto = await repository.update(
+        'calendar-id',
+        input,
+      );
 
       expect(MINADVENT_API_SERVICE_MOCK.updateMinAdventCalendar).toHaveBeenCalledWith('calendar-id', input);
       expect(result).toBe(MINADVENT_CALENDAR_DTO_MOCK);
@@ -141,7 +150,7 @@ describe('MinAdventCalendarRepository', () => {
 
   describe('updateDoorStatus()', () => {
     it('sends FILLED and the expected version through the generated API service', async () => {
-      const response = { completed: false, day: 4, status: 'FILLED', version: 9 } as never;
+      const response: never = { completed: false, day: 4, status: 'FILLED', version: 9 } as never;
       MINADVENT_API_SERVICE_MOCK.updateMinAdventDoorStatus.and.returnValue(of(response));
 
       await expectAsync(repository.updateDoorStatus('calendar-id', 4, 8)).toBeResolvedTo(response);

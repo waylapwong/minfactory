@@ -14,13 +14,13 @@ export class MinAdventDtoMapper {
   }
 
   public static toDomain(dto: MinAdventCalendarCreateDto, ownerId: string): MinAdventCalendar {
-    const domain = new MinAdventCalendar();
+    const domain: MinAdventCalendar = new MinAdventCalendar();
     domain.ownerId = ownerId;
     domain.title = dto.title.trim();
     domain.recipientName = dto.recipientName.trim();
     domain.year = dto.year;
     domain.doors = Array.from({ length: 24 }, (_, index) => {
-      const door = new MinAdventDoor();
+      const door: MinAdventDoor = new MinAdventDoor();
       door.day = index + 1;
       door.status = MinAdventDoorStatus.Empty;
       return door;

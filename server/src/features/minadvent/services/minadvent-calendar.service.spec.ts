@@ -11,7 +11,7 @@ import { MinAdventCalendarService } from './minadvent-calendar.service';
 describe('MinAdventCalendarService', () => {
   let service: MinAdventCalendarService;
   let repository: MinAdventCalendarRepositoryMock;
-  const owner = { id: 'owner-1' } as MinFactoryUser;
+  const owner: MinFactoryUser = { id: 'owner-1' } as MinFactoryUser;
 
   beforeEach(() => {
     repository = new MinAdventCalendarRepositoryMock();
@@ -23,7 +23,7 @@ describe('MinAdventCalendarService', () => {
   });
 
   it('creates a calendar with exactly 24 empty doors', async () => {
-    const calendar = new MinAdventCalendarEntity();
+    const calendar: MinAdventCalendarEntity = new MinAdventCalendarEntity();
     calendar.id = 'calendar-1';
     calendar.title = 'December';
     calendar.recipientName = 'Alex';
@@ -36,7 +36,8 @@ describe('MinAdventCalendarService', () => {
     })) as MinAdventCalendarEntity['doors'];
     repository.create.mockResolvedValue(calendar);
 
-    const result = await service.create(owner, { title: 'December', recipientName: 'Alex', year: 1901 });
+    const result: import('C:/Users/wayla/Desktop/Projekte/minfactory/server/src/features/minadvent/models/dtos/minadvent-calendar.dto').MinAdventCalendarDto =
+      await service.create(owner, { title: 'December', recipientName: 'Alex', year: 1901 });
 
     expect(repository.create).toHaveBeenCalledWith(expect.objectContaining({ ownerId: owner.id, year: 1901 }));
     expect(result.id).toBe('calendar-1');
@@ -82,7 +83,12 @@ describe('MinAdventCalendarService', () => {
     async ({ currentTime, year, statuses, completed }) => {
       jest.useFakeTimers();
       jest.setSystemTime(new Date(currentTime));
-      const calendar = Object.assign(new MinAdventCalendarEntity(), {
+      const calendar: MinAdventCalendarEntity & {
+        id: string;
+        ownerId: string;
+        year: number;
+        doors: (MinAdventDoorEntity & { day: number; status: MinAdventDoorStatus })[];
+      } = Object.assign(new MinAdventCalendarEntity(), {
         id: 'calendar-1',
         ownerId: owner.id,
         year,
@@ -90,14 +96,15 @@ describe('MinAdventCalendarService', () => {
       });
       repository.findById.mockResolvedValue(calendar);
 
-      const result = await service.get(owner, calendar.id);
+      const result: import('C:/Users/wayla/Desktop/Projekte/minfactory/server/src/features/minadvent/models/dtos/minadvent-calendar.dto').MinAdventCalendarDto =
+        await service.get(owner, calendar.id);
 
       expect(result.completed).toBe(completed);
     },
   );
 
   it('does not expose another owner calendar', async () => {
-    const calendar = new MinAdventCalendarEntity();
+    const calendar: MinAdventCalendarEntity = new MinAdventCalendarEntity();
     calendar.ownerId = 'someone-else';
     repository.findById.mockResolvedValue(calendar);
 
@@ -105,7 +112,7 @@ describe('MinAdventCalendarService', () => {
   });
 
   it('rejects metadata changes made with an outdated global version', async () => {
-    const calendar = new MinAdventCalendarEntity();
+    const calendar: MinAdventCalendarEntity = new MinAdventCalendarEntity();
     calendar.id = 'calendar-1';
     calendar.ownerId = owner.id;
     calendar.version = 3;
@@ -118,7 +125,7 @@ describe('MinAdventCalendarService', () => {
   });
 
   it('does not increase the version when metadata is unchanged', async () => {
-    const calendar = new MinAdventCalendarEntity();
+    const calendar: MinAdventCalendarEntity = new MinAdventCalendarEntity();
     calendar.id = 'calendar-1';
     calendar.ownerId = owner.id;
     calendar.title = 'Same title';
@@ -126,7 +133,8 @@ describe('MinAdventCalendarService', () => {
     calendar.version = 3;
     repository.findById.mockResolvedValue(calendar);
 
-    const result = await service.update(owner, calendar.id, { title: 'Same title', expectedVersion: 3 });
+    const result: import('C:/Users/wayla/Desktop/Projekte/minfactory/server/src/features/minadvent/models/dtos/minadvent-calendar.dto').MinAdventCalendarDto =
+      await service.update(owner, calendar.id, { title: 'Same title', expectedVersion: 3 });
 
     expect(result.version).toBe(3);
     expect(repository.update).not.toHaveBeenCalled();
@@ -134,7 +142,17 @@ describe('MinAdventCalendarService', () => {
 
   describe('updateSharing()', () => {
     it('publishes with a cryptographically random token and advances the global version', async () => {
-      const calendar = Object.assign(new MinAdventCalendarEntity(), {
+      const calendar: MinAdventCalendarEntity & {
+        id: string;
+        ownerId: string;
+        title: string;
+        recipientName: string;
+        year: number;
+        version: number;
+        isPublished: boolean;
+        activeToken: string;
+        doors: never[];
+      } = Object.assign(new MinAdventCalendarEntity(), {
         id: 'calendar-1',
         ownerId: owner.id,
         title: 'December',
@@ -148,7 +166,8 @@ describe('MinAdventCalendarService', () => {
       repository.findById.mockResolvedValue(Object.assign({}, calendar, { isPublished: false, activeToken: null }));
       repository.updateSharing.mockResolvedValue(calendar);
 
-      const result = await service.updateSharing(owner, calendar.id, { published: true, expectedVersion: 2 });
+      const result: import('C:/Users/wayla/Desktop/Projekte/minfactory/server/src/features/minadvent/models/dtos/minadvent-sharing-response.dto').MinAdventSharingResponseDto =
+        await service.updateSharing(owner, calendar.id, { published: true, expectedVersion: 2 });
 
       expect(repository.updateSharing).toHaveBeenCalledWith(
         owner.id,
@@ -166,7 +185,14 @@ describe('MinAdventCalendarService', () => {
     });
 
     it('keeps the current version for an unchanged sharing state', async () => {
-      const calendar = Object.assign(new MinAdventCalendarEntity(), {
+      const calendar: MinAdventCalendarEntity & {
+        id: string;
+        ownerId: string;
+        version: number;
+        isPublished: boolean;
+        activeToken: null;
+        doors: never[];
+      } = Object.assign(new MinAdventCalendarEntity(), {
         id: 'calendar-1',
         ownerId: owner.id,
         version: 4,
@@ -176,7 +202,8 @@ describe('MinAdventCalendarService', () => {
       });
       repository.findById.mockResolvedValue(calendar);
 
-      const result = await service.updateSharing(owner, calendar.id, { published: false, expectedVersion: 4 });
+      const result: import('C:/Users/wayla/Desktop/Projekte/minfactory/server/src/features/minadvent/models/dtos/minadvent-sharing-response.dto').MinAdventSharingResponseDto =
+        await service.updateSharing(owner, calendar.id, { published: false, expectedVersion: 4 });
 
       expect(repository.updateSharing).not.toHaveBeenCalled();
       expect(result.version).toBe(4);
@@ -184,7 +211,14 @@ describe('MinAdventCalendarService', () => {
     });
 
     it('rejects stale global versions before applying a sharing change', async () => {
-      const calendar = Object.assign(new MinAdventCalendarEntity(), {
+      const calendar: MinAdventCalendarEntity & {
+        id: string;
+        ownerId: string;
+        version: number;
+        isPublished: boolean;
+        activeToken: null;
+        doors: never[];
+      } = Object.assign(new MinAdventCalendarEntity(), {
         id: 'calendar-1',
         ownerId: owner.id,
         version: 5,
@@ -203,7 +237,17 @@ describe('MinAdventCalendarService', () => {
 
   describe('rotateSharingToken()', () => {
     it('replaces the active token using the current global version', async () => {
-      const calendar = Object.assign(new MinAdventCalendarEntity(), {
+      const calendar: MinAdventCalendarEntity & {
+        id: string;
+        ownerId: string;
+        title: string;
+        recipientName: string;
+        year: number;
+        version: number;
+        isPublished: boolean;
+        activeToken: string;
+        doors: never[];
+      } = Object.assign(new MinAdventCalendarEntity(), {
         id: 'calendar-1',
         ownerId: owner.id,
         title: 'December',
@@ -229,7 +273,14 @@ describe('MinAdventCalendarService', () => {
     });
 
     it('rejects rotation when the calendar is unpublished', async () => {
-      const calendar = Object.assign(new MinAdventCalendarEntity(), {
+      const calendar: MinAdventCalendarEntity & {
+        id: string;
+        ownerId: string;
+        version: number;
+        isPublished: boolean;
+        activeToken: null;
+        doors: never[];
+      } = Object.assign(new MinAdventCalendarEntity(), {
         id: 'calendar-1',
         ownerId: owner.id,
         version: 4,
@@ -246,7 +297,17 @@ describe('MinAdventCalendarService', () => {
 
   describe('getSharedCalendar()', () => {
     it('returns calendar metadata and door statuses without private block content', async () => {
-      const calendar = Object.assign(new MinAdventCalendarEntity(), {
+      const calendar: MinAdventCalendarEntity & {
+        id: string;
+        ownerId: string;
+        title: string;
+        recipientName: string;
+        year: number;
+        version: number;
+        isPublished: boolean;
+        activeToken: string;
+        doors: { day: number; status: MinAdventDoorStatus; blocks: { text: string }[] }[];
+      } = Object.assign(new MinAdventCalendarEntity(), {
         id: 'calendar-1',
         ownerId: owner.id,
         title: 'December',
@@ -259,7 +320,9 @@ describe('MinAdventCalendarService', () => {
       });
       repository.findByActiveToken.mockResolvedValue(calendar);
 
-      const result = await service.getSharedCalendar(calendar.activeToken);
+      const result:
+        | import('C:/Users/wayla/Desktop/Projekte/minfactory/server/src/features/minadvent/models/dtos/minadvent-shared-calendar.dto').MinAdventSharedCalendarDto
+        | null = await service.getSharedCalendar(calendar.activeToken);
 
       expect(repository.findByActiveToken).toHaveBeenCalledWith(calendar.activeToken);
       expect(result).toEqual({
@@ -354,7 +417,9 @@ describe('MinAdventCalendarService', () => {
         firstOpened: true,
       });
 
-      const result = await service.openSharedDoor('a'.repeat(64), 2, { expectedVersion: 5 });
+      const result:
+        | import('C:/Users/wayla/Desktop/Projekte/minfactory/server/src/features/minadvent/models/dtos/minadvent-shared-door-open-response.dto').MinAdventSharedDoorOpenResponseDto
+        | null = await service.openSharedDoor('a'.repeat(64), 2, { expectedVersion: 5 });
 
       expect(repository.openSharedDoor).toHaveBeenCalledWith(
         'a'.repeat(64),
@@ -391,7 +456,9 @@ describe('MinAdventCalendarService', () => {
         firstOpened: true,
       });
 
-      const result = await service.openSharedDoor('a'.repeat(64), 1, { expectedVersion: 5 });
+      const result:
+        | import('C:/Users/wayla/Desktop/Projekte/minfactory/server/src/features/minadvent/models/dtos/minadvent-shared-door-open-response.dto').MinAdventSharedDoorOpenResponseDto
+        | null = await service.openSharedDoor('a'.repeat(64), 1, { expectedVersion: 5 });
 
       expect(result).toMatchObject({
         day: 1,
@@ -413,7 +480,9 @@ describe('MinAdventCalendarService', () => {
   });
 
   describe('updateDoorStatus()', () => {
-    const currentCalendar = (calendarOwnerId = owner.id): MinAdventCalendarEntity =>
+    const currentCalendar: (calendarOwnerId?: string) => MinAdventCalendarEntity = (
+      calendarOwnerId = owner.id,
+    ): MinAdventCalendarEntity =>
       Object.assign(new MinAdventCalendarEntity(), {
         id: 'calendar-1',
         ownerId: calendarOwnerId,
@@ -423,8 +492,20 @@ describe('MinAdventCalendarService', () => {
       });
 
     it.each([1, 24])('closes boundary day %i and maps the updated response', async (day) => {
-      const calendar = currentCalendar();
-      const updatedCalendar = Object.assign(new MinAdventCalendarEntity(), {
+      const calendar: MinAdventCalendarEntity = currentCalendar();
+      const updatedCalendar: MinAdventCalendarEntity & {
+        version: number;
+        doors: (MinAdventDoorEntity & { day: number; status: MinAdventDoorStatus })[];
+        activeToken: string | null;
+        isPublished: boolean;
+        ownerId: string;
+        recipientName: string;
+        title: string;
+        year: number;
+        createdAt: Date;
+        id: string;
+        updatedAt: Date;
+      } = Object.assign(new MinAdventCalendarEntity(), {
         ...calendar,
         version: 9,
         doors: [Object.assign(new MinAdventDoorEntity(), { day, status: MinAdventDoorStatus.Filled })],
@@ -432,10 +513,11 @@ describe('MinAdventCalendarService', () => {
       repository.findById.mockResolvedValue(calendar);
       repository.closeDoor.mockResolvedValue(updatedCalendar);
 
-      const result = await service.updateDoorStatus(owner, calendar.id, day, {
-        status: MinAdventDoorStatus.Filled,
-        expectedVersion: 8,
-      });
+      const result: import('C:/Users/wayla/Desktop/Projekte/minfactory/server/src/features/minadvent/models/dtos/minadvent-door-update-response.dto').MinAdventDoorUpdateResponseDto =
+        await service.updateDoorStatus(owner, calendar.id, day, {
+          status: MinAdventDoorStatus.Filled,
+          expectedVersion: 8,
+        });
 
       expect(repository.closeDoor).toHaveBeenCalledWith(owner.id, calendar.id, day, 8);
       expect(result).toEqual({ day, status: MinAdventDoorStatus.Filled, version: 9, completed: false });
@@ -454,7 +536,7 @@ describe('MinAdventCalendarService', () => {
     });
 
     it('rejects a calendar owned by another user without closing a door', async () => {
-      const calendar = currentCalendar('someone-else');
+      const calendar: MinAdventCalendarEntity = currentCalendar('someone-else');
       repository.findById.mockResolvedValue(calendar);
 
       await expect(
@@ -468,7 +550,7 @@ describe('MinAdventCalendarService', () => {
     });
 
     it('propagates repository conflicts', async () => {
-      const calendar = currentCalendar();
+      const calendar: MinAdventCalendarEntity = currentCalendar();
       repository.findById.mockResolvedValue(calendar);
       repository.closeDoor.mockRejectedValue(new ConflictException({ code: 'DOOR_NOT_OPENED' }));
 
@@ -484,7 +566,7 @@ describe('MinAdventCalendarService', () => {
   });
 
   describe('updateDoor()', () => {
-    const currentCalendar = (): MinAdventCalendarEntity =>
+    const currentCalendar: () => MinAdventCalendarEntity = (): MinAdventCalendarEntity =>
       Object.assign(new MinAdventCalendarEntity(), {
         id: 'calendar-1',
         ownerId: owner.id,
@@ -495,12 +577,12 @@ describe('MinAdventCalendarService', () => {
         doors: [Object.assign(new MinAdventDoorEntity(), { id: 'door-3', day: 3, status: MinAdventDoorStatus.Empty })],
       });
 
-    const captureBlocks = (): MinAdventBlock[][] => {
+    const captureBlocks: () => MinAdventBlock[][] = (): MinAdventBlock[][] => {
       const saved: MinAdventBlock[][] = [];
       repository.replaceDoorBlocks.mockImplementation((_ownerId, _id, day, expectedVersion, createBlocks) => {
-        const blocks = createBlocks();
+        const blocks: MinAdventBlock[] = createBlocks();
         saved.push(blocks);
-        const calendar = currentCalendar();
+        const calendar: MinAdventCalendarEntity = currentCalendar();
         calendar.version = expectedVersion + 1;
         calendar.doors[0].day = day;
         calendar.doors[0].blocks = blocks;
@@ -512,14 +594,18 @@ describe('MinAdventCalendarService', () => {
 
     it('accepts an empty door and exactly ten ordered blocks', async () => {
       repository.findById.mockResolvedValue(currentCalendar());
-      const saved = captureBlocks();
+      const saved: MinAdventBlock[][] = captureBlocks();
 
-      const empty = await service.updateDoor(owner, 'calendar-1', 3, { expectedVersion: 4, blocks: [] });
-      const tenBlocks = Array.from({ length: 10 }, (_, index) => ({
-        position: index + 1,
-        type: MinAdventBlockType.Text,
-        text: `<p>${index}</p>`,
-      }));
+      const empty: import('C:/Users/wayla/Desktop/Projekte/minfactory/server/src/features/minadvent/models/dtos/minadvent-door-update-response.dto').MinAdventDoorUpdateResponseDto =
+        await service.updateDoor(owner, 'calendar-1', 3, { expectedVersion: 4, blocks: [] });
+      const tenBlocks: { position: number; type: MinAdventBlockType; text: string }[] = Array.from(
+        { length: 10 },
+        (_, index) => ({
+          position: index + 1,
+          type: MinAdventBlockType.Text,
+          text: `<p>${index}</p>`,
+        }),
+      );
       await service.updateDoor(owner, 'calendar-1', 3, { expectedVersion: 5, blocks: tenBlocks });
 
       expect(empty).toEqual({ day: 3, status: MinAdventDoorStatus.Empty, version: 5, completed: false });
@@ -531,11 +617,14 @@ describe('MinAdventCalendarService', () => {
     it('rejects eleven blocks and position gaps as invalid content', async () => {
       repository.findById.mockResolvedValue(currentCalendar());
       captureBlocks();
-      const elevenBlocks = Array.from({ length: 11 }, (_, index) => ({
-        position: index + 1,
-        type: MinAdventBlockType.Text,
-        text: '<p>Text</p>',
-      }));
+      const elevenBlocks: { position: number; type: MinAdventBlockType; text: string }[] = Array.from(
+        { length: 11 },
+        (_, index) => ({
+          position: index + 1,
+          type: MinAdventBlockType.Text,
+          text: '<p>Text</p>',
+        }),
+      );
 
       await expect(
         service.updateDoor(owner, 'calendar-1', 3, { expectedVersion: 4, blocks: elevenBlocks }),
@@ -552,7 +641,7 @@ describe('MinAdventCalendarService', () => {
 
     it('sanitizes text and validates visible text, link and voucher content', async () => {
       repository.findById.mockResolvedValue(currentCalendar());
-      const saved = captureBlocks();
+      const saved: MinAdventBlock[][] = captureBlocks();
 
       await service.updateDoor(owner, 'calendar-1', 3, {
         expectedVersion: 4,

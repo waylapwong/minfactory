@@ -4,13 +4,15 @@ import { ThrottlerException, ThrottlerGuard } from '@nestjs/throttler';
 @Injectable()
 export class MinAdventSharedThrottlerGuard extends ThrottlerGuard {
   public override async canActivate(context: ExecutionContext): Promise<boolean> {
-    const response = context.switchToHttp().getResponse<{ setHeader: (name: string, value: string) => void }>();
+    const response: { setHeader: (name: string, value: string) => void } = context
+      .switchToHttp()
+      .getResponse<{ setHeader: (name: string, value: string) => void }>();
     response.setHeader('Cache-Control', 'no-store');
     response.setHeader('Referrer-Policy', 'no-referrer');
 
     try {
       return await super.canActivate(context);
-    } catch (error) {
+    } catch (error: unknown) {
       if (error instanceof ThrottlerException) {
         throw new HttpException(
           {

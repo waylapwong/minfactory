@@ -47,7 +47,7 @@ export class MinAdventSharedController {
     @Param('token') token: string,
     @Param('day', ParseIntPipe) day: number,
   ): Promise<MinAdventSharedDoorContentDto> {
-    const door = await this.calendarService.getSharedDoor(token, day);
+    const door: MinAdventSharedDoorContentDto | null = await this.calendarService.getSharedDoor(token, day);
     if (!door) {
       throw new NotFoundException({
         code: 'SHARED_CALENDAR_UNAVAILABLE',
@@ -67,7 +67,7 @@ export class MinAdventSharedController {
   @API_404()
   @API_500()
   public async get(@Param('token') token: string): Promise<MinAdventSharedCalendarDto> {
-    const calendar = await this.calendarService.getSharedCalendar(token);
+    const calendar: MinAdventSharedCalendarDto | null = await this.calendarService.getSharedCalendar(token);
     if (!calendar) {
       throw new NotFoundException({
         code: 'SHARED_CALENDAR_UNAVAILABLE',
@@ -94,7 +94,11 @@ export class MinAdventSharedController {
     @Param('day', ParseIntPipe) day: number,
     @Body() input: MinAdventSharedDoorOpenDto,
   ): Promise<MinAdventSharedDoorOpenResponseDto> {
-    const door = await this.calendarService.openSharedDoor(token, day, input);
+    const door: MinAdventSharedDoorOpenResponseDto | null = await this.calendarService.openSharedDoor(
+      token,
+      day,
+      input,
+    );
     if (!door) {
       throw new NotFoundException({
         code: 'SHARED_CALENDAR_UNAVAILABLE',

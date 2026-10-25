@@ -25,9 +25,9 @@ export class MinAdventCalendarRepository {
     expectedVersion: number,
   ): Promise<MinAdventCalendarEntity> {
     return this.dataSource.transaction(async (manager) => {
-      const calendarRepository = manager.getRepository(MinAdventCalendarEntity);
-      const doorRepository = manager.getRepository(MinAdventDoorEntity);
-      const calendar = await calendarRepository
+      const calendarRepository: Repository<MinAdventCalendarEntity> = manager.getRepository(MinAdventCalendarEntity);
+      const doorRepository: Repository<MinAdventDoorEntity> = manager.getRepository(MinAdventDoorEntity);
+      const calendar: MinAdventCalendarEntity | null = await calendarRepository
         .createQueryBuilder('calendar')
         .setLock('pessimistic_write')
         .where('calendar.id = :calendarId AND calendar.ownerId = :ownerId', { calendarId, ownerId })
@@ -41,7 +41,7 @@ export class MinAdventCalendarRepository {
           message: 'Der Kalender wurde zwischenzeitlich geändert.',
         });
       }
-      const doors = await doorRepository
+      const doors: MinAdventDoorEntity[] = await doorRepository
         .createQueryBuilder('door')
         .setLock('pessimistic_write')
         .where('door.calendarId = :calendarId', { calendarId })
@@ -52,7 +52,7 @@ export class MinAdventCalendarRepository {
           message: 'Abgeschlossene Kalender können nicht mehr bearbeitet werden.',
         });
       }
-      const door = doors.find((candidate) => candidate.day === day);
+      const door: MinAdventDoorEntity | undefined = doors.find((candidate) => candidate.day === day);
       if (!door) {
         throw new NotFoundException('Door not found.');
       }
@@ -63,17 +63,18 @@ export class MinAdventCalendarRepository {
         });
       }
       await doorRepository.update({ id: door.id }, { status: MinAdventDoorStatus.Filled });
-      const result = await calendarRepository.update(
-        { id: calendarId, ownerId, version: expectedVersion },
-        { version: expectedVersion + 1 },
-      );
+      const result: import('C:/Users/wayla/Desktop/Projekte/minfactory/server/node_modules/typeorm/index').UpdateResult =
+        await calendarRepository.update(
+          { id: calendarId, ownerId, version: expectedVersion },
+          { version: expectedVersion + 1 },
+        );
       if (!result.affected) {
         throw new ConflictException({
           code: 'VERSION_CONFLICT',
           message: 'Der Kalender wurde zwischenzeitlich geändert.',
         });
       }
-      const updated = await this.findById(calendarId, calendarRepository);
+      const updated: MinAdventCalendarEntity | null = await this.findById(calendarId, calendarRepository);
       if (!updated) {
         throw new NotFoundException('Calendar not found.');
       }
@@ -83,16 +84,16 @@ export class MinAdventCalendarRepository {
 
   public async create(calendar: MinAdventCalendar): Promise<MinAdventCalendarEntity> {
     return this.dataSource.transaction(async (manager) => {
-      const calendarRepository = manager.getRepository(MinAdventCalendarEntity);
-      const doorRepository = manager.getRepository(MinAdventDoorEntity);
-      const savedCalendar = await calendarRepository.save(
+      const calendarRepository: Repository<MinAdventCalendarEntity> = manager.getRepository(MinAdventCalendarEntity);
+      const doorRepository: Repository<MinAdventDoorEntity> = manager.getRepository(MinAdventDoorEntity);
+      const savedCalendar: MinAdventCalendarEntity = await calendarRepository.save(
         calendarRepository.create(MinAdventDomainMapper.toEntity(calendar)),
       );
-      const doors = MinAdventDomainMapper.toDoorEntities(calendar, savedCalendar.id).map((door) =>
-        doorRepository.create(door),
+      const doors: MinAdventDoorEntity[] = MinAdventDomainMapper.toDoorEntities(calendar, savedCalendar.id).map(
+        (door) => doorRepository.create(door),
       );
       await doorRepository.save(doors);
-      const createdCalendar = await this.findById(savedCalendar.id, calendarRepository);
+      const createdCalendar: MinAdventCalendarEntity | null = await this.findById(savedCalendar.id, calendarRepository);
       if (!createdCalendar) {
         throw new NotFoundException('Calendar not found.');
       }
@@ -102,8 +103,8 @@ export class MinAdventCalendarRepository {
 
   public async delete(ownerId: string, calendarId: string, expectedVersion: number): Promise<void> {
     await this.dataSource.transaction(async (manager) => {
-      const repository = manager.getRepository(MinAdventCalendarEntity);
-      const calendar = await repository
+      const repository: Repository<MinAdventCalendarEntity> = manager.getRepository(MinAdventCalendarEntity);
+      const calendar: MinAdventCalendarEntity | null = await repository
         .createQueryBuilder('calendar')
         .setLock('pessimistic_write')
         .where('calendar.id = :calendarId', { calendarId })
@@ -120,7 +121,8 @@ export class MinAdventCalendarRepository {
           message: 'Der Kalender wurde zwischenzeitlich geändert.',
         });
       }
-      const result = await repository.delete({ id: calendarId, ownerId, version: expectedVersion });
+      const result: import('C:/Users/wayla/Desktop/Projekte/minfactory/server/node_modules/typeorm/index').DeleteResult =
+        await repository.delete({ id: calendarId, ownerId, version: expectedVersion });
       if (!result.affected) {
         throw new ConflictException({
           code: 'VERSION_CONFLICT',
@@ -155,7 +157,7 @@ export class MinAdventCalendarRepository {
   }
 
   public async getSharedDoor(token: string, day: number): Promise<MinAdventCalendarEntity | null> {
-    const calendar = await this.calendars.findOne({
+    const calendar: MinAdventCalendarEntity | null = await this.calendars.findOne({
       where: { activeToken: token, isPublished: true },
       relations: { doors: { blocks: true } },
       order: { doors: { day: 'ASC', blocks: { position: 'ASC' } } },
@@ -174,10 +176,10 @@ export class MinAdventCalendarRepository {
     currentDate: { year: number; month: number; day: number },
   ): Promise<{ calendar: MinAdventCalendarEntity; firstOpened: boolean }> {
     return this.dataSource.transaction(async (manager) => {
-      const calendarRepository = manager.getRepository(MinAdventCalendarEntity);
-      const doorRepository = manager.getRepository(MinAdventDoorEntity);
-      const blockRepository = manager.getRepository(MinAdventBlockEntity);
-      const calendar = await calendarRepository
+      const calendarRepository: Repository<MinAdventCalendarEntity> = manager.getRepository(MinAdventCalendarEntity);
+      const doorRepository: Repository<MinAdventDoorEntity> = manager.getRepository(MinAdventDoorEntity);
+      const blockRepository: Repository<MinAdventBlockEntity> = manager.getRepository(MinAdventBlockEntity);
+      const calendar: MinAdventCalendarEntity | null = await calendarRepository
         .createQueryBuilder('calendar')
         .setLock('pessimistic_write')
         .where('calendar.activeToken = :token AND calendar.isPublished = :published', { token, published: true })
@@ -191,13 +193,16 @@ export class MinAdventCalendarRepository {
           message: 'Der Kalender wurde zwischenzeitlich geändert.',
         });
       }
-      const doors = await doorRepository.find({ where: { calendarId: calendar.id } });
-      const door = doors.find((candidate) => candidate.day === day);
+      const doors: MinAdventDoorEntity[] = await doorRepository.find({ where: { calendarId: calendar.id } });
+      const door: MinAdventDoorEntity | undefined = doors.find((candidate) => candidate.day === day);
       if (!door) {
         throw new NotFoundException('Door not found.');
       }
       if (door.status === MinAdventDoorStatus.Opened) {
-        const blocks = await blockRepository.find({ where: { doorId: door.id }, order: { position: 'ASC' } });
+        const blocks: MinAdventBlockEntity[] = await blockRepository.find({
+          where: { doorId: door.id },
+          order: { position: 'ASC' },
+        });
         calendar.doors = doors.map((item) => Object.assign(item, { blocks: item.id === door.id ? blocks : [] }));
         return { calendar, firstOpened: false };
       }
@@ -215,18 +220,22 @@ export class MinAdventCalendarRepository {
         });
       }
       await doorRepository.update({ id: door.id }, { status: MinAdventDoorStatus.Opened });
-      const update = await calendarRepository.update(
-        { id: calendar.id, version: expectedVersion },
-        { version: expectedVersion + 1 },
-      );
+      const update: import('C:/Users/wayla/Desktop/Projekte/minfactory/server/node_modules/typeorm/index').UpdateResult =
+        await calendarRepository.update(
+          { id: calendar.id, version: expectedVersion },
+          { version: expectedVersion + 1 },
+        );
       if (!update.affected) {
         throw new ConflictException({
           code: 'VERSION_CONFLICT',
           message: 'Der Kalender wurde zwischenzeitlich geändert.',
         });
       }
-      const blocks = await blockRepository.find({ where: { doorId: door.id }, order: { position: 'ASC' } });
-      const refreshed = await calendarRepository.findOne({
+      const blocks: MinAdventBlockEntity[] = await blockRepository.find({
+        where: { doorId: door.id },
+        order: { position: 'ASC' },
+      });
+      const refreshed: MinAdventCalendarEntity | null = await calendarRepository.findOne({
         where: { id: calendar.id },
         relations: { doors: { blocks: true } },
         order: { doors: { day: 'ASC', blocks: { position: 'ASC' } } },
@@ -246,10 +255,10 @@ export class MinAdventCalendarRepository {
     createBlocks: () => MinAdventBlock[],
   ): Promise<MinAdventCalendarEntity> {
     return this.dataSource.transaction(async (manager) => {
-      const calendarRepository = manager.getRepository(MinAdventCalendarEntity);
-      const doorRepository = manager.getRepository(MinAdventDoorEntity);
-      const blockRepository = manager.getRepository(MinAdventBlockEntity);
-      const currentCalendar = await calendarRepository
+      const calendarRepository: Repository<MinAdventCalendarEntity> = manager.getRepository(MinAdventCalendarEntity);
+      const doorRepository: Repository<MinAdventDoorEntity> = manager.getRepository(MinAdventDoorEntity);
+      const blockRepository: Repository<MinAdventBlockEntity> = manager.getRepository(MinAdventBlockEntity);
+      const currentCalendar: MinAdventCalendarEntity | null = await calendarRepository
         .createQueryBuilder('calendar')
         .setLock('pessimistic_write')
         .where('calendar.id = :id AND calendar.ownerId = :ownerId', { id: calendarId, ownerId })
@@ -264,19 +273,19 @@ export class MinAdventCalendarRepository {
         });
       }
 
-      const doors = await doorRepository
+      const doors: MinAdventDoorEntity[] = await doorRepository
         .createQueryBuilder('door')
         .setLock('pessimistic_write')
         .where('door.calendarId = :calendarId', { calendarId })
         .getMany();
-      const currentDomain = MinAdventEntityMapper.toDomain({ ...currentCalendar, doors });
+      const currentDomain: MinAdventCalendar = MinAdventEntityMapper.toDomain({ ...currentCalendar, doors });
       if (currentDomain.completed) {
         throw new ConflictException({
           code: 'CALENDAR_COMPLETED',
           message: 'Abgeschlossene Kalender können nicht mehr bearbeitet werden.',
         });
       }
-      const door = doors.find((candidate) => candidate.day === day);
+      const door: MinAdventDoorEntity | undefined = doors.find((candidate) => candidate.day === day);
       if (!door) {
         throw new NotFoundException('Door not found.');
       }
@@ -287,13 +296,16 @@ export class MinAdventCalendarRepository {
         });
       }
 
-      const blocks = createBlocks();
-      const currentBlocks = await blockRepository.find({ where: { doorId: door.id }, order: { position: 'ASC' } });
+      const blocks: MinAdventBlock[] = createBlocks();
+      const currentBlocks: MinAdventBlockEntity[] = await blockRepository.find({
+        where: { doorId: door.id },
+        order: { position: 'ASC' },
+      });
       if (
         this.blocksEqual(currentBlocks, blocks) &&
         door.status === (blocks.length ? MinAdventDoorStatus.Filled : MinAdventDoorStatus.Empty)
       ) {
-        const unchanged = await this.findById(calendarId, calendarRepository);
+        const unchanged: MinAdventCalendarEntity | null = await this.findById(calendarId, calendarRepository);
         if (!unchanged) {
           throw new NotFoundException('Calendar not found.');
         }
@@ -303,12 +315,14 @@ export class MinAdventCalendarRepository {
       if (blocks.length > 0) {
         await blockRepository.save(blocks.map((block) => blockRepository.create({ ...block, doorId: door.id })));
       }
-      const nextStatus = blocks.length > 0 ? MinAdventDoorStatus.Filled : MinAdventDoorStatus.Empty;
+      const nextStatus: MinAdventDoorStatus.Empty | MinAdventDoorStatus.Filled =
+        blocks.length > 0 ? MinAdventDoorStatus.Filled : MinAdventDoorStatus.Empty;
       await doorRepository.update({ id: door.id }, { status: nextStatus });
-      const result = await calendarRepository.update(
-        { id: calendarId, ownerId, version: expectedVersion },
-        { version: expectedVersion + 1 },
-      );
+      const result: import('C:/Users/wayla/Desktop/Projekte/minfactory/server/node_modules/typeorm/index').UpdateResult =
+        await calendarRepository.update(
+          { id: calendarId, ownerId, version: expectedVersion },
+          { version: expectedVersion + 1 },
+        );
       if (!result.affected) {
         throw new ConflictException({
           code: 'VERSION_CONFLICT',
@@ -316,7 +330,7 @@ export class MinAdventCalendarRepository {
         });
       }
 
-      const updated = await this.findById(calendarId, calendarRepository);
+      const updated: MinAdventCalendarEntity | null = await this.findById(calendarId, calendarRepository);
       if (!updated) {
         throw new NotFoundException('Calendar not found.');
       }
@@ -326,9 +340,9 @@ export class MinAdventCalendarRepository {
 
   public async update(calendar: MinAdventCalendar, expectedVersion: number): Promise<MinAdventCalendarEntity> {
     return this.dataSource.transaction(async (manager) => {
-      const calendarRepository = manager.getRepository(MinAdventCalendarEntity);
-      const doorRepository = manager.getRepository(MinAdventDoorEntity);
-      const currentCalendar = await calendarRepository
+      const calendarRepository: Repository<MinAdventCalendarEntity> = manager.getRepository(MinAdventCalendarEntity);
+      const doorRepository: Repository<MinAdventDoorEntity> = manager.getRepository(MinAdventDoorEntity);
+      const currentCalendar: MinAdventCalendarEntity | null = await calendarRepository
         .createQueryBuilder('calendar')
         .setLock('pessimistic_write')
         .where('calendar.id = :id AND calendar.ownerId = :ownerId', {
@@ -345,12 +359,15 @@ export class MinAdventCalendarRepository {
           message: 'Der Kalender wurde zwischenzeitlich geändert.',
         });
       }
-      const currentDoors = await doorRepository
+      const currentDoors: MinAdventDoorEntity[] = await doorRepository
         .createQueryBuilder('door')
         .setLock('pessimistic_write')
         .where('door.calendarId = :calendarId', { calendarId: currentCalendar.id })
         .getMany();
-      const currentDomain = MinAdventEntityMapper.toDomain({ ...currentCalendar, doors: currentDoors });
+      const currentDomain: MinAdventCalendar = MinAdventEntityMapper.toDomain({
+        ...currentCalendar,
+        doors: currentDoors,
+      });
       if (currentDomain.completed) {
         throw new ConflictException({
           code: 'CALENDAR_COMPLETED',
@@ -358,17 +375,18 @@ export class MinAdventCalendarRepository {
         });
       }
 
-      const result = await calendarRepository.update(
-        { id: calendar.id, ownerId: calendar.ownerId, version: expectedVersion },
-        { title: calendar.title, recipientName: calendar.recipientName, version: expectedVersion + 1 },
-      );
+      const result: import('C:/Users/wayla/Desktop/Projekte/minfactory/server/node_modules/typeorm/index').UpdateResult =
+        await calendarRepository.update(
+          { id: calendar.id, ownerId: calendar.ownerId, version: expectedVersion },
+          { title: calendar.title, recipientName: calendar.recipientName, version: expectedVersion + 1 },
+        );
       if (!result.affected) {
         throw new ConflictException({
           code: 'VERSION_CONFLICT',
           message: 'Der Kalender wurde zwischenzeitlich geändert.',
         });
       }
-      const updatedCalendar = await this.findById(calendar.id, calendarRepository);
+      const updatedCalendar: MinAdventCalendarEntity | null = await this.findById(calendar.id, calendarRepository);
       if (!updatedCalendar) {
         throw new NotFoundException('Calendar not found.');
       }
@@ -384,8 +402,8 @@ export class MinAdventCalendarRepository {
     activeToken: string | null,
   ): Promise<MinAdventCalendarEntity> {
     return this.dataSource.transaction(async (manager) => {
-      const repository = manager.getRepository(MinAdventCalendarEntity);
-      const calendar = await repository
+      const repository: Repository<MinAdventCalendarEntity> = manager.getRepository(MinAdventCalendarEntity);
+      const calendar: MinAdventCalendarEntity | null = await repository
         .createQueryBuilder('calendar')
         .setLock('pessimistic_write')
         .where('calendar.id = :calendarId AND calendar.ownerId = :ownerId', { calendarId, ownerId })
@@ -399,17 +417,18 @@ export class MinAdventCalendarRepository {
           message: 'Der Kalender wurde zwischenzeitlich geändert.',
         });
       }
-      const result = await repository.update(
-        { id: calendarId, ownerId, version: expectedVersion },
-        { isPublished: published, activeToken, version: expectedVersion + 1 },
-      );
+      const result: import('C:/Users/wayla/Desktop/Projekte/minfactory/server/node_modules/typeorm/index').UpdateResult =
+        await repository.update(
+          { id: calendarId, ownerId, version: expectedVersion },
+          { isPublished: published, activeToken, version: expectedVersion + 1 },
+        );
       if (!result.affected) {
         throw new ConflictException({
           code: 'VERSION_CONFLICT',
           message: 'Der Kalender wurde zwischenzeitlich geändert.',
         });
       }
-      const updated = await this.findById(calendarId, repository);
+      const updated: MinAdventCalendarEntity | null = await this.findById(calendarId, repository);
       if (!updated) {
         throw new NotFoundException('Calendar not found.');
       }
@@ -421,7 +440,7 @@ export class MinAdventCalendarRepository {
     return (
       current.length === requested.length &&
       current.every((block, index) => {
-        const next = requested[index];
+        const next: MinAdventBlock = requested[index];
         return (
           block.position === next.position &&
           block.type === next.type &&

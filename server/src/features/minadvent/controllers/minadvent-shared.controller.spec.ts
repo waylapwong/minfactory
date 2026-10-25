@@ -13,7 +13,7 @@ describe('MinAdventSharedController', () => {
 
   describe('get()', () => {
     it('returns the shared calendar for a valid token', async () => {
-      const response = { title: 'December' } as never;
+      const response: never = { title: 'December' } as never;
       calendarService.getSharedCalendar.mockResolvedValue(response);
 
       await expect(controller.get('a'.repeat(64))).resolves.toBe(response);

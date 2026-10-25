@@ -12,7 +12,8 @@ describe('MinAdventComponent', () => {
         providers: [provideZonelessChangeDetection()],
       }).compileComponents();
 
-      const fixture = TestBed.createComponent(MinAdventComponent);
+      const fixture: import('@angular/core/testing').ComponentFixture<MinAdventComponent> =
+        TestBed.createComponent(MinAdventComponent);
       fixture.detectChanges();
 
       expect(TestBed.inject(ContextService).app()).toBe(AppName.MinAdvent);
@@ -26,7 +27,8 @@ describe('MinAdventComponent', () => {
         providers: [provideZonelessChangeDetection()],
       }).compileComponents();
 
-      const fixture = TestBed.createComponent(MinAdventComponent);
+      const fixture: import('@angular/core/testing').ComponentFixture<MinAdventComponent> =
+        TestBed.createComponent(MinAdventComponent);
       fixture.detectChanges();
 
       expect(fixture.nativeElement.querySelector('router-outlet')).toBeTruthy();

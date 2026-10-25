@@ -10,8 +10,13 @@ function createContext(
   setHeader = jest.fn(),
   handler: (...args: never[]) => unknown = MinAdventSharedController.prototype.get,
 ): ExecutionContext {
-  const request = { method, ip, socket: { remoteAddress: ip }, headers: {} };
-  const response = { setHeader };
+  const request: { method: string; ip: string; socket: { remoteAddress: string }; headers: {} } = {
+    method,
+    ip,
+    socket: { remoteAddress: ip },
+    headers: {},
+  };
+  const response: { setHeader: jest.Mock } = { setHeader };
   return {
     switchToHttp: () => ({
       getRequest: () => request,
@@ -42,7 +47,7 @@ describe('MinAdventSharedThrottlerGuard', () => {
   });
 
   it('sets no-store and no-referrer headers', async () => {
-    const setHeader = jest.fn();
+    const setHeader: jest.Mock = jest.fn();
 
     await expect(guard.canActivate(createContext('GET', '192.0.2.1', setHeader))).resolves.toBe(true);
     expect(setHeader).toHaveBeenCalledWith('Cache-Control', 'no-store');
@@ -50,8 +55,8 @@ describe('MinAdventSharedThrottlerGuard', () => {
   });
 
   it('uses the configured throttler and returns the neutral 429 response', async () => {
-    const setHeader = jest.fn();
-    const context = createContext('GET', '192.0.2.1', setHeader);
+    const setHeader: jest.Mock = jest.fn();
+    const context: ExecutionContext = createContext('GET', '192.0.2.1', setHeader);
 
     await guard.canActivate(context);
     await guard.canActivate(context);
@@ -68,9 +73,14 @@ describe('MinAdventSharedThrottlerGuard', () => {
   });
 
   it('uses the PUT route override instead of the default limit', async () => {
-    const context = createContext('PUT', '192.0.2.1', jest.fn(), MinAdventSharedController.prototype.openDoor);
+    const context: ExecutionContext = createContext(
+      'PUT',
+      '192.0.2.1',
+      jest.fn(),
+      MinAdventSharedController.prototype.openDoor,
+    );
 
-    for (let request = 0; request < 10; request += 1) {
+    for (let request: number = 0; request < 10; request += 1) {
       await expect(guard.canActivate(context)).resolves.toBe(true);
     }
 
@@ -78,7 +88,7 @@ describe('MinAdventSharedThrottlerGuard', () => {
   });
 
   it('tracks different client addresses independently', async () => {
-    const firstClient = createContext('GET', '192.0.2.1');
+    const firstClient: ExecutionContext = createContext('GET', '192.0.2.1');
 
     await guard.canActivate(firstClient);
     await guard.canActivate(firstClient);
@@ -89,7 +99,7 @@ describe('MinAdventSharedThrottlerGuard', () => {
   it('resets the request window after one minute', async () => {
     jest.useFakeTimers();
     jest.setSystemTime(new Date('2026-10-21T12:00:00.000Z'));
-    const context = createContext('GET', '192.0.2.1');
+    const context: ExecutionContext = createContext('GET', '192.0.2.1');
 
     await guard.canActivate(context);
     await guard.canActivate(context);

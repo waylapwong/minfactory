@@ -53,11 +53,14 @@ export class MinAdventSharedCalendarComponent implements OnInit, OnDestroy {
   public readonly calendar = signal<MinAdventSharedCalendarDto | null>(null);
   public readonly now = signal(Date.now());
   public readonly countdown = computed(() => {
-    const calendar = this.calendar();
+    const calendar: MinAdventSharedCalendarDto | null = this.calendar();
     if (!calendar) {
       return { days: 0, hours: 0, minutes: 0, seconds: 0 };
     }
-    const remainingSeconds = Math.max(0, Math.floor((this.getDecemberStart(calendar.year) - this.now()) / 1000));
+    const remainingSeconds: number = Math.max(
+      0,
+      Math.floor((this.getDecemberStart(calendar.year) - this.now()) / 1000),
+    );
     return {
       days: Math.floor(remainingSeconds / 86400),
       hours: Math.floor((remainingSeconds % 86400) / 3600),
@@ -68,7 +71,7 @@ export class MinAdventSharedCalendarComponent implements OnInit, OnDestroy {
   public readonly doorError = signal('');
   public readonly error = signal('');
   public readonly isBeforeDecember: Signal<boolean> = computed(() => {
-    const calendar = this.calendar();
+    const calendar: MinAdventSharedCalendarDto | null = this.calendar();
     return calendar !== null && this.now() < this.getDecemberStart(calendar.year);
   });
   public readonly isDoorLoading = signal(false);
@@ -121,10 +124,10 @@ export class MinAdventSharedCalendarComponent implements OnInit, OnDestroy {
   }
 
   public isDoorAvailable(day: number): boolean {
-    const parts = Object.fromEntries(
+    const parts: { [k: string]: number } = Object.fromEntries(
       BERLIN_DATE_FORMATTER.formatToParts(new Date(this.now())).map((part) => [part.type, Number(part.value)]),
     );
-    const calendar = this.calendar();
+    const calendar: MinAdventSharedCalendarDto | null = this.calendar();
     return (
       calendar !== null &&
       (parts['year'] > calendar.year ||
@@ -140,8 +143,9 @@ export class MinAdventSharedCalendarComponent implements OnInit, OnDestroy {
 
   public async reloadAfterConflict(): Promise<void> {
     await this.loadCalendar();
-    const selectedDay = this.selectedDoor()?.day;
-    const door = this.calendar()?.doors.find((item) => item.day === selectedDay);
+    const selectedDay: number | undefined = this.selectedDoor()?.day;
+    const door: import('../../../../core/generated').MinAdventSharedDoorDto | undefined =
+      this.calendar()?.doors.find((item) => item.day === selectedDay);
     this.reloadRequired.set(false);
     this.reloadDialogOpen.set(false);
     this.doorError.set('');
@@ -161,8 +165,10 @@ export class MinAdventSharedCalendarComponent implements OnInit, OnDestroy {
   }
 
   public async selectDoor(day: number): Promise<void> {
-    const calendar = this.calendar();
-    const door = calendar?.doors.find((item) => item.day === day);
+    const calendar: MinAdventSharedCalendarDto | null = this.calendar();
+    const door: import('../../../../core/generated').MinAdventSharedDoorDto | undefined = calendar?.doors.find(
+      (item) => item.day === day,
+    );
     if (!calendar || !door || !this.isDoorAvailable(day) || door.status === 'EMPTY' || this.isDoorLoading()) {
       return;
     }
@@ -174,11 +180,15 @@ export class MinAdventSharedCalendarComponent implements OnInit, OnDestroy {
       if (door.status === 'OPENED') {
         this.showDoor(await this.calendarService.getSharedDoor(this.token, day), false);
       } else {
-        const response = await this.calendarService.openSharedDoor(this.token, day, calendar.version);
+        const response: MinAdventSharedDoorOpenResponseDto = await this.calendarService.openSharedDoor(
+          this.token,
+          day,
+          calendar.version,
+        );
         this.applyOpenedDoor(response);
         this.showDoor(response, response.firstOpened);
       }
-    } catch (error) {
+    } catch (error: unknown) {
       this.doorError.set(
         'Die Tür konnte nicht geöffnet werden. Lade zuerst die Übersicht neu, bevor du es erneut versuchst.',
       );
@@ -210,17 +220,17 @@ export class MinAdventSharedCalendarComponent implements OnInit, OnDestroy {
   }
 
   private getDecemberStart(year: number): number {
-    const localMidnight = new Date(0);
+    const localMidnight: Date = new Date(0);
     localMidnight.setUTCFullYear(year, 11, 1);
     localMidnight.setUTCHours(0, 0, 0, 0);
-    const localMidnightTimestamp = localMidnight.getTime();
-    let timestamp = localMidnightTimestamp;
+    const localMidnightTimestamp: number = localMidnight.getTime();
+    let timestamp: number = localMidnightTimestamp;
 
-    for (let attempt = 0; attempt < 3; attempt += 1) {
-      const dateParts = Object.fromEntries(
+    for (let attempt: number = 0; attempt < 3; attempt += 1) {
+      const dateParts: { [k: string]: number } = Object.fromEntries(
         BERLIN_DATE_FORMATTER.formatToParts(new Date(timestamp)).map((part) => [part.type, Number(part.value)]),
       );
-      const berlinAsUtc = new Date(0);
+      const berlinAsUtc: Date = new Date(0);
       berlinAsUtc.setUTCFullYear(dateParts['year'], dateParts['month'] - 1, dateParts['day']);
       berlinAsUtc.setUTCHours(dateParts['hour'], dateParts['minute'], dateParts['second'], 0);
       timestamp = localMidnightTimestamp - (berlinAsUtc.getTime() - timestamp);
@@ -239,7 +249,7 @@ export class MinAdventSharedCalendarComponent implements OnInit, OnDestroy {
     this.error.set('');
     try {
       this.calendar.set(await this.calendarService.getSharedCalendar(this.token));
-    } catch (error) {
+    } catch (error: unknown) {
       this.error.set(
         error instanceof HttpErrorResponse && error.status === 404
           ? 'Dieser Adventskalender ist nicht verfügbar.'
@@ -256,7 +266,7 @@ export class MinAdventSharedCalendarComponent implements OnInit, OnDestroy {
   }
 }
 
-const BERLIN_DATE_FORMATTER = new Intl.DateTimeFormat('en', {
+const BERLIN_DATE_FORMATTER: Intl.DateTimeFormat = new Intl.DateTimeFormat('en', {
   timeZone: 'Europe/Berlin',
   year: 'numeric',
   month: 'numeric',

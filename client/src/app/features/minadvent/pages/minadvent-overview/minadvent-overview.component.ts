@@ -44,9 +44,9 @@ export class MinAdventOverviewComponent implements OnInit {
   });
   public readonly error = signal('');
   public readonly groups: Signal<MinAdventCalendarGroup[]> = computed(() => {
-    const calendars = this.calendarService.calendars();
-    const years = [...new Set(calendars.map((calendar) => calendar.year))].sort((left, right) => {
-      const currentYear = new Date().getFullYear();
+    const calendars: MinAdventCalendar[] = this.calendarService.calendars();
+    const years: number[] = [...new Set(calendars.map((calendar) => calendar.year))].sort((left, right) => {
+      const currentYear: number = new Date().getFullYear();
       if (left === currentYear) {
         return -1;
       }
@@ -81,7 +81,7 @@ export class MinAdventOverviewComponent implements OnInit {
     this.isCreating.set(true);
     this.error.set('');
     try {
-      const calendar = await this.calendarService.createCalendar(this.createForm.getRawValue());
+      const calendar: MinAdventCalendar = await this.calendarService.createCalendar(this.createForm.getRawValue());
       this.isCreateDialogOpen.set(false);
       this.routingService.navigateToMinAdventCalendar(calendar.id);
     } catch {
@@ -92,7 +92,7 @@ export class MinAdventOverviewComponent implements OnInit {
   }
 
   public async confirmDeleteCalendar(): Promise<void> {
-    const calendar = this.calendarToDelete();
+    const calendar: MinAdventCalendar | null = this.calendarToDelete();
     if (!calendar || this.isDeleting()) {
       return;
     }

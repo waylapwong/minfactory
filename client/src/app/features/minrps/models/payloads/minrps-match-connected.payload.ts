@@ -1,3 +1,3 @@
 export class MinRpsMatchConnectedPayload {
-  declare public playerId: string;
+  public playerId: string;
 }

@@ -8,7 +8,7 @@ import { MinAdventBlockEntity } from '../models/entities/minadvent-block.entity'
 
 export class MinAdventEntityMapper {
   public static toDomain(entity: MinAdventCalendarEntity): MinAdventCalendar {
-    const domain = new MinAdventCalendar();
+    const domain: MinAdventCalendar = new MinAdventCalendar();
     domain.id = entity.id;
     domain.ownerId = entity.ownerId;
     domain.year = entity.year;
@@ -22,13 +22,13 @@ export class MinAdventEntityMapper {
     domain.doors = [...(entity.doors ?? [])]
       .sort((left, right) => left.day - right.day)
       .map((entityDoor) => {
-        const door = new MinAdventDoor();
+        const door: MinAdventDoor = new MinAdventDoor();
         door.day = entityDoor.day;
         door.status = entityDoor.status;
         door.blocks = [...(entityDoor.blocks ?? [])]
           .sort((left, right) => left.position - right.position)
           .map((entityBlock) => {
-            const block = new MinAdventBlock();
+            const block: MinAdventBlock = new MinAdventBlock();
             block.description = entityBlock.description;
             block.position = entityBlock.position;
             block.text = entityBlock.text;
@@ -44,7 +44,7 @@ export class MinAdventEntityMapper {
   }
 
   public static toDoorEntity(domain: MinAdventDoor, calendarId: string): MinAdventDoorEntity {
-    const entity = new MinAdventDoorEntity();
+    const entity: MinAdventDoorEntity = new MinAdventDoorEntity();
     entity.calendarId = calendarId;
     entity.day = domain.day;
     entity.status = domain.status;
@@ -56,20 +56,22 @@ export class MinAdventEntityMapper {
   }
 
   private static isCompleted(calendar: MinAdventCalendar): boolean {
-    const dateParts = new Intl.DateTimeFormat('en', {
+    const dateParts: Intl.DateTimeFormatPart[] = new Intl.DateTimeFormat('en', {
       timeZone: 'Europe/Berlin',
       year: 'numeric',
       month: 'numeric',
       day: 'numeric',
     }).formatToParts(new Date());
-    const berlinDate = Object.fromEntries(dateParts.map((part) => [part.type, Number(part.value)]));
-    const currentYear = berlinDate['year'];
-    const currentMonth = berlinDate['month'];
-    const currentDay = berlinDate['day'];
-    const deadlinePassed =
+    const berlinDate: { [k: string]: number } = Object.fromEntries(
+      dateParts.map((part) => [part.type, Number(part.value)]),
+    );
+    const currentYear: number = berlinDate['year'];
+    const currentMonth: number = berlinDate['month'];
+    const currentDay: number = berlinDate['day'];
+    const deadlinePassed: boolean =
       currentYear > calendar.year || (currentYear === calendar.year && currentMonth === 12 && currentDay >= 25);
-    const hasOpenedDoor = calendar.doors.some((door) => door.status === MinAdventDoorStatus.Opened);
-    const hasFilledDoor = calendar.doors.some((door) => door.status === MinAdventDoorStatus.Filled);
+    const hasOpenedDoor: boolean = calendar.doors.some((door) => door.status === MinAdventDoorStatus.Opened);
+    const hasFilledDoor: boolean = calendar.doors.some((door) => door.status === MinAdventDoorStatus.Filled);
 
     return deadlinePassed && hasOpenedDoor && !hasFilledDoor;
   }

@@ -9,7 +9,10 @@ describe('MinAdventEntityMapper', () => {
 
   describe('toDomain()', () => {
     it('calculates completion at midnight on December 25 in Europe/Berlin', () => {
-      const calendar = Object.assign(new MinAdventCalendarEntity(), {
+      const calendar: MinAdventCalendarEntity & {
+        year: number;
+        doors: (MinAdventDoorEntity & { day: number; status: MinAdventDoorStatus; blocks: never[] })[];
+      } = Object.assign(new MinAdventCalendarEntity(), {
         year: 2026,
         doors: [Object.assign(new MinAdventDoorEntity(), { day: 1, status: MinAdventDoorStatus.Opened, blocks: [] })],
       });
@@ -24,7 +27,10 @@ describe('MinAdventEntityMapper', () => {
 
     it('keeps a calendar with 24 empty doors editable after the deadline', () => {
       jest.setSystemTime(new Date('2026-12-24T23:00:00.000Z'));
-      const calendar = Object.assign(new MinAdventCalendarEntity(), {
+      const calendar: MinAdventCalendarEntity & {
+        year: number;
+        doors: (MinAdventDoorEntity & { day: number; status: MinAdventDoorStatus; blocks: never[] })[];
+      } = Object.assign(new MinAdventCalendarEntity(), {
         year: 2026,
         doors: Array.from({ length: 24 }, (_, index) =>
           Object.assign(new MinAdventDoorEntity(), { day: index + 1, status: MinAdventDoorStatus.Empty, blocks: [] }),
@@ -36,7 +42,10 @@ describe('MinAdventEntityMapper', () => {
 
     it('completes with one opened door and 23 empty doors after the deadline', () => {
       jest.setSystemTime(new Date('2026-12-24T23:00:00.000Z'));
-      const calendar = Object.assign(new MinAdventCalendarEntity(), {
+      const calendar: MinAdventCalendarEntity & {
+        year: number;
+        doors: (MinAdventDoorEntity & { day: number; status: MinAdventDoorStatus; blocks: never[] })[];
+      } = Object.assign(new MinAdventCalendarEntity(), {
         year: 2026,
         doors: Array.from({ length: 24 }, (_, index) =>
           Object.assign(new MinAdventDoorEntity(), {

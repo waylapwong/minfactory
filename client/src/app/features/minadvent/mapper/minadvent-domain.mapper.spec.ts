@@ -4,9 +4,10 @@ import { MinAdventDomainMapper } from './minadvent-domain.mapper';
 describe('MinAdventDomainMapper', () => {
   describe('toCalendar()', () => {
     it('should map all calendar fields and doors from the DTO', () => {
-      const dto = createMinAdventCalendarDto();
+      const dto: import('../../../core/generated').MinAdventCalendarDto = createMinAdventCalendarDto();
 
-      const calendar = MinAdventDomainMapper.toCalendar(dto);
+      const calendar: import('../models/minadvent-calendar.model').MinAdventCalendar =
+        MinAdventDomainMapper.toCalendar(dto);
 
       expect(calendar).toEqual(dto);
       expect(calendar.doors).not.toBe(dto.doors);

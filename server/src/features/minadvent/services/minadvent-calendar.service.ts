@@ -28,6 +28,7 @@ import { MinAdventSharedDoorOpenDto } from '../models/dtos/minadvent-shared-door
 import { MinAdventSharingResponseDto } from '../models/dtos/minadvent-sharing-response.dto';
 import { MinAdventSharingUpdateDto } from '../models/dtos/minadvent-sharing-update.dto';
 import { MinAdventTokenRotationDto } from '../models/dtos/minadvent-token-rotation.dto';
+import { MinAdventCalendarEntity } from '../models/entities/minadvent-calendar.entity';
 import { MinAdventBlockType } from '../models/enums/minadvent-block-type.enum';
 import { MinAdventDoorStatus } from '../models/enums/minadvent-door-status.enum';
 import { MinAdventCalendarRepository } from '../repositories/minadvent-calendar.repository';
@@ -36,30 +37,33 @@ import { MinAdventCalendarRepository } from '../repositories/minadvent-calendar.
 export class MinAdventCalendarService {
   constructor(private readonly calendarRepository: MinAdventCalendarRepository) {}
 
-  public async create(user: MinFactoryUser, input: MinAdventCalendarCreateDto): Promise<MinAdventCalendarDto> {
-    this.validateCreate(input);
-    const domain = MinAdventDtoMapper.toDomain(input, user.id);
-    return MinAdventDomainMapper.toDto(MinAdventEntityMapper.toDomain(await this.calendarRepository.create(domain)));
+  public async create(user: MinFactoryUser, dto: MinAdventCalendarCreateDto): Promise<MinAdventCalendarDto> {
+    this.validateCreate(dto);
+    const domain: MinAdventCalendar = MinAdventDtoMapper.toDomain(dto, user.id);
+    const createdEntity: MinAdventCalendarEntity = await this.calendarRepository.create(domain);
+    const createdDomain: MinAdventCalendar = MinAdventEntityMapper.toDomain(createdEntity);
+    return MinAdventDomainMapper.toDto(createdDomain);
   }
 
   public async delete(user: MinFactoryUser, id: string, input: MinAdventCalendarDeleteDto): Promise<void> {
     await this.calendarRepository.delete(user.id, id, input.expectedVersion);
   }
 
-  public async get(user: MinFactoryUser, id: string): Promise<MinAdventCalendarDto> {
-    return MinAdventDomainMapper.toDto(await this.requireOwnedCalendar(user, id));
+  public async get(user: MinFactoryUser, calendarId: string): Promise<MinAdventCalendarDto> {
+    const calender: MinAdventCalendar = await this.requireOwnedCalendar(user, calendarId);
+    return MinAdventDomainMapper.toDto(calender);
   }
 
   public async getSharedCalendar(token: string): Promise<MinAdventSharedCalendarDto | null> {
     if (!/^[a-f0-9]{64}$/.test(token)) {
       return null;
     }
-    const entity = await this.calendarRepository.findByActiveToken(token);
+    const entity: MinAdventCalendarEntity | null = await this.calendarRepository.findByActiveToken(token);
     if (!entity) {
       return null;
     }
-    const calendar = MinAdventEntityMapper.toDomain(entity);
-    const response = new MinAdventSharedCalendarDto();
+    const calendar: MinAdventCalendar = MinAdventEntityMapper.toDomain(entity);
+    const response: MinAdventSharedCalendarDto = new MinAdventSharedCalendarDto();
     response.title = calendar.title;
     response.recipientName = calendar.recipientName;
     response.year = calendar.year;
@@ -76,16 +80,17 @@ export class MinAdventCalendarService {
     if (!/^[a-f0-9]{64}$/.test(token)) {
       return null;
     }
-    const entity = await this.calendarRepository.getSharedDoor(token, day);
+    const entity: MinAdventCalendarEntity | null = await this.calendarRepository.getSharedDoor(token, day);
     if (!entity) {
       return null;
     }
-    const calendar = MinAdventEntityMapper.toDomain(entity);
-    const door = calendar.doors[0];
+    const calendar: MinAdventCalendar = MinAdventEntityMapper.toDomain(entity);
+    const door: import('C:/Users/wayla/Desktop/Projekte/minfactory/server/src/features/minadvent/models/domains/minadvent-door').MinAdventDoor =
+      calendar.doors[0];
     if (!door || door.status !== MinAdventDoorStatus.Opened) {
       throw new ConflictException({ code: 'DOOR_NOT_OPENED', message: 'Dieses Türchen wurde noch nicht geöffnet.' });
     }
-    const response = new MinAdventSharedDoorContentDto();
+    const response: MinAdventSharedDoorContentDto = new MinAdventSharedDoorContentDto();
     response.day = door.day;
     response.status = door.status;
     response.blocks = door.blocks.map(MinAdventDomainMapper.toBlockDto);
@@ -97,8 +102,10 @@ export class MinAdventCalendarService {
   }
 
   public async list(user: MinFactoryUser): Promise<MinAdventCalendarDto[]> {
-    const calendars = (await this.calendarRepository.findByOwner(user.id)).map(MinAdventEntityMapper.toDomain);
-    const currentYear = this.getCurrentBerlinYear();
+    const calendarEntities: MinAdventCalendarEntity[] = await this.calendarRepository.findByOwner(user.id);
+    const calendars: MinAdventCalendar[] = calendarEntities.map(MinAdventEntityMapper.toDomain);
+    const currentYear: number = this.getCurrentBerlinYear();
+
     calendars.sort((left, right) => {
       if (left.year === currentYear) {
         return right.year === currentYear ? 0 : -1;
@@ -108,7 +115,9 @@ export class MinAdventCalendarService {
       }
       return right.year - left.year || right.createdAt.getTime() - left.createdAt.getTime();
     });
-    return calendars.map(MinAdventDomainMapper.toDto);
+
+    const calendarDtos: MinAdventCalendarDto[] = calendars.map(MinAdventDomainMapper.toDto);
+    return calendarDtos;
   }
 
   public async openSharedDoor(
@@ -122,23 +131,26 @@ export class MinAdventCalendarService {
     if (!/^[a-f0-9]{64}$/.test(token)) {
       return null;
     }
-    const now = Object.fromEntries(
+    const now: { [k: string]: number } = Object.fromEntries(
       new Intl.DateTimeFormat('en', { timeZone: 'Europe/Berlin', year: 'numeric', month: 'numeric', day: 'numeric' })
         .formatToParts(new Date())
         .map((part) => [part.type, Number(part.value)]),
     );
     try {
-      const result = await this.calendarRepository.openSharedDoor(token, day, input.expectedVersion, {
-        year: now['year'],
-        month: now['month'],
-        day: now['day'],
-      });
-      const calendar = MinAdventEntityMapper.toDomain(result.calendar);
-      const door = calendar.doors.find((item) => item.day === day);
+      const result: { calendar: MinAdventCalendarEntity; firstOpened: boolean } =
+        await this.calendarRepository.openSharedDoor(token, day, input.expectedVersion, {
+          year: now['year'],
+          month: now['month'],
+          day: now['day'],
+        });
+      const calendar: MinAdventCalendar = MinAdventEntityMapper.toDomain(result.calendar);
+      const door:
+        | import('C:/Users/wayla/Desktop/Projekte/minfactory/server/src/features/minadvent/models/domains/minadvent-door').MinAdventDoor
+        | undefined = calendar.doors.find((item) => item.day === day);
       if (!door) {
         throw new NotFoundException('Door not found.');
       }
-      const response = new MinAdventSharedDoorOpenResponseDto();
+      const response: MinAdventSharedDoorOpenResponseDto = new MinAdventSharedDoorOpenResponseDto();
       response.day = door.day;
       response.status = door.status;
       response.version = calendar.version;
@@ -146,7 +158,7 @@ export class MinAdventCalendarService {
       response.firstOpened = result.firstOpened;
       response.blocks = door.blocks.map(MinAdventDomainMapper.toBlockDto);
       return response;
-    } catch (error) {
+    } catch (error: unknown) {
       if (error instanceof NotFoundException) {
         return null;
       }
@@ -159,7 +171,7 @@ export class MinAdventCalendarService {
     id: string,
     input: MinAdventTokenRotationDto,
   ): Promise<MinAdventSharingResponseDto> {
-    const current = await this.requireOwnedCalendar(user, id);
+    const current: MinAdventCalendar = await this.requireOwnedCalendar(user, id);
     if (current.version !== input.expectedVersion) {
       throw new ConflictException({
         code: 'VERSION_CONFLICT',
@@ -169,7 +181,7 @@ export class MinAdventCalendarService {
     if (!current.isPublished) {
       throw new ConflictException({ code: 'CALENDAR_NOT_PUBLISHED', message: 'Der Kalender ist nicht freigegeben.' });
     }
-    const updated = MinAdventEntityMapper.toDomain(
+    const updated: MinAdventCalendar = MinAdventEntityMapper.toDomain(
       await this.calendarRepository.updateSharing(user.id, id, input.expectedVersion, true, this.createToken()),
     );
     return this.toSharingResponse(updated);
@@ -189,19 +201,19 @@ export class MinAdventCalendarService {
     if (input.recipientName !== undefined && (!input.recipientName.trim() || input.recipientName.trim().length > 50)) {
       throw new BadRequestException('Recipient name must contain 1 to 50 characters.');
     }
-    const calendar = await this.requireOwnedCalendar(user, id);
+    const calendar: MinAdventCalendar = await this.requireOwnedCalendar(user, id);
     if (input.expectedVersion !== calendar.version) {
       throw new ConflictException({
         code: 'VERSION_CONFLICT',
         message: 'Der Kalender wurde zwischenzeitlich geändert.',
       });
     }
-    const updatedDomain = MinAdventDtoMapper.applyMetadataUpdate(input, calendar);
+    const updatedDomain: MinAdventCalendar = MinAdventDtoMapper.applyMetadataUpdate(input, calendar);
     if (updatedDomain.title === calendar.title && updatedDomain.recipientName === calendar.recipientName) {
       return MinAdventDomainMapper.toDto(calendar);
     }
     updatedDomain.version += 1;
-    const updated = await this.calendarRepository.update(updatedDomain, input.expectedVersion);
+    const updated: MinAdventCalendarEntity = await this.calendarRepository.update(updatedDomain, input.expectedVersion);
     return MinAdventDomainMapper.toDto(MinAdventEntityMapper.toDomain(updated));
   }
 
@@ -215,11 +227,17 @@ export class MinAdventCalendarService {
       throw new BadRequestException('Day must be an integer between 1 and 24.');
     }
     await this.requireOwnedCalendar(user, id);
-    const updatedEntity = await this.calendarRepository.replaceDoorBlocks(user.id, id, day, input.expectedVersion, () =>
-      this.validateAndMapBlocks(input.blocks),
+    const updatedEntity: MinAdventCalendarEntity = await this.calendarRepository.replaceDoorBlocks(
+      user.id,
+      id,
+      day,
+      input.expectedVersion,
+      () => this.validateAndMapBlocks(input.blocks),
     );
-    const updatedCalendar = MinAdventEntityMapper.toDomain(updatedEntity);
-    const updatedDoor = updatedCalendar.doors.find((door) => door.day === day);
+    const updatedCalendar: MinAdventCalendar = MinAdventEntityMapper.toDomain(updatedEntity);
+    const updatedDoor:
+      | import('C:/Users/wayla/Desktop/Projekte/minfactory/server/src/features/minadvent/models/domains/minadvent-door').MinAdventDoor
+      | undefined = updatedCalendar.doors.find((door) => door.day === day);
     if (!updatedDoor) {
       throw new NotFoundException('Door not found.');
     }
@@ -236,9 +254,16 @@ export class MinAdventCalendarService {
       throw new BadRequestException('Day must be an integer between 1 and 24.');
     }
     await this.requireOwnedCalendar(user, id);
-    const updatedEntity = await this.calendarRepository.closeDoor(user.id, id, day, input.expectedVersion);
-    const updatedCalendar = MinAdventEntityMapper.toDomain(updatedEntity);
-    const updatedDoor = updatedCalendar.doors.find((door) => door.day === day);
+    const updatedEntity: MinAdventCalendarEntity = await this.calendarRepository.closeDoor(
+      user.id,
+      id,
+      day,
+      input.expectedVersion,
+    );
+    const updatedCalendar: MinAdventCalendar = MinAdventEntityMapper.toDomain(updatedEntity);
+    const updatedDoor:
+      | import('C:/Users/wayla/Desktop/Projekte/minfactory/server/src/features/minadvent/models/domains/minadvent-door').MinAdventDoor
+      | undefined = updatedCalendar.doors.find((door) => door.day === day);
     if (!updatedDoor) {
       throw new NotFoundException('Door not found.');
     }
@@ -250,7 +275,7 @@ export class MinAdventCalendarService {
     id: string,
     input: MinAdventSharingUpdateDto,
   ): Promise<MinAdventSharingResponseDto> {
-    const current = await this.requireOwnedCalendar(user, id);
+    const current: MinAdventCalendar = await this.requireOwnedCalendar(user, id);
     if (current.version !== input.expectedVersion) {
       throw new ConflictException({
         code: 'VERSION_CONFLICT',
@@ -260,16 +285,16 @@ export class MinAdventCalendarService {
     if (current.isPublished === input.published) {
       return this.toSharingResponse(current);
     }
-    const token = input.published ? this.createToken() : null;
-    const updated = MinAdventEntityMapper.toDomain(
+    const token: string | null = input.published ? this.createToken() : null;
+    const updated: MinAdventCalendar = MinAdventEntityMapper.toDomain(
       await this.calendarRepository.updateSharing(user.id, id, input.expectedVersion, input.published, token),
     );
     return this.toSharingResponse(updated);
   }
 
   private countVisibleCharacters(html: string): number {
-    let visibleText = '';
-    const parser = new Parser({ ontext: (text) => (visibleText += text) }, { decodeEntities: true });
+    let visibleText: string = '';
+    const parser: Parser = new Parser({ ontext: (text) => (visibleText += text) }, { decodeEntities: true });
     parser.end(html);
     return [...visibleText.replaceAll('\u00a0', ' ').trim()].length;
   }
@@ -295,7 +320,7 @@ export class MinAdventCalendarService {
     if (!['http:', 'https:'].includes(parsedUrl.protocol) || !parsedUrl.hostname) {
       this.throwInvalidContent();
     }
-    const serializedUrl = parsedUrl.toString();
+    const serializedUrl: string = parsedUrl.toString();
     if (serializedUrl.length > 50) {
       this.throwInvalidContent();
     }
@@ -311,12 +336,12 @@ export class MinAdventCalendarService {
     block.description = input.description.trim();
   }
 
-  private async requireOwnedCalendar(user: MinFactoryUser, id: string): Promise<MinAdventCalendar> {
-    const calendar = await this.calendarRepository.findById(id);
+  private async requireOwnedCalendar(user: MinFactoryUser, calendarId: string): Promise<MinAdventCalendar> {
+    const calendar: MinAdventCalendarEntity | null = await this.calendarRepository.findById(calendarId);
     if (!calendar) {
       throw new NotFoundException('Calendar not found.');
     }
-    const domain = MinAdventEntityMapper.toDomain(calendar);
+    const domain: MinAdventCalendar = MinAdventEntityMapper.toDomain(calendar);
     if (domain.ownerId !== user.id) {
       throw new ForbiddenException('You do not own this calendar.');
     }
@@ -327,13 +352,13 @@ export class MinAdventCalendarService {
     if (typeof text !== 'string') {
       this.throwInvalidContent();
     }
-    const sanitized = sanitizeHtml(text, {
+    const sanitized: string = sanitizeHtml(text, {
       allowedTags: ['p', 'br', 'strong', 'b', 'em', 'i', 'ul', 'ol', 'li'],
       allowedAttributes: {},
       disallowedTagsMode: 'discard',
       nonTextTags: ['script', 'style', 'textarea', 'option'],
     });
-    const visibleCharacters = this.countVisibleCharacters(sanitized);
+    const visibleCharacters: number = this.countVisibleCharacters(sanitized);
     if (visibleCharacters < 1 || visibleCharacters > 500) {
       this.throwInvalidContent();
     }
@@ -345,7 +370,7 @@ export class MinAdventCalendarService {
   }
 
   private toSharingResponse(calendar: MinAdventCalendar): MinAdventSharingResponseDto {
-    const response = new MinAdventSharingResponseDto();
+    const response: MinAdventSharingResponseDto = new MinAdventSharingResponseDto();
     response.published = calendar.isPublished;
     response.version = calendar.version;
     response.completed = calendar.completed;
@@ -359,7 +384,7 @@ export class MinAdventCalendarService {
     if (input?.position !== index + 1 || !Object.values(MinAdventBlockType).includes(input.type)) {
       this.throwInvalidContent();
     }
-    const block = new MinAdventBlock();
+    const block: MinAdventBlock = new MinAdventBlock();
     block.position = input.position;
     block.type = input.type;
     if (input.type === MinAdventBlockType.Text) {
@@ -379,14 +404,14 @@ export class MinAdventCalendarService {
     return inputs.map((input, index) => this.validateAndMapBlock(input, index));
   }
 
-  private validateCreate(input: MinAdventCalendarCreateDto): void {
-    if (!input.title?.trim() || input.title.length > 50) {
+  private validateCreate(createDto: MinAdventCalendarCreateDto): void {
+    if (!createDto.title?.trim() || createDto.title.length > 50) {
       throw new BadRequestException('Title must contain 1 to 50 characters.');
     }
-    if (!input.recipientName?.trim() || input.recipientName.length > 50) {
+    if (!createDto.recipientName?.trim() || createDto.recipientName.length > 50) {
       throw new BadRequestException('Recipient name must contain 1 to 50 characters.');
     }
-    if (!Number.isInteger(input.year) || input.year < 1 || input.year > 9999) {
+    if (!Number.isInteger(createDto.year) || createDto.year < 1 || createDto.year > 9999) {
       throw new BadRequestException('Year must be an integer between 1 and 9999.');
     }
   }

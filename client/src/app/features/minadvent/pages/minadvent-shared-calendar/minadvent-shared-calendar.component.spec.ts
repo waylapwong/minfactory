@@ -118,7 +118,7 @@ describe('MinAdventSharedCalendarComponent', () => {
       await fixture.whenStable();
       component.now.set(Date.UTC(2026, 11, 1, 0, 0));
 
-      const opening = component.selectDoor(1);
+      const opening: Promise<void> = component.selectDoor(1);
       fixture.detectChanges();
 
       expect(fixture.nativeElement.querySelector('output[role="status"][aria-live="polite"]')?.textContent).toContain(
@@ -150,16 +150,20 @@ describe('MinAdventSharedCalendarComponent', () => {
       expect(component.animateDoor()).toBeTrue();
       expect(component.calendar()?.version).toBe(2);
       fixture.detectChanges();
-      const animatedContent = fixture.nativeElement.querySelector('.minadvent-first-open') as HTMLElement;
+      const animatedContent: HTMLElement = fixture.nativeElement.querySelector('.minadvent-first-open') as HTMLElement;
       expect(animatedContent).toBeTruthy();
       expect(getComputedStyle(animatedContent).animationName).toContain('minadvent-door-reveal');
       expect(fixture.nativeElement.querySelector('min-dialog')).toBeTruthy();
     });
 
     it('uses a read-only GET to show an already opened door', async () => {
-      const calendar = createMinAdventSharedCalendarDto({
-        doors: Array.from({ length: 24 }, (_, index) => ({ day: index + 1, status: index === 0 ? 'OPENED' : 'EMPTY' })),
-      });
+      const calendar: import('../../../../core/generated').MinAdventSharedCalendarDto =
+        createMinAdventSharedCalendarDto({
+          doors: Array.from({ length: 24 }, (_, index) => ({
+            day: index + 1,
+            status: index === 0 ? 'OPENED' : 'EMPTY',
+          })),
+        });
       MINADVENT_CALENDAR_SERVICE_MOCK.getSharedCalendar.and.resolveTo(calendar);
       MINADVENT_CALENDAR_SERVICE_MOCK.getSharedDoor.and.resolveTo({ day: 1, status: 'OPENED', blocks: [] });
       fixture.detectChanges();
@@ -201,7 +205,7 @@ describe('MinAdventSharedCalendarComponent', () => {
       expect(component.reloadDialogOpen()).toBeFalse();
       expect(MINADVENT_CALENDAR_SERVICE_MOCK.openSharedDoor).toHaveBeenCalledTimes(1);
       fixture.detectChanges();
-      const reloadButton = Array.from(
+      const reloadButton: HTMLButtonElement = Array.from(
         fixture.nativeElement.querySelectorAll('button') as NodeListOf<HTMLButtonElement>,
       ).find((button) => button.textContent.trim() === 'Übersicht neu laden') as HTMLButtonElement;
       reloadButton.click();
@@ -211,7 +215,10 @@ describe('MinAdventSharedCalendarComponent', () => {
       expect(fixture.nativeElement.textContent).toContain('Abbrechen');
       expect(fixture.nativeElement.textContent).toContain('Übersicht neu laden');
 
-      const confirmSpy = spyOn(window, 'confirm');
+      const confirmSpy: jasmine.Spy<((message?: string) => boolean) & ((message?: string) => boolean)> = spyOn(
+        window,
+        'confirm',
+      );
       await component.reloadAfterConflict();
 
       expect(confirmSpy).not.toHaveBeenCalled();
@@ -230,7 +237,7 @@ describe('MinAdventSharedCalendarComponent', () => {
       await component.selectDoor(1);
       component.openReloadDialog();
       fixture.detectChanges();
-      const cancelButton = Array.from(
+      const cancelButton: HTMLButtonElement = Array.from(
         fixture.nativeElement.querySelectorAll('min-button button') as NodeListOf<HTMLButtonElement>,
       ).find((button) => button.textContent.trim() === 'Abbrechen') as HTMLButtonElement;
       cancelButton.click();
