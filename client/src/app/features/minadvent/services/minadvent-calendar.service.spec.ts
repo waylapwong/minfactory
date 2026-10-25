@@ -41,8 +41,11 @@ describe('MinAdventCalendarService', () => {
       MINADVENT_CALENDAR_REPOSITORY_MOCK.create.and.resolveTo(createMinAdventCalendarDto({ id: 'created' }));
       await service.loadCalendars();
 
-      const result: import('../models/minadvent-calendar.model').MinAdventCalendar =
-        await service.createCalendar({ recipientName: 'Alex', title: 'Neu', year: 2026 });
+      const result: import('../models/minadvent-calendar.model').MinAdventCalendar = await service.createCalendar({
+        recipientName: 'Alex',
+        title: 'Neu',
+        year: 2026,
+      });
 
       expect(MINADVENT_CALENDAR_REPOSITORY_MOCK.create).toHaveBeenCalledWith({
         recipientName: 'Alex',
@@ -127,8 +130,10 @@ describe('MinAdventCalendarService', () => {
       MINADVENT_CALENDAR_REPOSITORY_MOCK.update.and.resolveTo(createMinAdventCalendarDto({ title: 'Aktualisiert' }));
       await service.loadCalendars();
 
-      const result: import('../models/minadvent-calendar.model').MinAdventCalendar =
-        await service.updateCalendar('calendar-id', { expectedVersion: 1, title: 'Aktualisiert' });
+      const result: import('../models/minadvent-calendar.model').MinAdventCalendar = await service.updateCalendar(
+        'calendar-id',
+        { expectedVersion: 1, title: 'Aktualisiert' },
+      );
 
       expect(MINADVENT_CALENDAR_REPOSITORY_MOCK.update).toHaveBeenCalledWith('calendar-id', {
         expectedVersion: 1,
@@ -151,11 +156,14 @@ describe('MinAdventCalendarService', () => {
       });
       await service.loadCalendars();
 
-      const result: import('../../../core/generated').MinAdventDoorUpdateResponseDto =
-        await service.updateDoor('calendar-id', 1, {
+      const result: import('../../../core/generated').MinAdventDoorUpdateResponseDto = await service.updateDoor(
+        'calendar-id',
+        1,
+        {
           blocks: [{ position: 1, text: '<p>Surprise</p>', type: 'TEXT' }],
           expectedVersion: 1,
-        });
+        },
+      );
 
       expect(MINADVENT_CALENDAR_REPOSITORY_MOCK.updateDoor).toHaveBeenCalledWith('calendar-id', 1, {
         blocks: [{ position: 1, text: '<p>Surprise</p>', type: 'TEXT' }],

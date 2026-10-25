@@ -124,21 +124,12 @@ export class MinAdventCalendarComponent implements OnInit {
     return Boolean(this.calendar()) && !this.calendar()?.completed && door.status === 'OPENED';
   }
 
-  public isPastCalendarYear(): boolean {
-    const calendar:
-      | import('../../models/minadvent-calendar.model').MinAdventCalendar
-      | null = this.calendar();
-    return calendar !== null && calendar.year < this.getCurrentBerlinYear();
-  }
-
   public canDeactivate(): boolean {
     return this.confirmDiscardDoorDraft();
   }
 
   public async closeDoor(): Promise<void> {
-    const calendar:
-      | import('../../models/minadvent-calendar.model').MinAdventCalendar
-      | null = this.calendar();
+    const calendar: import('../../models/minadvent-calendar.model').MinAdventCalendar | null = this.calendar();
     const door: MinAdventDoor | null = this.selectedDoor();
     if (!calendar || !door || !this.canCloseDoor(door) || this.isClosingDoor()) {
       return;
@@ -199,9 +190,7 @@ export class MinAdventCalendarComponent implements OnInit {
   }
 
   public async confirmSharingAction(): Promise<void> {
-    const calendar:
-      | import('../../models/minadvent-calendar.model').MinAdventCalendar
-      | null = this.calendar();
+    const calendar: import('../../models/minadvent-calendar.model').MinAdventCalendar | null = this.calendar();
     const action: 'publish' | 'revoke' | 'rotate' | null = this.sharingDialogAction();
     if (!calendar || !action || this.isSharing()) {
       return;
@@ -338,10 +327,13 @@ export class MinAdventCalendarComponent implements OnInit {
     return !this.hasUnsavedDoorChanges() || !this.isDoorFormValid() || this.isSavingDoor();
   }
 
+  public isPastCalendarYear(): boolean {
+    const calendar: import('../../models/minadvent-calendar.model').MinAdventCalendar | null = this.calendar();
+    return calendar !== null && calendar.year < this.getCurrentBerlinYear();
+  }
+
   public isRecipientSaveDisabled(): boolean {
-    const calendar:
-      | import('../../models/minadvent-calendar.model').MinAdventCalendar
-      | null = this.calendar();
+    const calendar: import('../../models/minadvent-calendar.model').MinAdventCalendar | null = this.calendar();
     return (
       !calendar ||
       calendar.completed ||
@@ -357,9 +349,7 @@ export class MinAdventCalendarComponent implements OnInit {
   }
 
   public isTitleSaveDisabled(): boolean {
-    const calendar:
-      | import('../../models/minadvent-calendar.model').MinAdventCalendar
-      | null = this.calendar();
+    const calendar: import('../../models/minadvent-calendar.model').MinAdventCalendar | null = this.calendar();
     return (
       !calendar ||
       calendar.completed ||
@@ -390,9 +380,7 @@ export class MinAdventCalendarComponent implements OnInit {
   }
 
   public async reloadDoorAfterConflict(): Promise<void> {
-    const calendar:
-      | import('../../models/minadvent-calendar.model').MinAdventCalendar
-      | null = this.calendar();
+    const calendar: import('../../models/minadvent-calendar.model').MinAdventCalendar | null = this.calendar();
     const door: MinAdventDoor | null = this.selectedDoor();
     if (!calendar || !door || this.isRefreshingDoor()) {
       return;
@@ -423,9 +411,7 @@ export class MinAdventCalendarComponent implements OnInit {
   }
 
   public async saveDoor(): Promise<void> {
-    const calendar:
-      | import('../../models/minadvent-calendar.model').MinAdventCalendar
-      | null = this.calendar();
+    const calendar: import('../../models/minadvent-calendar.model').MinAdventCalendar | null = this.calendar();
     const door: MinAdventDoor | null = this.selectedDoor();
     if (!calendar || !door || this.isSelectedDoorReadOnly()) {
       return;
@@ -470,9 +456,7 @@ export class MinAdventCalendarComponent implements OnInit {
   }
 
   public async saveRecipient(): Promise<void> {
-    const calendar:
-      | import('../../models/minadvent-calendar.model').MinAdventCalendar
-      | null = this.calendar();
+    const calendar: import('../../models/minadvent-calendar.model').MinAdventCalendar | null = this.calendar();
     const control: FormControl<string> = this.form.controls.recipientName;
     control.markAsTouched();
     if (!calendar || calendar.completed || control.invalid || control.value === calendar.recipientName) {
@@ -496,9 +480,7 @@ export class MinAdventCalendarComponent implements OnInit {
   }
 
   public async saveTitle(): Promise<void> {
-    const calendar:
-      | import('../../models/minadvent-calendar.model').MinAdventCalendar
-      | null = this.calendar();
+    const calendar: import('../../models/minadvent-calendar.model').MinAdventCalendar | null = this.calendar();
     const control: FormControl<string> = this.form.controls.title;
     control.markAsTouched();
     if (!calendar || calendar.completed || control.invalid || control.value === calendar.title) {
@@ -565,6 +547,10 @@ export class MinAdventCalendarComponent implements OnInit {
     });
   }
 
+  private getCurrentBerlinYear(): number {
+    return Number(new Intl.DateTimeFormat('en', { timeZone: 'Europe/Berlin', year: 'numeric' }).format(new Date()));
+  }
+
   private getDescriptionFieldError(value: string): string | null {
     if (!value.trim()) {
       return 'Die Beschreibung ist erforderlich.';
@@ -573,10 +559,6 @@ export class MinAdventCalendarComponent implements OnInit {
       return 'Maximal 200 Zeichen.';
     }
     return null;
-  }
-
-  private getCurrentBerlinYear(): number {
-    return Number(new Intl.DateTimeFormat('en', { timeZone: 'Europe/Berlin', year: 'numeric' }).format(new Date()));
   }
 
   private getTextFieldError(value: string): string | null {
@@ -805,9 +787,7 @@ export class MinAdventCalendarComponent implements OnInit {
     ) {
       return false;
     }
-    const calendar:
-      | import('../../models/minadvent-calendar.model').MinAdventCalendar
-      | null = this.calendar();
+    const calendar: import('../../models/minadvent-calendar.model').MinAdventCalendar | null = this.calendar();
     if (!calendar || calendar.doors.some((item) => item.day !== door.day && item.status === 'FILLED')) {
       return false;
     }
@@ -817,9 +797,7 @@ export class MinAdventCalendarComponent implements OnInit {
       month: 'numeric',
       day: 'numeric',
     }).formatToParts(new Date());
-    const parts: { [k: string]: number } = Object.fromEntries(
-      berlinDate.map((part) => [part.type, Number(part.value)]),
-    );
+    const parts: Record<string, number> = Object.fromEntries(berlinDate.map((part) => [part.type, Number(part.value)]));
     return (
       parts['year'] > calendar.year || (parts['year'] === calendar.year && parts['month'] === 12 && parts['day'] >= 25)
     );

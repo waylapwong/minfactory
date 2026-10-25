@@ -93,8 +93,7 @@ describe('MinAdventOverviewComponent', () => {
     });
 
     it('creates a valid calendar and navigates to its detail page', async () => {
-      const calendar: import('../../models/minadvent-calendar.model').MinAdventCalendar =
-        createMinAdventCalendar();
+      const calendar: import('../../models/minadvent-calendar.model').MinAdventCalendar = createMinAdventCalendar();
       MINADVENT_CALENDAR_SERVICE_MOCK.createCalendar.and.resolveTo(calendar);
       component.createForm.setValue({ recipientName: 'Alex', title: 'Adventskalender', year: 2026 });
 
@@ -139,8 +138,7 @@ describe('MinAdventOverviewComponent', () => {
     });
 
     it('creates a valid calendar and navigates to its detail page', async () => {
-      const calendar: import('../../models/minadvent-calendar.model').MinAdventCalendar =
-        createMinAdventCalendar();
+      const calendar: import('../../models/minadvent-calendar.model').MinAdventCalendar = createMinAdventCalendar();
       MINADVENT_CALENDAR_SERVICE_MOCK.createCalendar.and.resolveTo(calendar);
       component.createForm.setValue({ recipientName: 'Alex', title: 'Adventskalender', year: 2026 });
 
@@ -166,8 +164,9 @@ describe('MinAdventOverviewComponent', () => {
 
   describe('deleteCalendar()', () => {
     it('opens delete confirmation without navigating when the card delete button is clicked', () => {
-      const calendar: import('../../models/minadvent-calendar.model').MinAdventCalendar =
-        createMinAdventCalendar({ id: 'calendar-to-delete' });
+      const calendar: import('../../models/minadvent-calendar.model').MinAdventCalendar = createMinAdventCalendar({
+        id: 'calendar-to-delete',
+      });
       MINADVENT_CALENDARS_SIGNAL.set([calendar]);
       fixture.detectChanges();
       const deleteButton: HTMLButtonElement = fixture.nativeElement.querySelector(
@@ -183,8 +182,10 @@ describe('MinAdventOverviewComponent', () => {
     });
 
     it('confirms deletion with the calendar version and closes the dialog after success', async () => {
-      const calendar: import('../../models/minadvent-calendar.model').MinAdventCalendar =
-        createMinAdventCalendar({ id: 'calendar-to-delete', version: 7 });
+      const calendar: import('../../models/minadvent-calendar.model').MinAdventCalendar = createMinAdventCalendar({
+        id: 'calendar-to-delete',
+        version: 7,
+      });
       component.openDeleteDialog(calendar, new MouseEvent('click'));
       MINADVENT_CALENDAR_SERVICE_MOCK.deleteCalendar.and.resolveTo();
 
@@ -195,8 +196,9 @@ describe('MinAdventOverviewComponent', () => {
     });
 
     it('keeps the confirmation open and shows an error when deletion fails', async () => {
-      const calendar: import('../../models/minadvent-calendar.model').MinAdventCalendar =
-        createMinAdventCalendar({ id: 'calendar-to-delete' });
+      const calendar: import('../../models/minadvent-calendar.model').MinAdventCalendar = createMinAdventCalendar({
+        id: 'calendar-to-delete',
+      });
       component.openDeleteDialog(calendar, new MouseEvent('click'));
       MINADVENT_CALENDAR_SERVICE_MOCK.deleteCalendar.and.rejectWith(new Error('Version conflict'));
 

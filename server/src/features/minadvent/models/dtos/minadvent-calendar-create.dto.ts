@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsInt, IsString, Max, MaxLength, Min, MinLength } from 'class-validator';
+import { Trim } from '../../../../shared/decorators/trim.decorator';
 
 export class MinAdventCalendarCreateDto {
   @ApiProperty({ minimum: 1, maximum: 9999, example: new Date().getFullYear() })
@@ -13,6 +14,7 @@ export class MinAdventCalendarCreateDto {
   @MaxLength(50)
   public recipientName: string;
   @ApiProperty({ maxLength: 50 })
+  @Trim()
   @IsString()
   @MinLength(1)
   @MaxLength(50)

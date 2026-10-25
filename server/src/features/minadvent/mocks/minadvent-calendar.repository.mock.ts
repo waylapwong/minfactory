@@ -1,30 +1,30 @@
 import { MinAdventCalendarEntity } from '../models/entities/minadvent-calendar.entity';
-import { MinAdventBlock } from '../models/domains/minadvent-block';
 
 export class MinAdventCalendarRepositoryMock {
   public create = jest
-    .fn<Promise<MinAdventCalendarEntity>, [Partial<MinAdventCalendarEntity>]>()
+    .fn<Promise<MinAdventCalendarEntity>, [MinAdventCalendarEntity]>()
     .mockResolvedValue(new MinAdventCalendarEntity());
+  public delete = jest.fn<Promise<void>, [MinAdventCalendarEntity]>().mockResolvedValue(undefined);
   public findById = jest.fn<Promise<MinAdventCalendarEntity | null>, [string]>().mockResolvedValue(null);
   public findByActiveToken = jest.fn<Promise<MinAdventCalendarEntity | null>, [string]>().mockResolvedValue(null);
   public getSharedDoor = jest.fn<Promise<MinAdventCalendarEntity | null>, [string, number]>().mockResolvedValue(null);
   public openSharedDoor = jest
     .fn<
-      Promise<{ calendar: MinAdventCalendarEntity; firstOpened: boolean }>,
-      [string, number, number, { year: number; month: number; day: number }]
+      Promise<MinAdventCalendarEntity>,
+      [MinAdventCalendarEntity, number, { year: number; month: number; day: number }]
     >()
-    .mockResolvedValue({ calendar: new MinAdventCalendarEntity(), firstOpened: true });
+    .mockResolvedValue(new MinAdventCalendarEntity());
   public findByOwner = jest.fn<Promise<MinAdventCalendarEntity[]>, [string]>().mockResolvedValue([]);
   public update = jest
-    .fn<Promise<MinAdventCalendarEntity>, [MinAdventCalendarEntity, number]>()
+    .fn<Promise<MinAdventCalendarEntity>, [MinAdventCalendarEntity]>()
     .mockResolvedValue(new MinAdventCalendarEntity());
   public closeDoor = jest
-    .fn<Promise<MinAdventCalendarEntity>, [string, string, number, number]>()
+    .fn<Promise<MinAdventCalendarEntity>, [MinAdventCalendarEntity, number]>()
     .mockResolvedValue(new MinAdventCalendarEntity());
   public replaceDoorBlocks = jest
-    .fn<Promise<MinAdventCalendarEntity>, [string, string, number, number, () => MinAdventBlock[]]>()
+    .fn<Promise<MinAdventCalendarEntity>, [MinAdventCalendarEntity, number]>()
     .mockResolvedValue(new MinAdventCalendarEntity());
   public updateSharing = jest
-    .fn<Promise<MinAdventCalendarEntity>, [string, string, number, boolean, string | null]>()
+    .fn<Promise<MinAdventCalendarEntity>, [MinAdventCalendarEntity]>()
     .mockResolvedValue(new MinAdventCalendarEntity());
 }

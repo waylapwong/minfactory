@@ -40,6 +40,9 @@ Senior Fullstack Developer.
 - Controller und Gateways sind Transportadapter und enthalten keine unnötige Business-Logik.
 - Services orchestrieren Anwendungsfälle und koordinieren Domain Objects und Repositories.
 - Repositories kapseln externe Systeme und Datenzugriffe.
+- REST-Controller sprechen an ihren API-Grenzen ausschließlich Request- und Response-DTOs; ein injizierter Authentifizierungs-Principal ist davon ausgenommen.
+- Services koordinieren DTO-, Domain- und Entity-Modelle über die zuständigen Mapper und übergeben an Repositories keine DTOs oder Domain Objects.
+- Repositories kennen ausschließlich Persistenz-Entities und notwendige skalare Suchparameter. Schreiboperationen erhalten Entities und geben bei zustandsändernden Ergebnissen die gespeicherten Entities zurück.
 - Komponenten verantworten Darstellung und Benutzerinteraktion.
 - Keine Business-Logik oder Mapping-Logik zwischen mehreren Schichten duplizieren.
 - Neue Abstraktionen nur einführen, wenn sie eine tatsächlich benötigte Verantwortung trennen.

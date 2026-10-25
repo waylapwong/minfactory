@@ -17,6 +17,7 @@ Verbindliche Entwicklungsregeln stehen in `AGENTS.md`.
 
 ### Backend-Struktur
 
+- `MinAdventCalendarService` bildet eine Referenz für die Layergrenzen: REST-Controller verwenden DTOs, der Service koordiniert DTO-/Domain-/Entity-Mapping und das Kalender-Repository arbeitet ohne Domain- oder DTO-Abhängigkeiten mit Entities.
 - `MinPokerModule` registriert Controller, Gateway, Services, Repositories, Policy und Room-System als Feature-Provider.
 - `MinPokerGamePolicy` kapselt die Autorisierung für das Löschen eines Spiels.
 - `MinRpsRoomSystem` und `MinPokerRoomSystem` kapseln die Verwaltung von Socket-Rooms.

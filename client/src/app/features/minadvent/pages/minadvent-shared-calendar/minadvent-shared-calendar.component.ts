@@ -124,7 +124,7 @@ export class MinAdventSharedCalendarComponent implements OnInit, OnDestroy {
   }
 
   public isDoorAvailable(day: number): boolean {
-    const parts: { [k: string]: number } = Object.fromEntries(
+    const parts: Record<string, number> = Object.fromEntries(
       BERLIN_DATE_FORMATTER.formatToParts(new Date(this.now())).map((part) => [part.type, Number(part.value)]),
     );
     const calendar: MinAdventSharedCalendarDto | null = this.calendar();
@@ -144,8 +144,9 @@ export class MinAdventSharedCalendarComponent implements OnInit, OnDestroy {
   public async reloadAfterConflict(): Promise<void> {
     await this.loadCalendar();
     const selectedDay: number | undefined = this.selectedDoor()?.day;
-    const door: import('../../../../core/generated').MinAdventSharedDoorDto | undefined =
-      this.calendar()?.doors.find((item) => item.day === selectedDay);
+    const door: import('../../../../core/generated').MinAdventSharedDoorDto | undefined = this.calendar()?.doors.find(
+      (item) => item.day === selectedDay,
+    );
     this.reloadRequired.set(false);
     this.reloadDialogOpen.set(false);
     this.doorError.set('');
@@ -227,7 +228,7 @@ export class MinAdventSharedCalendarComponent implements OnInit, OnDestroy {
     let timestamp: number = localMidnightTimestamp;
 
     for (let attempt: number = 0; attempt < 3; attempt += 1) {
-      const dateParts: { [k: string]: number } = Object.fromEntries(
+      const dateParts: Record<string, number> = Object.fromEntries(
         BERLIN_DATE_FORMATTER.formatToParts(new Date(timestamp)).map((part) => [part.type, Number(part.value)]),
       );
       const berlinAsUtc: Date = new Date(0);

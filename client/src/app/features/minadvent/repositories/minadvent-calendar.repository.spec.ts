@@ -61,8 +61,7 @@ describe('MinAdventCalendarRepository', () => {
     it('should get a calendar by id through the API service', async () => {
       MINADVENT_API_SERVICE_MOCK.getMinAdventCalendar.and.returnValue(of(MINADVENT_CALENDAR_DTO_MOCK));
 
-      const result: import('../../../core/generated').MinAdventCalendarDto =
-        await repository.get('calendar-id');
+      const result: import('../../../core/generated').MinAdventCalendarDto = await repository.get('calendar-id');
 
       expect(MINADVENT_API_SERVICE_MOCK.getMinAdventCalendar).toHaveBeenCalledWith('calendar-id');
       expect(result).toBe(MINADVENT_CALENDAR_DTO_MOCK);

@@ -1,15 +1,51 @@
 import { ConflictException, ForbiddenException, NotFoundException } from '@nestjs/common';
 import { MinAdventCalendarTransactionMock } from '../mocks/minadvent-calendar-transaction.mock';
-import { MinAdventCalendar } from '../models/domains/minadvent-calendar';
-import { MinAdventBlock } from '../models/domains/minadvent-block';
-import { MinAdventDoorEntity } from '../models/entities/minadvent-door.entity';
 import { MinAdventBlockEntity } from '../models/entities/minadvent-block.entity';
+import { MinAdventCalendarEntity } from '../models/entities/minadvent-calendar.entity';
+import { MinAdventDoorEntity } from '../models/entities/minadvent-door.entity';
 import { MinAdventDoorStatus } from '../models/enums/minadvent-door-status.enum';
 import { MinAdventCalendarRepository } from './minadvent-calendar.repository';
 
 describe('MinAdventCalendarRepository', () => {
   let transaction: MinAdventCalendarTransactionMock;
   let repository: MinAdventCalendarRepository;
+
+  const createCalendarEntity = (overrides: Partial<MinAdventCalendarEntity> = {}): MinAdventCalendarEntity =>
+    Object.assign(
+      new MinAdventCalendarEntity(),
+      {
+        activeToken: null,
+        doors: [],
+        id: 'calendar-1',
+        isPublished: false,
+        ownerId: 'owner-1',
+        recipientName: 'Alex',
+        title: 'December',
+        version: 1,
+        year: 2026,
+      },
+      overrides,
+    );
+
+  const createDoorEntity = (
+    day: number,
+    status: MinAdventDoorStatus = MinAdventDoorStatus.Empty,
+    blocks: MinAdventBlockEntity[] = [],
+  ): MinAdventDoorEntity =>
+    Object.assign(new MinAdventDoorEntity(), {
+      blocks,
+      calendarId: 'calendar-1',
+      day,
+      id: `door-${day}`,
+      status,
+    });
+
+  const createCalendarWithDoor = (
+    day: number,
+    status: MinAdventDoorStatus = MinAdventDoorStatus.Empty,
+    blocks: MinAdventBlockEntity[] = [],
+    overrides: Partial<MinAdventCalendarEntity> = {},
+  ): MinAdventCalendarEntity => createCalendarEntity({ ...overrides, doors: [createDoorEntity(day, status, blocks)] });
 
   beforeEach(() => {
     transaction = new MinAdventCalendarTransactionMock();
@@ -21,13 +57,15 @@ describe('MinAdventCalendarRepository', () => {
   });
 
   it('persists the calendar and exactly 24 empty doors in one transaction', async () => {
-    const calendar: MinAdventCalendar = new MinAdventCalendar();
-    calendar.title = 'December';
-    calendar.ownerId = 'owner-1';
-    calendar.year = 2026;
-    calendar.doors = Array.from({ length: 24 }, (_, index) => ({ day: index + 1, status: MinAdventDoorStatus.Empty }));
-    const created: import('C:/Users/wayla/Desktop/Projekte/minfactory/server/src/features/minadvent/models/entities/minadvent-calendar.entity').MinAdventCalendarEntity =
-      await repository.create(calendar);
+    const calendar: MinAdventCalendarEntity = Object.assign(new MinAdventCalendarEntity(), {
+      ownerId: 'owner-1',
+      year: 2026,
+      title: 'December',
+      recipientName: 'Alex',
+      version: 1,
+      doors: Array.from({ length: 24 }, (_, index) => createDoorEntity(index + 1)),
+    });
+    const created: MinAdventCalendarEntity = await repository.create(calendar);
 
     expect(transaction.calendarRepository.create.mock.calls[0][0].id).toBeUndefined();
     expect(created.id).toBe('calendar-1');
@@ -49,7 +87,7 @@ describe('MinAdventCalendarRepository', () => {
       transaction.calendar.isPublished = true;
       transaction.calendar.activeToken = 'a'.repeat(64);
 
-      await repository.delete('owner-1', 'calendar-1', 1);
+      await repository.delete(createCalendarEntity());
 
       expect(transaction.dataSource.transaction).toHaveBeenCalledTimes(1);
       expect(transaction.calendarQueryBuilder.setLock).toHaveBeenCalledWith('pessimistic_write');
@@ -64,7 +102,9 @@ describe('MinAdventCalendarRepository', () => {
     });
 
     it('rejects calendars owned by another user without deleting them', async () => {
-      await expect(repository.delete('someone-else', 'calendar-1', 1)).rejects.toBeInstanceOf(ForbiddenException);
+      await expect(repository.delete(createCalendarEntity({ ownerId: 'someone-else' }))).rejects.toBeInstanceOf(
+        ForbiddenException,
+      );
 
       expect(transaction.calendarRepository.delete).not.toHaveBeenCalled();
     });
@@ -72,7 +112,7 @@ describe('MinAdventCalendarRepository', () => {
     it('returns not found for an unknown calendar', async () => {
       transaction.calendarQueryBuilder.getOne.mockResolvedValue(null);
 
-      await expect(repository.delete('owner-1', 'calendar-1', 1)).rejects.toBeInstanceOf(NotFoundException);
+      await expect(repository.delete(createCalendarEntity())).rejects.toBeInstanceOf(NotFoundException);
 
       expect(transaction.calendarRepository.delete).not.toHaveBeenCalled();
     });
@@ -82,7 +122,7 @@ describe('MinAdventCalendarRepository', () => {
       transaction.calendar.isPublished = true;
       transaction.calendar.activeToken = 'a'.repeat(64);
 
-      await expect(repository.delete('owner-1', 'calendar-1', 1)).rejects.toMatchObject({
+      await expect(repository.delete(createCalendarEntity())).rejects.toMatchObject({
         response: expect.objectContaining({ code: 'VERSION_CONFLICT' }),
       });
 
@@ -92,19 +132,15 @@ describe('MinAdventCalendarRepository', () => {
 
   it('updates metadata only when owner and expected global version still match', async () => {
     transaction.calendar.version = 4;
-    const calendar: MinAdventCalendar & { id: string; ownerId: string; title: string; recipientName: string } =
-      Object.assign(new MinAdventCalendar(), {
-        id: 'calendar-1',
-        ownerId: 'owner-1',
-        title: 'Updated title',
-        recipientName: 'Alex',
-      });
+    const calendar: MinAdventCalendarEntity = createCalendarEntity({
+      title: 'Updated title',
+      version: 4,
+    });
 
-    await repository.update(calendar, 4);
+    await repository.update(calendar);
 
     expect(transaction.dataSource.transaction).toHaveBeenCalledTimes(1);
     expect(transaction.calendarQueryBuilder.setLock).toHaveBeenCalledWith('pessimistic_write');
-    expect(transaction.doorQueryBuilder.setLock).toHaveBeenCalledWith('pessimistic_write');
     expect(transaction.calendarRepository.update).toHaveBeenCalledWith(
       { id: calendar.id, ownerId: calendar.ownerId, version: 4 },
       { title: calendar.title, recipientName: calendar.recipientName, version: 5 },
@@ -113,35 +149,25 @@ describe('MinAdventCalendarRepository', () => {
 
   it('rejects a concurrent update when the expected version no longer matches', async () => {
     transaction.calendar.version = 5;
-    const calendar: MinAdventCalendar & { id: string; ownerId: string } = Object.assign(new MinAdventCalendar(), {
-      id: 'calendar-1',
-      ownerId: 'owner-1',
-    });
+    const calendar: MinAdventCalendarEntity = createCalendarEntity({ version: 4 });
 
-    const error: unknown = await repository.update(calendar, 4).catch((reason: unknown) => reason);
+    const error: unknown = await repository.update(calendar).catch((reason: unknown) => reason);
 
     expect(error).toBeInstanceOf(ConflictException);
     expect((error as ConflictException).getResponse()).toEqual(expect.objectContaining({ code: 'VERSION_CONFLICT' }));
     expect(transaction.calendarRepository.update).not.toHaveBeenCalled();
   });
 
-  it('rejects completed calendars inside the locked update transaction', async () => {
-    jest.useFakeTimers();
-    jest.setSystemTime(new Date('2026-12-24T23:00:00.000Z'));
-    transaction.doors.push(Object.assign(new MinAdventDoorEntity(), { day: 1, status: MinAdventDoorStatus.Opened }));
-    const calendar: MinAdventCalendar & { id: string; ownerId: string; title: string; recipientName: string } =
-      Object.assign(new MinAdventCalendar(), {
-        id: 'calendar-1',
-        ownerId: 'owner-1',
-        title: 'Updated title',
-        recipientName: 'Alex',
-      });
-    const error: unknown = await repository.update(calendar, 1).catch((reason: unknown) => reason);
+  it('updates using the expected version carried by the calendar entity', async () => {
+    transaction.calendar.version = 4;
+    const calendar: MinAdventCalendarEntity = createCalendarEntity({ version: 4 });
 
-    expect(error).toBeInstanceOf(ConflictException);
-    expect((error as ConflictException).getResponse()).toEqual(expect.objectContaining({ code: 'CALENDAR_COMPLETED' }));
-    expect(transaction.dataSource.transaction).toHaveBeenCalledTimes(1);
-    expect(transaction.calendarRepository.update).not.toHaveBeenCalled();
+    await repository.update(calendar);
+
+    expect(transaction.calendarRepository.update).toHaveBeenCalledWith(
+      { id: calendar.id, ownerId: calendar.ownerId, version: 4 },
+      expect.objectContaining({ version: 5 }),
+    );
   });
 
   describe('replaceDoorBlocks()', () => {
@@ -156,9 +182,9 @@ describe('MinAdventCalendarRepository', () => {
         }),
       );
 
-      await expect(repository.replaceDoorBlocks('owner-1', 'calendar-1', 3, 1, () => [])).rejects.toBeInstanceOf(
-        ConflictException,
-      );
+      await expect(
+        repository.replaceDoorBlocks(createCalendarWithDoor(3, MinAdventDoorStatus.Empty, [], { version: 1 }), 3),
+      ).rejects.toBeInstanceOf(ConflictException);
 
       expect(transaction.blockRepository.find).not.toHaveBeenCalled();
       expect(transaction.blockRepository.delete).not.toHaveBeenCalled();
@@ -175,15 +201,8 @@ describe('MinAdventCalendarRepository', () => {
         }),
       );
 
-      await expect(repository.replaceDoorBlocks('owner-1', 'calendar-1', 3, 1, () => [])).rejects.toMatchObject({
+      await expect(repository.replaceDoorBlocks(createCalendarWithDoor(3), 3)).rejects.toMatchObject({
         response: expect.objectContaining({ code: 'DOOR_OPENED' }),
-      });
-      expect(transaction.blockRepository.delete).not.toHaveBeenCalled();
-
-      jest.useFakeTimers();
-      jest.setSystemTime(new Date('2026-12-24T23:00:00.000Z'));
-      await expect(repository.replaceDoorBlocks('owner-1', 'calendar-1', 3, 1, () => [])).rejects.toMatchObject({
-        response: expect.objectContaining({ code: 'CALENDAR_COMPLETED' }),
       });
       expect(transaction.blockRepository.delete).not.toHaveBeenCalled();
     });
@@ -219,10 +238,11 @@ describe('MinAdventCalendarRepository', () => {
         doors: [{ ...door, status: MinAdventDoorStatus.Filled, blocks: [block] }],
       });
 
-      const result: import('C:/Users/wayla/Desktop/Projekte/minfactory/server/src/features/minadvent/models/entities/minadvent-calendar.entity').MinAdventCalendarEntity =
-        await repository.replaceDoorBlocks('owner-1', 'calendar-1', 3, 1, () => [
-          Object.assign(new MinAdventBlock(), block),
-        ]);
+      const requestedBlock: MinAdventBlockEntity = Object.assign(new MinAdventBlockEntity(), block);
+      const result: MinAdventCalendarEntity = await repository.replaceDoorBlocks(
+        createCalendarWithDoor(3, MinAdventDoorStatus.Empty, [requestedBlock]),
+        3,
+      );
 
       expect(transaction.calendarQueryBuilder.setLock).toHaveBeenCalledWith('pessimistic_write');
       expect(transaction.doorQueryBuilder.setLock).toHaveBeenCalledWith('pessimistic_write');
@@ -265,9 +285,7 @@ describe('MinAdventCalendarRepository', () => {
       transaction.doors.push(door);
       transaction.blockRepository.find.mockResolvedValue([existing]);
 
-      await repository.replaceDoorBlocks('owner-1', 'calendar-1', 3, 1, () => [
-        Object.assign(new MinAdventBlock(), existing),
-      ]);
+      await repository.replaceDoorBlocks(createCalendarWithDoor(3, MinAdventDoorStatus.Filled, [existing]), 3);
 
       expect(transaction.blockRepository.delete).not.toHaveBeenCalled();
       expect(transaction.calendarRepository.update).not.toHaveBeenCalled();
@@ -279,7 +297,11 @@ describe('MinAdventCalendarRepository', () => {
       transaction.calendar.version = 3;
 
       await expect(
-        repository.openSharedDoor('a'.repeat(64), 1, 2, { year: 2026, month: 12, day: 1 }),
+        repository.openSharedDoor(createCalendarEntity({ activeToken: 'a'.repeat(64), version: 2 }), 1, {
+          year: 2026,
+          month: 12,
+          day: 1,
+        }),
       ).rejects.toMatchObject({
         response: expect.objectContaining({ code: 'VERSION_CONFLICT' }),
       });
@@ -313,10 +335,11 @@ describe('MinAdventCalendarRepository', () => {
         doors: [{ ...door, status: MinAdventDoorStatus.Opened, blocks: [block] }],
       });
 
-      const result: {
-        calendar: import('C:/Users/wayla/Desktop/Projekte/minfactory/server/src/features/minadvent/models/entities/minadvent-calendar.entity').MinAdventCalendarEntity;
-        firstOpened: boolean;
-      } = await repository.openSharedDoor('a'.repeat(64), 1, 1, { year: 2026, month: 12, day: 1 });
+      const result: MinAdventCalendarEntity = await repository.openSharedDoor(
+        createCalendarEntity({ activeToken: 'a'.repeat(64), version: 1 }),
+        1,
+        { year: 2026, month: 12, day: 1 },
+      );
 
       expect(transaction.calendarQueryBuilder.setLock).toHaveBeenCalledWith('pessimistic_write');
       expect(transaction.calendarQueryBuilder.where).toHaveBeenCalledWith(
@@ -331,8 +354,8 @@ describe('MinAdventCalendarRepository', () => {
         { id: 'calendar-1', version: 1 },
         { version: 2 },
       );
-      expect(result.firstOpened).toBe(true);
-      expect(result.calendar.version).toBe(2);
+      expect(result.version).toBe(2);
+      expect(result.doors[0].status).toBe(MinAdventDoorStatus.Opened);
     });
 
     it('rejects empty doors and doors before their December day', async () => {
@@ -342,12 +365,20 @@ describe('MinAdventCalendarRepository', () => {
       );
 
       await expect(
-        repository.openSharedDoor('a'.repeat(64), 1, 1, { year: 2026, month: 12, day: 1 }),
+        repository.openSharedDoor(createCalendarEntity({ activeToken: 'a'.repeat(64), version: 1 }), 1, {
+          year: 2026,
+          month: 12,
+          day: 1,
+        }),
       ).rejects.toMatchObject({
         response: expect.objectContaining({ code: 'DOOR_EMPTY' }),
       });
       await expect(
-        repository.openSharedDoor('a'.repeat(64), 2, 1, { year: 2026, month: 12, day: 1 }),
+        repository.openSharedDoor(createCalendarEntity({ activeToken: 'a'.repeat(64), version: 1 }), 2, {
+          year: 2026,
+          month: 12,
+          day: 1,
+        }),
       ).rejects.toMatchObject({
         response: expect.objectContaining({ code: 'DOOR_NOT_YET_UNLOCKED' }),
       });
@@ -377,14 +408,14 @@ describe('MinAdventCalendarRepository', () => {
       });
       transaction.doors.push(door, filledDoor);
 
-      const result: {
-        calendar: import('C:/Users/wayla/Desktop/Projekte/minfactory/server/src/features/minadvent/models/entities/minadvent-calendar.entity').MinAdventCalendarEntity;
-        firstOpened: boolean;
-      } = await repository.openSharedDoor('a'.repeat(64), 1, 1, { year: 2026, month: 12, day: 1 });
+      const result: MinAdventCalendarEntity = await repository.openSharedDoor(
+        createCalendarEntity({ activeToken: 'a'.repeat(64), version: 1 }),
+        1,
+        { year: 2026, month: 12, day: 1 },
+      );
 
-      expect(result.firstOpened).toBe(false);
-      expect(result.calendar.doors).toHaveLength(2);
-      expect(result.calendar.doors[1].status).toBe(MinAdventDoorStatus.Filled);
+      expect(result.doors).toHaveLength(2);
+      expect(result.doors[1].status).toBe(MinAdventDoorStatus.Filled);
       expect(transaction.doorRepository.update).not.toHaveBeenCalled();
       expect(transaction.calendarRepository.update).not.toHaveBeenCalled();
     });
@@ -411,7 +442,7 @@ describe('MinAdventCalendarRepository', () => {
     it('checks the expected version before reading the door status', async () => {
       transaction.calendar.version = 2;
 
-      await expect(repository.closeDoor('owner-1', 'calendar-1', 1, 1)).rejects.toMatchObject({
+      await expect(repository.closeDoor(createCalendarEntity(), 1)).rejects.toMatchObject({
         response: expect.objectContaining({ code: 'VERSION_CONFLICT' }),
       });
 
@@ -425,31 +456,12 @@ describe('MinAdventCalendarRepository', () => {
       transaction.calendar.version = 2;
       transaction.doors.push(Object.assign(new MinAdventDoorEntity(), { day: 1, status: MinAdventDoorStatus.Opened }));
 
-      await expect(repository.closeDoor('owner-1', 'calendar-1', 1, 1)).rejects.toMatchObject({
+      await expect(repository.closeDoor(createCalendarEntity(), 1)).rejects.toMatchObject({
         response: expect.objectContaining({ code: 'VERSION_CONFLICT' }),
       });
 
       expect(transaction.doorQueryBuilder.getMany).not.toHaveBeenCalled();
       expect(transaction.doorRepository.update).not.toHaveBeenCalled();
-    });
-
-    it('rejects status changes after completion without writing', async () => {
-      jest.useFakeTimers();
-      jest.setSystemTime(new Date('2026-12-24T23:00:00.000Z'));
-      transaction.doors.push(
-        Object.assign(new MinAdventDoorEntity(), { id: 'door-1', day: 1, status: MinAdventDoorStatus.Opened }),
-        ...Array.from({ length: 23 }, (_, index) =>
-          Object.assign(new MinAdventDoorEntity(), { day: index + 2, status: MinAdventDoorStatus.Empty }),
-        ),
-      );
-
-      await expect(repository.closeDoor('owner-1', 'calendar-1', 1, 1)).rejects.toMatchObject({
-        response: expect.objectContaining({ code: 'CALENDAR_COMPLETED' }),
-      });
-
-      expect(transaction.doorQueryBuilder.setLock).toHaveBeenCalledWith('pessimistic_write');
-      expect(transaction.doorRepository.update).not.toHaveBeenCalled();
-      expect(transaction.calendarRepository.update).not.toHaveBeenCalled();
     });
 
     it('closes an opened door after the Advent period and increments the global version once', async () => {
@@ -458,8 +470,8 @@ describe('MinAdventCalendarRepository', () => {
       const door: MinAdventDoorEntity = addOpenedDoor();
       transaction.doors.push(Object.assign(new MinAdventDoorEntity(), { day: 2, status: MinAdventDoorStatus.Filled }));
 
-      const updated: import('C:/Users/wayla/Desktop/Projekte/minfactory/server/src/features/minadvent/models/entities/minadvent-calendar.entity').MinAdventCalendarEntity =
-        await repository.closeDoor('owner-1', 'calendar-1', 1, 1);
+      const updated: import('../models/entities/minadvent-calendar.entity').MinAdventCalendarEntity =
+        await repository.closeDoor(createCalendarEntity(), 1);
 
       expect(transaction.calendarQueryBuilder.setLock).toHaveBeenCalledWith('pessimistic_write');
       expect(transaction.doorQueryBuilder.setLock).toHaveBeenCalledWith('pessimistic_write');
@@ -484,7 +496,7 @@ describe('MinAdventCalendarRepository', () => {
         }),
       );
 
-      await expect(repository.closeDoor('owner-1', 'calendar-1', 1, 1)).rejects.toMatchObject({
+      await expect(repository.closeDoor(createCalendarEntity(), 1)).rejects.toMatchObject({
         response: expect.objectContaining({ code: 'DOOR_NOT_OPENED' }),
       });
 

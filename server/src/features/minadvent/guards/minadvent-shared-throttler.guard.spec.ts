@@ -10,7 +10,12 @@ function createContext(
   setHeader = jest.fn(),
   handler: (...args: never[]) => unknown = MinAdventSharedController.prototype.get,
 ): ExecutionContext {
-  const request: { method: string; ip: string; socket: { remoteAddress: string }; headers: {} } = {
+  const request: {
+    method: string;
+    ip: string;
+    socket: { remoteAddress: string };
+    headers: Record<string, string | string[] | undefined>;
+  } = {
     method,
     ip,
     socket: { remoteAddress: ip },
