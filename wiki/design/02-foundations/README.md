@@ -1,6 +1,6 @@
 # Foundations – Visuelle Grundlagen
 
-Hier werden die visuellen Grundlagen des Design Systems vorbereitet. Die Themendateien sind Platzhalter für spätere Festlegungen.
+Hier werden die visuellen Grundlagen des Design Systems dokumentiert. Der jeweilige Status ist in den Themendateien angegeben.
 
 ## Themen
 
