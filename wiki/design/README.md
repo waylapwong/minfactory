@@ -8,9 +8,10 @@ minDesign bündelt die gemeinsamen Gestaltungsgrundlagen und Interaktionsregeln 
 - [02 – Foundations: Visuelle Grundlagen](02-foundations/README.md)
 - [03 – Patterns: Interaktionsmuster](03-patterns/README.md)
 - [04 – Components: Shared Components](04-components/README.md)
+- [05 – Content: Texte und Inhalte](05-content/README.md)
 
 ## Abgrenzung
 
-Die [fachliche Dokumentation](../requirements/README.md) beschreibt Anforderungen und Nutzerfunktionen. Die [technische Dokumentation](../architecture/README.md) beschreibt Architektur und Umsetzung. minDesign legt künftig die übergreifenden visuellen und interaktiven UI-Vorgaben fest. Gemeinsame Designregeln werden hier einmal dokumentiert; andere Dokumentationen verweisen bei Bedarf darauf.
+Die [fachliche Dokumentation](../requirements/README.md) beschreibt Anforderungen und Nutzerfunktionen. Die [technische Dokumentation](../architecture/README.md) beschreibt Architektur und Umsetzung. minDesign legt künftig die übergreifenden visuellen, interaktiven und textlichen UI-Vorgaben fest. Gemeinsame Designregeln werden hier einmal dokumentiert; andere Dokumentationen verweisen bei Bedarf darauf.
 
 [Dokumentationsregeln](../../AGENTS.md#Dokumentation)
