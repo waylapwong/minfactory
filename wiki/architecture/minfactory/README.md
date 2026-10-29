@@ -1,6 +1,6 @@
-# minrpg – Technische Architekturdokumentation (arc42)
+﻿# minfactory – Technische Architekturdokumentation (arc42)
 
-Produktspezifische Dokumentation; gemeinsame Architekturkonzepte sind unter [minFactory](../minfactory/README.md) dokumentiert.
+Übergreifende Dokumentation der Plattform.
 
 ## Kapitel
 

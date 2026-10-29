@@ -1,6 +1,8 @@
-# minrps – Technische Architekturdokumentation (arc42)
+﻿# minsplit – Technische Architekturdokumentation (arc42)
 
 Produktspezifische Dokumentation; gemeinsame Architekturkonzepte sind unter [minFactory](../minfactory/README.md) dokumentiert.
+
+> Die übernommenen Spezifikationen enthalten ausdrücklich geplante Soll-Zustände. Diese sind nicht automatisch bereits implementiert.
 
 ## Kapitel
 

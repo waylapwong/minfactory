@@ -1,8 +1,8 @@
-# 9. Architekturentscheidungen
+﻿# 9. Architekturentscheidungen
 
 ## minSplit | Technische Spezifikation v1.0.0
 
-> **Geplanter Soll-Zustand; nicht als bereits implementiert zu verstehen.** Verbindliche Fachbasis: [minSplit fachlich](../../business/minsplit/README.md) und die dort verlinkten Detailseiten. Dokumentationsauftrag: [#202](https://github.com/waylapwong/minfactory/issues/202). Der Produktumfang entspricht dem fachlich definierten Gesamtumfang, unabhängig von der späteren Aufteilung auf Entwicklungs-Milestones bis v0.5.0.
+> **Geplanter Soll-Zustand; nicht als bereits implementiert zu verstehen.** Verbindliche Fachbasis: [minSplit fachlich](../../requirements/minsplit/README.md) und die dort verlinkten Detailseiten. Dokumentationsauftrag: [#202](https://github.com/waylapwong/minfactory/issues/202). Der Produktumfang entspricht dem fachlich definierten Gesamtumfang, unabhängig von der späteren Aufteilung auf Entwicklungs-Milestones bis v0.5.0.
 
 #### Architekturentscheidungen
 

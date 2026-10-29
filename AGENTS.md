@@ -13,6 +13,16 @@ Monorepo:
 - `client/`: Angular
 - `server/`: NestJS
 
+## Dokumentation
+
+- Fachliche Produktspezifikationen liegen unter `wiki/requirements/` und folgen SRS gemäß [ISO/IEC/IEEE 29148](https://www.iso.org/standard/72089.html), gegliedert nach Produktfunktionen und fachlichen Anforderungen.
+- Technische Architekturdokumente liegen unter `wiki/architecture/` und verwenden die zwölf [arc42-Kapitel](https://arc42.org/overview).
+- Das Design System [minDesign](wiki/design/README.md) dokumentiert übergreifende Gestaltungsprinzipien, visuelle Grundlagen, Interaktionsmuster und wiederverwendbare UI-Bausteine.
+- Fachliche Dokumentation beschreibt Anforderungen und Nutzerfunktionen, technische Dokumentation Architektur und Implementierung, minDesign visuelle und interaktive UI-Vorgaben. Überschneidungen werden durch Verweise statt doppelte Regeln aufgelöst.
+- Gemeinsame Aspekte werden bei minFactory dokumentiert; minApps beschreiben nur eigene Besonderheiten und verweisen auf die Plattform. Übergreifende UI-Vorgaben werden zentral in minDesign beschrieben.
+- Leere Kapitel enthalten keine erfundenen Inhalte. Geplante Soll-Zustände von minAdvent und minSplit sind als **geplant, nicht bereits implementiert** zu kennzeichnen. Vorbereitende minDesign-Themenseiten enthalten noch keine verbindlichen Designentscheidungen.
+- GitHub-Issues und Milestones verwalten Umsetzungsaufgaben und Releases.
+
 ## Rolle
 
 Senior Fullstack Developer.

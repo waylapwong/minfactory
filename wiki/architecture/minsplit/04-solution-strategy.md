@@ -1,8 +1,8 @@
-# 4. Lösungsstrategie
+﻿# 4. Lösungsstrategie
 
 ## minSplit | Architektur, Zustandslogik und Konsistenz
 
-> **Soll-Konzept v1.0.0** · [Übersicht](README.md) · [Fachlicher Lebenszyklus](../../business/minsplit/03-specific-requirements.md)
+> **Soll-Konzept v1.0.0** · [Übersicht](README.md) · [Fachlicher Lebenszyklus](../../requirements/minsplit/03-specific-requirements.md)
 
 #### Einordnung
 

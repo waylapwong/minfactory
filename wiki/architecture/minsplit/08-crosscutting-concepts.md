@@ -1,4 +1,4 @@
-# 8. Querschnittliche Konzepte
+﻿# 8. Querschnittliche Konzepte
 
 ## minSplit | Sicherheit, Zugriffe und Datenschutz
 
@@ -30,7 +30,7 @@ Gruppenlöschung verlangt im UI ausdrückliche Bestätigung mit exaktem Gruppenn
 
 ## minSplit | Unit-Tests und Review
 
-> **Soll-Konzept v1.0.0** · [Übersicht](README.md) · [Fachliche Beispiele](../../business/minsplit/03-specific-requirements.md)
+> **Soll-Konzept v1.0.0** · [Übersicht](README.md) · [Fachliche Beispiele](../../requirements/minsplit/03-specific-requirements.md)
 
 #### Teststrategie
 
@@ -67,7 +67,7 @@ Nur isolierte **Unit-Tests**, Backend mit bestehendem Jest/ts-jest, Frontend mit
 
 #### Dokumentations-Review
 
-- Fachliche Source of Truth vollständig geprüft: [Gruppen](../../business/minsplit/03-specific-requirements.md), [Ausgaben](../../business/minsplit/03-specific-requirements.md), [Abrechnung](../../business/minsplit/03-specific-requirements.md), [Benutzerabläufe](../../business/minsplit/03-specific-requirements.md).
+- Fachliche Source of Truth vollständig geprüft: [Gruppen](../../requirements/minsplit/03-specific-requirements.md), [Ausgaben](../../requirements/minsplit/03-specific-requirements.md), [Abrechnung](../../requirements/minsplit/03-specific-requirements.md), [Benutzerabläufe](../../requirements/minsplit/03-specific-requirements.md).
 - API-Authentifizierung und Swagger/Mapper-/Repository-Namensgebung anhand der aktuellen minFactory-Projektkonventionen ausrichten, nicht neue parallele Infrastruktur schaffen.
 - Konsistenz: Rest-Cent werden nie in Ausgleichsplan/Salden aufgenommen; Ersatzbuchungen erhalten neue Sequenzen; nur aktive Personen erscheinen in Abrechnungsbalken; jeder bestätigte Plantransfer führt schließlich alle Salden auf null.
 - Dokumentationsänderung umfasst keine lauffähige Feature-Implementierung; für einen Markdown-only-PR sind keine betroffenen ausführbaren Unit-Tests/Linter vorhanden.

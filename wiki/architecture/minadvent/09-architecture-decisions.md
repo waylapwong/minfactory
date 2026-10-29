@@ -1,8 +1,8 @@
-# 9. Architekturentscheidungen
+﻿# 9. Architekturentscheidungen
 
 ## minAdvent | Technische Spezifikation v1.0.0
 
-> **Geplanter Soll-Zustand, nicht implementiert.** Verbindliche Fachanforderungen: [minAdvent fachlich](../../business/minadvent/README.md), [#175](https://github.com/waylapwong/minfactory/issues/175). Auftrag: [#176](https://github.com/waylapwong/minfactory/issues/176). Der technische Entwurf ist Ausgangspunkt für spätere, getrennte Implementierungstickets.
+> **Geplanter Soll-Zustand, nicht implementiert.** Verbindliche Fachanforderungen: [minAdvent fachlich](../../requirements/minadvent/README.md), [#175](https://github.com/waylapwong/minfactory/issues/175). Auftrag: [#176](https://github.com/waylapwong/minfactory/issues/176). Der technische Entwurf ist Ausgangspunkt für spätere, getrennte Implementierungstickets.
 
 #### Architekturentscheidungen
 

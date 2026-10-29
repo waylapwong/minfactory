@@ -1,4 +1,4 @@
-# 5. Bausteinsicht
+﻿# 5. Bausteinsicht
 
 ## minSplit | REST-API und Fehlervertrag
 
@@ -132,7 +132,7 @@ Exakte User-FK-Spalte, konkrete MySQL-Kollation und vorhandenes Migrationen-Depl
 
 ## minSplit | Angular-Frontend und UI-Zustände
 
-> **Soll-Konzept v1.0.0** · [Übersicht](README.md) · [Fachliche Benutzerabläufe](../../business/minsplit/03-specific-requirements.md)
+> **Soll-Konzept v1.0.0** · [Übersicht](README.md) · [Fachliche Benutzerabläufe](../../requirements/minsplit/03-specific-requirements.md)
 
 #### Architektur
 

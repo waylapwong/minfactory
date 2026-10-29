@@ -1,6 +1,8 @@
-# minfactory – Technische Architekturdokumentation (arc42)
+﻿# minadvent – Technische Architekturdokumentation (arc42)
 
-Übergreifende Dokumentation der Plattform.
+Produktspezifische Dokumentation; gemeinsame Architekturkonzepte sind unter [minFactory](../minfactory/README.md) dokumentiert.
+
+> Die übernommenen Spezifikationen enthalten ausdrücklich geplante Soll-Zustände. Diese sind nicht automatisch bereits implementiert.
 
 ## Kapitel
 

@@ -1,4 +1,4 @@
-# minpoker – Technische Architekturdokumentation (arc42)
+﻿# minrpg – Technische Architekturdokumentation (arc42)
 
 Produktspezifische Dokumentation; gemeinsame Architekturkonzepte sind unter [minFactory](../minfactory/README.md) dokumentiert.
 

@@ -1,6 +1,6 @@
-# Fachliche Dokumentation
+# Technische Dokumentation
 
-Fachliche Produktspezifikationen (SRS).
+Architekturdokumentationen (arc42).
 
 ## Plattform
 
@@ -17,4 +17,4 @@ Fachliche Produktspezifikationen (SRS).
 - [minAdvent](minadvent/README.md)
 - [minSplit](minsplit/README.md)
 
-[Dokumentationskonventionen](../documentation-conventions.md)
+[Dokumentationsregeln](../../AGENTS.md#dokumentation)

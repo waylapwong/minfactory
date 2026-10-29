@@ -2,11 +2,11 @@
 
 ## Fachliche Dokumentation
 
-- [Fachliche Dokumentation](business/README.md)
+- [Fachliche Dokumentation](requirements/README.md)
 
 ## Technische Dokumentation
 
-- [Technische Dokumentation](technical/README.md)
+- [Technische Dokumentation](architecture/README.md)
 
 ## Design System
 

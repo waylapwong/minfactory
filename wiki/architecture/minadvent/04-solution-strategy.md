@@ -1,8 +1,8 @@
-# 4. Lösungsstrategie
+﻿# 4. Lösungsstrategie
 
 ## minAdvent | Architektur und Zustandslogik
 
-> **Soll-Konzept v1.0.0** · [Übersicht](README.md) · [Fachlicher Lebenszyklus](../../business/minadvent/03-specific-requirements.md)
+> **Soll-Konzept v1.0.0** · [Übersicht](README.md) · [Fachlicher Lebenszyklus](../../requirements/minadvent/03-specific-requirements.md)
 
 #### 1. Einordnung in minFactory
 
