@@ -1,73 +1,67 @@
 ---
 name: ticket-implementation
-description: 'Verwenden, wenn ein GitHub-Issue oder Ticket in diesem Repository umgesetzt werden soll. Ticket, Referenzen und Abhängigkeiten prüfen, Unklarheiten klären, Änderungen implementieren und testen, erledigte Umsetzungsaufgaben abhaken und einen Draft-Pull-Request erstellen.'
+description: 'Implementiert ein GitHub-Issue unter Berücksichtigung seiner Anforderungen, Referenzen und Abhängigkeiten, verifiziert die Änderungen, aktualisiert das Issue und erstellt einen Draft-Pull-Request.'
 user-invocable: true
 ---
 
 # Ticket-Implementierung
 
-Befolge diesen Workflow, wenn Copilot oder Codex mit der Umsetzung eines Tickets in diesem Repository beauftragt wird.
+Befolge diesen Workflow, wenn Copilot oder Codex ein GitHub-Issue implementieren soll.
 
-## 1. Ticket und Referenzen prüfen
+Die `AGENTS.md` und die darin referenzierten Projektanweisungen sind für Architektur, Implementierung, Tests, Dokumentation und Verifikation verbindlich.
 
-- Identifiziere das GitHub-Issue anhand der Benutzeranfrage. Falls das Ticket nicht eindeutig identifizierbar ist, frage nach.
-- Lies das vollständige Issue einschließlich Beschreibung, Aufgabenlisten, Akzeptanzkriterien, Kommentaren und relevanten Verknüpfungen.
-- Lies alle relevanten referenzierten Anforderungen, Architektur- und Designdokumentationen, verwandten Issues und Codebereiche, bevor du die Umsetzung planst.
-- Lies die `AGENTS.md` des Repositories sowie alle geltenden Projektanweisungen. Beachte deren Vorgaben zu Architektur, Implementierung, Tests, Formatierung und Verifizierung.
-- Prüfe die `blocked by`-Beziehungen des Issues und stelle sicher, dass notwendige Abhängigkeiten abgeschlossen sind.
-- Falls eine erforderliche Abhängigkeit noch nicht erfüllt ist, beginne nicht mit der davon abhängigen Implementierung. Melde die Blockierung.
-- Vergleiche die Anforderungen des Tickets mit dem aktuellen Code und den bestehenden Tests, um Ausgangszustand und Umfang der Änderung zu verstehen.
+## 1. Ticket analysieren
 
-## 2. Unklarheiten vor der Implementierung klären
+- Identifiziere das GitHub-Issue. Frage nach, falls es nicht eindeutig bestimmbar ist.
+- Lies das vollständige Issue einschließlich Beschreibung, Akzeptanzkriterien, Umsetzung, Kommentaren und relevanten Referenzen.
+- Prüfe verknüpfte Issues und `blocked by`-Abhängigkeiten. Kläre unerfüllte Voraussetzungen vor der Implementierung.
+- Lies die geltenden Projektanweisungen und relevanten Dokumentationen.
+- Prüfe den aktuellen Code und die bestehenden Tests.
+- Prüfe den Git-Status, den aktuellen Branch und gegebenenfalls bereits vorhandene Pull Requests zum Issue.
+- Verwende einen geeigneten Arbeitsbranch und bewahre bestehende, nicht zum Ticket gehörende Änderungen.
 
-- Identifiziere fehlende Entscheidungen, widersprüchliche Anforderungen, unklare Akzeptanzkriterien oder nicht zugängliche Referenzen, die die Umsetzung beeinflussen.
-- Stelle gezielte und möglichst knappe Rückfragen, bevor du Änderungen implementierst, wenn wesentliche Unklarheiten bestehen.
-- Triff keine unbegründeten Annahmen über das fachliche Verhalten und beginne keine Implementierung, solange wesentliche Fragen ungeklärt sind.
-- Wenn keine wesentlichen Unklarheiten bestehen, fahre ohne zusätzliche Bestätigung fort.
+## 2. Unklarheiten klären
 
-## 3. Implementieren und testen
+- Identifiziere wesentliche Unklarheiten, fehlende Entscheidungen und widersprüchliche Anforderungen.
+- Kläre fachliche Fragen und größere technische Entscheidungen vor der Implementierung mit dem Benutzer.
+- Erläutere bei Rückfragen das Problem, empfehle eine konkrete Lösung und bitte um eine Entscheidung.
+- Triff kleinere technische Entscheidungen eigenständig anhand bestehender Projektkonventionen.
+- Sind alle wesentlichen Fragen geklärt, fahre ohne zusätzliche Bestätigung fort.
 
-- Beschränke die Änderungen auf den Umfang des Tickets und halte bestehende Architektur, Konventionen und Zuständigkeiten ein.
-- Bevorzuge die einfachste Lösung, die alle Akzeptanzkriterien erfüllt und zu den bestehenden Patterns passt.
-- Verwende vorhandene Komponenten, Services, Hilfsfunktionen und Dependencies, bevor du neue Abstraktionen einführst.
-- Vermeide nicht angeforderte Refactorings, spekulative Funktionalität und unnötige Dependencies.
-- Ergänze oder aktualisiere gezielte Tests für das geänderte Verhalten einschließlich relevanter Randfälle und Fehlerzustände.
-- Führe betroffene Tests sowie gegebenenfalls bestehende Regressionstests aus.
-- Führe die erforderlichen Lint-, Formatierungs- und sonstigen Prüfungen gemäß `AGENTS.md` aus.
-- Behebe durch deine Änderungen verursachte Fehler und wiederhole die betroffenen Prüfungen.
-- Aktualisiere die betroffene technische Dokumentation, wenn sich Implementierungsdetails ändern.
-- Ändere dokumentiertes fachliches Verhalten nicht eigenmächtig. Kläre Widersprüche zur fachlichen Dokumentation vor der Implementierung.
-- Prüfe abschließend den gesamten Diff auf unnötige Änderungen, duplizierte Logik, fehlende Tests, inkonsistente Benennungen und Abweichungen von bestehenden Konventionen.
-- Entferne temporären Code, Debugging-Artefakte und nicht zum Ticket gehörende Änderungen.
-- Dokumentiere Prüfungen, die nicht ausgeführt werden konnten. Stelle nicht verifizierte Arbeiten nicht als abgeschlossen dar.
+## 3. Implementieren und verifizieren
+
+- Implementiere die Anforderungen und Akzeptanzkriterien innerhalb des Ticketumfangs.
+- Befolge die Implementierungs-, Test- und Dokumentationsvorgaben der `AGENTS.md`.
+- Führe die vorgeschriebenen Prüfungen aus und behebe durch deine Änderungen verursachte Fehler.
+- Führe die Abschlussprüfung gemäß `AGENTS.md` durch.
+- Dokumentiere nicht ausführbare Prüfungen und verbleibende Einschränkungen.
+- Stelle nicht verifizierte Arbeiten nicht als abgeschlossen dar.
 
 ## 4. Issue aktualisieren
 
-- Markiere im Abschnitt `Umsetzung` ausschließlich Aufgaben als erledigt, die tatsächlich implementiert und erfolgreich verifiziert wurden.
-- Verändere keine Checkboxen im Abschnitt `Akzeptanzkriterien`. Diese bleiben für die Abnahme durch den Auftraggeber unverändert.
-- Lasse nicht abgeschlossene oder nicht verifizierte Aufgaben offen.
-- Falls die Implementierung unvollständig ist, dokumentiere die verbleibenden Arbeiten und lasse die entsprechenden Checkboxen unverändert.
-- Stelle ein unvollständig umgesetztes Ticket nicht als abgeschlossen dar.
-- Verändere keine anderen Inhalte oder Metadaten des Issues, sofern dies nicht ausdrücklich erforderlich ist.
-- Aktualisiere das Issue erst nach der Implementierung und Verifizierung, unmittelbar vor der Erstellung des Draft-Pull-Requests.
+- Markiere im Abschnitt `Umsetzung` ausschließlich tatsächlich abgeschlossene und verifizierte Aufgaben als erledigt.
+- Lasse offene oder nicht verifizierte Aufgaben unverändert.
+- Verändere die Checkboxen der `Akzeptanzkriterien` nicht. Sie bleiben für die Abnahme durch den Auftraggeber offen.
+- Erhalte alle anderen Inhalte und Metadaten des Issues.
+- Aktualisiere das Issue nach der Verifikation und vor der Erstellung des Pull Requests.
 
 ## 5. Draft-Pull-Request erstellen
 
-- Erstelle einen Draft-Pull-Request für die Implementierung und verknüpfe ihn mit dem Issue.
-- Verwende das bestehende Pull-Request-Template des Repositories.
-- Beschreibe die Änderungen, durchgeführten Prüfungen, gegebenenfalls offene Arbeiten und die Issue-Referenz möglichst knapp.
+- Verwende einen bestehenden passenden Pull Request oder erstelle einen neuen Draft-Pull-Request.
+- Beachte das vorhandene Pull-Request-Template.
+- Beschreibe die Änderungen, durchgeführten Prüfungen und gegebenenfalls offene Arbeiten.
 - Verwende `Closes #<issue-number>` in der Pull-Request-Beschreibung, damit GitHub das Issue beim Merge automatisch schließen kann.
-- Belasse den Pull Request im Draft-Status. Markiere ihn nicht als bereit für das Review.
-- Falls die Erstellung des Pull Requests durch fehlende Berechtigungen, nicht verfügbare GitHub-Werkzeuge oder andere externe Voraussetzungen verhindert wird, dokumentiere die Blockierung und stelle die vorhandenen Branch- beziehungsweise Pull-Request-Informationen bereit. Behaupte nicht, dass ein Pull Request erstellt wurde.
+- Belasse den Pull Request im Draft-Status.
+- Falls die Veröffentlichung nicht möglich ist, dokumentiere die Ursache und die verfügbaren Branch-Informationen.
 
 ## Abschluss
 
 Fasse die Ergebnisse knapp zusammen:
 
-- Implementierte Änderungen und deren wesentliche Auswirkungen.
-- Ausgeführte Tests und Prüfungen einschließlich fehlgeschlagener oder nicht ausführbarer Prüfungen.
-- Aktualisierte Checkboxen im Abschnitt `Umsetzung` und gegebenenfalls verbleibende Aufgaben.
+- Implementierte Änderungen.
+- Ergebnisse der Tests und Prüfungen.
+- Aktualisierte und offene Umsetzungsaufgaben.
 - Link zum Draft-Pull-Request.
-- Verbleibende Blockierungen oder unvollständige Arbeiten.
+- Verbleibende Einschränkungen oder Blockierungen.
 
-Stelle ausschließlich tatsächlich implementierte und verifizierte Arbeiten als abgeschlossen dar.
+Behaupte keine erfolgreiche Durchführung nicht verifizierter Arbeitsschritte.
