@@ -94,4 +94,7 @@ Verbindliche Entwicklungsregeln stehen in `AGENTS.md`. Alle Referenzen sind vor 
 ## 6. Bekannte Stolperfallen
 
 - **Angular Signals:** Änderungen an Objekten innerhalb von Signals müssen über neue Objektinstanzen beziehungsweise aktualisierte Collections sichtbar gemacht werden. Ein gewöhnlicher Wert ersetzt in Test-Doubles kein Signal.
-- **Socket-Lifecycle:**
+- **Socket-Lifecycle:** Der interne `isSubscribed`-Status des `MinPokerMultiplayerService` verhindert doppelte Subscriptions bei wiederholten Verbindungsaufrufen.
+- **Spiel verlassen:** Bei der Zerstörung von `MinPokerGameComponent` müssen gegebenenfalls offene Leave-Confirmation-Promises beziehungsweise deren Resolver berücksichtigt werden.
+- **Native Button-Aktivierung:** Enter kann auf nativen Buttons bereits ein Click-Ereignis auslösen. Zusätzliche Aktivierung im Keyboard-Handler kann doppelte Aktionen verursachen.
+- **Popover-Tests:** Die tatsächliche Reihenfolge von Enter-Keydown und anschließendem Click ist relevant. Der bestehende Regressionstest prüft, dass das Popover danach sichtbar und angeheftet bleibt.

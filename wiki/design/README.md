@@ -13,4 +13,4 @@ minDesign bündelt die gemeinsamen Gestaltungsgrundlagen und Interaktionsregeln 
 
 Die [fachliche Dokumentation](../requirements/README.md) beschreibt Anforderungen und Nutzerfunktionen. Die [technische Dokumentation](../architecture/README.md) beschreibt Architektur und Umsetzung. minDesign legt künftig die übergreifenden visuellen und interaktiven UI-Vorgaben fest. Gemeinsame Designregeln werden hier einmal dokumentiert; andere Dokumentationen verweisen bei Bedarf darauf.
 
-[Dokumentationsregeln](../../AGENTS.md#dokumentation)
+[Dokumentationsregeln](../../AGENTS.md#Dokumentation)

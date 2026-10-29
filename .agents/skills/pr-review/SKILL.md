@@ -42,8 +42,9 @@ Die `AGENTS.md` und die darin referenzierten Projektanweisungen sind für Archit
 
 ## 4. Änderungen veröffentlichen
 
-- Prüfe vor der Veröffentlichung erneut, welche Review-Threads noch `Unresolved` sind.
-- Veröffentliche keine ausschließlich für zwischenzeitlich als `Resolved` markierte Threads vorgesehenen Änderungen. Bewahre dabei bereits bestehende oder anderweitig erforderliche Änderungen.
+- Prüfe vor der Veröffentlichung erneut den aktuellen Status der betroffenen Review-Threads.
+- Beginne keine neuen Änderungen für zwischenzeitlich als `Resolved` markierte Threads.
+- Behalte bereits implementierte Änderungen bei, sofern sie fachlich berechtigt und weiterhin erforderlich sind.
 - Committe und pushe die verifizierten Änderungen auf den bestehenden PR-Branch.
 - Erstelle keinen zusätzlichen Pull Request.
 - Verändere den Draft- beziehungsweise Review-Status des Pull Requests nicht.

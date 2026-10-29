@@ -255,7 +255,7 @@ Regeln:
 
 ### Agent Memory
 
-Das gemeinsame Projektgedächtnis für Codex und Copilot liegt in `agents-memory.md`.
+Das gemeinsame Projektgedächtnis für Codex und Copilot liegt in `AGENTS_MEMORY.md`.
 
 - Bei relevanten Entwicklungsaufgaben das Agent Memory lesen.
 - Erkenntnisse anhand des aktuellen Repository-Codes und der geltenden Projektanweisungen überprüfen.

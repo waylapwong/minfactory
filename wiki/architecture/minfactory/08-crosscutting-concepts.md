@@ -7,7 +7,7 @@
 
 ##### 1.1 Rollierendes Agentengedächtnis
 
-Das gemeinsame Gedächtnis in `agents-memory.md` bewahrt bestätigtes, langfristig nützliches Projektwissen für spätere Aufgaben. Es ist weder Gesprächsprotokoll noch Ersatz für Quellcode oder Dokumentation.
+Das gemeinsame Gedächtnis in `AGENTS_MEMORY.md` bewahrt bestätigtes, langfristig nützliches Projektwissen für spätere Aufgaben. Es ist weder Gesprächsprotokoll noch Ersatz für Quellcode oder Dokumentation.
 
 ###### 1.1.1 Grundprinzipien
 

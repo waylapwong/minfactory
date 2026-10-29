@@ -17,8 +17,10 @@ Die `AGENTS.md` und die darin referenzierten Projektanweisungen sind für Archit
 - Prüfe verknüpfte Issues und `blocked by`-Abhängigkeiten. Kläre unerfüllte Voraussetzungen vor der Implementierung.
 - Lies die geltenden Projektanweisungen und relevanten Dokumentationen.
 - Prüfe den aktuellen Code und die bestehenden Tests.
-- Prüfe den Git-Status, den aktuellen Branch und gegebenenfalls bereits vorhandene Pull Requests zum Issue.
-- Verwende einen geeigneten Arbeitsbranch und bewahre bestehende, nicht zum Ticket gehörende Änderungen.
+- Prüfe den Git-Status, den aktuellen Branch und bereits vorhandene Pull Requests zum Issue.
+- Falls bereits ein passender Pull Request existiert, verwende dessen Branch und Pull Request weiter.
+- Verwende andernfalls einen geeigneten Arbeitsbranch.
+- Bewahre bestehende, nicht zum Ticket gehörende Änderungen.
 
 ## 2. Unklarheiten klären
 
@@ -43,15 +45,17 @@ Die `AGENTS.md` und die darin referenzierten Projektanweisungen sind für Archit
 - Lasse offene oder nicht verifizierte Aufgaben unverändert.
 - Verändere die Checkboxen der `Akzeptanzkriterien` nicht. Sie bleiben für die Abnahme durch den Auftraggeber offen.
 - Erhalte alle anderen Inhalte und Metadaten des Issues.
-- Aktualisiere das Issue nach der Verifikation und vor der Erstellung des Pull Requests.
+- Aktualisiere das Issue nach der Verifikation und vor der Veröffentlichung des Pull Requests.
 
-## 5. Draft-Pull-Request erstellen
+## 5. Draft-Pull-Request erstellen oder aktualisieren
 
 - Verwende einen bestehenden passenden Pull Request oder erstelle einen neuen Draft-Pull-Request.
+- Erstelle keinen zusätzlichen Pull Request, wenn bereits ein passender existiert.
 - Beachte das vorhandene Pull-Request-Template.
 - Beschreibe die Änderungen, durchgeführten Prüfungen und gegebenenfalls offene Arbeiten.
 - Verwende `Closes #<issue-number>` in der Pull-Request-Beschreibung, damit GitHub das Issue beim Merge automatisch schließen kann.
-- Belasse den Pull Request im Draft-Status.
+- Committe und pushe die Änderungen auf den zugehörigen Arbeitsbranch.
+- Belasse einen bestehenden Pull Request in seinem bisherigen Draft- beziehungsweise Review-Status. Neue Pull Requests werden als Draft erstellt.
 - Falls die Veröffentlichung nicht möglich ist, dokumentiere die Ursache und die verfügbaren Branch-Informationen.
 
 ## Abschluss
@@ -61,7 +65,7 @@ Fasse die Ergebnisse knapp zusammen:
 - Implementierte Änderungen.
 - Ergebnisse der Tests und Prüfungen.
 - Aktualisierte und offene Umsetzungsaufgaben.
-- Link zum Draft-Pull-Request.
+- Link zum Draft- beziehungsweise bestehenden Pull Request.
 - Verbleibende Einschränkungen oder Blockierungen.
 
 Behaupte keine erfolgreiche Durchführung nicht verifizierter Arbeitsschritte.
