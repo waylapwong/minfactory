@@ -60,7 +60,7 @@
 
 - Überschriften nach Inhalt und Bedeutung als `h1` bis `h3` auszeichnen, nicht allein anhand ihrer Darstellung.
 - Auf kleinen Ansichten beginnen und bei Bedarf mit Tailwind-Breakpoints wie `sm:` vergrößern. Fließtext bleibt mindestens `text-base`; wichtige Hinweise mindestens `text-sm`.
-- Zahlen und kurze technische Werte dürfen `font-mono` nutzen, wenn dadurch Ausrichtung oder Lesbarkeit gewinnt. Dekorative Schriften sind nicht für Fließtext oder längere Anweisungen vorgesehen.
+- Zahlen und kurze technische Werte dürfen `font-mono` nutzen, wenn dies Ausrichtung oder Lesbarkeit verbessert. Dekorative Schriften sind nicht für Fließtext oder längere Anweisungen vorgesehen.
 - Die Empfehlungen legen neue Standards fest; die Bestandsspalte beschreibt vorhandene Nutzung. Die Dokumentation allein ändert keine Komponenten.
 
 ## Regeln
